@@ -1,0 +1,188 @@
+using System;
+using System.Data;
+using System.Drawing;
+using System.Web.UI.DataVisualization.Charting;
+using System.Web.UI.WebControls;
+
+namespace Paymaker {
+
+    public partial class top_performer : Root {
+        private ChartArea chtArea = new ChartArea("chtArea");
+        private bool blnPrint = false, blnExport = false;
+        protected int intRoleID = -1;
+        protected string szFY = "";
+        protected int startYear = 2000;
+        protected int endYear = 3000;
+        protected int iColor = 38;
+        private Series oSeries;
+        private int MaxSalesValue = 0;
+        private DateTime dtStart = DateTime.MaxValue;
+        private DateTime dtEnd = DateTime.MaxValue;
+
+        protected void Page_Load(object sender, System.EventArgs e) {
+            blnShowMenu = false;
+            intRoleID = Valid.getInteger("szRoleID");
+            blnPrint = Valid.getBoolean("blnPrint", false);
+            blnExport = Valid.getText("blnPrint", "") == "EXPORT";
+            setChart();
+            bindData();
+        }
+
+        protected void bindData() {
+            string szSQLFilter = "";
+            if (intRoleID > -1) {
+                szSQLFilter = string.Format(@" AND U.ROLEID IN ({0}) ", intRoleID);
+            }
+            szSQLFilter += getDateFilter();
+
+            string szCompanyIDList = Valid.getText("szCompanyID", "", VT.TextNormal);
+            string szCompanyFilter = "";
+            if (!String.IsNullOrWhiteSpace(szCompanyIDList))
+                szCompanyFilter += String.Format(" AND L_OFFICE.COMPANYID IN ({0})", szCompanyIDList);
+
+            string szSQL = string.Format(@"
+                SELECT U.TOPPERFORMERREPORTSETTINGS AS USERID, '' AS INITIALSCODE, 0 AS ROLEID, SUM(GRAPHCOMMISSION) AS CALCULATEDAMOUNT
+                FROM USERSALESPLIT USS
+                JOIN SALESPLIT SS ON USS.SALESPLITID = SS.ID AND SS.RECORDSTATUS < 1 AND USS.RECORDSTATUS < 1
+                JOIN LIST L_SPLITTYPE ON SS.COMMISSIONTYPEID = L_SPLITTYPE.ID
+                JOIN SALE S ON SS.SALEID = S.ID
+                JOIN DB_USER U ON USS.USERID = U.ID
+                JOIN LIST L_OFFICE ON U.OFFICEID = L_OFFICE.ID
+                WHERE U.ID > 0 AND S.STATUSID IN (1, 2) AND SS.CALCULATEDAMOUNT > 0 AND U.ISACTIVE = 1 AND U.ISPAID = 1
+                {0} {1}
+                GROUP BY TOPPERFORMERREPORTSETTINGS;
+
+                SELECT USR.ID, USR.INITIALSCODE , ROLEID, ISNULL(T.AMOUNT, 0) AS OFFSET
+                FROM DB_USER USR
+                JOIN LIST L_OFFICE ON USR.OFFICEID = L_OFFICE.ID
+                LEFT JOIN TPOFFSET2015 T ON T.USERID = USR.ID
+                WHERE 1=1 {1} AND USR.ISPAID = 1
+                ;
+
+               ", szSQLFilter, szCompanyFilter);
+            DataSet ds = DB.runDataSet(szSQL);
+            formatDataSet(ds);
+            DataView dv = ds.Tables[0].DefaultView;
+            dv.Sort = "ROLEID, CALCULATEDAMOUNT DESC, INITIALSCODE";
+
+            if (blnExport) {
+                DataTable dt = dv.ToTable();
+                dt.Columns.Remove("USERID");
+                dt.Columns.Remove("ROLEID");
+
+                Export.ExportToExcel2(dt, "TopPerformer" + DateTime.Now.Ticks + ".xls");
+            }
+            //sort on the basis of the role, then amount
+            oSeries = getSeries("Top Performers");
+            foreach (DataRowView oR in dv) {
+                if (String.IsNullOrEmpty(oR["INITIALSCODE"].ToString()))
+                    continue;
+                //oSeries.LabelFormat =
+                oSeries.Points.AddXY(oR["INITIALSCODE"].ToString(), Math.Round(Convert.ToDouble(oR["CALCULATEDAMOUNT"])));
+                oSeries.YValueType = ChartValueType.Double;
+                if (Math.Round(Convert.ToDouble(oR["CALCULATEDAMOUNT"])) > MaxSalesValue)
+                    MaxSalesValue = Convert.ToInt32(Math.Round(Convert.ToDouble(oR["CALCULATEDAMOUNT"])));
+            }
+            oSeries.Font = new Font("Arial narrow", 8);
+            oSeries.IsValueShownAsLabel = true;
+            oSeries.SmartLabelStyle.Enabled = true;
+            SmartLabelStyle oS = new SmartLabelStyle();
+            oS.Enabled = true;
+            // oS.CalloutStyle = LabelCalloutStyle.Box;
+            oS.MovingDirection = LabelAlignmentStyles.Top;
+            oS.MinMovingDistance = 40;
+            oSeries.SmartLabelStyle = oS;
+
+            chtTopPerformers.Series.Add(oSeries);
+            chtTopPerformers.Series[oSeries.Name]["PointWidth"] = (0.4).ToString();
+            // oSeries.LabelAngle = 90;
+            foreach (DataPoint dp in chtTopPerformers.Series[0].Points) {
+                dp.IsValueShownAsLabel = false;
+                dp.Color = Color.FromKnownColor((KnownColor)Enum.ToObject(typeof(KnownColor), iColor++));
+            }
+            if (MaxSalesValue > 2000000)
+                chtArea.AxisY.Maximum = MaxSalesValue + 150000;
+            else if (MaxSalesValue > 200000)
+                chtArea.AxisY.Maximum = MaxSalesValue + 60000;
+            else
+                chtArea.AxisY.Maximum = MaxSalesValue + 8000;
+            chtArea.AxisY.Interval = Math.Round((chtArea.AxisY.Maximum / 15) / 500) * 500; //Round to nearest 500
+            chtArea.AxisX.LabelAutoFitMinFontSize = 8;
+            chtArea.AxisX.LabelAutoFitMaxFontSize = 8;
+            if (blnPrint) {
+                Charts.sendChartToClient(chtTopPerformers);
+            }
+        }
+
+        protected void formatDataSet(DataSet ds) {
+            DataView dvUserDetails = ds.Tables[1].DefaultView;
+
+            foreach (DataRow oR in ds.Tables[0].Rows) {
+                if (System.DBNull.Value == oR["USERID"] || Convert.ToInt32(oR["USERID"]) == -1) {
+                    oR.Delete();
+                    continue;
+                }
+                dvUserDetails.RowFilter = "ID = " + oR["USERID"].ToString();
+                if (dvUserDetails.Count > 0) {
+                    oR["INITIALSCODE"] = dvUserDetails[0]["INITIALSCODE"].ToString();
+                    if (Convert.ToInt32(dvUserDetails[0]["ROLEID"]) == 4)
+                        oR["ROLEID"] = 1; //Set these to sort at the end
+
+                    //Check to see if we need to apply the 2015 offset
+                    //  if (Valid.getText("szStartDate", "", VT.TextNormal) == "Jul 01, 2014") {
+                    //    oR["CALCULATEDAMOUNT"] = Convert.ToDouble(oR["CALCULATEDAMOUNT"]) + Convert.ToDouble(dvUserDetails[0]["OFFSET"]);
+                    //}
+                }
+            }
+            ds.Tables[0].AcceptChanges();
+        }
+
+        protected Series getSeries(string szVlaue) {
+            Series oSeries = new Series(szVlaue);
+            oSeries.ChartType = SeriesChartType.Column;
+            return oSeries;
+        }
+
+        protected void setChart() {
+            chtTopPerformers.Titles[0].Text = "Top Performer";
+            chtTopPerformers.BorderSkin.SkinStyle = BorderSkinStyle.Emboss;
+            chtTopPerformers.BackColor = ColorTranslator.FromHtml("#D3DFF0");
+            chtTopPerformers.BorderlineDashStyle = ChartDashStyle.Solid;
+            chtTopPerformers.Palette = ChartColorPalette.BrightPastel;
+            chtTopPerformers.BackSecondaryColor = Color.White;
+
+            chtTopPerformers.BackGradientStyle = GradientStyle.TopBottom;
+            chtTopPerformers.BorderlineWidth = 2;
+            chtTopPerformers.BorderlineColor = Color.FromArgb(26, 59, 105);
+            chtTopPerformers.Width = Unit.Pixel(1600);//2475
+            chtTopPerformers.Height = Unit.Pixel(580);//3525
+            setChartArea();
+        }
+
+        protected void setChartArea() {
+            chtArea.BackColor = Color.Transparent;
+            chtArea.ShadowColor = Color.Transparent;
+            //chtArea.AxisX.LabelStyle.Format = "MMM yyyy";
+            chtArea.AxisY.IsStartedFromZero = true;
+            chtArea.AxisX.IsStartedFromZero = false;
+            chtArea.AxisY.Minimum = 0;
+            chtArea.AxisY.IntervalAutoMode = IntervalAutoMode.VariableCount;
+            chtArea.AxisY.LabelStyle.Format = "${0.00}";
+            chtArea.AxisX.Interval = 1; //shows every month, year on the chart
+
+            chtArea.AxisY.MajorGrid.Enabled = true;
+            chtArea.AxisX.MajorGrid.Enabled = false;
+            chtArea.AxisX.MajorGrid.LineColor = Color.Transparent;
+            chtArea.AxisY.MajorGrid.LineDashStyle = ChartDashStyle.NotSet;
+
+            chtTopPerformers.ChartAreas.Add(chtArea);//Add chart area to chart
+        }
+
+        private string getDateFilter() {
+            string szStartDate = Valid.getText("szStartDate", "", VT.TextNormal);
+            string szEndDate = Valid.getText("szEndDate", "", VT.TextNormal);
+            chtTopPerformers.Titles[1].Text = szStartDate + " - " + szEndDate;
+            return string.Format(@" AND S.SALEDATE >= '{0} 00:00' and S.SALEDATE <= '{1} 23:59:59'", szStartDate, szEndDate);
+        }
+    }
+}

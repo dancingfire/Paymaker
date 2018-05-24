@@ -1,0 +1,31 @@
+LASTNAME,FIRSTNAME,ADDR1,ADDR2,ADDR3,ADDR4,INCLUSIVE,INVOICENUMBER,INVOICEDATE,CUSTOMERPO,SHIPVIA,DELIVERYSTATUS,DESCRIPTION,ACCOUNTNUM,AMOUNT,IncTaxAMOUNT,JOB,COMMENT,JOURNALMEMO,SPLASTNAME,SPFIRSTNAME,SHIPPINGDATE,ReferralSource,TAXCODE,NONGSTAMOUNT,GST_AMOUNT,LCTAMOUNT,FREIGHTAMOUNT,INCTAXFREIGHTAMOUNT,FREIGHTTAXCODE,FREIGHTNONGST,FREIGHTGST,FREIGHTLCT,SALESTATUS,CURRENCYCODE,EXCHANGERATE,TERMS1,TERMS2,TERMS3,TERMS4,TERMS5,AMOUNTPAID,PAYMENTMETHOD,PAYMENTNOTES,NAMEONCARD,CARDNUMBER,EXPIRYDATE,AUTHCODE,BSB,ACCOUNTNUMBER,ACCOUNTNAME,CHECQUENUM,CATEGORY,CARDID
+
+
+Fees-Hugh13,,,,,,,10587,18/05/16,,,,Marketing Production Fee,44000,395.0000,395.0000,9,,,,,,Advertising,GST,,35.9100,,,,,,,,,,,,,,,,,,,,,,,,,,,,Fees-Hugh13
+Fees-Hugh13,,,,,,,10587,18/05/16,,,,Advertising,52200,1587.0000,1587.0000,9,,,,,,Advertising,GST,,144.2600,,,,,,,,,,,,,,,,,,,,,,,,,,,,Fees-Hugh13
+Fees-Hugh13,,,,,,,10587,18/05/16,,,,Brochures,52240,205.4500,205.4500,9,,,,,,Advertising,GST,,18.6800,,,,,,,,,,,,,,,,,,,,,,,,,,,,Fees-Hugh13
+Fees-Hugh13,,,,,,,10587,18/05/16,,,,Internet,52250,2900.0000,2900.0000,9,,,,,,Advertising,GST,,263.6300,,,,,,,,,,,,,,,,,,,,,,,,,,,,Fees-Hugh13
+
+
+Fees-Jame3/20,,,,,,,10569,13/05/16,,,,Marketing Production Fee,44000,395.0000,395.0000,9,,,,,,Advertising,GST,,35.9100,,,,,,,,,,,,,,,,,,,,,,,,,,,,Fees-Jame3/20
+Fees-Jame3/20,,,,,,,10569,13/05/16,,,,Advertising,52200,1572.7000,1572.7000,9,,,,,,Advertising,GST,,142.9700,,,,,,,,,,,,,,,,,,,,,,,,,,,,Fees-Jame3/20
+Fees-Jame3/20,,,,,,,10569,13/05/16,,,,Brochures,52240,338.3000,338.3000,9,,,,,,Advertising,GST,,30.7600,,,,,,,,,,,,,,,,,,,,,,,,,,,,Fees-Jame3/20
+Fees-Jame3/20,,,,,,,10569,13/05/16,,,,Internet,52250,3325.0000,3325.0000,9,,,,,,Advertising,GST,,302.2700,,,,,,,,,,,,,,,,,,,,,,,,,,,,Fees-Jame3/20
+
+
+Fees-Jump98,,,,,,,10571,17/05/16,,,,Marketing Production Fee,44000,395.0000,395.0000,9,,,,,,Advertising,GST,,35.9100,,,,,,,,,,,,,,,,,,,,,,,,,,,,Fees-Jump98
+Fees-Jump98,,,,,,,10571,17/05/16,,,,Advertising,52200,4845.1900,4845.1900,9,,,,,,Advertising,GST,,440.4800,,,,,,,,,,,,,,,,,,,,,,,,,,,,Fees-Jump98
+Fees-Jump98,,,,,,,10571,17/05/16,,,,Brochures,52240,255.0000,255.0000,9,,,,,,Advertising,GST,,23.1800,,,,,,,,,,,,,,,,,,,,,,,,,,,,Fees-Jump98
+Fees-Jump98,,,,,,,10571,17/05/16,,,,Internet,52250,3117.0000,3117.0000,9,,,,,,Advertising,GST,,283.3700,,,,,,,,,,,,,,,,,,,,,,,,,,,,Fees-Jump98
+
+
+Fees-Nymp1/35,,,,,,,10577,17/05/16,,,,Marketing Production Fee,44000,395.0000,395.0000,9,,,,,,Advertising,GST,,35.9100,,,,,,,,,,,,,,,,,,,,,,,,,,,,Fees-Nymp1/35
+Fees-Nymp1/35,,,,,,,10577,17/05/16,,,,Advertising,52200,1447.0000,1447.0000,9,,,,,,Advertising,GST,,131.5400,,,,,,,,,,,,,,,,,,,,,,,,,,,,Fees-Nymp1/35
+Fees-Nymp1/35,,,,,,,10577,17/05/16,,,,Brochures,52240,169.1500,169.1500,9,,,,,,Advertising,GST,,15.3800,,,,,,,,,,,,,,,,,,,,,,,,,,,,Fees-Nymp1/35
+Fees-Nymp1/35,,,,,,,10577,17/05/16,,,,Internet,52250,2517.0000,2517.0000,9,,,,,,Advertising,GST,,228.8200,,,,,,,,,,,,,,,,,,,,,,,,,,,,Fees-Nymp1/35
+
+
+Fees-Suns421,,,,,,,10572,17/05/16,,,,Marketing Production Fee,44000,395.0000,395.0000,9,,,,,,Advertising,GST,,35.9100,,,,,,,,,,,,,,,,,,,,,,,,,,,,Fees-Suns421
+Fees-Suns421,,,,,,,10572,17/05/16,,,,Advertising,52200,2333.3500,2333.3500,9,,,,,,Advertising,GST,,212.1300,,,,,,,,,,,,,,,,,,,,,,,,,,,,Fees-Suns421
+Fees-Suns421,,,,,,,10572,17/05/16,,,,Brochures,52240,169.1500,169.1500,9,,,,,,Advertising,GST,,15.3800,,,,,,,,,,,,,,,,,,,,,,,,,,,,Fees-Suns421
+Fees-Suns421,,,,,,,10572,17/05/16,,,,Internet,52250,2900.0000,2900.0000,9,,,,,,Advertising,GST,,263.6300,,,,,,,,,,,,,,,,,,,,,,,,,,,,Fees-Suns421

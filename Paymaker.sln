@@ -1,0 +1,60 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Paymaker", ".", "{1FA47EDD-3C72-4C0D-B0AF-2A904D54CB04}"
+	ProjectSection(WebsiteProperties) = preProject
+		SccProjectName = "Svn"
+		SccAuxPath = "Svn"
+		SccLocalPath = "Svn"
+		SccProvider = "SubversionScc"
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.5"
+		Debug.AspNetCompiler.VirtualPath = "/Paymaker"
+		Debug.AspNetCompiler.PhysicalPath = "..\Paymaker\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\Paymaker\"
+		Debug.AspNetCompiler.Updateable = "false"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/Paymaker"
+		Release.AspNetCompiler.PhysicalPath = "..\Paymaker\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\Paymaker\"
+		Release.AspNetCompiler.Updateable = "false"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "55695"
+		StartServerOnDebug = "false"
+	EndProjectSection
+	ProjectSection(SvnOrigin) = preProject
+		@Keys = Enlist
+		Enlist = Required
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|.NET = Debug|.NET
+		Debug|Any CPU = Debug|Any CPU
+		DebugLocal|.NET = DebugLocal|.NET
+		DebugLocal|Any CPU = DebugLocal|Any CPU
+		Release|.NET = Release|.NET
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1FA47EDD-3C72-4C0D-B0AF-2A904D54CB04}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{1FA47EDD-3C72-4C0D-B0AF-2A904D54CB04}.Debug|.NET.Build.0 = Debug|Any CPU
+		{1FA47EDD-3C72-4C0D-B0AF-2A904D54CB04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FA47EDD-3C72-4C0D-B0AF-2A904D54CB04}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FA47EDD-3C72-4C0D-B0AF-2A904D54CB04}.DebugLocal|.NET.ActiveCfg = Debug|Any CPU
+		{1FA47EDD-3C72-4C0D-B0AF-2A904D54CB04}.DebugLocal|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FA47EDD-3C72-4C0D-B0AF-2A904D54CB04}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
+		{1FA47EDD-3C72-4C0D-B0AF-2A904D54CB04}.Release|.NET.ActiveCfg = Debug|Any CPU
+		{1FA47EDD-3C72-4C0D-B0AF-2A904D54CB04}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FA47EDD-3C72-4C0D-B0AF-2A904D54CB04}.Release|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

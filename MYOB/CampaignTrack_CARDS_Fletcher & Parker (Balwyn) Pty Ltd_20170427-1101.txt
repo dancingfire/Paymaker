@@ -1,0 +1,23 @@
+LASTNAME,FIRSTNAME,CARD ID,CARDSTATUS,CURRENCYCODE,ADDRESS1,ADDR2,ADDR3,ADDR4,CITY,STATE,POSTCODE
+Fees-Stan29E,3365562,Fees-Stan29E,,,29E Stanhope Grove,,,,Camberwell,VIC,3124
+Fees-Peel2,3472521,Fees-Peel2,,,2 Peel Street,,,,Mitcham,VIC,3132
+Fees-Engl6,3478469,Fees-Engl6,,,6 England Street,,,,Bulleen,VIC,3105
+Fees-Prin75,3613814,Fees-Prin75,,,75 Princess Street,,,,Kew,VIC,3101
+Fees-Beec66,3794040,Fees-Beec66,,,66 Beecroft Crescent,,,,Templestowe,VIC,3106
+Fees-Burk25/10,3798238,Fees-Burk25/10,,,25/1062 Burke Road,,,,Balwyn North,VIC,3104
+Fees-Derb134,3820006,Fees-Derb134,,,134 Derby Street,,,,Kew,VIC,3101
+Fees-Mowb3/4,3784517,Fees-Mowb3/4,,,3/4 Mowbray Street,,,,Hawthorn East,VIC,3123
+Fees-Rain2-6,3921606,Fees-Rain2-6,,,2-6 Rainbow Valley Road,,,,Park Orchards,VIC,3114
+Fees-Donc3/181,4221385,Fees-Donc3/181,,,3/18 Doncaster Road,,,,Balwyn North,VIC,3104
+Fees-Carr11,4286877,Fees-Carr11,,,11 Carrington Street,,,,Balwyn North,VIC,3104
+Fees-Brou97,4441899,Fees-Brou97,,,97 Broughton Road,,,,Surrey Hills,VIC,3127
+Fees-12 OThe H,5510221,Fees-12 OThe H,,,"The Heritage, 12 Oak Court",,,,Chirnside Park,VIC,3116
+Fees-Belm3A,5559269,Fees-Belm3A,,,3A Belmont Avenue,,,,Kew,VIC,3101
+Fees-Spri1/226,5623620,Fees-Spri1/226,,,1/226 Springfield Road,,,,Blackburn,VIC,3130
+Fees-Waln28,5624075,Fees-Waln28,,,28 Walnut Road,,,,Balwyn North,VIC,3104
+Fees-Murd16,5603516,Fees-Murd16,,,16 Murdoch Street,,,,Camberwell,VIC,3124
+Fees-Mort18,5649231,Fees-Mort18,,,18 Morton Street,,,,Box Hill South,VIC,3128
+Fees-Prin2/120,5653334,Fees-Prin2/120,,,2/120 Princess Street,,,,Kew,VIC,3101
+Fees-Lans27,5662879,Fees-Lans27,,,27 Lansell Crescent,,,,Camberwell,VIC,3124
+Fees-Lorn28,5657089,Fees-Lorn28,,,28 Lorne Parade,,,,Mont Albert,VIC,3127
+Fees-High4/241,5613969,Fees-High4/241,,,4/24 Highbury Grove,,,,Kew,VIC,3101
