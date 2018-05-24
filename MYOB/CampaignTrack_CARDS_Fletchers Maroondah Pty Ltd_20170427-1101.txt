@@ -1,0 +1,6 @@
+LASTNAME,FIRSTNAME,CARD ID,CARDSTATUS,CURRENCYCODE,ADDRESS1,ADDR2,ADDR3,ADDR4,CITY,STATE,POSTCODE
+Fees-Suns421,5523336,Fees-Suns421,,,42 Sunset Drive,,,,Kilsyth South,VIC,3137
+Fees-Jame3/20,5614115,Fees-Jame3/20,,,3/20 James Road,,,,Croydon,VIC,3136
+Fees-Jump98,5521577,Fees-Jump98,,,98 Jumping Creek Road,,,,Wonga Park,VIC,3115
+Fees-Nymp1/35,5639647,Fees-Nymp1/35,,,1/35 Nymph Street,,,,Mitcham,VIC,3132
+Fees-Hugh13,5676644,Fees-Hugh13,,,13 Hugh Street,,,,Ringwood,VIC,3134

@@ -1,0 +1,951 @@
+.BodyBackground {
+    background: #B7C6AA;
+}
+
+body.report {
+    background: white;
+}
+
+table, body {
+    font-size: 9pt;
+    font-family: Arial;
+    text-align: left;
+    margin: 0 0 0 0;
+}
+
+body{
+	margin: 0;
+	padding: 0;
+}
+
+table.dataTable {
+  border: none;
+}
+
+.Filter {
+    width: 100%;
+    margin-top: 5px;
+}
+
+.MarginTop, .TopMargin {
+    margin-top: 10px;
+}
+
+.ActionPanel a {
+    font-size: 12px;
+    color: #2F3437;
+}
+
+.modal-body {
+    padding: 5px;
+}
+
+.modal-header {
+    padding: 8px;
+}
+
+.modal-footer {
+    display: none;
+}
+
+.panel-heading {
+    padding: 5px;
+}
+
+.ui-widget-header {
+     background-color: #E6D5AC;
+
+}
+
+ .ui-widget-header .ui-state-default{
+     background-color: #BE9D52;
+}
+
+  .ui-widget-header .ui-state-active{
+     background-color: white;
+}
+ .ui-datepicker-trigger {
+    position: relative;
+    margin-left: 2px;
+    vertical-align: top;
+    padding-top: 0px;
+}
+
+.FilterLabel {
+    margin-top: 5px;
+    font-family: Helvetica, Arial, sans-serif;
+    font-weight: 600;
+    color: #2F3437;
+    float: left;
+    clear: left;
+    width: 100%;
+}
+
+.PageHeader {
+    padding: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    float: left;
+    width: 100%;
+    background-color: #E6D5AC;
+}
+
+.ActionPanel {
+    width: 100%;
+    left: 1%;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    background-color: #E6D5AC;
+    float: left;
+}
+button, html input[type="button"], input[type="reset"], input[type="submit"] {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 12px;
+}
+
+.Normal .ActionPanel {
+    font-size: 10px;
+}
+
+.CalcTotal {
+    font-weight: 900;
+}
+
+.AlignRight {
+    text-align: right;
+}
+
+.RoundPanel {
+    background-color: #EFE3C9;
+    padding: 5px;
+}
+
+.column-filter-widget {
+float: left;
+padding: 5px;
+}
+
+.RightActionPanel {
+    float: right;
+    margin-right: 10px;
+    width: 100px;
+    text-align: right;
+}
+
+.Login {
+    background-color: #2F3437;
+}
+
+.DataList {
+    font-family: inherit;
+    font-size: 10px;
+}
+
+.GridFilter {
+    background: #BE9D52;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 1%;
+    padding-right: 1%;
+    float: left;
+    width: 100%;
+}
+
+.Page {
+    overflow-y: none;
+}
+
+.label {
+    background: #BE9D52;
+}
+.FilterPanel {
+    width: 250px;
+    float: left;
+    vertical-align: bottom;
+}
+
+.FilterPanel .Label {
+    font-weight: 400;
+    height: 18px;
+    padding: 1px;
+    padding-left: 3px;
+    font-weight: bold;
+    width: 100px;
+    clear: none;
+}
+
+.FilterPanel .Edit {
+    width: 100px;
+    height: 18px;
+    font-size: 12px;
+    clear: none;
+}
+
+div.transON {
+    opacity: .50;
+    filter: alpha(opacity=50);
+    -moz-opacity: 0.5;
+}
+
+.Pager {
+    color: Gold;
+    font-family: Verdana;
+    font-size: 12px;
+}
+.FloatLeft {
+    float: left;
+}
+
+.FloatRight {
+    float: right;
+}
+
+.Pager A {
+    color: white;
+    text-decoration: none;
+    cursor: hand;
+}
+
+A.Unadorned {
+    text-decoration: none;
+    font-size: 10px;
+    cursor: hand;
+    font-weight: 400;
+}
+
+A.Unadorned:hover {
+    color: Red;
+    text-decoration: none;
+    font-size: 10px;
+    cursor: hand;
+    font-weight: 400;
+}
+
+A:hover {
+    text-decoration:  underline;
+}
+
+A.Listheader {
+    color: white;
+    text-decoration: none;
+    cursor: hand;
+    border-bottom: 0;
+    width: 100%;
+}
+
+A.Normal {
+    color: #858378;
+    text-decoration: none;
+    border-bottom: dashed 1 #858378;
+    cursor: hand;
+}
+
+A {
+    color: #858378;
+    text-decoration: none;
+}
+
+.ReadOnly {
+    border: 0;
+    font-size: 8px;
+    font-family: Verdana;
+}
+
+.TabPage {
+    border: solid 2 #F9CD35;
+    background: #FCF8EF;
+    font-family: Verdana;
+    padding: 2px;
+    width: 880px;
+    position: absolute;
+    top: 55px;
+    height: 430px;
+}
+
+.Tab {
+    padding-left: 5px;
+    padding-top: 3px;
+    font-weight: 800;
+    font-size: 12px;
+    background: #8BAB89;
+    color: #FFEAA8;
+    height: 22;
+    width: 100%;
+    border: 1 solid #8BAB89;
+    cursor: hand;
+    text-align: center;
+}
+
+.TabOver {
+    padding-left: 5px;
+    padding-top: 3px;
+    font-weight: 800;
+    font-size: 12px;
+    background: #6C956A;
+    color: #FFE79B;
+    height: 22;
+    width: 100%;
+    border: 1 solid #6C956A;
+    cursor: hand;
+    text-align: center;
+}
+
+.TabSelected {
+    padding-left: 5px;
+    padding-top: 3px;
+    font-weight: 800;
+    font-size: 12px;
+    background: #F9CD35;
+    color: #FFFFFF;
+    height: 22;
+    width: 100%;
+    border: 1 solid #F9CD35;
+    cursor: hand;
+    text-align: center;
+}
+
+.Error {
+    color: Red;
+    font-size: 8pt;
+    font-family: Verdana;
+    font-weight: 600;
+}
+
+.Status {
+    background: #BE9D52;
+    color: White;
+    text-align: right;
+}
+.Inactive {
+    color: red !important;
+}
+
+.Container {
+    background: #EBDEBC;
+    padding: 2px;
+}
+.AdminActionPanel {
+    float: left;
+    text-align: right;
+    width: 100%;
+}
+
+.AdminPage {
+    background-color: #F3ECDA;
+}
+
+.AdminUpdateFrame {
+    float: left;
+    width: 55%;
+    margin-left: 10px;
+    border: 0px;
+    height: 550px;
+}
+.ListContainer {
+    background: white;
+    border-top: 0;
+    padding: 2px;
+    overflow: auto;
+    width: 100%;
+    height: 500px;
+    float: left;
+}
+
+.Group {
+    border-left: solid 1px #8AA275;
+    border-right: solid 1px #8AA275;
+    border-bottom: solid 1px #8AA275;
+}
+.TableFilter {
+    font-size: 10px;
+    color: black;
+    font-weight: 400;
+}
+
+.DataTables_sort_icon {
+    float: right;
+}
+
+.DataTables_sort_wrapper {
+    float: left;
+    width: 100%
+}
+
+.Normal {
+    font-size: 1em;
+    color: black;
+    font-family: Verdana;
+}
+.ReportLink {
+    font-size: xx-small;
+    color: black;
+    font-family: Verdana;
+}
+.Entry {
+    font-weight: normal;
+    font-size: 8pt;
+    color: black;
+    font-family: Verdana;
+}
+.SetEntry {
+    font-weight: normal;
+    font-size: 8pt;
+    color: #003366;
+    background: #cccccc;
+    font-family: Verdana;
+}
+
+.EntryChanged {
+    background: #FEF5F8;
+    font-family: Verdana;
+    border: solid 1px;
+    height: inherit;
+}
+
+.Label {
+    font-weight: 400;
+    min-height: 18px;
+    padding: 1px;
+    padding-left: 3px;
+    font-weight: bold;
+    font-size: 9pt;
+    text-align: left;
+    color: #2F3437;
+}
+
+.LoginLabel {
+    color: White;
+    font-weight: 800;
+}
+
+.Button  {
+    padding: 2px;
+    cursor: pointer;
+    font-family: Arial, Verdana;
+    background-color: hsl(38, 38%, 33%) !important;
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#b49359", endColorstr="#745c34");
+     background-image: linear-gradient(#b49359, #745c34);
+     color: #fff !important;
+     text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.33);
+     -webkit-font-smoothing: antialiased;
+}
+
+.TopSpace {
+    margin-top: 9px;
+}
+
+.LinkButton {
+    font-weight: 800;
+    font-size: 10pt;
+    color: #695421;
+    cursor: hand;
+    font-family: Arial, Verdana;
+    border-bottom: dashed 1px #695421;
+}
+
+.odd {
+    background: #FFFFCC;
+}
+table.dataTable {
+    cursor: pointer;
+}
+table.dataTable tr.odd { background-color: #FFFFCC; }
+
+table.dataTable tr.selectedRow, .selectedRow  {
+    background-color: #DDC691;
+    cursor: pointer;
+}
+
+.dataTable tr:hover  {
+    background-color: #DDC691 !important;
+    cursor: pointer;
+}
+
+.ListHeader, .header {
+    background-color: #FF8940;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 8pt;
+    font-weight: bold;
+    color: white;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+tr {
+    font-family: Verdana, Tahoma;
+    font-size: 8pt;
+}
+tr.even:hover {
+	background-color: #C6F5FF !important;
+    cursor: pointer;
+}
+
+tr.even {
+    background: white;
+}
+
+td a {
+    text-align: center;
+    vertical-align: middle;
+    font-family: Verdana, Tahoma;
+    font-size: 8pt;
+    font-weight: bold;
+    color: #858378;
+}
+td a:hover {
+    text-align: center;
+    vertical-align: middle;
+    font-family: Verdana, Tahoma;
+    font-size: 8pt;
+    font-weight: bold;
+    color: #858378;
+    text-decoration: underline;
+}
+
+.ListHeader, .header {
+    background-color: #BE9D52 !important;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 8pt;
+    font-weight: bold;
+    color: white;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    height: 16px;
+}
+
+.Row {
+    font-family: Verdana;
+    font-size: 8pt;
+    vertical-align: middle;
+    color: #858378;
+    word-break: break-all;
+}
+.PrintRow {
+    font-family: Verdana;
+    font-size: 8pt;
+    vertical-align: middle;
+    color: black;
+}
+
+.Invisible {
+    display: none;
+}
+
+Body.Update {
+    background: #FCF8EF;
+}
+
+.ReportTitle {
+    text-align: center;
+    font-family: Arial;
+    font-weight: 800;
+    font-size: 18px;
+}
+.ReportParams {
+    background: white;
+    border: solid 1 #716F1A;
+}
+.ReportHeader {
+    font-family: Arial;
+    font-weight: 800;
+    font-size: 12px;
+}
+
+.AlignTextRight {
+    text-align: right;
+}
+
+@media print {
+    Container {
+        display: none;
+    }
+
+    .NoPrint {
+        display: none;
+    }
+
+    .Normal {
+        color: Black;
+        background: white;
+        font-family: Arial Narrow;
+        font-size: 10pt;
+    }
+
+    .ReportParams {
+        background: white;
+        border: 0;
+    }
+
+    .even {
+        background: white;
+    }
+}
+
+.Align {
+    clear: both;
+    height: 0px;
+    font-size: 1pt;
+}
+
+.EntryPos {
+    width: 200px;
+    float: left;
+    padding-left: 2px;
+    vertical-align: middle;
+    margin-bottom: 2px;
+}
+
+#LoginPage {
+    text-align: center;
+}
+
+#Logo {
+    background: #2F3437;
+}
+
+.LogoWord
+{
+    font-family: Arial; font-size: 13px; color: white;
+    font-weight: 500;
+}
+
+.LogoLeadingLetter
+{
+    font-size: 15px;
+    font-weight: 900;
+}
+.TableHeader {
+    text-align: center;
+    background: #EDE0C2;
+    font-size: 8pt;
+}
+
+table.dataTable th
+{
+    background-color: #BE9D52;
+}
+
+div.transON {
+    opacity: .50;
+    filter: alpha(opacity=50);
+    -moz-opacity: 0.5;
+}
+
+img {
+    border-style: none;
+}
+
+.RightPanel {
+    float: right;
+    clear: none;
+    text-align: right;
+}
+
+.LeftPanel {
+    float: left;
+    clear: none;
+    text-align: left;
+}
+
+.Bold {
+    font-weight: 800;
+}
+img.RWLeft {
+    float: left;
+}
+
+.btn {
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+.LabelPos {
+    float: left;
+    clear: left;
+    padding-left: 2px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    vertical-align: middle;
+    margin-right: 5px;
+    width: 130px;
+}
+
+.EditDate {
+    width: 210px;
+    float: left;
+    vertical-align: middle;
+    margin-bottom: 2px;
+}
+
+.Align {
+    clear: both;
+    height: 0px;
+    font-size: 1pt;
+}
+
+.flexdropdownmenu, .flexdropdownmenu ul {
+    /*topmost and sub ULs, respectively*/
+    font: normal 12px Verdana;
+    margin: 0px;
+    padding: 0px;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    list-style-type: none;
+    background: white;
+    border: 1px solid #9B9B9B;
+    visibility: hidden;
+    padding-top: 0px;
+    display: none;
+    width: 160px; /*collapse all sub menus to begin with*/ /*box-shadow: 3px 3px 8px #818181; /*shadow for CSS3 capable browsers. -webkit-box-shadow: 3px 3px 8px #818181; -moz-box-shadow: 3px 3px 8px #818181;*/
+}
+
+.flexdropdownmenu li {
+    position: relative;
+    padding-left: 2px;
+}
+
+.flexdropdownmenu li.disabled a, .flexdropdownmenu li.disabled a:hover {
+    color: #B0B0B0;
+    background: white;
+}
+
+.flexdropdownmenu li a {
+    display: block;
+    width: 152px; /*width of menu (not including side paddings)*/
+    color: black;
+    background: white;
+    border-bottom: 1px solid silver;
+    text-decoration: none;
+    padding: 2px;
+}
+
+* html .flexdropdownmenu li {
+    /*IE6 CSS hack*/
+    display: inline-block;
+    width: 160px; /*width of menu (include side paddings of LI A*/
+}
+
+.flexdropdownmenu li a:hover, .flexdropdownmenu li.selected > a {
+    background: silver;
+}
+
+.rightarrowclass {
+    position: absolute;
+    top: 4px;
+    right: 5px;
+}
+
+.flexdropdownmenu li.lastItem {
+    border-bottom-style: solid;
+    border-bottom-color: white;
+    border-bottom-width: 0px;
+}
+
+/* Success notification */
+.NoticeSuccess {
+    float: left;
+    font-size: 10pt;
+    font-family: Arial, Verdana, sans-serif;
+    border: solid 1px #9ADF8F;
+    width: 100%;
+    background: #D4FFCD;
+    background-image: url('sys_images/NoticeSuccess.jpg');
+    background-repeat: no-repeat;
+    background-position: 10px 15px;
+    padding-bottom: 10px;
+    margin-top: 10px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+}
+
+.NoticeSuccessHeader {
+    width: 100%;
+    font-size: 12pt;
+    font-weight: 800;
+    font-family: Arial, Verdana, sans-serif;
+    color: #258815;
+    float: left;
+    margin-bottom: 5px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+/* Error notification */
+.NoticeError {
+    float: left;
+    font-size: 10pt;
+    font-family: Arial, Verdana, sans-serif;
+    border: solid 1px #DF8F90;
+    width: 100%;
+    background: #FFD2D3;
+    background-image: url('sys_images/NoticeError.jpg');
+    background-repeat: no-repeat;
+    background-position: 10px 15px;
+    padding-bottom: 10px;
+    margin-top: 10px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+}
+
+.NoticeErrorHeader {
+    width: 100%;
+    font-size: 12pt;
+    font-weight: 800;
+    font-family: Arial, Verdana, sans-serif;
+    color: #871414;
+    float: left;
+    margin-bottom: 5px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+/* Warning notification */
+.NoticeWarning {
+    float: left;
+    font-size: 10pt;
+    font-family: Arial, Verdana, sans-serif;
+    border: solid 1px #E5DB55;
+    width: 100%;
+    background: #FEFCCB;
+    background-image: url('sys_images/NoticeWarning.jpg');
+    background-repeat: no-repeat;
+    background-position: 10px 15px;
+    padding-bottom: 10px;
+    margin-top: 10px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+}
+
+.NoticeWarningHeader {
+    width: 100%;
+    font-size: 12pt;
+    font-weight: 800;
+    font-family: Arial, Verdana, sans-serif;
+    color: #8f8B20;
+    float: left;
+    margin-bottom: 5px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+/* Info notification */
+.NoticeInfo {
+    float: left;
+    font-size: 10pt;
+    font-family: Arial, Verdana, sans-serif;
+    border: solid 1px #9FC7F5;
+    width: 100%;
+    background: #DBECFF;
+    background-image: url('sys_images/NoticeInfo.jpg');
+    background-repeat: no-repeat;
+    background-position: 10px 15px;
+    padding-bottom: 10px;
+    margin-top: 10px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+}
+
+.NoticeInfoHeader {
+    width: 100%;
+    font-size: 12pt;
+    font-weight: 800;
+    font-family: Arial, Verdana, sans-serif;
+    color: #2850C1;
+    float: left;
+    margin-bottom: 5px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+.NoticeContent {
+    float: left;
+    margin-left: 65px;
+    margin-top: 8px;
+    margin-bottom: 5px;
+    width: 90%;
+}
+
+.NoticeCloseIcon {
+    float: right;
+    margin-right: 5px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    cursor: pointer;
+}
+
+/* Bootstrap menu*/
+.AppMenu {
+    background: #be9d52;
+    float: left;
+    width: 100%;
+    margin-bottom: 10px;
+}
+#custom-bootstrap-menu.navbar {
+    min-height: 0px;
+    margin-bottom: 2px;
+}
+#custom-bootstrap-menu.navbar-default,
+#custom-bootstrap-menu.navbar-header{
+    color: rgba(119, 119, 119, 1);
+    background: #be9d52;
+    border-color: #be9d52;
+}
+
+.nav > li > a {
+    padding: 4px 20px;
+}
+
+#custom-bootstrap-menu.navbar-default,
+#custom-bootstrap-menu .dropdown-menu,
+#custom-bootstrap-menu .dropdown-menu > li > a
+ {
+    font-size: 12px;
+    background-color: #be9d52;
+    border-width: 1px;
+    box-shadow:none;
+}
+#custom-bootstrap-menu.navbar-default .navbar-nav>li>a {
+    color: rgba(255, 255, 255, 1);
+    background-color: rgba(190, 157, 82, 1);
+}
+#custom-bootstrap-menu.navbar-default .navbar-nav>li>a:hover,
+#custom-bootstrap-menu.navbar-default .navbar-nav>li>a:focus {
+    color: rgba(51, 51, 51, 1);
+    background-color:#be9d52;;
+}
+#custom-bootstrap-menu.navbar-default .navbar-nav>.active>a,
+#custom-bootstrap-menu.navbar-default .navbar-nav>.active>a:hover,
+#custom-bootstrap-menu.navbar-default .navbar-nav>.active>a:focus {
+    color: rgba(85, 85, 85, 1);
+    background-color: rgba(190, 157, 82, 1);
+}
+#custom-bootstrap-menu.navbar-default .navbar-toggle {
+    border-color: #be9d52;
+}
+#custom-bootstrap-menu.navbar-default .navbar-toggle:hover,
+#custom-bootstrap-menu.navbar-default .navbar-toggle:focus {
+    background-color: #be9d52;
+}
+#custom-bootstrap-menu.navbar-default .navbar-toggle .icon-bar {
+    background-color: #be9d52;
+}
+#custom-bootstrap-menu.navbar-default .navbar-toggle:hover .icon-bar,
+#custom-bootstrap-menu.navbar-default .navbar-toggle:focus .icon-bar {
+    background-color: #be9d52;
+}
+
+.dropdown-menu .divider {
+    background-color: #7B642F;
+}
+
+.ButtonWait {
+    background: url(sys_images/loading_ani.gif);
+    background-repeat: no-repeat;
+    background-position: center center;
+    text-indent: -9999px;
+}

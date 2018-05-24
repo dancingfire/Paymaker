@@ -1,0 +1,16 @@
+
+Set oServerXML = CreateObject("Msxml2.ServerXMLHTTP")
+oServerXML.setTimeouts 120000, 300000, 300000, 300000
+oServerXML.Open "GET","http://localhost/mgt/admin/archive_data.aspx", False
+oServerXML.setRequestHeader "Content-Type","application/x-www-form-urlencoded"
+oServerXML.send
+Set oServerXML = nothing
+
+
+Set oServerXML = CreateObject("Msxml2.ServerXMLHTTP")
+oServerXML.setTimeouts 60000, 300000, 300000, 300000
+oServerXML.Open "GET","http://localhost/mgt/admin/update_report_priorities.aspx", False
+oServerXML.setRequestHeader "Content-Type","application/x-www-form-urlencoded"
+oServerXML.send
+
+Set oServerXML = nothing

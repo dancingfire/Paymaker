@@ -1,0 +1,341 @@
+using System;
+using System.Collections;
+using System.Data;
+using System.Net.Mail;
+using System.Text.RegularExpressions;
+
+/// <summary>
+/// Summary description for RolePermissionType
+/// </summary>
+///
+public enum RolePermissionType {
+
+    // ---- Role permission constants ----
+    // 1. Users
+    ViewPermissionButton = 0,
+
+    UpdatePreviousPayPeriod = 75, //user can update details like Date Started and Completed
+    ViewCampaignModule = 80, //View the campaign module and related functionality
+    ViewCommissionModule = 90 // View the commission module and related functionality
+}
+
+public enum RolePermissionGroupType {
+    SalePermissions = 1,
+    UserPermissions = 2,
+    ApplicationPermissions = 3
+}
+
+public class RolePermissions {
+    private RolePermission[] arRolePermissions = null;
+    private SortedList slRolePermissions = new SortedList();
+    private bool blnPermissionsLoaded = false;
+
+    /// <summary>
+    /// Array of role permissions, sorted by Role Permission Group
+    /// </summary>
+    public RolePermission[] PermissionList {
+        get { return arRolePermissions; }
+    }
+
+    private RolePermissions() {
+    }
+
+    public static RolePermissions getRolePermissions() {
+        RolePermissions oReturn = new RolePermissions();
+        oReturn.loadRolePermissions();
+        return oReturn;
+    }
+
+    /// <summary>
+    /// Returns whether the passed in permissions can perform the permitted role.
+    /// </summary>
+    /// <param name="Type"></param>
+    /// <param name="Permissions"></param>
+    /// <returns></returns>
+    public static bool isPermitted(RolePermissionType Type, string Permissions) {
+        return Utility.InCommaSeparatedString(((int)Type).ToString(), Permissions);
+    }
+
+    private void loadRolePermissions() {
+        if (blnPermissionsLoaded)
+            return;
+
+        slRolePermissions.Add(slRolePermissions.Count, new RolePermission(RolePermissionType.UpdatePreviousPayPeriod, "Update previous pay period", "Permits a person to update sales that belong to past pay periods", true, RolePermissionGroupType.SalePermissions));
+        slRolePermissions.Add(slRolePermissions.Count, new RolePermission(RolePermissionType.ViewPermissionButton, "Update user permissions", "Permits a person to update other users' permissions", true, RolePermissionGroupType.UserPermissions));
+        slRolePermissions.Add(slRolePermissions.Count, new RolePermission(RolePermissionType.ViewCampaignModule, "View campaigns", "Show the campaign functionality", true, RolePermissionGroupType.ApplicationPermissions));
+        slRolePermissions.Add(slRolePermissions.Count, new RolePermission(RolePermissionType.ViewCommissionModule, "View commissions", "Show the commission functionality", true, RolePermissionGroupType.ApplicationPermissions));
+        arRolePermissions = new RolePermission[slRolePermissions.Count];
+        foreach (DictionaryEntry oItem in slRolePermissions) {
+            arRolePermissions[Convert.ToInt32(oItem.Key)] = (RolePermission)oItem.Value;
+        }
+
+        blnPermissionsLoaded = true;
+    }
+
+    public static string getRolePermissionGroupName(RolePermissionGroupType oGroupType) {
+        switch (oGroupType) {
+            case RolePermissionGroupType.SalePermissions:
+                return "Sale permissions";
+
+            case RolePermissionGroupType.ApplicationPermissions:
+                return "Application modules";
+
+            case RolePermissionGroupType.UserPermissions:
+                return "User permissions";
+        }
+        return "group name not found";
+    }
+}
+
+public class RolePermission {
+    private RolePermissionType oType = RolePermissionType.UpdatePreviousPayPeriod;
+    private string szLabel = "";
+    private string szHelp = "";
+    private bool blnIsActive = false;
+    private RolePermissionGroupType oGroup = RolePermissionGroupType.SalePermissions;
+
+    public RolePermissionType PermissionType {
+        get { return oType; }
+    }
+
+    public int PermissionTypeAsInt {
+        get { return (int)oType; }
+    }
+
+    public string Label {
+        get { return szLabel; }
+    }
+
+    public string Help {
+        get { return szHelp; }
+    }
+
+    public bool IsActive {
+        get { return blnIsActive; }
+    }
+
+    public RolePermissionGroupType PermissionGroup {
+        get { return oGroup; }
+    }
+
+    public RolePermission(RolePermissionType oRolePermissionType, string Label, string Help, bool IsActive, RolePermissionGroupType oRolePermissionGroup) {
+        this.oType = oRolePermissionType;
+        this.szLabel = Label;
+        this.szHelp = Help;
+        this.blnIsActive = IsActive;
+        this.oGroup = oRolePermissionGroup;
+    }
+}
+
+public class UserLogin {
+    public static string resetPasswordEmailFrom = "do-not-reply@fletchers.net.au";
+
+    /// <summary>
+    /// Validates the password passed in based on the rules. If the password is valid, the function will return an empty string, else the errors that 
+    /// are the cause of the issue. 
+    /// 
+    /// </summary>
+    /// <param name="Pwd"></param>
+    /// <returns></returns>
+    public static string validatePassword(int UserID, string Pwd) {
+        string szError = "";
+
+        if (Pwd.Length < 8) { 
+            szError += "Error";
+        }
+       
+        int PatternMatch = 0;
+        if (Regex.IsMatch(Pwd, "[A-Z]"))
+            PatternMatch++;
+        if (Regex.IsMatch(Pwd, "[a-z]"))
+            PatternMatch++;
+        if (Regex.IsMatch(Pwd, "[\\d\\W]"))
+            PatternMatch++;
+
+        if (PatternMatch < 3) {
+            szError += @"Error";
+        }
+ 
+        return szError;
+    }
+
+    /// <summary>
+    /// Returns whether there are consecutive characters (1234, abc) at least three in a row
+    /// </summary>
+    /// <param name="Pwd"></param>
+    /// <returns></returns>
+    private static bool validateConsecutiveSeq(String Pwd) {
+        char[] epinCharArray = Pwd.ToCharArray();
+        int asciiCode = 0;
+        bool isConSeq = false;
+        int previousAsciiCode = 0;
+        int numSeqcount = 0;
+
+        for (int i = 0; i < epinCharArray.Length; i++) {
+            asciiCode = epinCharArray[i];
+            if ((previousAsciiCode + 1) == asciiCode) {
+                numSeqcount++;
+                if (numSeqcount >= 2) {
+                    isConSeq = true;
+                    break;
+                }
+            } else {
+                numSeqcount = 0;
+            }
+            previousAsciiCode = asciiCode;
+        }
+        return isConSeq;
+    }
+
+    /// <summary>
+    /// Updates the password - if there are any validation errors the return string will contain the errors. A success is indicated by an empty string
+    /// </summary>
+    /// <param name="UserID"></param>
+    /// <param name="NewPwd"></param>
+    public static string updatePassword(int UserID, string NewPwd) {
+        string szErrors = validatePassword(UserID, NewPwd);
+
+        if (szErrors != "")
+            return szErrors;
+
+        string szUpdateTokenValue = "";
+      
+        string szSQL = String.Format(@"
+                UPDATE DB_USER
+                SET PASSWORD = convert(varbinary(255), PWDENCRYPT('{1}')),
+                UNIQUEID = newid()
+                WHERE ID = {0} ", UserID, DB.escape(NewPwd), DB.escape(szUpdateTokenValue));
+        DB.runNonQuery(szSQL);
+        return "";
+    }
+
+  
+    /// <summary>
+    /// Resets the login for MGT users
+    /// </summary>
+    /// <param name="UserName"></param>
+    public static bool resetPassword(string UserName) {
+       
+        if (!String.IsNullOrEmpty(UserName)) {
+            if (!String.IsNullOrEmpty(UserName)) {
+                string szSQL = string.Format(@"
+                    SELECT *
+                    FROM [dbo].[DB_USER] DU
+                    WHERE DU.EMAIL = '{0}' AND ISDELETED = 0  AND ISACTIVE = 1", DB.escape(UserName)
+                );
+                DataSet ds = DB.runDataSet(szSQL);
+                if (ds.Tables[0].Rows.Count == 0) {
+                    return false;
+                } else {
+                    DataRow dr = ds.Tables[0].Rows[0];
+                    // Set timeout for password
+                    DB.runNonQuery(string.Format(@"
+                        UPDATE DB_USER SET PASSWORDRESETTIMEOUT = DATEADD(HOUR, 2, GETDATE()) WHERE ID = {0}", DB.readInt(dr["ID"])));
+                    UserLogin.prepareEmail(DB.readString(dr["UNIQUEID"]), DB.readString(dr["EMAIL"]));
+                    return true;
+                }
+            }
+
+        }
+        return false;
+    }
+
+    private static int checkLoginCount(string IP, string LoginName, int lastNumberOfMinutes) {
+        // Check number of times user has failed attempt to login in given timeframe
+        // Note successful login resets count to 0.
+        int CountUser = DB.getScalar(String.Format(@"
+            SELECT COUNT(*) 
+            FROM LOGINLOG WHERE 
+                USERNAME = '{0}'
+                AND ID > (SELECT MAX(ID) FROM LOGINLOG WHERE USERNAME = '{0}' AND ISSUCCESS = 1)
+                AND LOGINDATE > DATEADD(MINUTE, -{1}, GETDATE())
+            ", DB.escape(LoginName), lastNumberOfMinutes), 0);
+
+        // Check number of times IP has failed attempt to login in given timeframe
+        // Note successful login resets count to 0.
+        int CountIP = DB.getScalar(String.Format(@"
+            SELECT COUNT(*) 
+            FROM LOGINLOG WHERE 
+                IPADDRESS = '{0}'
+                AND ID > (SELECT MAX(ID) FROM LOGINLOG WHERE IPADDRESS = '{0}' AND ISSUCCESS = 1)
+                AND LOGINDATE > DATEADD(MINUTE, -{1}, GETDATE())
+            ", DB.escape(IP), lastNumberOfMinutes), 0);
+
+        // Returns the higher of the two
+        if (CountIP > CountUser)
+            return CountIP;
+        return CountUser;
+    }
+
+    ///<summary>
+    ///Log Attempt to the Log History Table
+    ///</summary>
+    ///<param name = ""></param>
+    public static bool checkLoginLock(string LoginName) {
+        string IP = getIPAddress();
+
+        // Count of failed attempts in last 1 minute (if zero - then no lock in place)
+        if (checkLoginCount(IP, LoginName, 1) == 0)
+            return false;
+
+        // Count of failed attempts in last 10 minutes, if more than 
+        // 4 then user is locked out for 1 minute after a failed attempt.
+        if (checkLoginCount(IP, LoginName, 60) > 4)
+            return true;
+
+        return false;
+    }
+
+    
+    ///<summary>
+    ///Log Attempt to the Log History Table
+    ///</summary>
+    ///<param name = ""></param>
+    public static void writeLog(int UserID, string LoginName, bool IsSuccess) {
+
+        string szSQLInsert = string.Format(@"INSERT INTO LOGINLOG(USERID,USERNAME,ISSUCCESS,IPADDRESS) 
+                                                 VALUES({0},'{1}',{2},'{3}')", UserID, DB.escape(LoginName), IsSuccess ? 1 : 0, DB.escape(getIPAddress()));
+        DB.runNonQuery(szSQLInsert);
+    }
+
+    protected static string getIPAddress() {
+        System.Web.HttpContext context = System.Web.HttpContext.Current;
+        string ipAddress = context.Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
+
+        if (!string.IsNullOrEmpty(ipAddress)) {
+            string[] addresses = ipAddress.Split(',');
+            if (addresses.Length != 0) {
+                return addresses[0];
+            }
+        }
+
+        return context.Request.ServerVariables["REMOTE_ADDR"];
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="Token"></param>
+    /// <param name="ForPsswdUserEmail"></param>
+    /// <param name="UserID">For logging purposes UserID must be provided</param>
+    private static void prepareEmail(string Token, string ForPsswdUserEmail) {
+        string To = ForPsswdUserEmail;
+
+        string strMailContent = string.Format(@"
+             <html>
+                 <body>
+                     <p> You have requested to reset your password.</p>
+                 <p> Please click  <a href='{1}/reset_password.aspx?t={0}'>here</a> to reset your password</p>
+                 </body>
+             </html>", Token, G.Settings.DomainName);
+
+        try {
+            Email.sendMail(To, "do-not-reply@fletchers.net.au", "Reset password", strMailContent);
+            G.Notifications.addPageNotification(PageNotificationType.Success, "Email sent", "The email with reset link has been sent", true);
+            G.Notifications.showPageNotification(true);
+        } catch {
+            throw;
+        }
+    }
+}
+
