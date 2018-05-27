@@ -1,9 +1,5 @@
-<%@ Page Language="c#" Inherits="Paymaker.monthly_sales_detail
-    "
-    CodeFile="monthly_sales_detail.aspx.cs" %>
+<%@ Page Language="c#" Inherits="Paymaker.monthly_sales_detail" CodeFile="monthly_sales_detail.aspx.cs" %>
 
-<%@ Register Assembly="Microsoft.ReportViewer.WebForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
-    Namespace="Microsoft.Reporting.WebForms" TagPrefix="rsweb" %>
 <!DOCTYPE html>
 <html>
 <head runat="server">
