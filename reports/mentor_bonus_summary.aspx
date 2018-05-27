@@ -1,7 +1,5 @@
 <%@ Page Language="c#" Inherits="Paymaker.mentor_bonus_summary" CodeFile="mentor_bonus_summary.aspx.cs" %>
 
-<%@ Register Assembly="Microsoft.ReportViewer.WebForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
-    Namespace="Microsoft.Reporting.WebForms" TagPrefix="rsweb" %>
 <!DOCTYPE html>
 <html>
 <head runat="server">
@@ -26,7 +24,7 @@
         <asp:HiddenField ID="hdCompanyID" Value="" runat="server" />
         <asp:Panel ID="pNoData" runat="server" Style="float: left; margin-left: 20px" Visible="false">There was no data on the report</asp:Panel>
         <div id="dViewer">
-            <rsweb:ReportViewer ID="rViewer" runat="server" Width="100%" Height="100%" AsyncRendering="true"></rsweb:ReportViewer>
+            <rsweb:ReportViewer ID="rViewer" runat="server" Width="100%"  AsyncRendering="true"></rsweb:ReportViewer>
         </div>
     </form>
 </body>
