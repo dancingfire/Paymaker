@@ -99,7 +99,7 @@ public partial class myob_export : Root {
             '' AS ADDR4,
             '' AS INCLUSIVE,
             '' AS INVOICENUMBER,
-            CONVERT(varchar(8), CI.INVOICEDATE, 3) as INVOICEDATE,
+            CONVERT(varchar(8), getdate(), 3) as INVOICEDATE,
             '' AS CUSTOMERPO,
             '' AS SHIPVIA,
             '' AS DELIVERYSTATUS,
@@ -149,9 +149,10 @@ public partial class myob_export : Root {
             FROM CAMPAIGNINVOICE CI JOIN CAMPAIGN C ON C.ID = CI.CAMPAIGNID
             JOIN INVOICEPRODUCT IP ON IP.CAMPAIGNINVOICEID = CI.ID
             LEFT JOIN CAMPAIGNPRODUCT CP ON IP.CAMPAIGNPRODUCTID = CP.ID AND CP.ISDELETED = 0
-            JOIN PRODUCT P ON P.ID = CP.PRODUCTID
+            JOIN PRODUCT P ON P.ID = CP.PRODUCTID AND P.EXCLUDEFROMMYOBEXPORT = 0
             JOIN LIST L_GLCODE ON L_GLCODE.ID = P.CREDITGLCODE
             JOIN DB_USER U ON U.ID = C.AGENTID
+
             JOIN LIST L_OFF ON L_OFF.ID = U.OFFICEID
             JOIN LIST L_COMP ON L_COMP.ID = L_OFF.COMPANYID
             WHERE CI.EXPORTID IS NULL AND (L_OFF.COMPANYID = {0} OR {0} = -1)  AND C.OFFICEID = {1}

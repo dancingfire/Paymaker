@@ -30,6 +30,11 @@
                 <asp:CheckBox CssClass="EntryPos" ID="chkExcludeFromInvoicing" runat="server" />
                 <br class="Align" />
             </asp:Panel>
+             <asp:Panel ID="Panel2" runat="server">
+                <asp:Label ID="Label2" runat="server" CssClass="Label LabelPos" Text="Exclude from MYOB export"></asp:Label>
+                <asp:CheckBox CssClass="EntryPos" ID="chkExcludeFromMYOB" runat="server" />
+                <br class="Align" />
+            </asp:Panel>
         </div>
         <div class='LeftPanel' style="width: 95px; text-align: right">
             <asp:Button ID="btnUpdate" Style="width: 85px;" runat="server" Text="Update" CommandName="cancel"
