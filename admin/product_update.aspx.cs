@@ -29,6 +29,7 @@ public partial class product_update : Root {
         lstGLCode.Items.Insert(0, new ListItem("Select a GL code...", "-1"));
         Utility.setListBoxItems(ref lstGLCode, dr["CREDITGLCode"].ToString());
         chkExcludeFromInvoicing.Checked = Convert.ToBoolean(dr["EXCLUDEFROMINVOICE"]);
+        chkExcludeFromMYOB.Checked = Convert.ToBoolean(dr["EXCLUDEFROMMYOBEXPORT"]);
     }
 
     protected void btnUpdate_Click(object sender, System.EventArgs e) {
@@ -36,6 +37,7 @@ public partial class product_update : Root {
         oSQL.add("DESCRIPTION", txtName.Text);
         oSQL.add("CREDITGLCODE", lstGLCode.SelectedValue);
         oSQL.add("EXCLUDEFROMINVOICE", chkExcludeFromInvoicing);
+        oSQL.add("EXCLUDEFROMMYOBEXPORT", chkExcludeFromMYOB);
 
         DB.runNonQuery(oSQL.createUpdateSQL());
         sbEndJS.Append("parent.refreshPage();");
