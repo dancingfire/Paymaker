@@ -45,7 +45,7 @@ public static class HTML {
         List<string> arCssLinks = new List<string>();
         arCssLinks.Add(szDir + "include/JQueryUI1.11.4/smoothness.css?v=1");
         arCssLinks.Add("https://cdn.datatables.net/v/dt/dt-1.10.16/b-1.5.0/fh-3.1.3/kt-2.3.2/datatables.min.css");
-        arCssLinks.Add(szDir + "include/select2 -3.4.3/select2.css");
+        arCssLinks.Add(szDir + "include/select2-3.4.3/select2.css");
         arCssLinks.Add(szDir + "include/bootstrap/3.3.6/css/bootstrap.min.css");
         arCssLinks.Add(szDir + "include/bootstrap/3.3.6/css/bootstrap-theme.min.css");
 
