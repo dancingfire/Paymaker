@@ -76,7 +76,7 @@ public partial class myob_export : Root {
         output.Flush();
         output.Close();
         oLinks.Visible = true;
-        oLinks.InnerHtml += string.Format("<a href='../MYOB/{0}' target='_blank'>{0}</a> <br/>", FileName);
+        oLinks.InnerHtml += string.Format("<a href='../admin/myob_doc.aspx?file={0}' target='_blank'>{1}</a> <br/>", Server.UrlEncode(FileName), FileName);
     }
 
     /// <summary>
