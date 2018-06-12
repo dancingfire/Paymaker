@@ -30,7 +30,7 @@ public static class HTML {
         arFiles.Add("https://cdn.datatables.net/v/dt/dt-1.10.16/b-1.5.0/fh-3.1.3/kt-2.3.2/datatables.min.js");
         arFiles.Add(szDir + "include/jquery.mods.js?v=13");
         arFiles.Add("https://code.jquery.com/ui/1.12.1/jquery-ui.min.js");
-        arFiles.Add(szDir + "include/bootstrap /3.3.6/js/bootstrap.min.js");
+        arFiles.Add(szDir + "include/bootstrap/3.3.6/js/bootstrap.min.js");
         arFiles.Add(szDir + "include/jquery.validVal.min.js");
         arFiles.Add("https://code.jquery.com/jquery-2.2.4.min.js");
 
