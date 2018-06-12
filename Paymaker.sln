@@ -1,5 +1,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.2037
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Paymaker", ".", "{1FA47EDD-3C72-4C0D-B0AF-2A904D54CB04}"
 	ProjectSection(WebsiteProperties) = preProject
 		SccProjectName = "Svn"
@@ -24,16 +26,8 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Paymaker", ".", "{1FA47EDD-
 		VWDPort = "55695"
 		StartServerOnDebug = "false"
 	EndProjectSection
-	ProjectSection(SvnOrigin) = preProject
-		@Keys = Enlist
-		Enlist = Required
-	EndProjectSection
 EndProject
 Global
-	GlobalSection(SubversionScc) = preSolution
-		Svn-Managed = True
-		Manager = AnkhSVN - Subversion Support for Visual Studio
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|.NET = Debug|.NET
 		Debug|Any CPU = Debug|Any CPU
@@ -56,5 +50,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1F4FF6B6-0E6A-4A41-85CA-33EE6654810D}
 	EndGlobalSection
 EndGlobal
