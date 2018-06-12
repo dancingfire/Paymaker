@@ -24,14 +24,14 @@ public static class HTML {
         if (IsRoot)
             szDir = "";
         arFiles.Add(szDir + "include/utility.js?v=12");
-        arFiles.Add("/Libraries/select2-3.4.3/select2.min.js");
-        arFiles.Add("/Libraries/ckeditor/adapters/jquery.js");
-        arFiles.Add("/Libraries/ckeditor/ckeditor.js");
+        arFiles.Add(szDir + "include/select2-3.4.3/select2.min.js");
+        arFiles.Add(szDir + "include/ckeditor/adapters/jquery.js");
+        arFiles.Add(szDir + "include/ckeditor/ckeditor.js");
         arFiles.Add("https://cdn.datatables.net/v/dt/dt-1.10.16/b-1.5.0/fh-3.1.3/kt-2.3.2/datatables.min.js");
         arFiles.Add(szDir + "include/jquery.mods.js?v=13");
         arFiles.Add("https://code.jquery.com/ui/1.12.1/jquery-ui.min.js");
-        arFiles.Add("/Libraries/bootstrap/3.3.6/js/bootstrap.min.js");
-        arFiles.Add("/Libraries/jquery.validVal.min.js");
+        arFiles.Add(szDir + "include/bootstrap /3.3.6/js/bootstrap.min.js");
+        arFiles.Add(szDir + "include/jquery.validVal.min.js");
         arFiles.Add("https://code.jquery.com/jquery-2.2.4.min.js");
 
         HtmlLink oLink = new HtmlLink();
@@ -43,11 +43,11 @@ public static class HTML {
         oPage.Header.Controls.AddAt(0, oLink);
 
         List<string> arCssLinks = new List<string>();
-        arCssLinks.Add("/Libraries/JQueryUI1.11.4/smoothness.css?v=1");
+        arCssLinks.Add(szDir + "include/JQueryUI1.11.4/smoothness.css?v=1");
         arCssLinks.Add("https://cdn.datatables.net/v/dt/dt-1.10.16/b-1.5.0/fh-3.1.3/kt-2.3.2/datatables.min.css");
-        arCssLinks.Add("/Libraries/select2-3.4.3/select2.css");
-        arCssLinks.Add("/Libraries/bootstrap/3.3.6/css/bootstrap.min.css");
-        arCssLinks.Add("/Libraries/bootstrap/3.3.6/css/bootstrap-theme.min.css");
+        arCssLinks.Add(szDir + "include/select2 -3.4.3/select2.css");
+        arCssLinks.Add(szDir + "include/bootstrap/3.3.6/css/bootstrap.min.css");
+        arCssLinks.Add(szDir + "include/bootstrap/3.3.6/css/bootstrap-theme.min.css");
 
         foreach (string File in arCssLinks) {
             if (File == "")
