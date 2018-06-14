@@ -29,7 +29,7 @@
             <asp:Button ID="btnContacts" runat="server" Text="Contacts" OnClick="btnContacts_Click" />
             <asp:Button ID="btnTasks" runat="server" Text="Tasks" OnClick="btnTasks_Click" />
             <asp:Button ID="btnTest" runat="server" Text="Import all" OnClick="btnTest_Click" />
-            <asp:Button ID="btnProcess" runat="server" Text="Process sales" OnClick="btnProcess_Click" Visible="false" />
+            <asp:Button ID="btnProcess" runat="server" Text="Process sales" OnClick="btnProcess_Click"  />
             <br />
             <br />
             <asp:Button ID="btnViewReport" runat="server" Text="View API history" OnClientClick="window.open('../report/apilog_detail.aspx'); return false;" />

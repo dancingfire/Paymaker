@@ -973,6 +973,29 @@ public class KPI_Office_agents : Report {
     }
 }
 
+public class KPI_Office_agents_auction_detail : KPI_Office_agents_NEW {
+    private static string RFileName = "KPI Office agents - Auction details";
+
+    /// <summary>
+    /// Constructor Method that receives the Viewer and the Filter and creates the report.
+    /// </summary>
+    /// <param name="Viewer"></param>
+    /// <param name="oFilter"></param>
+    public KPI_Office_agents_auction_detail(ReportViewer Viewer, ReportFilters oFilter) : base(Viewer,oFilter) {
+        ReportTitle = "KPI by Agent (auction details)";
+    }
+
+    /// <summary>
+    /// The name within the get, corresponds with the report to return.
+    /// </summary>
+    public override string ReportFileName {
+        get {
+            return RFileName;
+        }
+    }
+
+}
+
 public class KPI_Office_agents_NEW : Report {
     private static string RFileName = "KPI Office agents NEW";
 
@@ -1054,6 +1077,7 @@ public class KPI_Office_agents_NEW : Report {
 				    CONVERT(VARCHAR(7), ISNULL(S.SALEDATE, S.FALLENTHROUGHDATE), 120) AS MONTHSORT,
 					USS.USERID AS AGENTID,
                     ISNULL(USR.FIRSTNAME,'') + ', ' +  ISNULL(USR.LASTNAME,'') as AGENTNAME,
+                    S.ID AS SALEID, S.ADDRESS AS SALEADDRESS,
                     SUBSTRING (CONVERT(VARCHAR, ISNULL(S.SALEDATE, S.FALLENTHROUGHDATE), 100),1,3) +'-'+ SUBSTRING (CONVERT(VARCHAR, ISNULL(S.SALEDATE, S.FALLENTHROUGHDATE), 100),8,4 ) AS MONTHGROUP,
                  	USR.OFFICEID, '' AS SUBURB,
                     CASE
@@ -1478,6 +1502,7 @@ public class KPI_Office_agents_NEW : Report {
         integrateBnDData(ref ds, ds1.Tables[1]);
         integrateBnDData(ref ds, ds1.Tables[2]);
 
+        // This is for debugging purposes - all data used in the report can be viewed in it's final state in this saved file.
         Utility.dataTableToCSVFile(ds.Tables[0], string.Format(@"C:\Temp\final.csv"));
 
         return ds;
