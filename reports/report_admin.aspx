@@ -280,8 +280,6 @@
                     $("#spCompany").show();
 
                     break;
-                case "PAYROLLTIMESHEETS":
-                    break;
 
             }
             $("#dButtons").show();
@@ -593,10 +591,6 @@
                     var szParam = getFilterValues();
                     szParam += "&szChtType=SALESDOLLARS";
                     break;
-                case "PAYROLLTIMESHEETS":
-                    var szSrc = "payroll_timesheets.aspx";
-                    var szParam = getFilterValues();
-                    break;
             }
 
             szParam += "&szOfficeNames=" + escape(getSelectText("lstOffice"));
@@ -714,7 +708,6 @@
             </select>
             <select id="lstReport" class="Entry">
                 <option value="-1">Select a report...</option>
-                <option value="PAYROLLTIMESHEETS">Payroll Timesheets</option>
                 <optgroup label='Campaign reports' />
                 <option value="PREPAYMENT">Campaign prepayment</option>
                 <option value="PREPAYMENTN">Campaign prepayment (N)</option>
