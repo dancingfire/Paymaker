@@ -309,78 +309,6 @@ public class Sale {
     }
 
     /// <summary>
-    /// Searches for B&D records to match to CAPS record.  Only to be used for transition
-    /// </summary>
-    public static void findBnDSaleRecords() {
-        if (DateTime.Now > G.TransitionToBnDDate)
-            throw new Exception("Box&Dice Transition Exception : Old Import process called after transition date");
-
-        DB.runNonQuery(String.Format(@"
-                UPDATE {0}.DBO.SALE SET BNDSALEID =
-		                ( SELECT MAX(SL.ID) FROM PROPERTY P JOIN SALESLISTING SL ON SL.PROPERTYID = P.ID
-			                JOIN SALESVOUCHER SV ON SV.SALESLISTINGID = SL.ID
-			                WHERE P.ADDRESS + ', Vic, ' + P.POSTCODE = {0}.DBO.SALE.ADDRESS
-			                AND SV.SOLDDATE = {0}.DBO.SALE.SALEDATE
-			                AND SV.SOLDDATE IS NOT NULL)
-                   WHERE BNDSALEID IS NULL", Client.DBName), DB.BoxDiceDBConn);
-    }
-
-    /// <summary>
-    /// Imports the sales from REOFFICE for the current pay period
-    /// </summary>
-    public static void importSales() {
-        if (DateTime.Now > G.TransitionToBnDDate)
-            throw new Exception("Box&Dice Transition Exception : Old Import process called after transition date");
-
-        string szCNN = ConfigurationManager.AppSettings["REOFFICE"];
-
-        //Load sales
-        string szSQL = String.Format(@"
-            SELECT BU_BUSINESSID, BU_CODE,BU_NAME AS ADDRESS, BU_SALEENTERED AS SALEDATE, CAST(BU_ENTITLEMENTDATES AS VARCHAR(120)) AS ENTITLEMENTDATE, BU_SALEPRICE AS SALEPRICE,
-            BU_GROSSCOMMISSION,BU_CONJUNCTIONCOMMISSION AS CONJUNCTIONALCOMMISSION,BU_ACTUALSETTLEMENT ,BR_CONJAGENT1FULLNAME AS CONJUNCTIONALAGENT, BU_TRANSACTIONDATE AS LISTINGDATE,
-             BU_SUBURB
-            FROM BUSINESS, BUSINESSRELATION
-             WHERE BU_TYPEID IN (6,12,65) AND (BU_ENTITLEMENTDATES IS NULL OR BU_ENTITLEMENTDATES >= '01/01/2013')
-              AND BR_BUSINESSID = BU_BUSINESSID
-            ");
-
-        OdbcDataAdapter da = new OdbcDataAdapter(szSQL, szCNN);
-        DataSet dsImport = new DataSet();
-        da.Fill(dsImport, "emp");
-        // BU_LASTACTIONDATE = last updated date
-        foreach (DataRow dr in dsImport.Tables[0].Rows) {
-            processImport(dr);
-        }
-
-        updateListingDate();    // Most likey not relevant b/c we can get this directly and most up to date from API - YEP (SHANE)
-        loadWithdrawn();        // How do we identify withdrawns from B&D and what should we do with them
-                                /* Need to follow up business rules :
-                                 *
-                                 *    Where sale falls through & no commission splits have been set - run SQL :
-                                 *
-                                 *         INSERT INTO SALESPLIT(SALEID, COMMISSIONTYPEID, AMOUNT, AMOUNTTYPEID, CALCULATEDAMOUNT)
-                                 *             VALUES({SaleID}, 10, 0, 0, 0);
-                                 *
-                                 *         INSERT INTO USERSALESPLIT(SALESPLITID, USERID, AMOUNT, AMOUNTTYPEID, CALCULATEDAMOUNT, INCLUDEINKPI, OFFICEID)
-                                 *             SELECT ID, {ListingUserID}, 0, 0, 0, 1, (SELECT OFFICEID FROM DB_USER WHERE ID = {ListingUserID})
-                                 *             FROM SALESPLIT WHERE SALEID = {SaleID}  AND RECORDSTATUS = 0
-                                 *             ORDER BY ID DESC
-                                 *
-                                 *
-                                 */
-
-        loadAuctionInformation(); // Do we need to get the purchaser suburb for the KPI agent report?
-                                  /* SHANE - Purchaser suburb taken care of.  SQL to identify ISAUCTION should be used :
-                                   *             UPDATE SALE  SET ISAUCTION = CASE WHEN DATEDIFF(d, SALEDATE, AUCTIONDATE) BETWEEN 0 and 1 THEN 1 ELSE 0 END
-                                   *                   WHERE AUCTIONDATE IS NOT NULL
-                                   *
-                                   * Also Auction Date to be imported.
-                                   *
-                                   * SHANE - DONE!
-                                   */
-    }
-
-    /// <summary>
     ///
     /// </summary>
     /// <param name="SaleID"></param>
@@ -467,88 +395,7 @@ public class Sale {
             oSE.delete();
     }
 
-    /// <summary>
-    /// Loads the listing date
-    /// </summary>
-    private static void updateListingDate() {
-        string szCNN = ConfigurationManager.AppSettings["REOFFICE"];
-
-        string szSQL = String.Format(@"
-             SELECT  B.BU_BUSINESSID, A.BU_TRANSACTIONDATE AS LISTINGDATE
-             FROM BUSINESS A , BUSINESS B
-             WHERE A.BU_TYPEID IN (4,10,63)  AND A.BU_TRANSACTIONDATE > '01/01/2013'
-             AND B.BU_SOURCEID = A.BU_BUSINESSID
-
-            ");
-
-        OdbcDataAdapter da = new OdbcDataAdapter(szSQL, szCNN);
-        DataSet dsImport = new DataSet();
-        da.Fill(dsImport, "emp");
-        SQLQueue oQ = new SQLQueue(50);
-
-        foreach (DataRow dr in dsImport.Tables[0].Rows) {
-            int intSaleDBID = DB.getScalar(string.Format("SELECT ID FROM SALE WHERE REOFFICEID = {0}", dr["BU_BUSINESSID"]), -1);
-            if (intSaleDBID > -1) {
-                DateTime dtListing = Valid.checkDate(dr["LISTINGDATE"].ToString(), DateTime.MinValue);
-                oQ.addSQL(String.Format(" UPDATE SALE SET LISTEDDATE = '{0}' WHERE REOFFICEID = {1}; ", Utility.formatDate(dtListing), dr["BU_BUSINESSID"].ToString()));
-            }
-        }
-        oQ.flush();
-    }
-
-    /// <summary>
-    /// Loads all the listings that have been withdrawn
-    /// </summary>
-    private static void loadWithdrawn() {
-        string szCNN = ConfigurationManager.AppSettings["REOFFICE"];
-
-        string szSQL = String.Format(@"
-             SELECT  BR.BR_LISTER1CODE, a.BU_BUSINESSID, b.BU_TRANSACTIONDATE AS FALLENTHROUGHDATE, a.BU_CODE,a.BU_NAME AS ADDRESS, a.BU_SALEENTERED AS SALEDATE,
-                CAST(a.BU_ENTITLEMENTDATES AS VARCHAR(120)) AS ENTITLEMENTDATE, a.BU_SALEPRICE AS SALEPRICE,
-                a.BU_GROSSCOMMISSION, a.BU_CONJUNCTIONCOMMISSION AS CONJUNCTIONALCOMMISSION, a.BU_ACTUALSETTLEMENT,
-                BR_CONJAGENT1FULLNAME AS CONJUNCTIONALAGENT, a.BU_TRANSACTIONDATE AS LISTINGDATE,
-                 a.BU_SUBURB
-
-             FROM BUSINESS a, BUSINESSRELATION BR, BUSINESS B
-             WHERE a.BU_TYPEID IN (4,10,63)
-              AND BR_BUSINESSID = a.BU_BUSINESSID
-              AND B.BU_SOURCEID = A.BU_BUSINESSID
-              AND B.BU_TYPEID IN (5) AND b.BU_TRANSACTIONDATE > '01/01/2013'
-            ");
-
-        OdbcDataAdapter da = new OdbcDataAdapter(szSQL, szCNN);
-        DataSet dsImport = new DataSet();
-        da.Fill(dsImport, "emp");
-        SQLQueue oQ = new SQLQueue(50);
-
-        foreach (DataRow dr in dsImport.Tables[0].Rows) {
-            int intSaleDBID = DB.getScalar(string.Format("SELECT ID FROM SALE WHERE REOFFICEID = {0}", dr["BU_BUSINESSID"]), -1);
-            if (intSaleDBID == -1) {
-                intSaleDBID = processImport(dr);
-            }
-
-            DateTime dtWithdrawn = Valid.checkDate(dr["FALLENTHROUGHDATE"].ToString(), DateTime.MinValue);
-            string szListingInitials = Convert.ToString(dr["BR_LISTER1CODE"]);
-            int intNumOfCommRows = DB.getScalar(String.Format("SELECT COUNT(*) FROM SALESPLIT WHERE SALEID = {0}", intSaleDBID), 0);
-            if (intNumOfCommRows == 0) {
-                //We need to insert a listing record for the selected lister
-                int intListingUserID = DB.getScalar(String.Format("SELECT ID FROM DB_USER WHERE INITIALSCODE = '{0}' ORDER BY ISACTIVE DESC", DB.escape(szListingInitials)), -1);
-                if (intListingUserID > -1) {
-                    oQ.addSQL(String.Format(@"
-                        INSERT INTO SALESPLIT(SALEID, COMMISSIONTYPEID, AMOUNT, AMOUNTTYPEID, CALCULATEDAMOUNT)
-                        VALUES({0}, 10, 0, 0, 0);
-
-                        INSERT INTO USERSALESPLIT(SALESPLITID, USERID, AMOUNT, AMOUNTTYPEID, CALCULATEDAMOUNT, INCLUDEINKPI, OFFICEID)
-                        SELECT ID, {1}, 0, 0, 0, 1, (SELECT OFFICEID FROM DB_USER WHERE ID = {1})
-                        FROM SALESPLIT WHERE SALEID = {0}  AND RECORDSTATUS = 0
-                        ORDER BY ID DESC", intSaleDBID, intListingUserID));
-                }
-            }
-            oQ.addSQL(String.Format(" UPDATE SALE SET FALLENTHROUGHDATE = '{0}' WHERE REOFFICEID = {1}; ", Utility.formatDate(dtWithdrawn), dr["BU_BUSINESSID"].ToString()));
-        }
-        oQ.flush();
-    }
-
+  
     /// <summary>
     /// Used to check for various null / invalid date values.  including DateTime.MinVal & 1900-01-01
     /// </summary>
@@ -713,8 +560,27 @@ public class Sale {
         DB.runNonQuery(string.Format(@"
             -- temp fix for IsAuction not calculating correctly under blimps
             update sale set ISAUCTION = 1 where SALEDATE = AUCTIONDATE and SALEDATE > '2016-07-01'"));
+
+        checkWithdrawnSales();
     }
 
+    /// <summary>
+    /// Checks to see if any sales have been withdrawn, and sets the gross commission to 0 as a result
+    /// </summary>
+    static void checkWithdrawnSales() {
+        string szSQL = @"
+                UPDATE SALESVOUCHER 
+                    SET GROSSCOMMISSION = 0 
+                WHERE SV.ID in (
+                    SELECT SV.ID
+                    FROM PROPERTY P
+	                    JOIN SALESLISTING SL ON SL.PROPERTYID = P.ID
+                        JOIN SALESVOUCHER SV ON SV.SALESLISTINGID = SL.ID
+                        WHERE (SV.WITHDRAWNON IS NOT NULL OR SL.STATUS = 'listing_cancelled') AND SV.GROSSCOMMISSION > 0 
+				);";
+        DB.runNonQuery(szSQL);
+
+    }
     /// <summary>
     /// Returns the SaleID
     /// </summary>
@@ -770,40 +636,7 @@ public class Sale {
         }
         return intDbID;
     }
-
-    /// <summary>
-    /// Loads all the listings that have an auction date (Sales: TypeID = 6, 12, 65) (Listings: 4, 10, 63)
-    /// </summary>
-    private static void loadAuctionInformation() {
-        string szCNN = ConfigurationManager.AppSettings["REOFFICE"];
-
-        string szSQL = String.Format(@"
-              SELECT B.BU_AUCTIONDATE, B.BU_TRANSACTIONDATE AS LISTINGDATE, A.BU_BUSINESSID,BR_PURCHASER1SUBURB
-              FROM BUSINESS A, BUSINESSRELATION , BUSINESS B
-              WHERE A.BU_TYPEID IN (6,12,65)
-                  AND BR_BUSINESSID = A.BU_BUSINESSID
-                  AND A.BU_SOURCEID = B.BU_BUSINESSID
-                  AND B.BU_AUCTIONDATE > '01/01/2013'
-                  AND B.BU_TYPEID IN (4,10,63)
-            ");
-
-        OdbcDataAdapter da = new OdbcDataAdapter(szSQL, szCNN);
-        DataSet dsImport = new DataSet();
-        da.Fill(dsImport, "emp");
-        szSQL = "";
-        // BU_LASTACTIONDATE = last updated date
-        foreach (DataRow dr in dsImport.Tables[0].Rows) {
-            DateTime dtAuction = Valid.checkDate(dr["BU_AUCTIONDATE"].ToString(), DateTime.MinValue);
-            DateTime dtListing = Valid.checkDate(dr["LISTINGDATE"].ToString(), DateTime.MinValue);
-            szSQL += String.Format(" UPDATE SALE SET AUCTIONDATE = '{0}', LISTEDDATE = '{1}', PURCHASERSUBURB = '{2}' WHERE REOFFICEID = {3}; "
-                , Utility.formatDate(dtAuction), Utility.formatDate(dtListing), DB.escape(dr["BR_PURCHASER1SUBURB"].ToString()), DB.escape(dr["BU_BUSINESSID"].ToString()));
-        }
-        DB.runNonQuery(szSQL);
-        DB.runNonQuery(@"
-            UPDATE SALE  SET ISAUCTION = CASE WHEN DATEDIFF(d, SALEDATE, AUCTIONDATE) BETWEEN 0 and 1 THEN 1 ELSE 0 END
-            WHERE AUCTIONDATE IS NOT NULL ");
-    }
-
+    
     /// <summary>
     /// Loads all the records where a salesperson has a part of the splits
     /// </summary>

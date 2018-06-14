@@ -95,6 +95,7 @@
                     break;
                 case "KPIOFFICE":
                 case "KPIOFFICENEW":
+                case "KPIOFFICEAUCTION":
                     $("#lstFinancialYear option[value='']").remove();
                     //$("#spUser").show();
                     //$("#spOffice").show();
@@ -460,6 +461,11 @@
                     var szParam = getFilterValues();
                     szParam += getSelectedUser(false);
                     break;
+                case "KPIOFFICEAUCTION":
+                    var szSrc = "kpi_office_agents_auction_details.aspx";
+                    var szParam = getFilterValues();
+                    szParam += getSelectedUser(false);
+                    break;
                 case "MENTORBONUSSUMMARY":
                     var szSrc = "mentor_bonus_summary.aspx";
                     var szParam = getFilterValues();
@@ -722,6 +728,7 @@
                 <option value="KPISUBURB">KPI suburb detail</option>
                 <option value="KPIOFFICE">KPI Office agents BETA</option>
                 <option value="KPIOFFICENEW">KPI Office agents NEW BETA</option>
+                <option value="KPIOFFICEAUCTION">KPI Office agents Auction Details</option>
 
                 <optgroup label='Sales reports' />
                 <option value="AGENTEOMBALANCE">Agents EOM Balances</option>
