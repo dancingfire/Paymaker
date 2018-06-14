@@ -568,17 +568,15 @@ public class Sale {
     /// Checks to see if any sales have been withdrawn, and sets the gross commission to 0 as a result
     /// </summary>
     static void checkWithdrawnSales() {
-        string szSQL = @"
-                UPDATE SALESVOUCHER 
+        string szSQL = String.Format(@"
+                UPDATE   {0}.dbo.SALE
                     SET GROSSCOMMISSION = 0 
-                WHERE SV.ID in (
-                    SELECT SV.ID
-                    FROM PROPERTY P
-	                    JOIN SALESLISTING SL ON SL.PROPERTYID = P.ID
-                        JOIN SALESVOUCHER SV ON SV.SALESLISTINGID = SL.ID
-                        WHERE (SV.WITHDRAWNON IS NOT NULL OR SL.STATUS = 'listing_cancelled') AND SV.GROSSCOMMISSION > 0 
-				);";
-        DB.runNonQuery(szSQL);
+                WHERE ID in (
+                    SELECT ID
+                    FROM SALESLISTING 
+                    WHERE (WITHDRAWNON IS NOT NULL AND STATUS = 'listing_cancelled') 
+				);", Client.DBName);
+        DB.runNonQuery(szSQL, DB.BoxDiceDBConn);
 
     }
     /// <summary>
