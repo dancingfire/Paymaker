@@ -115,7 +115,7 @@
                     Text="Lock timesheet" UseSubmitBehavior="true" OnClientClick="return checkSignOff();" OnClick="btnSignOff_Click" ToolTip="Select this to lock your timesheet." />
             </div>
             <div id="dViewer">
-                <rsweb:ReportViewer ID="rViewer" runat="server" Width="100%"  AsyncRendering="true"></rsweb:ReportViewer>
+                <rsweb:ReportViewer ID="rViewer" runat="server" Width="100%"  AsyncRendering="true" SizeToReportContent="true"></rsweb:ReportViewer>
             </div>
         </div>
 
