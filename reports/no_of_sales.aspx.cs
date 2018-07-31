@@ -23,6 +23,7 @@ namespace Paymaker {
         private int endYear = 3000;
         private ChartType oChartType = ChartType.NOOFSALES;
         private bool blnPrint = false;
+        protected int iColor = 38;
 
         private DateTime dtMaxValue = DateTime.MinValue;
 
@@ -154,6 +155,7 @@ namespace Paymaker {
         protected Series getSeries(string szVlaue) {
             Series oSeries = new Series(szVlaue);
             oSeries.ChartType = SeriesChartType.Line;
+            oSeries.Color = Color.FromKnownColor((KnownColor)Enum.ToObject(typeof(KnownColor), iColor++));
             return oSeries;
         }
 
@@ -271,6 +273,7 @@ namespace Paymaker {
                 oSeries.IsXValueIndexed = true;
                 oSeries.YValueType = ChartValueType.Int32;
                 oSeries.MarkerStyle = getNextMarkerStyle(ref intMarkerStyle);
+
             }
             chtNoOfSales.ChartAreas[0].AxisY.Maximum = intMaxCount;
             chtNoOfSales.Series.Add(oSeries);
