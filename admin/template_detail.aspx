@@ -20,7 +20,7 @@
             }
 
             blnPageDirty = false; //Turn off our page leaving check
-            return document.frmMain.btnUpdate.className == 'Button';
+            return true;
         }
 
         function insertTag(szValue) {
@@ -113,7 +113,7 @@
                 <br class="Align" />
 
                 <div id="divTemplate" runat="server" style="width: 70%; float: left" enableviewstate="false">
-                    <asp:TextBox ID="txtContent" runat="server" Width="100%" Height="300" TextMode="MultiLine"></asp:TextBox>
+                    <asp:TextBox ID="txtContent" runat="server" Width="100%" Height="500" TextMode="MultiLine"></asp:TextBox>
                 </div>
                 <div id="divTemplateTerms" enableviewstate="false" runat="server" style="margin-left: 5px; float: left; padding-left: 0px; clear: right; width: 28%">
                     <div style='background: silver; text-align: center; font-family: Arial; padding: 3px;'>Replaceable terms</div>
