@@ -24,13 +24,15 @@ public class Template {
         string[] arUserName = Utility.SplitByString(szUserName, "*****");
         string szCurrUserFirstName = arUserName[1];
         string szCurrUserLastName = arUserName[0];
-
-        szSQL = "SELECT LASTNAME + '*****' + FIRSTNAME FROM DB_USER U JOIN CAMPAIGN C ON C.AGENTID = U.ID WHERE C.ID = " + CampaignID;
-        szUserName = DB.getScalar(szSQL, "*****");
-        arUserName = Utility.SplitByString(szUserName, "*****");
         string szAgentFirstName = arUserName[1];
         string szAgentLastName = arUserName[0];
-
+        if (CampaignID > -1) {
+            szSQL = "SELECT LASTNAME + '*****' + FIRSTNAME FROM DB_USER U JOIN CAMPAIGN C ON C.AGENTID = U.ID WHERE C.ID = " + CampaignID;
+            szUserName = DB.getScalar(szSQL, "*****");
+            arUserName = Utility.SplitByString(szUserName, "*****");
+            szAgentFirstName = arUserName[1];
+            szAgentLastName = arUserName[0];
+        }
         szFilledTemplate = szFilledTemplate.Replace("[AGENTFIRSTNAME]", szAgentFirstName);
         szFilledTemplate = szFilledTemplate.Replace("[AGENTLASTNAME]", szAgentLastName);
         szFilledTemplate = szFilledTemplate.Replace("[SENDERFIRSTNAME]", szCurrUserFirstName);

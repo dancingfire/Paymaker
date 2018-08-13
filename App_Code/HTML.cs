@@ -27,7 +27,8 @@ public static class HTML {
         arFiles.Add(szDir + "include/select2-3.4.3/select2.min.js");
         arFiles.Add(szDir + "include/ckeditor/adapters/jquery.js");
         arFiles.Add(szDir + "include/ckeditor/ckeditor.js");
-        arFiles.Add("https://cdn.datatables.net/v/dt/dt-1.10.16/b-1.5.0/fh-3.1.3/kt-2.3.2/datatables.min.js");
+        //arFiles.Add("https://cdn.datatables.net/v/dt/dt-1.10.16/b-1.5.0/fh-3.1.3/kt-2.3.2/datatables.min.js");
+        arFiles.Add("https://cdn.datatables.net/v/bs/jszip-2.5.0/dt-1.10.18/b-1.5.2/b-html5-1.5.2/fh-3.1.4/datatables.min.js");
         arFiles.Add(szDir + "include/jquery.mods.js?v=13");
         arFiles.Add("https://code.jquery.com/ui/1.12.1/jquery-ui.min.js");
         arFiles.Add(szDir + "include/bootstrap/3.3.6/js/bootstrap.min.js");
@@ -44,7 +45,9 @@ public static class HTML {
 
         List<string> arCssLinks = new List<string>();
         arCssLinks.Add(szDir + "include/JQueryUI1.11.4/smoothness.css?v=1");
-        arCssLinks.Add("https://cdn.datatables.net/v/dt/dt-1.10.16/b-1.5.0/fh-3.1.3/kt-2.3.2/datatables.min.css");
+        // arCssLinks.Add("https://cdn.datatables.net/v/dt/dt-1.10.16/b-1.5.0/fh-3.1.3/kt-2.3.2/datatables.min.css");
+        arCssLinks.Add("https://cdn.datatables.net/v/bs/jszip-2.5.0/dt-1.10.18/b-1.5.2/b-html5-1.5.2/fh-3.1.4/datatables.min.css");
+        
         arCssLinks.Add(szDir + "include/select2-3.4.3/select2.css");
         arCssLinks.Add(szDir + "include/bootstrap/3.3.6/css/bootstrap.min.css");
         arCssLinks.Add(szDir + "include/bootstrap/3.3.6/css/bootstrap-theme.min.css");

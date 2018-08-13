@@ -322,6 +322,9 @@ public class Campaign {
             LEFT JOIN LIST L ON U.OFFICEID = L.ID
             WHERE C.ID = {0}", intDBID);
         DataSet ds = DB.runDataSet(szLoadSQL);
+        if (ds.Tables[0].Rows.Count == 0)
+            return;
+
         DataRow dr = ds.Tables[0].Rows[0];
         intAgentID = Convert.ToInt32(dr["SAFEAGENTID"]);
         intFocusAgentID = DB.readInt(dr["FOCUSAGENTID"]);

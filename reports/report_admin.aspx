@@ -40,7 +40,7 @@
                                             .removeAttr('multiple')
                                             .val('-1');
                     $("#spDate").show();
-                    $("#spYTDSales").show();
+                    $("#spFinYear").show();
                     break;
 
                 case "CAMPAIGNOUTSTANDING":
@@ -69,7 +69,7 @@
                                             .removeAttr('multiple')
                                             .val('-1');
                     $("#lstFinancialYear option[value='']").remove();
-                    $("#spYTDSales").show();
+                    $("#spFinYear").show();
                     $("#spCompany").show();
                     $("#spExpense").show();
                     $("#spFletcherOrUserAmount").show();
@@ -82,7 +82,7 @@
                                             .removeAttr('multiple')
                                             .val('-1');
                     $("#lstFinancialYear option[value='']").remove();
-                    $("#spYTDSales").show();
+                    $("#spFinYear").show();
                     break;
                 case "MAINKPI":
                     $("#lstFinancialYear option[value='']").remove();
@@ -164,7 +164,18 @@
                     }
                     $("#spDate").show();
                     break;
-                case "MONTHLYSALESBYAGENT":
+                case "SALESLETTER":
+                     $("#lstFinancialYear").attr('size', '1')
+                                            .removeAttr('size')
+                                            .removeAttr('multiple')
+                        .val('-1');
+                     $("#spOffice").show();
+                        $("#spCompany").show();
+                        $("#spUser").show();
+                     $("#spFinYear").show();
+                    break;
+
+                 case "MONTHLYSALESBYAGENT":
                     $("#lstFinancialYear option[value='']").remove();
                     if (!blnSingleUser) {
                         $("#spOffice").show();
@@ -249,7 +260,7 @@
                     $("#lstFinancialYear").attr('multiple', 'multiple');
                     $("#lstFinancialYear").attr('size', '4');
                     $("#lstFinancialYear option[value='-1']").remove();
-                    $("#spYTDSales").show();
+                    $("#spFinYear").show();
                     $("#spActive").show();
                     $("#spCompany").show();
 
@@ -263,7 +274,7 @@
                     $("#lstFinancialYear").attr('multiple', 'multiple');
                     $("#lstFinancialYear").attr('size', '4');
                     $("#lstFinancialYear option[value='-1']").remove();
-                    $("#spYTDSales").show();
+                    $("#spFinYear").show();
                     $("#spActive").show();
                     $("#spCompany").show();
 
@@ -275,7 +286,7 @@
                     $("#lstFinancialYear").removeAttr('size');
                     $("#lstFinancialYear").attr('size', '1');
                     $("#lstFinancialYear option[value='-1']").remove();
-                    $("#spYTDSales").show();
+                    $("#spFinYear").show();
                     $("#spActive").show();
                     $("#spCompany").show();
 
@@ -522,6 +533,11 @@
                     var szParam = getFilterValues();
                     szParam += getSelectedUser(false);
                     break;
+                  case "SALESLETTER":
+                    var szSrc = "sales_letters.aspx";
+                    var szParam = getFilterValues();
+                    szParam += getSelectedUser(false);
+                    break;
                 case "AGENTEOMBALANCE":
                     var szSrc = "agent_eom_balance.aspx";
                     var szParam = getFilterValues();
@@ -548,6 +564,10 @@
                     var szSrc = "quarterly_top_performer.aspx";
                     var szParam = getFilterValues();
 
+                    break;
+                case "SALESLETTER":
+                    if (!enforceFinancialYear())
+                        return false;
                     break;
                 case "YTDSALES":
                     var szSrc = "YTD_sales.aspx";
@@ -635,7 +655,7 @@
         }
 
         function enforceFinancialYear() {
-            if ($("#lstFinancialYear option:selected").length == 0) {
+            if ($("#lstFinancialYear option:selected").length == 0 && $("#lstFinancialYear").val() != -1) {
                 alert('Please select a Financial year.');
                 $("#lstFinancialYear").focus();
                 return false;
@@ -722,6 +742,8 @@
                 <option value="KPIOFFICE">KPI Office agents BETA</option>
                 <option value="KPIOFFICENEW">KPI Office agents NEW BETA</option>
                 <option value="KPIOFFICEAUCTION">KPI Office agents Auction Details</option>
+                <optgroup label='EOFY reports' />
+                <option value="SALESLETTER">Sales letter</option>
 
                 <optgroup label='Sales reports' />
                 <option value="AGENTEOMBALANCE">Agents EOM Balances</option>
@@ -765,7 +787,7 @@
             </select>
 
             <br class='Align' />
-            <span id="spYTDSales" class="Filter">
+            <span id="spFinYear" class="Filter">
                 <asp:Label ID="Label6" CssClass="FilterLabel" runat="server" Text="Financial year">
                 </asp:Label>
                 <asp:ListBox ID="lstFinancialYear" runat="server" CssClass="Entry"></asp:ListBox>
@@ -883,7 +905,7 @@
             </div>
         </div>
         <iframe id='fReport' name="fReport" style="overflow: auto; border: 0px;" src="../blank.html" frameborder="0"></iframe>
-        <iframe id='fPDF' name="fPDF" style="overflow: auto; border: 0px; height: 100px; width: 1000px; top: 800px" src="about:blank" frameborder="0"></iframe>
+        <iframe id='fPDF' name="fPDF" style="overflow: auto; border: 0px; height: 0px; width: 1000px; top: 800px" src="about:blank" frameborder="0"></iframe>
     </form>
 </body>
 </html>

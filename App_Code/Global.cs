@@ -380,6 +380,12 @@ public class G {
             }
         }
 
+        public static int SalesLetterTemplateID {
+            get {
+                return Convert.ToSByte(System.Configuration.ConfigurationManager.AppSettings["SalesTemplateID"]);
+            }
+        }
+
         /// <summary>
         /// The clientID from the web config and run through the ClientID enum
         /// </summary>

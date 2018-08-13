@@ -554,14 +554,14 @@ public class Utility {
 
     public static string formatDateForMYOBExport(string szDate) {
         if (!string.IsNullOrEmpty(szDate.Trim())) {
-            return Convert.ToDateTime(szDate).ToString("dd'-'MM'-'yyyy");
+            return Convert.ToDateTime(szDate).ToString("dd'/'MM'/'yyyy");
         }
         return "";
     }
 
     public static string formatDateForMYOBExport(DateTime Date) {
         if (Date != null && Date != DateTime.MinValue) {
-            return Date.ToString("dd'-'MM'-'yyyy");
+            return Date.ToString("dd'/'MM'/'yyyy");
         }
         return "";
     }

@@ -37,7 +37,7 @@ public class ClientMenu {
         oM.addMenuItem("Change property details", "../main/sale_modification.aspx");
         oM.addSpacer();
         oM.addMenuItem("Setup user budgets", "../main/user_account_update.aspx");
-        oM.addMenuItem("Settings", "../admin/sales_settings.aspx");
+        oM.addMenuItem("Import EOY values", "../admin/import_values.aspx");
 
         oM.addMenu("Campaign", "../campaign/campaign_dashboard.aspx", MenuRole.Campaign);
         if (Payroll.CanAccess)
