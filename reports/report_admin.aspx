@@ -36,9 +36,9 @@
                     break;
                 case "BUDGETREPORT":
                     $("#lstFinancialYear").attr('size', '1')
-                                            .removeAttr('size')
-                                            .removeAttr('multiple')
-                                            .val('-1');
+                        .removeAttr('size')
+                        .removeAttr('multiple')
+                        .val('-1');
                     $("#spDate").show();
                     $("#spFinYear").show();
                     break;
@@ -65,9 +65,9 @@
 
                 case "EXPENSESUMMARY":
                     $("#lstFinancialYear").attr('size', '1')
-                                            .removeAttr('size')
-                                            .removeAttr('multiple')
-                                            .val('-1');
+                        .removeAttr('size')
+                        .removeAttr('multiple')
+                        .val('-1');
                     $("#lstFinancialYear option[value='']").remove();
                     $("#spFinYear").show();
                     $("#spCompany").show();
@@ -78,9 +78,9 @@
                 case "INCENTIVECHART":
                     $("#spCompany").show();
                     $("#lstFinancialYear").attr('size', '1')
-                                            .removeAttr('size')
-                                            .removeAttr('multiple')
-                                            .val('-1');
+                        .removeAttr('size')
+                        .removeAttr('multiple')
+                        .val('-1');
                     $("#lstFinancialYear option[value='']").remove();
                     $("#spFinYear").show();
                     break;
@@ -165,17 +165,17 @@
                     $("#spDate").show();
                     break;
                 case "SALESLETTER":
-                     $("#lstFinancialYear").attr('size', '1')
-                                            .removeAttr('size')
-                                            .removeAttr('multiple')
+                    $("#lstFinancialYear").attr('size', '1')
+                        .removeAttr('size')
+                        .removeAttr('multiple')
                         .val('-1');
-                     $("#spOffice").show();
-                        $("#spCompany").show();
-                        $("#spUser").show();
-                     $("#spFinYear").show();
+                    $("#spOffice").show();
+                    $("#spCompany").show();
+                    $("#spUser").show();
+                    $("#spFinYear").show();
                     break;
 
-                 case "MONTHLYSALESBYAGENT":
+                case "MONTHLYSALESBYAGENT":
                     $("#lstFinancialYear option[value='']").remove();
                     if (!blnSingleUser) {
                         $("#spOffice").show();
@@ -228,8 +228,8 @@
                     $("#spCompany").show();
                     break;
                 case "MISSINGSECTION27":
-                        $("#spDate").show();
-                        break;
+                    $("#spDate").show();
+                    break;
                 case "TOPPERFORMER":
                     $("#spRole").show();
                     $("#spCompany").show();
@@ -312,6 +312,9 @@
                 szParam += "&szCompanyID=" + escape($("#lstCompany").val());
             if ($("#lstSuburb").val() != null)
                 szParam += "&szSuburbID=" + escape($("#lstSuburb").val());
+            if ($("#lstFinancialYear").val() != null)
+                szParam += "&szFinYear=" + escape($("#lstFinancialYear").val());
+        
             szParam += "&szExpenseID=" + $("#lstExpense").val();
             szParam += "&szFletcherOrAgent=" + $("#lstFletcherOrAgent").val();
             szParam += "&szOffTheTopID=" + $("#lstOffTheTop").val();
@@ -352,7 +355,8 @@
         }
 
         function runReport(TargetFrm, blnPrint) {
-            switch (getReport()) {
+            szReport = getReport();
+            switch (szReport) {
                 case "AGENTOFFTHETOP":
                     var szSrc = "agent_off_the_top.aspx";
                     var szParam = getFilterValues();
@@ -533,7 +537,10 @@
                     var szParam = getFilterValues();
                     szParam += getSelectedUser(false);
                     break;
-                  case "SALESLETTER":
+                case "SALESLETTER":
+                     if (!enforceFinancialYear())
+                        return false;
+                    
                     var szSrc = "sales_letters.aspx";
                     var szParam = getFilterValues();
                     szParam += getSelectedUser(false);
@@ -554,7 +561,7 @@
                         alert("You must select a start date");
                         return false;
                     }
-                szParam += getSelectedUser(true);
+                    szParam += getSelectedUser(true);
                     break;
                 case "SYSTEMQUARTERLY":
                     if ($("#lstQuarter").val() == "") {
@@ -564,10 +571,6 @@
                     var szSrc = "quarterly_top_performer.aspx";
                     var szParam = getFilterValues();
 
-                    break;
-                case "SALESLETTER":
-                    if (!enforceFinancialYear())
-                        return false;
                     break;
                 case "YTDSALES":
                     var szSrc = "YTD_sales.aspx";
@@ -655,7 +658,7 @@
         }
 
         function enforceFinancialYear() {
-            if ($("#lstFinancialYear option:selected").length == 0 && $("#lstFinancialYear").val() != -1) {
+            if ($("#lstFinancialYear option:selected").length == 0 || $("#lstFinancialYear").val() == -1) {
                 alert('Please select a Financial year.');
                 $("#lstFinancialYear").focus();
                 return false;
