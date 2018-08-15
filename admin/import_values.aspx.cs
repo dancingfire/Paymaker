@@ -24,6 +24,7 @@ public partial class import_values : Root {
     }
 
     protected void btnUpdate_Click(object sender, System.EventArgs e) {
+        DB.runNonQuery("TRUNCATE TABLE USERVALUE");
         if (fuImport.HasFile) {
             foreach (HttpPostedFile uploadedFile in fuImport.PostedFiles) {
                 uploadedFile.SaveAs(Server.MapPath("./upload.xlsx"));
@@ -34,7 +35,7 @@ public partial class import_values : Root {
     }
 
     private void importFile(string FilePath) {
-        string szCNN = string.Format("Provider=Microsoft.ACE.OLEDB.12.0; Data Source={0}; Extended Properties='Excel 12.0; HDR=NO;'", FilePath);
+        string szCNN = string.Format("Provider=Microsoft.ACE.OLEDB.12.0; Data Source={0}; Extended Properties='Excel 12.0; HDR=NO;IMEX=1'", FilePath);
 
         OleDbConnection oledbConn = new OleDbConnection(szCNN);
       
@@ -62,9 +63,13 @@ public partial class import_values : Root {
                 int UserID = DB.getScalar(String.Format("SELECT ID FROM DB_USER WHERE INITIALSCODE = '{0}' ", DB.escape(Convert.ToString(dr[0]))), -1) ;
                 if (UserID == -1)
                     continue;
-                DB.runNonQuery("DELETE FROM USERVALUE WHERE USERID = " + UserID);
-                for (int i = 1; i < 9; i++) {
-                    importValue(UserID, Convert.ToString(drHeader[i]), Convert.ToString(dr[i]));
+               
+                for (int i = 1; i < 8; i++) {
+                    string szValue = Convert.ToString(dr[i]);
+                    szValue = szValue.Replace("$", "").Replace(",", "").Replace(" ", "");
+                    if (szValue != "-" && szValue != "") {
+                        importValue(UserID, Convert.ToString(drHeader[i]), szValue);
+                    }
                 }
             } else {
                 drHeader = dr;

@@ -35,10 +35,14 @@ public partial class template_detail : Root {
             txtDescription.Text = oT.Description;
             btnUpdate.Text = "Update";
             txtContent.Text = oT.TemplateHTML;
+            btnDelete.Visible = true;
+            if (intSelID == G.Settings.SalesLetterTemplateID)
+                btnDelete.Enabled = false;
         } else {
             txtName.Text = "";
             txtDescription.Text = "";
             btnUpdate.Text = "Insert";
+            btnDelete.Visible = false;
         }
     }
 

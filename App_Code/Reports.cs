@@ -65,6 +65,13 @@ public class ReportFilters {
                 szFY = value;
         }
     }
+    //REturns a single financial year
+    public int getSingleFinancialYear() {
+        if (szFY == "")
+            return -1;
+        else
+            return Convert.ToInt32(szFY);
+    }
 
     public string RoleID {
         get { return szRoleID; }
@@ -142,6 +149,10 @@ public class ReportFilters {
         szPayPeriodID = Valid.getText("szPayPeriod", "", VT.List);
         if (szPayPeriodID == "null")
             szPayPeriodID = "";
+
+        szFY = Valid.getText("szFinYear", "", VT.List);
+        if (szFY == "null")
+            szFY = "";
     }
 }
 

@@ -28,21 +28,24 @@ namespace Paymaker {
                     Template oT = new Template(G.Settings.SalesLetterTemplateID);
                     int UserID = Convert.ToInt32(dr["ID"]);
                     UserDetail oU = G.UserInfo.getUser(UserID);
+                    double SalesTarget = DB.getScalar("SELECT SALESTARGET FROM DB_USER WHERE ID = " + UserID, 0);
+                    
                     string FilledTemplate = oT.TemplateHTML;
                     FilledTemplate = FilledTemplate.Replace("[AGENTFIRSTNAME]", oU.FirstName);
                     FilledTemplate = FilledTemplate.Replace("[AGENTLASTNAME]", oU.LastName);
+                    FilledTemplate = FilledTemplate.Replace("[SALESTARGET]", Utility.formatReportMoney(SalesTarget));
 
-                    
-                  
-                    if(oU.OfficeID == 94) {
+                    if (oU.OfficeID == 94) {
                         FilledTemplate = FilledTemplate.Replace("<p>I would like to remind you that in order to qualify for the 5% service (focus) area extra commission, you need to comply with our service area marketing requirements which can be found within the Sales Excellence Model Document in Business Planning.</p>", "");
                     }
                     dv = ds.Tables[1].DefaultView;
                     dvUserValues = ds.Tables[3].DefaultView;
-
+                   
                     FilledTemplate = FilledTemplate.Replace("[BENEFITSPAID]", getBenefitsTable(UserID));
                     dv = ds.Tables[2].DefaultView;
-                                     
+
+                   
+
                     FilledTemplate = FilledTemplate.Replace("[ENTITLEMENTS]", getEntitlementsTable(UserID));
 
                     dr["Template"] = FilledTemplate + "<div class='page-break'></div>";
@@ -65,8 +68,8 @@ namespace Paymaker {
                         <td>Amount Received</td>
                     </tr>";
             szHTML += getImportedValue(UserID, "Salary/Commissions Paid (Net)", ref dTotal);
-            szHTML += getImportedValue(UserID, "EOFY Bonus Comm", ref dTotal);
-            szHTML += getImportedValue(UserID, "Team Mentoring Bonus", ref dTotal);
+            szHTML += getExpense(UserID, "EOFY Bonus Comm", 95, ref dTotal);
+            szHTML += getExpense(UserID, "Team Mentoring Bonus", 97, ref dTotal);
             szHTML += getImportedValue(UserID, "Directors Allowance", ref dTotal);
             szHTML += getImportedValue(UserID, "Directors Car Allowance", ref dTotal);
             szHTML += getExpense(UserID, "Travel Award + FBT Costs", 67, ref dTotal);
@@ -146,7 +149,7 @@ namespace Paymaker {
             string szFilter = "";
             if (!String.IsNullOrWhiteSpace(oFilter.UserIDList))
                 szFilter += " AND U.ID IN (" + oFilter.UserIDList + ")";
-
+            
             bool blnIncludeInactive = Valid.getBoolean("blnIncludeInactive", false);
             string szUserActive = " AND U.ISACTIVE = 1 ";
             if (blnIncludeInactive)
@@ -161,7 +164,7 @@ namespace Paymaker {
                 SELECT U.ID, SUM(T.AMOUNT) AS AMOUNT, T.ACCOUNTID, L_ACCOUNT.NAME, U.LASTNAME
                 FROM USERTX T JOIN DB_USER U ON T.USERID = U.ID 
                 JOIN LIST L_ACCOUNT ON L_ACCOUNT.ID = T.ACCOUNTID
-                WHERE T.TXDATE BETWEEN 'JUL 1, 2015' AND 'JUN 30, 2016'
+                WHERE T.TXDATE BETWEEN 'JUL 1, {2} 00:00' AND 'JUN 30, {3} 2:59' {0}
                 GROUP BY U.ID,  T.ACCOUNTID, L_ACCOUNT.NAME, U.LASTNAME;
 
                 -- 2) Budget Query
@@ -177,7 +180,7 @@ namespace Paymaker {
 
                 -- 3) Uploaded values
                 SELECT * FROM USERVALUE
-            ", szFilter, szUserActive);
+            ", szFilter, szUserActive, oFilter.getSingleFinancialYear() - 1, oFilter.getSingleFinancialYear());
 
             DataSet ds = DB.runDataSet(szSQL);
             return ds;
