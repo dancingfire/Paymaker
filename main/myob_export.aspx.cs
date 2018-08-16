@@ -70,13 +70,13 @@ public partial class myob_export : Root {
             intMYOBExportID = Utility.getMYOBExportID(ExportType.UserTx, szName);
 
         string szSQL = string.Format(@"
-            SELECT '' as JOURNALNUMBER, '' AS TXDATE, '' as MEMO, 'P' AS GST, '0' AS INCLUSIVE, '' AS ACCOUNTNUMBER, '' AS DEBITEXGST, '' AS DEBITINCGST,
-            '' AS CREDITEXGST, '' AS CREDITINCGST, '' as JOB, 'N-T' as TAXCODE, '' as STOP, L_OFF.COMPANYID, L_COMP.NAME AS COMPANY,
+            SELECT '' as JOURNALNUMBER, '' AS TXDATE, '' as MEMO, 'P' AS GST, '0' AS INCLUSIVE, '' AS ACCOUNTNUMBER, 'Y' AS ISCREDIT,
+            TX.AMOUNT, '' as JOB, 'N-T' as TAXCODE, '0' AS TAXAMOUNT, '' as STOP, L_OFF.COMPANYID, L_COMP.NAME AS COMPANY,
             --Debit Info
             TX.ACCOUNTID AS DEBITACCOUNT, L.NAME AS DEBITACCOUNTNAME, TX.DEBITGLCODE AS DEBITACCOUNTGLCODE,
             --Credit info
             U.ID AS CREDITACCOUNT, U.INITIALSCODE + ' ' + FIRSTNAME + ' ' + LASTNAME as CREDITACCOUNTNAME, TX.CREDITGLCODE AS CREDITACCOUNTGLCODE,
-            TX.AMOUNT, TX.FLETCHERAMOUNT, TX.COMMENT, TX.TXDATE AS TXTXDATE, TX.CREDITJOBCODE, TX.DEBITJOBCODE, L.LISTTYPEID, TX.SHOWEXGST, TX.ID AS TXID
+            TX.TXDATE AS TXTXDATE, TX.CREDITJOBCODE, TX.DEBITJOBCODE, L.LISTTYPEID, TX.ID AS TXID
             FROM USERTX TX
             JOIN DB_USER U ON  U.ID = TX.USERID AND TX.ISDELETED = 0
             JOIN LIST L ON L.ID = TX.ACCOUNTID
@@ -95,23 +95,20 @@ public partial class myob_export : Root {
             DataRow rCurr = dtNew.Rows[dtNew.Rows.Count - 1];
 
             //Debit
+            rCurr["ISCREDIT"] = "N";
             rCurr["JOURNALNUMBER"] = szJournalNumber;
             rCurr["TXDATE"] = Utility.formatDateForMYOBExport(rCurr["TXTXDATE"].ToString());
             rCurr["ACCOUNTNUMBER"] = rCurr["DEBITACCOUNTGLCODE"];
-            rCurr["DEBITEXGST"] = rCurr["AMOUNT"];
-            rCurr["DEBITINCGST"] = rCurr["AMOUNT"];  //Math.Round(Convert.ToDouble(rCurr["AMOUNT"]) + (Convert.ToDouble(rCurr["AMOUNT"]) * 0.1), 2);  // Set this appropriately
             rCurr["JOB"] = rCurr["DEBITJOBCODE"];
 
             //Do the same for the inverse of this transaction
             //Credit
             dtNew.ImportRow(tx);
             rCurr = dtNew.Rows[dtNew.Rows.Count - 1];
+            rCurr["ISCREDIT"] = "Y";
             rCurr["JOURNALNUMBER"] = szJournalNumber;
             rCurr["TXDATE"] = Utility.formatDateForMYOBExport(rCurr["TXTXDATE"].ToString());
             rCurr["ACCOUNTNUMBER"] = rCurr["CREDITACCOUNTGLCODE"];
-            rCurr["DEBITEXGST"] = "";
-            rCurr["CREDITEXGST"] = rCurr["AMOUNT"];
-            rCurr["CREDITINCGST"] = rCurr["AMOUNT"];  //Math.Round(Convert.ToDouble(rCurr["AMOUNT"]) + (Convert.ToDouble(rCurr["AMOUNT"]) * 0.1), 2);  // Set this appropriately
             rCurr["JOB"] = rCurr["CREDITJOBCODE"];
 
             //TODO: If we are updating the DB update the row with the MYOBExportID
@@ -181,23 +178,3 @@ public partial class myob_export : Root {
         PageNotificationManager.PageNotificationInfo.showPageNotification();
     }
 }
-
-// Journal entry MYOB fields
-/* Journal Number 255 characters, alphanumeric
-Date 10 characters, alphanumeric. Follows date convention of your system. Allows any non-numeric as a separator between months, days and years.
-Memo S for Sale (Supply) or P for Purchase (Acquisition). When importing, if the field is blank and the transaction doesn’t have a tax amount, it will be imported and reported on the GST Exceptions report.
-Inclusive 1 character alphanumeric indicates the amount is tax-inclusive.
-*Account Number 5 characters, numeric. Must be a valid, pre-existing MYOB account number. May have an optional non‑numeric separator between the first digit and the last 4 digits (example: 1-1234).
-*Debit Ex-Tax Amount 15 characters (including 2 decimal places). More than 2 decimal places are rounded to 2 decimal places.
-*Debit Inc-Tax Amount 15 characters (including 2 decimal places). More than 2 decimal places are rounded to 2 decimal places.
-*Credit Ex-Tax Amount 15 characters (including 2 decimal places). More than 2 decimal places are rounded to 2 decimal places.
-*Credit Inc-Tax Amount 15 characters (including 2 decimal places). More than 2 decimal places are rounded to 2 decimal places.
-Job
-15 characters, alphanumeric Tax Code
-3 characters, alphanumeric. If the tax code is not a pre-existing MYOB tax code, the transaction will be imported on a tax-exclusive basis.
-Non-GST/LCT Amount 15 characters (including 2 decimal places). More than 2 decimal places are rounded to 2 decimal places.
-GST Amount 15 characters (including 2 decimal places). More than 2 decimal places are rounded to 2 decimal places.
-LCT Amount 15 characters (including 2 decimal places). More than 2 decimal places are rounded to 2 decimal places.
-Import Duty Amount 15 characters (including 2 decimal places). More than 2 decimal places are rounded to 2 decimal places.
-Allocation Memo 255 characters, alphanumeric.
-Category 15 characters, alphanumeric.*/
