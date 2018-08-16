@@ -50,6 +50,7 @@
                     $("#spCompany").show();
                     break;
                 case "COMMISSION":
+                case "COMMISSION_NEW":
                     $("#spUser, #spRecreate").show();
                     $("#spPayPeriod").show();
                     $("#spCompany").show();
@@ -406,6 +407,25 @@
                     var szParam = getFilterValues();
                     break;
                 case "COMMISSION":
+                case "COMMISSION_NEW":
+                    var szSrc = "commission_statement.aspx";
+                    if(szReport == "COMMISSION_NEW")
+                        szSrc = "commission_statement_new.aspx";
+
+                    var szParam = getFilterValues();
+
+                    if ($("#lstUser").val() == null) {
+                        if ($("#hfUserID").val() != "")
+                            szParam += "&szUserID=" + $("#hfUserID").val(); //Get the hidden value as this is a single user view
+                        else {
+                            $("#lstUser *").attr("selected", "selected");
+                            szParam += "&szUserID=" + $("#lstUser").val();
+                        }
+                    } else {
+                        szParam += "&szUserID=" + $("#lstUser").val();
+                    }
+                    szParam += "&RecalcTotals=" + $("#lstRecreateTotals").val();
+                    break;
                     var szSrc = "commission_statement.aspx";
                     var szParam = getFilterValues();
 
@@ -754,6 +774,7 @@
                 <option value="PAYROLLESTIMATE">Agents payroll estimate</option>
                 <option value="BUDGETREPORT">Budget report</option>
                 <option value="COMMISSION">Commission statement</option>
+                <option value="COMMISSION_NEW">Commission statement - NEW</option>
                 <option value="MENTORCOMMISSION">Commission - Mentoring</option>
                 <option value="FARMCOMMISSION">Commission - Service Area</option>
                 <option value="EXPENSESUMMARY">Expense summary</option>
