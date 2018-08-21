@@ -110,7 +110,9 @@ namespace Paymaker {
             addJuniorBonusHTML(sbHTML);
             addValue("[OTHERINCOME]", sbHTML.ToString());
             addValue("[TOTALOTHERINCOME]", Utility.formatReportMoney(UserTotals.OtherIncome));
-            addValue("[MONTHLYPAY]", Utility.formatReportMoney(UserTotals.TotalDistributionOfFunds));
+            
+            addValue("[MONTHLYPAY]", Utility.formatReportMoney(UserTotals.MonthlyIncomeWithoutRetainer));
+
             addValue("[MONTHLYRETAINER]", Utility.formatReportMoney(UserTotals.RetainerAmount));
            
             addSummaryValue("[CommissionSummary_OTHERINCOME]", Utility.formatReportMoney(UserTotals.OtherIncome));
@@ -120,14 +122,16 @@ namespace Paymaker {
             //Deductions
             addDeductionHTML(sbHTML);
             sbHTML.Clear();
-            double TotalAfterSuper = UserTotals.TotalDistributionOfFunds;
+            double TotalAfterSuper = UserTotals.MonthlyIncomeWithRetainer;
             if (TotalAfterSuper >= 0) {
-                double Super = UserTotals.Income * 0.095;
+                double Super = UserTotals.MonthlyIncomeWithRetainer * 0.095;
+                if (Super > 1710.95)
+                    Super = 1720.95;
                 TotalAfterSuper -= Super;
                 addValue("[MONTHLYSUPER]", Utility.formatReportMoney(Super));
                 addValue("[TOTALDISTRIBUTIONOFFUNDS]", Utility.formatReportMoney(TotalAfterSuper));
             } else {
-                addValue("[TOTALDISTRIBUTIONOFFUNDS]", "-1" + Utility.formatReportMoney(-1 * TotalAfterSuper));
+                addValue("[TOTALDISTRIBUTIONOFFUNDS]", Utility.formatReportMoney(-1 * TotalAfterSuper));
                 addValue("[MONTHLYSUPER]", Utility.formatReportMoney(0));
 
             }
@@ -237,6 +241,9 @@ namespace Paymaker {
         private void addDeductionHTML(StringBuilder sbHTML) {
             double dTotal = 0.0;
             foreach (DataRow dr in UserTotals.dsDeductions.Tables[0].Rows) {
+                if (dr["NAME"].ToString().Contains("Retainer"))
+                    continue;
+
                 string szCategory = dr["category"].ToString();
                 sbHTML.AppendFormat(@"
                     <tr>
@@ -280,10 +287,12 @@ namespace Paymaker {
                         Curr.Address = Convert.ToString(dr["Address"]);
                         Curr.PayableDate = DB.readDate(dr["ENTITLEMENTDATE"]);
                         Curr.GrossComm = DB.readDouble(dr["GROSSCOMMISSION"]);
+                        Curr.OTTExp = DB.readDouble(dr["OTTEXP"]);
+                       
                         lSaleData.Add(Curr);
                     }
                     CommissionType CommTypeID = (CommissionType)DB.readInt(dr["COMMISSIONTYPEID"]);
-
+                    Curr.TotalPercent += DB.readInt(dr["TOTALCOMMPERCENTAGE"]);
                     if (CommTypeID == CommissionType.Lead) {
                         Curr.Lead = DB.readDouble(dr["ACTUALPAYMENT"]);
                     } else if (CommTypeID == CommissionType.List) {
@@ -295,6 +304,8 @@ namespace Paymaker {
                     } else if (CommTypeID == CommissionType.Sell) {
                         Curr.Seller = DB.readDouble(dr["ACTUALPAYMENT"]);
                     } else if (CommTypeID == CommissionType.ServiceArea) {
+                        Curr.ServiceArea = DB.readDouble(dr["ACTUALPAYMENT"]);
+                    } else if (CommTypeID == CommissionType.Fletchers) {
                         Curr.ServiceArea = DB.readDouble(dr["ACTUALPAYMENT"]);
                     }
                 }
@@ -766,13 +777,7 @@ namespace Paymaker {
             public double Manager { get; set; }
             public double Seller { get; set; }
             public double Mentoring { get; set; }
-            public int TotalPercent {
-                get {
-                    if (GrossComm == 0)
-                        return 0;
-                    return Convert.ToInt32(Math.Ceiling((TotalDollar / GrossComm) * 100)); }
-
-            }
+            public int TotalPercent {get; set;}
                 
             public double TotalDollar {
                 get {
