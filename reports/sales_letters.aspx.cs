@@ -79,7 +79,7 @@ namespace Paymaker {
             szHTML += getExpense(UserID, "PA 1 Allowance", 40, ref dTotal);
             szHTML += getExpense(UserID, "PA 2 Allowance", 68, ref dTotal);
             szHTML += getExpense(UserID, "PA 3 Allowance", 69, ref dTotal);
-            szHTML += getExpense(UserID, "PA 4 Allowance", 79, ref dTotal);
+            szHTML += getExpense(UserID, "PA 4 Allowance", 70, ref dTotal);
             szHTML += getExpense(UserID, "PA 5 Allowance", 72, ref dTotal);
             szHTML += getExpense(UserID, "Rental Referral Commissions", 42, ref dTotal);
             szHTML += getExpense(UserID, "Letterbox Drop Payments", 56, ref dTotal);
@@ -105,7 +105,7 @@ namespace Paymaker {
             szHTML += getExpense(UserID, "PA 1 Allowance", 40, ref dTotal);
             szHTML += getExpense(UserID, "PA 2 Allowance", 68, ref dTotal);
             szHTML += getExpense(UserID, "PA 3 Allowance", 69, ref dTotal);
-            szHTML += getExpense(UserID, "PA 4 Allowance", 79, ref dTotal);
+            szHTML += getExpense(UserID, "PA 4 Allowance", 70, ref dTotal);
             szHTML += getExpense(UserID, "PA 5 Allowance", 72, ref dTotal);
             szHTML += getExpense(UserID, "Mobile Phone Allowance", 15, ref dTotal);
             szHTML += getExpense(UserID, "Service Area Allowance", 56, ref dTotal);

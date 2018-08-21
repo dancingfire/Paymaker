@@ -218,6 +218,22 @@ public class UserPayPeriod {
         get { return DeductionsAmount; }
     }
 
+    /// <summary>
+    /// The current income for the month - includes the retainer as income
+    /// </summary>
+    public double MonthlyIncomeWithRetainer {
+        get { return this.Income + this.OtherIncome - this.DeductionsAmount + this.RetainerAmount + this.RetainerAmount; //Include twice cause its removed in the deductions 
+        }
+    }
+
+    /// <summary>
+    /// The current income for the month - excludes the retainer as income
+    /// </summary>
+    public double MonthlyIncomeWithoutRetainer {
+        get {
+            return this.Income + this.OtherIncome - this.DeductionsAmount + this.RetainerAmount; 
+        }
+    }
     public int UserID { get; set; }
     public int PayPeriodID { get; set; }
     public int DBID { get; set; }
@@ -314,17 +330,17 @@ public class UserPayPeriod {
             OtherIncome += DB.readDouble(dr["AMOUNT"], 0);
         }
 
-        RetainerAmount = 0;
         DeductionsAmount = 0;
         //Add the deductions
         foreach (DataRow dr in dsDeductions.Tables[0].Rows) {
             DeductionsAmount += DB.readDouble(dr["AMOUNT"], 0);
         }
 
-        if (G.Settings.ClientID == ClientID.HeadOffice)
+        if (G.Settings.ClientID == ClientID.HeadOffice) {
             TotalDistributionOfFunds = CommissionIncome + OtherIncome - DeductionsAmount;
-        else
+        } else {
             TotalDistributionOfFunds = CommissionIncome + OtherIncome + EOFYBonus - DeductionsAmount;
+        }
 
         foreach (DataRow dr in dsFutureData.Tables[0].Rows) {
             Pending += DB.readDouble(dr["ACTUALPAYMENT"], 0);

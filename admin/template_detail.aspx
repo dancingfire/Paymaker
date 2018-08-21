@@ -48,7 +48,10 @@
         $(document).ready(function () {
 
             CKEDITOR.replace("txtContent");
-
+            $('form').submit(function (event) {
+                $('#txtSubmit').val(btoa(CKEDITOR.instances['txtContent'].getData()));
+                CKEDITOR.instances['txtContent'].setData('');
+            });
         });
     </script>
     <style type="text/css">
@@ -74,7 +77,7 @@
 </head>
 <body id="oBody" runat="server" style="margin-top: 10px">
     <form id="frmMain" runat="server">
-
+        <input type="hidden" name="txtSubmit" id="txtSubmit" />
         <div id="Page" style='width: 850px'>
             <asp:Panel ID="pMaster" runat="server" Height="50px">
                 <asp:Label ID="lblTemplate" runat="server" Text="Templates" CssClass="Label LabelPos"></asp:Label>
