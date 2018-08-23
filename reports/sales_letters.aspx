@@ -46,7 +46,16 @@
              .PrintTableHeader {
                 background-color: #E3EBFD;
             }
-            }
+
+             .RightMargin {
+                text-align: right;
+                padding-right: 10px;
+
+             }
+             table tr td {
+                 padding: 1px;
+             }
+            
         }
     </style>
 </head>
