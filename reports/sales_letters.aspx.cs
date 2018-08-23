@@ -64,15 +64,15 @@ namespace Paymaker {
             String szHTML = @"
                 <table style='width: 60%; border: solid 1px silver;  margin:1em auto;'>
                     <tr style='background: #E3EBFD'>
-                        <td>Description</td>
-                        <td>Amount Received</td>
+                        <td style='width: 70%'><strong>Description</strong></td>
+                        <td><strong>Amount Received</strong></td>
                     </tr>";
             szHTML += getImportedValue(UserID, "Salary/Commissions Paid (Net)", ref dTotal);
             szHTML += getExpense(UserID, "EOFY Bonus Comm", 95, ref dTotal);
             szHTML += getExpense(UserID, "Team Mentoring Bonus", 97, ref dTotal);
             szHTML += getImportedValue(UserID, "Directors Allowance", ref dTotal);
             szHTML += getImportedValue(UserID, "Directors Car Allowance", ref dTotal);
-            szHTML += getExpense(UserID, "Travel Award + FBT Costs", 67, ref dTotal);
+            szHTML += getImportedValue(UserID, "Travel Award + FBT Costs", ref dTotal);
             szHTML += getExpense(UserID, "Auctioneer Fees", 45, ref dTotal);
             szHTML += getExpense(UserID, "Conveyancing Commissions", 44, ref dTotal);
             szHTML += getExpense(UserID, "Finance Commissions", 43, ref dTotal);
@@ -84,9 +84,11 @@ namespace Paymaker {
             szHTML += getExpense(UserID, "Rental Referral Commissions", 42, ref dTotal);
             szHTML += getExpense(UserID, "Letterbox Drop Payments", 56, ref dTotal);
             szHTML += getExpense(UserID, "Mobile Phone Payments", 15, ref dTotal);
-            szHTML += getExpense(UserID, "Service Area Assistance Payments", 56, ref dTotal);
+            szHTML += getExpense(UserID, "Service Area Assistance Payments", 58, ref dTotal);
             szHTML += getExpense(UserID, "Training & Seminar Payments", 57, ref dTotal);
-            szHTML += getExpense(UserID, "Salary on-costs 7% (Payroll Tax & Workcover)", 56, ref dTotal);
+            szHTML += String.Format("<tr style='border: solid 1px silver'><td>Salary on-costs 7% (Payroll Tax & Workcover)</td><td class='RightMargin' >{0}</td></tr>", Utility.formatReportMoney(dTotal * 0.07));
+            dTotal += dTotal * 0.07;
+            szHTML += String.Format("<tr style='border: solid 1px silver'><td></td><td class='RightMargin'><strong>{0}</strong></td></tr>", Utility.formatReportMoney(dTotal));
             return szHTML + "</table>";
         }
 
@@ -96,10 +98,11 @@ namespace Paymaker {
             String szHTML = @"
                 <table style='width: 60%; border: solid 1px silver;  margin:1em auto;'>
                     <tr class='PrintTableHeader'>
-                        <td class='PrintTableHeader'>Description</td>
-                        <td class='PrintTableHeader'>Maximum Allowance</td>
+                        <td class='PrintTableHeader' style='width: 70%'><strong>Description</strong></td>
+                        <td class='PrintTableHeader'><strong>Maximum Allowance</strong></td>
                     </tr>";
-            szHTML += getImportedValue(UserID, "Traval Bonus", ref dTotal);
+
+            szHTML += getImportedValue(UserID, "Travel Bonus", ref dTotal);
             szHTML += getImportedValue(UserID, "Directors Allowance", ref dTotal);
             szHTML += getImportedValue(UserID, "Directors Car Allowance", ref dTotal);
             szHTML += getExpense(UserID, "PA 1 Allowance", 40, ref dTotal);
@@ -107,23 +110,23 @@ namespace Paymaker {
             szHTML += getExpense(UserID, "PA 3 Allowance", 69, ref dTotal);
             szHTML += getExpense(UserID, "PA 4 Allowance", 70, ref dTotal);
             szHTML += getExpense(UserID, "PA 5 Allowance", 72, ref dTotal);
-            szHTML += getExpense(UserID, "Mobile Phone Allowance", 15, ref dTotal);
-            szHTML += getExpense(UserID, "Service Area Allowance", 56, ref dTotal);
-            szHTML += getExpense(UserID, "Training & Seminar Allowance", 57, ref dTotal);
             szHTML += getExpense(UserID, "Letterbox Drop Allowance", 56, ref dTotal);
-
+            szHTML += getExpense(UserID, "Mobile Phone Allowance", 15, ref dTotal);
+            szHTML += getExpense(UserID, "Service Area Allowance", 58, ref dTotal);
+            szHTML += getExpense(UserID, "Training & Seminar Allowance", 57, ref dTotal);
             return szHTML + "</table>";
         }
 
         private string getImportedValue(int UserID, string Account, ref double dTotal) {
             dvUserValues.RowFilter = String.Format(@"USERID={0} AND CATEGORY = '{1}' ", UserID, Account);
-
             if (dvUserValues.Count > 0) {
                
                 double Amount = DB.readDouble(dvUserValues[0]["AMOUNT"]);
                 if (Amount > 0) {
+                    dTotal += Amount;
+
                     return String.Format(@"
-                    <tr  style='border: solid 1px silver'><td>{0}</td><td>{1}</td></tr>", Account, Utility.formatReportMoney(Amount));
+                    <tr  style='border: solid 1px silver'><td>{0}</td><td class='RightMargin'>{1}</td></tr>", Account, Utility.formatReportMoney(Amount));
                 }
             }
             return "";
@@ -131,13 +134,17 @@ namespace Paymaker {
 
         private string getExpense(int UserID, string Account, int AccountID, ref double dTotal) {
             dv.RowFilter = "ID=" + UserID + " AND ACCOUNTID = " + AccountID;
-
+            double Amount = 0.0;
             if (dv.Count > 0) {
-                double Amount = DB.readDouble(dv[0]["AMOUNT"]);
+                if(DB.readInt(dv[0]["LISTTYPEID"]) == (int)ListType.Expense) 
+                    Amount = DB.readDouble(dv[0]["AMOUNT"]);
+                else
+                    Amount = DB.readDouble(dv[0]["INCOMEAMOUNT"]);
+                
                 if (Amount > 0) {
                     dTotal += Amount;
                     return String.Format(@"
-                    <tr style='border: solid 1px silver'><td>{0}</td><td>{1}</td></tr>", Account, Utility.formatReportMoney(Amount));
+                    <tr style='border: solid 1px silver'><td>{0}</td><td class='RightMargin'>{1}</td></tr>", Account, Utility.formatReportMoney(Amount));
                 }
             }
             return "";
@@ -161,7 +168,8 @@ namespace Paymaker {
                 FROM DB_USER U WHERE 1=1 {0}
 
                 -- 1) Paid
-                SELECT U.ID, SUM(T.AMOUNT) AS AMOUNT, T.ACCOUNTID, L_ACCOUNT.NAME, U.LASTNAME
+                SELECT U.ID, SUM(T.AMOUNT) AS INCOMEAMOUNT, SUM(T.FLETCHERCONTRIBTOTAL) AS AMOUNT, 
+                    T.ACCOUNTID, L_ACCOUNT.NAME, U.LASTNAME, MAX(L_ACCOUNT.LISTTYPEID) AS LISTTYPEID
                 FROM USERTX T JOIN DB_USER U ON T.USERID = U.ID 
                 JOIN LIST L_ACCOUNT ON L_ACCOUNT.ID = T.ACCOUNTID
                 WHERE T.TXDATE BETWEEN 'JUL 1, {2} 00:00' AND 'JUN 30, {3} 2:59' {0}
@@ -169,7 +177,7 @@ namespace Paymaker {
 
                 -- 2) Budget Query
                 SELECT U.ID, LASTNAME + ', ' + FIRSTNAME AS AGENT, UA.ACCOUNTID, SUM(UA.AMOUNT) AS AMOUNT,
-                    L_ACCOUNT.Name
+                    L_ACCOUNT.Name, 2 AS LISTTYPEID
                 FROM DB_USER U
                 JOIN USERACCOUNT UA ON UA.USERID = U.ID
                 JOIN LIST L_OFFICE ON L_OFFICE.ID = U.OFFICEID
