@@ -1010,7 +1010,9 @@ public class CsvWriter {
                     stream.Write(Environment.NewLine);
             }
         }
+        int RowCount = 0;
         foreach (DataRow row in table.Rows) {
+            RowCount++;
             for (int i = 0; i < table.Columns.Count; i++) {
                 WriteItem(stream, row[i], quoteall);
                 if (i < table.Columns.Count - 1)
@@ -1018,6 +1020,8 @@ public class CsvWriter {
                 else
                     stream.Write(Environment.NewLine);
             }
+            if(RowCount % 2 == 0)
+                stream.Write(Environment.NewLine); //MYOB needs transactions split with a newline
         }
     }
 
