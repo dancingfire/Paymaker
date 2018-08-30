@@ -222,16 +222,17 @@ public class UserPayPeriod {
     /// The current income for the month - includes the retainer as income
     /// </summary>
     public double MonthlyIncomeWithRetainer {
-        get { return this.Income + this.OtherIncome - this.DeductionsAmount + this.RetainerAmount + this.RetainerAmount; //Include twice cause its removed in the deductions 
+        get {
+            return this.Income + this.OtherIncome - this.DeductionsAmount + (2*this.RetainerAmount); //Need to add the retainer back in
         }
     }
 
     /// <summary>
-    /// The current income for the month - excludes the retainer as income
+    /// The current income for the month - the retainer counts as a deduction in this calculation
     /// </summary>
     public double MonthlyIncomeWithoutRetainer {
         get {
-            return this.Income + this.OtherIncome - this.DeductionsAmount + this.RetainerAmount; 
+            return this.Income + this.OtherIncome - this.DeductionsAmount ; 
         }
     }
     public int UserID { get; set; }
@@ -242,6 +243,14 @@ public class UserPayPeriod {
     public DataSet dsOtherIncome = null;
     public DataSet dsDeductions = null;
 
+    /// <summary>
+    /// We use the retainer only when the agents' pay will be less than their retainer amount
+    /// </summary>
+    public bool UseRetainer {
+        get {
+            return this.RetainerAmount > 0 && this.RetainerAmount > this.MonthlyIncomeWithoutRetainer;
+        }
+    }
     /// <summary>
     /// This will be true if the commission statement has written values to the DB
     /// </summary>
@@ -383,7 +392,7 @@ public class UserPayPeriod {
 
     private void getRetainerAmount() {
         foreach (DataRow dr in dsDeductions.Tables[0].Rows) {
-            if (DB.readString(dr["NAME"]).Contains("Retainer"))
+            if (DB.readString(dr["NAME"]).Contains("Retainer") )
                 RetainerAmount = DB.readDouble(dr["AMOUNT"], 0);
         }
     }

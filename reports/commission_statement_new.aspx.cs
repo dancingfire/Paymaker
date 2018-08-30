@@ -97,7 +97,7 @@ namespace Paymaker {
             StringBuilder sbHTML = new StringBuilder();
             DataView oDataView = UserTotals.dsData.Tables[0].DefaultView;
             UserTotals.calculateTotals();
-          
+
             addCommissionHTML(sbHTML, oDataView);
             addValue("[TOTALCOMMISSION]", Utility.formatReportMoney(UserTotals.Income));
             addValue("[TRDATA]", sbHTML.ToString());
@@ -108,23 +108,25 @@ namespace Paymaker {
             //Only get the HTML
             addOtherIncomeHTML(sbHTML);
             addJuniorBonusHTML(sbHTML);
-            addValue("[OTHERINCOME]", sbHTML.ToString());
-            addValue("[TOTALOTHERINCOME]", Utility.formatReportMoney(UserTotals.OtherIncome));
-            
-            addValue("[MONTHLYPAY]", Utility.formatReportMoney(UserTotals.MonthlyIncomeWithoutRetainer));
-
-            addValue("[MONTHLYRETAINER]", Utility.formatReportMoney(UserTotals.RetainerAmount));
-           
-            addSummaryValue("[CommissionSummary_OTHERINCOME]", Utility.formatReportMoney(UserTotals.OtherIncome));
-            addSummaryValue("[CommissionSummary_DEDUCTIONS]", Utility.formatReportMoney(UserTotals.TotalDeductionAmount));
-            sbHTML.Clear();
 
             //Deductions
             addDeductionHTML(sbHTML);
             sbHTML.Clear();
-            double TotalAfterSuper = UserTotals.MonthlyIncomeWithRetainer;
+            addValue("[OTHERINCOME]", sbHTML.ToString());
+            addValue("[TOTALOTHERINCOME]", Utility.formatReportMoney(UserTotals.OtherIncome));
+
+            addValue("[MONTHLYPAY]", Utility.formatReportMoney(UserTotals.MonthlyIncomeWithoutRetainer));
+            addPayOrRetainer();
+            addValue("[MONTHLYRETAINER]", Utility.formatReportMoney(UserTotals.RetainerAmount));
+
+            addSummaryValue("[CommissionSummary_OTHERINCOME]", Utility.formatReportMoney(UserTotals.OtherIncome));
+            addSummaryValue("[CommissionSummary_DEDUCTIONS]", Utility.formatReportMoney(UserTotals.TotalDeductionAmount));
+            sbHTML.Clear();
+double TotalAfterSuper = UserTotals.MonthlyIncomeWithRetainer;
+            if (UserTotals.UseRetainer)
+                TotalAfterSuper = UserTotals.RetainerAmount;
             if (TotalAfterSuper >= 0) {
-                double Super = UserTotals.MonthlyIncomeWithRetainer * 0.095;
+                double Super = TotalAfterSuper * 0.095;
                 if (Super > 1710.95)
                     Super = 1720.95;
                 TotalAfterSuper -= Super;
@@ -154,7 +156,25 @@ namespace Paymaker {
 
             addJuniorSalaryBreakdown();
             addSeniorBalanceBreakDown();
-            addValue("[SUMMARYTABLE]", szCommissionSummaryHTML );
+            addValue("[SUMMARYTABLE]", szCommissionSummaryHTML);
+        }
+
+        void addPayOrRetainer() {
+           
+            string szRow = String.Format(@"
+                <tr style='height: 30px'><td colspan='12'>&nbsp;'</td></tr>
+                <tr style='font-size: 12px'>
+                    <td colspan='8'>&nbsp;</td>
+                    <td colspan='3' style='border-top: 2px solid black; font-weight: bold; text-align: right; '>
+                        {0}
+                    </td>
+                    <td  style='border-top: 2px solid black; font-weight: bold; text-align: right; '>
+                        {1}
+                    </td>
+                </tr>", UserTotals.UseRetainer?"Retainer Amount": "This Months Pay",
+                        UserTotals.UseRetainer ? Utility.formatReportMoney(UserTotals.RetainerAmount): Utility.formatReportMoney(UserTotals.MonthlyIncomeWithoutRetainer));
+            addValue("[MONTHLYPAYORRETAINER]", szRow);
+
         }
 
         private void addSeniorBalanceBreakDown() {
@@ -241,9 +261,6 @@ namespace Paymaker {
         private void addDeductionHTML(StringBuilder sbHTML) {
             double dTotal = 0.0;
             foreach (DataRow dr in UserTotals.dsDeductions.Tables[0].Rows) {
-                if (dr["NAME"].ToString().Contains("Retainer"))
-                    continue;
-
                 string szCategory = dr["category"].ToString();
                 sbHTML.AppendFormat(@"
                     <tr>
@@ -251,13 +268,14 @@ namespace Paymaker {
                         <td colspan='4'>{0}</td>
                         <td class='AlignLeft' colspan='5'>{3}{1}</td>
                         <td class='AlignRight'>-{2}</td>
-                    </tr>", dr["NAME"].ToString(), dr["Comment"].ToString(), DB.readMoneyString(dr["AMOUNT"]),
+                    </tr>", dr["NAME"].ToString(), dr["Comment"].ToString(), DB.readMoneyString(dr["AMOUNT"], true),
                     string.IsNullOrWhiteSpace(szCategory) ? "" : string.Format("{0} - ", szCategory));
                 dTotal += Convert.ToDouble(dr["AMOUNT"]);
             }
            
             addValue("[TRDEDUCTIONS]", sbHTML.ToString());
             addValue("[TOTALDEDUCTIONS]", dTotal > 0 ? "-" + Utility.formatReportMoney(dTotal) : "");
+            UserTotals.DeductionsAmount = dTotal;
         }
 
         private void addCommissionHTML(StringBuilder sbHTML,  DataView oDataView) {
@@ -604,25 +622,7 @@ namespace Paymaker {
                                 [MONTHLYPAY]
                             </td>
                         </tr>
-                        <tr style='height: 30px'><td colspan='12'>&nbsp;'</td></tr>
-                        <tr style='font-size: 12px'>
-                            <td colspan='8'>&nbsp;</td>
-                            <td colspan='3' style='border-top: 2px solid black; font-weight: bold; text-align: right; '>
-                                This Months Pay
-                            </td>
-                            <td  style='border-top: 2px solid black; font-weight: bold; text-align: right; '>
-                                [MONTHLYPAY]
-                            </td>
-                        </tr>
-                        <tr style='font-size: 12px'>
-                            <td colspan='8'>&nbsp;</td>
-                            <td colspan='3' style='font-weight: bold; text-align: right; '>
-                                Monthly retainer
-                            </td>
-                            <td  style='font-weight: bold; text-align: right; '>
-                                [MONTHLYRETAINER]
-                            </td>
-                        </tr>
+                        [MONTHLYPAYORRETAINER]
                         <tr style='font-size: 12px'>
                             <td colspan='8'>&nbsp;</td>
                             <td colspan='3' style='font-weight: bold; text-align: right; '>
