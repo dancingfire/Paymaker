@@ -108,11 +108,12 @@ namespace Paymaker {
             //Only get the HTML
             addOtherIncomeHTML(sbHTML);
             addJuniorBonusHTML(sbHTML);
+            addValue("[OTHERINCOME]", sbHTML.ToString());
+            sbHTML.Clear();
 
             //Deductions
             addDeductionHTML(sbHTML);
             sbHTML.Clear();
-            addValue("[OTHERINCOME]", sbHTML.ToString());
             addValue("[TOTALOTHERINCOME]", Utility.formatReportMoney(UserTotals.OtherIncome));
 
             addValue("[MONTHLYPAY]", Utility.formatReportMoney(UserTotals.MonthlyIncomeWithoutRetainer));
