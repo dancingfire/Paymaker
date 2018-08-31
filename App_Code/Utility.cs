@@ -1020,8 +1020,8 @@ public class CsvWriter {
                 else
                     stream.Write(Environment.NewLine);
             }
-            if(RowCount % 2 == 0)
-                stream.Write(Environment.NewLine); //MYOB needs transactions split with a newline
+            //if(RowCount % 2 == 0)
+            //    stream.Write(Environment.NewLine); //MYOB needs transactions split with a newline
         }
     }
 
