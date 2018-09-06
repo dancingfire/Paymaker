@@ -779,10 +779,12 @@ double TotalAfterSuper = UserTotals.MonthlyIncomeWithRetainer;
             public double Seller { get; set; }
             public double Mentoring { get; set; }
             public int TotalPercent {get; set;}
-                
+                /// <summary>
+                /// Sum of everything except the OTT expenses
+                /// </summary>
             public double TotalDollar {
                 get {
-                    return OTTExp + ServiceArea + Lead + Lister + Manager + Seller + Mentoring;
+                    return ServiceArea + Lead + Lister + Manager + Seller + Mentoring;
                 }
 
             }
