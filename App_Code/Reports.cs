@@ -1075,7 +1075,7 @@ public class KPI_Office_agents_NEW : Report {
         if (!String.IsNullOrWhiteSpace(szCompanyIDList)) {
             szUserFilter += String.Format(" AND L_OFFICE.COMPANYID IN ({0})", szCompanyIDList);
         }
-
+        
         if (!String.IsNullOrWhiteSpace(oFilter.UserIDList)) {
             szUserFilter += String.Format(" AND USR.ID IN ({0})", oFilter.UserIDList);
         }
@@ -1378,53 +1378,7 @@ public class KPI_Office_agents_NEW : Report {
 	                            CP.DESCRIPTION LIKE 'MONASH LEADER%')
 				WHERE ((WITHDRAWNON IS NULL AND SOLDDATE {6}) OR WITHDRAWNON {6}) {1} AND USR.SHOWONKPIREPORT = 1;
 
-                -- 8. Listing Sources (Same temporary view is used for query -- 4)
-				WITH APPRAISALS AS (
-				  SELECT
-						SL.ID AS LISTINGID,
-						ISNULL(MIN(CA_APPR.STARTDATE),SL.LISTEDDATE) AS DATE,
-						MAX(T.ACTIONON) AS FOLLOWUPDATE,
-						CASE
-							WHEN ISNULL(MIN(CA_APPR.STARTDATE), LISTEDDATE) {4} THEN 'Current'
-							WHEN ISNULL(MIN(CA_APPR.STARTDATE), LISTEDDATE) {6} THEN 'Previous'
-							ELSE NULL END AS PERIOD,
-						MIN(USR.ID) AS AGENTID,
-						MIN(LS.NAME) AS LISTING_SOURCE,
-						MIN(SL.PROPERTYID) AS PROPERTYID
-					FROM Fletchers_BoxDiceAPI.dbo.SALESLISTING SL
-						LEFT JOIN Fletchers_BoxDiceAPI.dbo.LISTINGSOURCE LS ON LS.ID = SL.LISTINGSOURCEID
-						JOIN Fletchers_BoxDiceAPI.dbo.PROPERTY P ON P.ID = SL.PROPERTYID
-						LEFT JOIN Fletchers_BoxDiceAPI.dbo.CONTACTACTIVITY CA_APPR ON CA_APPR.SALESLISTINGID = SL.ID AND CA_APPR.CONTACTACTIVITYTYPEID IN (10,11,17) --APPRAISALS
-						JOIN Fletchers_BoxDiceAPI.dbo.DB_USER U ON U.ID = SL.CONSULTANT1ID
-						JOIN DB_USER USR ON USR.INITIALSCODE = U.INITIALS COLLATE Latin1_General_CI_AS AND USR.ISACTIVE = 1  AND USR.ISDELETED = 0
-						LEFT JOIN Fletchers_BoxDiceAPI.dbo.TASK T ON T.PROPERTYID = SL.PROPERTYID
-					WHERE (
-						SL.ID IN (
-							-- NOTE: There is a potential for multiple Appraisal dates in B&D - the earliest is the required date
-							-- Find all Sales Listings where the first appraisal date is in the given range
-							SELECT SL1.ID
-							FROM FLETCHERS_BOXDICEAPI.DBO.SALESLISTING SL1
-								JOIN FLETCHERS_BOXDICEAPI.DBO.CONTACTACTIVITY CA ON CA.SALESLISTINGID = SL1.ID AND CA.CONTACTACTIVITYTYPEID IN (10,11,17) --APPRAISALS
-							GROUP BY SL1.ID
-							HAVING MIN(CA.STARTDATE) {6}
-						) OR
-						LISTEDDATE {6}
-					)
-					GROUP BY SL.ID, SL.LISTEDDATE)
-
-                SELECT
-					USR.ID AS AGENTID,
-                    ISNULL(USR.FIRSTNAME,'') + ', ' +  ISNULL(USR.LASTNAME,'') as AGENTNAME,
-					USR.OFFICEID, A.PERIOD,
-                    CASE WHEN ROW_NUMBER() OVER(PARTITION BY USR.ID ORDER BY COUNT(*) DESC) > 5
-                       THEN 'Other' ELSE LISTING_SOURCE END AS SOURCE_NAME,
-                    COUNT(*) AS SOURCE_COUNT
-				 FROM APPRAISALS A
-					JOIN DB_USER USR ON A.AGENTID = USR.ID
-					JOIN LIST L_OFFICE ON L_OFFICE.ID = USR.OFFICEID
-				WHERE PERIOD = 'Current' {1}
-				GROUP BY PERIOD, USR.ID, USR.OFFICEID, USR.FIRSTNAME, USR.LASTNAME, LISTING_SOURCE
-				ORDER BY USR.ID, COUNT(*) DESC
+                
                 ", szFilter, szUserFilter, szFilter.Replace("S.SALEDATE", "S.LISTEDDATE"), szFilter.Replace("S.SALEDATE", "S.AUCTIONDATE"),
                 szCurrentPeriodFilter, szYTDFilter, szPreviousAndCurrentPeriodFilter);
         DataSet ds = DB.runDataSet(szSQL);
@@ -1437,16 +1391,16 @@ public class KPI_Office_agents_NEW : Report {
         integrateBnDData(ref ds, ds.Tables[4]);
         integrateBnDData(ref ds, ds.Tables[5]);
         integrateBnDData(ref ds, ds.Tables[6]);
-        integrateBnDData(ref ds, ds.Tables[8]);
 
         // Process 7 then integrate ***
         processGlossyAmounts(ref ds, 7);
 
         integrateBnDData(ref ds, ds.Tables[7]);
-
+      
         // Get list of all users found in report
         var lUsers = ds.Tables[0].AsEnumerable().Select(n => DB.readInt(n["AGENTID"])).Distinct();
         string szUserIDs = string.Join(",", lUsers);
+       
         szSQL = string.Format(@"
 				-- 0. Financial Year values
                 SELECT
@@ -1507,16 +1461,67 @@ public class KPI_Office_agents_NEW : Report {
                          WHEN USR.PROFILEVIDEODATE < '{4}' THEN 'Yes'
                          ELSE 'No' END AS HASPROFILEVIDEO
 				FROM DB_USER USR
-				WHERE USR.ID IN ({1})", szYTDFilter, szUserIDs, oFilter.getDBSafeEndDate(), szCurrentPeriodFilter, szPreviousPeriodEnd);
+				WHERE USR.ID IN ({1});
+
+            -- 3 Listing Sources (Same temporary view is used for query -- 4)
+				WITH APPRAISALS AS (
+				  SELECT
+						SL.ID AS LISTINGID,
+						ISNULL(MIN(CA_APPR.STARTDATE),SL.LISTEDDATE) AS DATE,
+						MAX(T.ACTIONON) AS FOLLOWUPDATE,
+						CASE
+							WHEN ISNULL(MIN(CA_APPR.STARTDATE), LISTEDDATE) {3} THEN 'Current'
+							WHEN ISNULL(MIN(CA_APPR.STARTDATE), LISTEDDATE) {5} THEN 'Previous'
+							ELSE NULL END AS PERIOD,
+						MIN(USR.ID) AS AGENTID,
+						MIN(LS.NAME) AS LISTING_SOURCE,
+						MIN(SL.PROPERTYID) AS PROPERTYID
+					FROM Fletchers_BoxDiceAPI.dbo.SALESLISTING SL
+						LEFT JOIN Fletchers_BoxDiceAPI.dbo.LISTINGSOURCE LS ON LS.ID = SL.LISTINGSOURCEID
+						JOIN Fletchers_BoxDiceAPI.dbo.PROPERTY P ON P.ID = SL.PROPERTYID
+						LEFT JOIN Fletchers_BoxDiceAPI.dbo.CONTACTACTIVITY CA_APPR ON CA_APPR.SALESLISTINGID = SL.ID AND CA_APPR.CONTACTACTIVITYTYPEID IN (10,11,17) --APPRAISALS
+						JOIN Fletchers_BoxDiceAPI.dbo.DB_USER U ON U.ID = SL.CONSULTANT1ID
+						JOIN DB_USER USR ON USR.INITIALSCODE = U.INITIALS COLLATE Latin1_General_CI_AS AND USR.ISACTIVE = 1  AND USR.ISDELETED = 0
+						LEFT JOIN Fletchers_BoxDiceAPI.dbo.TASK T ON T.PROPERTYID = SL.PROPERTYID
+					WHERE (
+						SL.ID IN (
+							-- NOTE: There is a potential for multiple Appraisal dates in B&D - the earliest is the required date
+							-- Find all Sales Listings where the first appraisal date is in the given range
+							SELECT SL1.ID
+							FROM FLETCHERS_BOXDICEAPI.DBO.SALESLISTING SL1
+								JOIN FLETCHERS_BOXDICEAPI.DBO.CONTACTACTIVITY CA ON CA.SALESLISTINGID = SL1.ID AND CA.CONTACTACTIVITYTYPEID IN (10,11,17) --APPRAISALS
+							GROUP BY SL1.ID
+							HAVING MIN(CA.STARTDATE) {5}
+						) OR
+						LISTEDDATE {5}
+					)
+					GROUP BY SL.ID, SL.LISTEDDATE)
+
+                SELECT
+					USR.ID AS AGENTID,
+                    ISNULL(USR.FIRSTNAME,'') + ', ' +  ISNULL(USR.LASTNAME,'') as AGENTNAME,
+					USR.OFFICEID, A.PERIOD,
+                    CASE WHEN ROW_NUMBER() OVER(PARTITION BY USR.ID ORDER BY COUNT(*) DESC) > 5
+                       THEN 'Other' ELSE ISNULL(LISTING_SOURCE, 'Unknown') END AS SOURCE_NAME,
+                    COUNT(*) AS SOURCE_COUNT
+				  FROM DB_USER USR LEFT JOIN APPRAISALS A ON A.AGENTID = USR.ID AND PERIOD = 'Current'
+					JOIN LIST L_OFFICE ON L_OFFICE.ID = USR.OFFICEID
+				WHERE USR.ID IN ({1})
+				GROUP BY PERIOD, USR.ID, USR.OFFICEID, USR.FIRSTNAME, USR.LASTNAME, LISTING_SOURCE
+				ORDER BY USR.ID, COUNT(*) DESC
+                ", szYTDFilter, szUserIDs, oFilter.getDBSafeEndDate(), szCurrentPeriodFilter, szPreviousPeriodEnd, 
+                szPreviousAndCurrentPeriodFilter);
 
         DataSet ds1 = DB.runDataSet(szSQL);
         integrateBnDData(ref ds, ds1.Tables[0]);
         integrateBnDData(ref ds, ds1.Tables[1]);
         integrateBnDData(ref ds, ds1.Tables[2]);
+        integrateBnDData(ref ds, ds1.Tables[3]);
 
         // This is for debugging purposes - all data used in the report can be viewed in it's final state in this saved file.
         Utility.dataTableToCSVFile(ds.Tables[0], string.Format(@"C:\Temp\final.csv"));
-
+       
+       
         return ds;
     }
 
@@ -1610,7 +1615,7 @@ public class KPI_Office_agents_NEW : Report {
         }
     }
 
-    private void integrateBnDData(ref DataSet ds, DataTable dtBnDData) {
+    private void integrateBnDData(ref DataSet ds, DataTable dtBnDData, string Type = "") {
         string szCampaignFilterSQL = String.Format(@" WHERE ADDRESS1 NOT LIKE '%PROMO,%' AND C.STARTDATE {0}", szPreviousAndCurrentPeriodFilter);
         string szCompanyIDList = Valid.getText("szCompanyID", "", VT.TextNormal);
 
