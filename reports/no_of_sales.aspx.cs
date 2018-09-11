@@ -169,7 +169,7 @@ namespace Paymaker {
             oLegend.BorderColor = Color.FromArgb(26, 59, 105);
             oLegend.Alignment = StringAlignment.Center;
             oLegend.IsEquallySpacedItems = true;
-            oLegend.AutoFitMinFontSize = 7;
+            oLegend.AutoFitMinFontSize = 6;
             oLegend.IsTextAutoFit = true;
             oLegend.Position.Auto = true;
             if (ChartType.SALESDOLLARS == oChartType)
@@ -201,7 +201,7 @@ namespace Paymaker {
                 JOIN DB_USER USR ON USR.ID = USS.USERID
                 JOIN LIST L_OFFICE ON L_OFFICE.ID = USR.OFFICEID {2}
                 JOIN LIST L_SALESPLIT ON L_SALESPLIT.ID = SS.COMMISSIONTYPEID --AND L_SALESPLIT.EXCLUDEONREPORT = 0
-                WHERE USR.ID > 0 AND S.STATUSID IN (1, 2) {1}
+                WHERE USR.ID > 0 AND S.STATUSID IN (1, 2) {1} AND L_OFFICE.ISACTIVE = 1
                 {0}
                 UNION --Sales history
                 SELECT DATEPART(YYYY, SH.MONTHDATE) AS YEAR, DATEPART(MM, SH.MONTHDATE) AS MONTH, SH.ID as ID, SH.OFFICEID, SH.SALECOUNT,
