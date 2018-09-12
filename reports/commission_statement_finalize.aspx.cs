@@ -45,7 +45,7 @@ namespace Paymaker {
             foreach (DataRow drCompany in dsCompany.Tables[0].Rows) {
                 if (lstCompany.SelectedValue != "" && Convert.ToInt32(lstCompany.SelectedValue) != DB.readInt(drCompany["ID"]))
                     continue;
-                string szFileName = Utility.formatDate(DateTime.Now) + "-MYOB-Commission-" + drCompany["NAME"] + ".csv";
+                string szFileName = Utility.formatDate(DateTime.Now) + "-MYOB-Commission-" + drCompany["NAME"] + ".txt";
                 if (UpdateDB) {
                     intMYOBExportID = Utility.getMYOBExportID(ExportType.SalesCommission, szFileName);
                 }
@@ -53,10 +53,9 @@ namespace Paymaker {
 
                 szSQL = string.Format(@"
                    -- 0) All normal commissions
-                   SELECT '' as JOURNALNUMBER, '' AS TXDATE, '' as MEMO, 'P' AS GST, '0' AS INCLUSIVE, '' AS ACCOUNTNUMBER,
-                        '' AS DEBITEXGST, '' AS DEBITINCGST,
-                        '' AS CREDITEXGST, '' AS CREDITINCGST, '' as JOB, 'N-T' as TAXCODE, '' as STOP,
-                        REPLACE(U.CREDITGLCODE, '-', '') AS USERCREDITGLCODE, REPLACE(U.DEBITGLCODE, '-', '') AS USERDEBITGLCODE, USS.ACTUALPAYMENT as AMOUNT, l_OFF.JOBCODE,
+                   SELECT '' as [Journal Number], '' AS [Date], '' as Memo, 'P' AS [GST (BAS) Reporting], '0' AS Inclusive, '' AS [Account Number], 'N' AS [Is Credit], 0.0 AS Amount,
+                        '' as JOB, 'N-T' as TAXCODE, '' as STOP,
+                        REPLACE(U.CREDITGLCODE, '-', '') AS USERCREDITGLCODE, REPLACE(U.DEBITGLCODE, '-', '') AS USERDEBITGLCODE, USS.ACTUALPAYMENT as COMMAMOUNT, l_OFF.JOBCODE,
                         S.ID, 0 AS TOTALBONUS,  S.SALEDATE as ACTUALDATE
                     FROM SALE S
                     JOIN SALESPLIT SS ON S.ID = SS.SALEID AND SS.RECORDSTATUS = 0
@@ -75,8 +74,7 @@ namespace Paymaker {
                 if (File.Exists(szPath))
                     File.Delete(szPath);
                 DataTable dtNew = ds.Tables[0].Clone();
-                if (dtTotal == null)
-                    dtTotal = ds.Tables[0].Clone(); ;
+               
 
                 string szJournalNumber = "999999";
                 string szFilter = lstRecords.SelectedValue;
@@ -97,6 +95,7 @@ namespace Paymaker {
                 while (dtNew.Columns.Count > intSTOPColumnOrdinal) {
                     dtNew.Columns.RemoveAt(intSTOPColumnOrdinal);
                 }
+                dtNew.AcceptChanges();
                 if (UpdateDB) {
                     StreamWriter output = new StreamWriter(szPath);
                     output.Write(CsvWriter.WriteToString(dtNew, true, false));
@@ -104,6 +103,8 @@ namespace Paymaker {
                     output.Close();
                     oLinks.InnerHtml += string.Format("<a href='../admin/myob_doc.aspx?file={0}' target='_blank'>{1}</a> <br/>", Server.UrlEncode(szFileName), szFileName);
                 } else {
+                    if (dtTotal == null)
+                        dtTotal = dtNew.Clone(); 
                     //Add these rows to the overalloutput so we can see the data
                     foreach (DataRow dr in dtNew.Rows) {
                         dtTotal.Rows.Add(dr.ItemArray);
@@ -122,49 +123,48 @@ namespace Paymaker {
             foreach (DataRowView tx in dt) {
                 dtNew.ImportRow(tx.Row);
                 DataRow rCurr = dtNew.Rows[dtNew.Rows.Count - 1];
-                double dCreditExGST = 0;
-                double dCreditIncGST = 0;
-                double dDebitExGST = 0;
-                double dDebitIncGST = 0;
-
+                double Amount = 0;
+              
+                bool IsCredit = false;
                 string szAccount = DB.readString(rCurr["USERDEBITGLCODE"]);
                 string szJobCode = DB.readString(rCurr["JOBCODE"]);
                 if (Type == "SALESBONUSSCHEME") {
-                    dCreditExGST = DB.readDouble(rCurr["TOTALBONUS"]);
-                    dCreditIncGST = DB.readDouble(rCurr["TOTALBONUS"]);
+                    Amount = DB.readDouble(rCurr["TOTALBONUS"]);
+                    IsCredit = true;
                 } else if (Type == "JUNIORTOSENIOR") {
                     // Debit the juniors 2 account and credit the 5 account
-                    dCreditExGST = DB.readDouble(rCurr["AMOUNT"]);
-                    dCreditIncGST = DB.readDouble(rCurr["AMOUNT"]);
+                    Amount = DB.readDouble(rCurr["COMMAMOUNT"]);
+                    IsCredit = true;
                 } else {
-                    dDebitExGST = DB.readDouble(rCurr["AMOUNT"]);
-                    dDebitIncGST = DB.readDouble(rCurr["AMOUNT"]);
+                    Amount = DB.readDouble(rCurr["COMMAMOUNT"]);
+                    IsCredit = false;
                 }
                 DateTime dtTX = DB.readDate(rCurr["ACTUALDATE"]);
+                if (Amount == 0)
+                    continue; //Can't import zero values
+
                 //Debit
-                createDataRow(ref rCurr, szJournalNumber, dtTX, szAccount, dDebitExGST, dDebitIncGST, dCreditExGST, dCreditIncGST, szJobCode);
+                createDataRow(ref rCurr, szJournalNumber, dtTX, szAccount, Amount, IsCredit, szJobCode);
 
                 //Do the same for the inverse of this transaction
                 //Credit
                 dtNew.ImportRow(tx.Row);
                 rCurr = dtNew.Rows[dtNew.Rows.Count - 1];
-                dCreditExGST = 0;
-                dCreditIncGST = 0;
-                dDebitExGST = 0;
-                dDebitIncGST = 0;
+                Amount = 0;
+               
                 szAccount = DB.readString(rCurr["USERCREDITGLCODE"]);
                 if (Type == "JUNIORTOSENIOR") {
-                    dDebitExGST = DB.readDouble(rCurr["AMOUNT"]);
-                    dDebitIncGST = DB.readDouble(rCurr["AMOUNT"]);
+                    Amount = DB.readDouble(rCurr["COMMAMOUNT"]);
+                    IsCredit = false;
                 } else if (Type == "SALESBONUSSCHEME") {
                     rCurr["ACCOUNTNUMBER"] = "2-8400";
-                    dDebitExGST = DB.readDouble(rCurr["TOTALBONUS"]);
-                    dDebitIncGST = DB.readDouble(rCurr["TOTALBONUS"]);
+                    Amount = DB.readDouble(rCurr["TOTALBONUS"]);
+                    IsCredit = false;
                 } else {
-                    dCreditExGST = DB.readDouble(rCurr["AMOUNT"]);
-                    dCreditIncGST = DB.readDouble(rCurr["AMOUNT"]);
+                    Amount = DB.readDouble(rCurr["COMMAMOUNT"]);
+                    IsCredit = true;
                 }
-                createDataRow(ref rCurr, szJournalNumber, dtTX, szAccount, dDebitExGST, dDebitIncGST, dCreditExGST, dCreditIncGST, szJobCode);
+                createDataRow(ref rCurr, szJournalNumber, dtTX, szAccount, Amount, IsCredit, szJobCode);
 
                 if (UpdateDB) {
                     if (Type == "COMM") {
@@ -176,13 +176,11 @@ namespace Paymaker {
             }
         }
 
-        private void createDataRow(ref DataRow dr, string JournalNumber, DateTime TxDate, string AccountCode, double DebitExGST, double DebitIncGST, double CreditExGST, double CreditIncGST, string JobCode) {
-            dr["TXDATE"] = Utility.formatDateForMYOBExport(TxDate);
-            dr["ACCOUNTNUMBER"] = AccountCode;
-            dr["DEBITEXGST"] = Utility.formatMoney(DebitExGST);
-            dr["DEBITINCGST"] = Utility.formatMoney(DebitIncGST);
-            dr["CREDITEXGST"] = Utility.formatMoney(CreditExGST);
-            dr["CREDITINCGST"] = Utility.formatMoney(CreditIncGST);
+        private void createDataRow(ref DataRow dr, string JournalNumber, DateTime TxDate, string AccountCode, double Amount, bool IsCredit, string JobCode) {
+            dr["DATE"] = Utility.formatDateForMYOBExport(TxDate);
+            dr["ACCOUNT NUMBER"] = AccountCode;
+            dr["AMOUNT"] = Utility.formatMoney(Amount);
+            dr["IS CREDIT"] = (IsCredit ? "Y" : "N");
             dr["JOB"] = JobCode;
         }
 

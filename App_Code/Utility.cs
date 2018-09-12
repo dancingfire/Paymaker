@@ -1002,6 +1002,8 @@ public class CsvWriter {
 
     public static void WriteToStream(TextWriter stream, DataTable table, bool header, bool quoteall) {
         if (header) {
+            stream.Write("{}");
+            stream.Write(Environment.NewLine);
             for (int i = 0; i < table.Columns.Count; i++) {
                 WriteItem(stream, table.Columns[i].Caption, quoteall);
                 if (i < table.Columns.Count - 1)
