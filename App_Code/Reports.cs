@@ -65,6 +65,7 @@ public class ReportFilters {
                 szFY = value;
         }
     }
+
     //REturns a single financial year
     public int getSingleFinancialYear() {
         if (szFY == "")
@@ -992,7 +993,7 @@ public class KPI_Office_agents_auction_detail : KPI_Office_agents_NEW {
     /// </summary>
     /// <param name="Viewer"></param>
     /// <param name="oFilter"></param>
-    public KPI_Office_agents_auction_detail(ReportViewer Viewer, ReportFilters oFilter) : base(Viewer,oFilter) {
+    public KPI_Office_agents_auction_detail(ReportViewer Viewer, ReportFilters oFilter) : base(Viewer, oFilter) {
         ReportTitle = "KPI by Agent (auction details)";
     }
 
@@ -1004,7 +1005,6 @@ public class KPI_Office_agents_auction_detail : KPI_Office_agents_NEW {
             return RFileName;
         }
     }
-
 }
 
 public class KPI_Office_agents_NEW : Report {
@@ -1075,7 +1075,7 @@ public class KPI_Office_agents_NEW : Report {
         if (!String.IsNullOrWhiteSpace(szCompanyIDList)) {
             szUserFilter += String.Format(" AND L_OFFICE.COMPANYID IN ({0})", szCompanyIDList);
         }
-        
+
         if (!String.IsNullOrWhiteSpace(oFilter.UserIDList)) {
             szUserFilter += String.Format(" AND USR.ID IN ({0})", oFilter.UserIDList);
         }
@@ -1378,7 +1378,6 @@ public class KPI_Office_agents_NEW : Report {
 	                            CP.DESCRIPTION LIKE 'MONASH LEADER%')
 				WHERE ((WITHDRAWNON IS NULL AND SOLDDATE {6}) OR WITHDRAWNON {6}) {1} AND USR.SHOWONKPIREPORT = 1;
 
-                
                 ", szFilter, szUserFilter, szFilter.Replace("S.SALEDATE", "S.LISTEDDATE"), szFilter.Replace("S.SALEDATE", "S.AUCTIONDATE"),
                 szCurrentPeriodFilter, szYTDFilter, szPreviousAndCurrentPeriodFilter);
         DataSet ds = DB.runDataSet(szSQL);
@@ -1396,11 +1395,11 @@ public class KPI_Office_agents_NEW : Report {
         processGlossyAmounts(ref ds, 7);
 
         integrateBnDData(ref ds, ds.Tables[7]);
-      
+
         // Get list of all users found in report
         var lUsers = ds.Tables[0].AsEnumerable().Select(n => DB.readInt(n["AGENTID"])).Distinct();
         string szUserIDs = string.Join(",", lUsers);
-       
+
         szSQL = string.Format(@"
 				-- 0. Financial Year values
                 SELECT
@@ -1509,7 +1508,7 @@ public class KPI_Office_agents_NEW : Report {
 				WHERE USR.ID IN ({1})
 				GROUP BY PERIOD, USR.ID, USR.OFFICEID, USR.FIRSTNAME, USR.LASTNAME, LISTING_SOURCE
 				ORDER BY USR.ID, COUNT(*) DESC
-                ", szYTDFilter, szUserIDs, oFilter.getDBSafeEndDate(), szCurrentPeriodFilter, szPreviousPeriodEnd, 
+                ", szYTDFilter, szUserIDs, oFilter.getDBSafeEndDate(), szCurrentPeriodFilter, szPreviousPeriodEnd,
                 szPreviousAndCurrentPeriodFilter);
 
         DataSet ds1 = DB.runDataSet(szSQL);
@@ -1520,8 +1519,7 @@ public class KPI_Office_agents_NEW : Report {
 
         // This is for debugging purposes - all data used in the report can be viewed in it's final state in this saved file.
         Utility.dataTableToCSVFile(ds.Tables[0], string.Format(@"C:\Temp\final.csv"));
-       
-       
+
         return ds;
     }
 
@@ -1649,7 +1647,8 @@ public class Payroll_Timesheets : Report {
     private static string RFileName = "Payroll Timesheets";
     private int ReportType;
     private int TimesheetCycleID;
-    int UserID = -1;
+    private int UserID = -1;
+
     /// <summary>
     /// Constructor Method that receives the Viewer and the Filter and creates the report.
     /// </summary>
@@ -1681,7 +1680,7 @@ public class Payroll_Timesheets : Report {
         string szReportType = string.Format("TIMESHEETCYCLEID = (SELECT MIN(ID) FROM TIMESHEETCYCLE WHERE CYCLETYPEID = {0} AND COMPLETED = 0)", ReportType);
 
         // Report type -1 : Produce current user timesheet
-        if (ReportType == -1) 
+        if (ReportType == -1)
             szReportType = string.Format("TIMESHEETCYCLEID = {1} AND U.ID = {0}", UserID, TimesheetCycleID);
         // Allows for the recreation of old timesheet cycles
         else if (TimesheetCycleID > int.MinValue)
@@ -1701,7 +1700,7 @@ public class Payroll_Timesheets : Report {
 
 public class Payroll_Summary : Report {
     private static string RFileName = "Payroll Summary";
-    int CycleRef = 0;
+    private int CycleRef = 0;
 
     /// <summary>
     /// Constructor Method that receives the Viewer and the Filter and creates the report.
@@ -1735,7 +1734,13 @@ public class Payroll_Summary : Report {
                 MIN(ENTRYDATE) AS STARTDATE, MAX(ENTRYDATE) AS ENDDATE,
 	            SUM(ACTUAL) AS ACTUAL, SUM(ANNUALLEAVE) AS ANNUALLEAVE,
 	            SUM(SICKLEAVE) AS SICKLEAVE, SUM(RDOACRUED) AS RDOACRUED,
-	            SUM(RDOTAKEN) AS RDOTAKEN, '' AS COMMENTS,
+	            SUM(RDOTAKEN) AS RDOTAKEN,
+                STUFF((
+                        SELECT ' ******' + CAST(TSE.ENTRYDATE AS VARCHAR) + ' - ' + TSE.COMMENTS AS [text()]
+                          FROM TIMESHEETENTRY TSE
+                         WHERE TSE.USERID = TS.USERID AND TSE.TIMESHEETCYCLEID = TS.TIMESHEETCYCLEID AND TSE.COMMENTS != '' AND TSE.COMMENTS is not  null
+                         FOR XML PATH('')
+                     ), 1, 1, '' ) AS [Comments],
                 CASE
                     -- User without supervisor signs off on own timesheet
 					WHEN MAX(USERSIGNOFFDATE) IS NULL AND (U.SUPERVISORID IS NULL OR U.SUPERVISORID = 0) THEN 'Awaiting Staff signoff'
@@ -1762,10 +1767,14 @@ public class Payroll_Summary : Report {
             JOIN LIST O ON O.ID = U.OFFICEID
             WHERE U.PAYROLLCYCLEID > 0
                 AND U.ID NOT IN (SELECT DISTINCT USERID FROM TIMESHEETENTRY WHERE TIMESHEETCYCLEID IN ((SELECT MIN(ID) FROM TIMESHEETCYCLE WHERE CYCLETYPEID = 1 AND COMPLETED = 0),(SELECT MIN(ID) FROM TIMESHEETCYCLE WHERE CYCLETYPEID = 2 AND COMPLETED = 0)))
-			ORDER BY TSC.CYCLETYPEID, LASTNAME", 
+			ORDER BY TSC.CYCLETYPEID, LASTNAME",
                         G.TimeSheetCycleReferences[CycleRef].NormalCycle.CycleID,
                         G.TimeSheetCycleReferences[CycleRef].PayAdvanceCycle.CycleID));
-
+        foreach (DataRow dr in ds.Tables[0].Rows) {
+            if(DB.readString(dr["COMMENTS"]) != "") {
+                dr["Comments"] = DB.readString(dr["COMMENTS"]).Replace("******", Environment.NewLine).Replace("12:00AM", "");
+            }
+        }
         return ds;
     }
 }
@@ -2135,7 +2144,7 @@ public abstract class Report {
 
                 i++;
             }
-        } catch (Exception e) {
+        } catch (Exception) {
             throw;
         }
         return true;
