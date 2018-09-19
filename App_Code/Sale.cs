@@ -571,7 +571,7 @@ public class Sale {
         string szSQL = String.Format(@"
                 UPDATE   {0}.dbo.SALE
                     SET GROSSCOMMISSION = 0 
-                WHERE ID in (
+                WHERE BNDSALEID in (
                     SELECT ID
                     FROM SALESLISTING 
                     WHERE (WITHDRAWNON IS NOT NULL AND STATUS = 'listing_cancelled') 
