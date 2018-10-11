@@ -396,7 +396,7 @@ public class Utility {
         oList.Items.Insert(0, new ListItem("All..", ""));
     }
 
-    public static void BindList(ref ListBox oList, ref SqlDataReader oData, string szIDCol, string szValueCol) {
+    public static void BindList(ref ListBox oList, ref SqlDataReader oData, string szIDCol = "ID", string szValueCol = "NAME") {
         oList.DataSource = oData;
         oList.DataValueField = szIDCol;
         oList.DataTextField = szValueCol;
@@ -405,14 +405,14 @@ public class Utility {
         oData = null;
     }
 
-    public static void BindList(ref ListBox oList, DataSet oData, string szIDCol, string szValueCol) {
+    public static void BindList(ref ListBox oList, DataSet oData, string szIDCol = "ID", string szValueCol = "NAME") {
         oList.DataSource = oData;
         oList.DataValueField = szIDCol;
         oList.DataTextField = szValueCol;
         oList.DataBind();
     }
 
-    public static void BindList(ref DropDownList oList, DataSet oData, string szIDCol, string szValueCol) {
+    public static void BindList(ref DropDownList oList, DataSet oData, string szIDCol = "ID", string szValueCol = "NAME") {
         oList.DataSource = oData;
         oList.DataValueField = szIDCol;
         oList.DataTextField = szValueCol;

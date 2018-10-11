@@ -164,7 +164,7 @@ public partial class payroll_update : Root {
         UserTimesheet oUT = new UserTimesheet(intUserID, intUserPayrollCycleID);
         getFormValues(oUT, SignOff);
         oUT.updateDB();
-        DBLog.addGenericRecord(DBLogType.PayrollModification, String.Format("Paysheet updated - sign off: {0} {1}", SignOff, G.CurrentUserName), intUserPayrollCycleID, intUserID);
+        DBLog.addGenericRecord(DBLogType.PayrollModification, String.Format("Paysheet updated - sign off: {0} {1}", SignOff, G.User.UserName), intUserPayrollCycleID, intUserID);
         // When user signs off, a check is run to see if they are the final user of their supervisor.
         // Supervisor is informed when all staff from a given pay cycle have submitted their forms.
         if (SignOff) {
@@ -213,7 +213,7 @@ public partial class payroll_update : Root {
 
         string Msg = "Thank you for submitting your timesheet.  Please find a copy attached.";
         if (blnIsAdminView) {
-            Msg = " Your timesheet has been changed by " + G.CurrentUserName;
+            Msg = " Your timesheet has been changed by " + G.User.UserName;
         }
         Email.sendMail(szEmail, "do-not-reply@fletchers.net.au", "Timesheet submitted",
                 Msg, szBCC: "payroll@fletchers.net.au", IncludeFile: new Attachment(new MemoryStream(bFile), "Timesheet.pdf"));

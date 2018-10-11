@@ -79,7 +79,8 @@ namespace Paymaker {
                 dr.Read();
                 UserLogin.writeLog(intResult, Convert.ToString(dr["LOGIN"]), true);
                 Session["LOGIN"] = Convert.ToString(dr["LOGIN"]);
-                G.CurrentUserName = Convert.ToString(dr["FirstName"] + " " + dr["LastName"]);
+                G.User.UserName = Convert.ToString(dr["FirstName"] + " " + dr["LastName"]);
+                G.User.AdminPAForThisUser = DB.readInt(dr["ADMINPAFORUSERID"]);
                 G.CurrentUserEmail = Convert.ToString(dr["EMAIL"]);
                 G.CurrentUserRoleID = Convert.ToInt32(dr["ROLEID"]);
                 G.CurrentUserPayrollTypeID = Convert.ToInt32(dr["PAYROLLCYCLEID"]);
