@@ -157,15 +157,6 @@ public class G {
         }
     }
 
-    public static string CurrentUserName {
-        get {
-            checkSessionValue("USERNAME");
-            return HttpContext.Current.Session["USERNAME"].ToString();
-        }
-        set {
-            HttpContext.Current.Session["USERNAME"] = value;
-        }
-    }
 
     public static string CurrentUserEmail {
         get {
@@ -357,6 +348,26 @@ public class G {
 
             set {
                 HttpContext.Current.Application["IMPORTCOUNTCURRENT"] = value;
+            }
+        }
+
+        public static string UserName {
+            get {
+                checkSessionValue("USERNAME");
+                return HttpContext.Current.Session["USERNAME"].ToString();
+            }
+            set {
+                HttpContext.Current.Session["USERNAME"] = value;
+            }
+        }
+
+        public static int AdminPAForThisUser {
+            get {
+                checkSessionValue("ADMINPAFORTHISUSER");
+                return Convert.ToInt32(HttpContext.Current.Session["ADMINPAFORTHISUSER"]);
+            }
+            set {
+                HttpContext.Current.Session["ADMINPAFORTHISUSER"] = value;
             }
         }
     }

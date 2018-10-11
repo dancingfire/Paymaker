@@ -11,7 +11,7 @@ public partial class sales_dashboard : Root {
         CurrentUserID = G.CurrentUserID;
 
         // This is for debuging and hard coded only to allow Gord's login to access other users details
-        if (CurrentUserID == 0 && G.CurrentUserName == "Gord Funk") {
+        if (CurrentUserID == 0 && G.User.UserName == "Gord Funk") {
             int intAltUser = Valid.getInteger("UserID", -1);
             if (intAltUser > -1)
                 CurrentUserID = intAltUser;

@@ -145,7 +145,7 @@ public class ClientMenu {
                         </a>
                     </div>
                 </div>
-            ", oM.createMenu(), G.CurrentUserName + " - " + System.DateTime.Now.ToString("D"));
+            ", oM.createMenu(), G.User.UserName + " - " + System.DateTime.Now.ToString("D"));
         return szHTML;
     }
 }
