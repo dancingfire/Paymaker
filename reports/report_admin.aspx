@@ -152,6 +152,8 @@
                         $("#spCompany").show();
                         $("#spUser").show();
                         $("#spActive").show();
+                    } else {
+                        $("#spNonAdminUserFilter").show()
                     }
                     $("#spDate").show();
                     break;
@@ -162,6 +164,8 @@
                         $("#spCompany").show();
                         $("#spUser").show();
                         $("#spActive").show();
+                    }  else {
+                        $("#spNonAdminUserFilter").show()
                     }
                     $("#spDate").show();
                     break;
@@ -184,6 +188,8 @@
                         $("#spUser").show();
                         $("#spActive").show();
                         $("#spKPIFilter").show();
+                    } else {
+                        $("#spNonAdminUserFilter").show()
                     }
                     $("#spDate").show();
                     break;
@@ -303,6 +309,8 @@
             $("#lstOffice option:selected").removeAttr("selected");
             $("#lstCompany option:selected").removeAttr("selected");
             $("#lstUser option:selected").removeAttr("selected");
+            $("#lstNonAdminUser option:selected").removeAttr("selected");
+            
         }
 
         function getFilterValues() {
@@ -413,17 +421,9 @@
                         szSrc = "commission_statement_new.aspx";
 
                     var szParam = getFilterValues();
+                    szParam += getSelectedUser(false);
 
-                    if ($("#lstUser").val() == null) {
-                        if ($("#hfUserID").val() != "")
-                            szParam += "&szUserID=" + $("#hfUserID").val(); //Get the hidden value as this is a single user view
-                        else {
-                            $("#lstUser *").attr("selected", "selected");
-                            szParam += "&szUserID=" + $("#lstUser").val();
-                        }
-                    } else {
-                        szParam += "&szUserID=" + $("#lstUser").val();
-                    }
+                    
                     szParam += "&RecalcTotals=" + $("#lstRecreateTotals").val();
                     break;
                     var szSrc = "commission_statement.aspx";
@@ -652,10 +652,20 @@
 
         function getSelectedUser(blnSelectAll) {
             if ($("#lstUser").val() == null) {
-                if (blnSelectAll)
+                if (blnSelectAll) {
                     $("#lstUser *").attr("selected", "selected");
-                else
-                    return "";
+                } else {
+                    if ($("#lstNonAdminUser").is(":visible")) { //Check whether the ability to select between the PA and the sales agent is available
+                        return "&szUserID=" + $("#lstNonAdminUser").val();
+                    }
+
+                    if ($("#hfUserID").val() != "")
+                        return "&szUserID=" + $("#hfUserID").val(); //Get the hidden value as this is a single user view
+                    else {
+                        $("#lstUser *").attr("selected", "selected");
+                        return "&szUserID=" + $("#lstUser").val();
+                    }
+                }   
             }
             return "&szUserID=" + $("#lstUser").val();
         }
@@ -822,6 +832,12 @@
                 </asp:Label>
                 <asp:ListBox ID="lstUser" runat="server" CssClass="Entry" SelectionMode="Multiple"
                     Rows="10"></asp:ListBox>
+                <br class='Align' />
+            </span>
+             <span id="spNonAdminUserFilter" runat="server" class="Filter" visible="false">
+                <asp:Label ID="Label16" CssClass="FilterLabel" runat="server" Text="User">
+                </asp:Label>
+                 <asp:DropDownList ID="lstNonAdminUser" runat="server" CssClass="Entry"></asp:DropDownList>
                 <br class='Align' />
             </span>
             <span id="spRecreate" runat="server" class="Filter">

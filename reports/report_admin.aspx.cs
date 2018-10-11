@@ -46,8 +46,13 @@ namespace Paymaker {
             Utility.BindList(ref lstUser, DB.runDataSet(@"
                 SELECT ID, LASTNAME + ', ' + FIRSTNAME AS NAME FROM DB_USER WHERE ISACTIVE = 1 AND ISDELETED = 0 AND ISPAID = 1 ORDER BY LASTNAME, FIRSTNAME"), "ID", "NAME");
 
+            Utility.BindList(ref lstNonAdminUser, DB.runDataSet(String.Format(@"
+                SELECT ID, LASTNAME + ', ' + FIRSTNAME AS NAME 
+                FROM DB_USER 
+                WHERE ISACTIVE = 1 AND ISDELETED = 0 AND ID IN ({0}, {1})
+                ORDER BY LASTNAME, FIRSTNAME", G.CurrentUserID, G.User.AdminPAForThisUser)));
+          
             //Suburb
-
             szSQL = string.Format("select DISTINCT SUBURB AS ID, SUBURB AS NAME FROM SALE ORDER BY SUBURB ");
             Utility.BindList(ref lstSuburb, DB.runDataSet(szSQL), "ID", "NAME");
 
@@ -125,6 +130,7 @@ namespace Paymaker {
 
                 //Show the commission report
                 spUser.Visible = false;
+                spNonAdminUserFilter.Visible = true;
                 spCompany.Visible = false;
                 hfUserID.Value = G.CurrentUserID.ToString();
             }
