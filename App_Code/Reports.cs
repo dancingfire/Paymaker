@@ -1656,7 +1656,7 @@ public class Payroll_Timesheets : Report {
     /// <param name="oFilter"></param>
     /// <param name="oFilter">Report Type 1 = Normal pay cycles, 2 = Paid in advance, -1 = Produce only current users timesheet</param>
     public Payroll_Timesheets(ReportViewer Viewer, ReportFilters oFilter, int ReportType, int TimesheetCycleID = Int32.MinValue, int UserID = -1) {
-        if (G.CurrentUserRoleID != 1 && ReportType > -1)
+        if (G.User.RoleID != 1 && ReportType > -1)
             throw new Exception("Non-Admin user attempting to access admin report - (Full) Payroll Summary");
         oViewer = Viewer;
         this.oFilter = oFilter;
@@ -1709,7 +1709,7 @@ public class Payroll_Summary : Report {
     /// <param name="oFilter"></param>
     public Payroll_Summary(ReportViewer Viewer, ReportFilters oFilter, int CycleRef) {
         this.CycleRef = CycleRef;
-        if (G.CurrentUserRoleID != 1)
+        if (G.User.RoleID != 1)
             throw new Exception("Non-Admin user attempting to access admin report - Payroll Summary");
         oViewer = Viewer;
         this.oFilter = oFilter;

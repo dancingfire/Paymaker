@@ -69,7 +69,7 @@ namespace Paymaker {
             if (!String.IsNullOrWhiteSpace(hdCompanyID.Value))
                 szFilter += String.Format(" AND L_COMPANY.ID IN ({0})", hdCompanyID.Value);
             string szUserIDFilter = Valid.getText("szUserID", "", VT.List);
-            if (G.CurrentUserRoleID != 1) //Filter for single user mode
+            if (G.User.RoleID != 1) //Filter for single user mode
                 szFilter += " AND USS.USERID IN (" + G.User.UserID + ") ";
             else if (!String.IsNullOrEmpty(szUserIDFilter)) {
                 szFilter += " AND USS.USERID IN (" + szUserIDFilter + ")";

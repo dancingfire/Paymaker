@@ -76,11 +76,11 @@ public class ClientMenu {
 
         oM.addMenu("Logout", "../login.aspx");
 
-        if (G.CurrentUserRoleID == 1) {
+        if (G.User.RoleID == 1) {
             oM.lUserRoles.Add(MenuRole.Admin);
             oM.StartPage = "main/admin_dashboard.aspx";
         } else {
-            if (G.CurrentUserRoleID != 5) {
+            if (G.User.RoleID != 5) {
                 oM.lUserRoles.Add(MenuRole.UserOnly);
             }
         }
@@ -98,7 +98,7 @@ public class ClientMenu {
     }
 
     private bool canAccessReports() {
-        return G.CurrentUserRoleID != 5 && G.CurrentUserRoleID != 6;
+        return G.User.RoleID != 5 && G.User.RoleID != 6;
     }
 
     #region MenuGenerator

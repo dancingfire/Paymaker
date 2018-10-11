@@ -50,7 +50,7 @@ namespace Paymaker {
                 SELECT ID, LASTNAME + ', ' + FIRSTNAME AS NAME 
                 FROM DB_USER 
                 WHERE ISACTIVE = 1 AND ISDELETED = 0 AND ID IN ({0}, {1})
-                ORDER BY LASTNAME, FIRSTNAME", G.CurrentUserID, G.User.AdminPAForThisUser)));
+                ORDER BY LASTNAME, FIRSTNAME", G.User.ID, G.User.AdminPAForThisUser)));
           
             //Suburb
             szSQL = string.Format("select DISTINCT SUBURB AS ID, SUBURB AS NAME FROM SALE ORDER BY SUBURB ");
@@ -124,7 +124,7 @@ namespace Paymaker {
         }
 
         private void formatPage() {
-            if (G.CurrentUserRoleID != 1) {
+            if (G.User.RoleID != 1) {
                 sbEndJS.Append("$('#lstReport').hide();");
                 lstUserReport.Visible = true;
 
@@ -132,7 +132,7 @@ namespace Paymaker {
                 spUser.Visible = false;
                 spNonAdminUserFilter.Visible = true;
                 spCompany.Visible = false;
-                hfUserID.Value = G.CurrentUserID.ToString();
+                hfUserID.Value = G.User.ID.ToString();
             }
         }
 
