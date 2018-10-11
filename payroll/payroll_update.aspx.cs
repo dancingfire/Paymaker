@@ -13,7 +13,7 @@ public partial class payroll_update : Root {
 
     protected void Page_Load(object sender, System.EventArgs e) {
         blPopup = false;
-        intUserID = G.CurrentUserID;
+        intUserID = G.User.ID;
        
         // Popup window can be accessed by admin / supervisor to view further details of the users timesheet
         if (Valid.getText("IsPopup", "").ToLower() == "true") {
@@ -65,7 +65,7 @@ public partial class payroll_update : Root {
         if (intCycleRef > -1) {
             UserTimesheet oUT = new UserTimesheet(intUserID, intUserPayrollCycleID, blReadOnlyForm: blPopup);
             oUT.lEntries.Add(new UserTimesheetEntry());
-            if (oUT.lEntries[0].UserID != G.CurrentUserID)
+            if (oUT.lEntries[0].UserID != G.User.ID)
                 blnIsAdminView = true;
             gvList.DataSource = oUT.lEntries;
             gvList.DataBind();
@@ -78,7 +78,7 @@ public partial class payroll_update : Root {
             HTML.formatGridView(ref gvList, true);
 
             // Check if user has a supervisor
-            if (G.UserInfo.getUser(G.CurrentUserID).SupervisorID > 0)
+            if (G.UserInfo.getUser(G.User.ID).SupervisorID > 0)
                 btnSignOff.Text = "Submit";
 
             btnUpdate.Enabled = btnSignOff.Enabled = true;
@@ -105,7 +105,7 @@ public partial class payroll_update : Root {
             dContainer.Visible = false;
             dOldRecords.Visible = true;
 
-            btnDownload.HRef = string.Format("../reports/manual_timesheet.aspx?UserID={0}&CycleID={1}", G.CurrentUserID, intUserPayrollCycleID);
+            btnDownload.HRef = string.Format("../reports/manual_timesheet.aspx?UserID={0}&CycleID={1}", G.User.ID, intUserPayrollCycleID);
         }
     }
 
@@ -168,7 +168,7 @@ public partial class payroll_update : Root {
         // When user signs off, a check is run to see if they are the final user of their supervisor.
         // Supervisor is informed when all staff from a given pay cycle have submitted their forms.
         if (SignOff) {
-            int intSupervisorID = G.UserInfo.getUser(G.CurrentUserID).SupervisorID;
+            int intSupervisorID = G.UserInfo.getUser(G.User.ID).SupervisorID;
             if (intSupervisorID > 0) {
                 TimesheetCycle oTC = new TimesheetCycle(intUserPayrollCycleID);
                 oTC.checkSupervisorGroupSignoff(intSupervisorID);

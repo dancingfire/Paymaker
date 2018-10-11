@@ -18,7 +18,7 @@ public partial class action_detail : Root {
         intCampaignID = Valid.getInteger("intCampaignID");
         intCampaignNoteID = Valid.getInteger("intCampaignNoteID");
         HDCampaignID.Value = intCampaignID.ToString();
-        HDCurrentUserID.Value = G.CurrentUserID.ToString();
+        HDCurrentUserID.Value = G.User.ID.ToString();
         if (!Page.IsPostBack) {
             loadActionList();
             loadCampaignNote();
@@ -114,7 +114,7 @@ public partial class action_detail : Root {
         Campaign oC = new Campaign(intCampaignID);
         sqlUpdate oSQL = new sqlUpdate("CAMPAIGNNOTE", "ID", -1);
         string szEmailText = Request.Form["txtContent"];
-        if (oC.AgentID == G.CurrentUserID) {
+        if (oC.AgentID == G.User.ID) {
             //This is the current agent replying, so we can append information that identifies the property to the email
             szEmailText += "<br><br><b>Property details</b><p>Campaign #: " + oC.PropertyRef + "<br/>Address: " + oC.Address + "</p>";
         }
@@ -123,7 +123,7 @@ public partial class action_detail : Root {
         oSQL.add("NOTEDATE", Utility.formatDateTime(DateTime.Now));
         oSQL.add("AGENTID", oC.AgentID);
         oSQL.add("ACTIONID", Valid.getText("lstActionID", VT.TextNormal));
-        oSQL.add("USERID", G.CurrentUserID);
+        oSQL.add("USERID", G.User.ID);
         if (txtReminder.Text != "") {
             oSQL.add("REMINDER", txtReminder.Text);
             //Clear out all other reminder dates - we can only have one active reminder date.
@@ -168,9 +168,9 @@ public partial class action_detail : Root {
             msg.To.Add(szTo);
         }
 
-        msg.CC.Add(G.CurrentUserEmail);
+        msg.CC.Add(G.User.Email);
 
-        msg.From = new MailAddress(G.CurrentUserEmail);
+        msg.From = new MailAddress(G.User.Email);
         msg.Subject = txtSubject.Text;
         msg.Body = EmailBody;
         SmtpClient oSMTP = new SmtpClient();

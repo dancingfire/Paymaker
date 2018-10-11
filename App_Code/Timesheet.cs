@@ -34,7 +34,7 @@ public class Payroll {
 
     public static Boolean IsAdmin {
         get {
-            return G.CurrentUserRoleID == 1 /* Admin */;
+            return G.User.RoleID == 1 /* Admin */;
         }
     }
 
@@ -249,7 +249,7 @@ public class UserTimesheet {
             }
 
             foreach (DataRow dr in ds.Tables[0].Rows) {
-                if (CanEdit && DB.readDate(dr["USERSIGNOFFDATE"]) > DateTime.MinValue && G.CurrentUserID == DB.readInt(dr["USERID"]))
+                if (CanEdit && DB.readDate(dr["USERSIGNOFFDATE"]) > DateTime.MinValue && G.User.ID == DB.readInt(dr["USERID"]))
                     CanEdit = false;
 
                 lEntries.Add(new UserTimesheetEntry(dr, blReadOnlyForm || !CanEdit));
@@ -349,7 +349,7 @@ public class UserTimesheetEntry {
 
     public UserTimesheetEntry() {
         ID = -1;
-        UserID = G.CurrentUserID;
+        UserID = G.User.ID;
         EntryDate = DateTime.MinValue;
         Actual = double.MinValue;
         AnnualLeave = double.MinValue;
@@ -379,10 +379,10 @@ public class UserTimesheetEntry {
 
     private bool CanEdit {
         get {
-            if (G.CurrentUserRoleID == 1 && G.CurrentUserID != UserID) // Admit can always edit other staff forms
+            if (G.User.RoleID == 1 && G.User.ID != UserID) // Admit can always edit other staff forms
                 return true;
 
-            if (G.CurrentUserID == UserID)
+            if (G.User.ID == UserID)
                 return UserSignOff <= DateTime.MinValue && !blReadOnlyForm;
             return true;
         }

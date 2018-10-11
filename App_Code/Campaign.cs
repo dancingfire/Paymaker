@@ -1223,7 +1223,7 @@ public class CampaignContribution : IComparable<CampaignContribution> {
         this.dAmount = Convert.ToDouble(ContributedAmount);
         dtContributionDate = ContributionDate;
         intCampaignID = CampaignID;
-        intUserID = G.CurrentUserID;
+        intUserID = G.User.ID;
         this.oType = oType;
         szReceiptNumber = ReceiptNumber;
         szCTRefID = CTRefID;
@@ -1579,7 +1579,7 @@ public class ContributionSplit : IComparable<ContributionSplit> {
 
         oSQL.add("DUEDATE", Utility.formatDate(dtDueDate));
         oSQL.add("PAYMENTOPTIONID", (int)oPaymentOption);
-        oSQL.add("USERID", G.CurrentUserID);
+        oSQL.add("USERID", G.User.ID);
         if (blnIsAuctionDate)
             oSQL.add("ISAUCTIONDATE", 1);
         else
@@ -1672,7 +1672,7 @@ public class CampaignInvoice : IComparable<CampaignInvoice> {
         this.dAmount = Convert.ToDouble(oI.TotalIncGST);
         dtInvoiceDate = oI.InvoiceDate;
         intCampaignID = CampaignID;
-        intUserID = G.CurrentUserID;
+        intUserID = G.User.ID;
         szInvoiceNumber = oI.InvoiceNo;
         szCTRefID = oI.TransactionID.ToString();
         blnCheckedByImport = true;

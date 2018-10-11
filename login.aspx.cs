@@ -71,7 +71,7 @@ namespace Paymaker {
         }
 
         private void loginSuccess(int intResult) {
-            G.CurrentUserID = intResult;
+            G.User.ID = intResult;
             string szSQL = "SELECT * FROM DB_USER WHERE ID = " + intResult.ToString();
 
             SqlDataReader dr = DB.runReader(szSQL);
@@ -81,20 +81,20 @@ namespace Paymaker {
                 Session["LOGIN"] = Convert.ToString(dr["LOGIN"]);
                 G.User.UserName = Convert.ToString(dr["FirstName"] + " " + dr["LastName"]);
                 G.User.AdminPAForThisUser = DB.readInt(dr["ADMINPAFORUSERID"]);
-                G.CurrentUserEmail = Convert.ToString(dr["EMAIL"]);
-                G.CurrentUserRoleID = Convert.ToInt32(dr["ROLEID"]);
-                G.CurrentUserPayrollTypeID = Convert.ToInt32(dr["PAYROLLCYCLEID"]);
+                G.User.Email = Convert.ToString(dr["EMAIL"]);
+                G.User.RoleID = Convert.ToInt32(dr["ROLEID"]);
+                G.User.PayrollTypeID = Convert.ToInt32(dr["PAYROLLCYCLEID"]);
                 if (String.IsNullOrEmpty(dr["PERMISSIONS"].ToString()))
                     G.CurrentUserPermissions = "";
                 else
                     G.CurrentUserPermissions = dr["PERMISSIONS"].ToString();
                 FormsAuthentication.SetAuthCookie(Session["LOGIN"].ToString(), false);
                 string szStartPage = "main/sales_dashboard.aspx";
-                if (G.CurrentUserRoleID == 1) {
+                if (G.User.RoleID == 1) {
                     szStartPage = "main/admin_dashboard.aspx";
                 } else if (G.User.hasPermission(RolePermissionType.ViewCampaignModule)) {
                     szStartPage = "campaign/campaign_dashboard.aspx";
-                } else if (G.CurrentUserRoleID == 5) {
+                } else if (G.User.RoleID == 5) {
                     szStartPage = "payroll/payroll_dashboard.aspx";
                 }
                 sbEndJS.AppendFormat("window.top.location.href = '{0}';", szStartPage);

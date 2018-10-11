@@ -92,13 +92,6 @@ public class G {
         }
     }
 
-    public static int CurrentUserID {
-        get {
-            checkSessionValue("USERID");
-            return Convert.ToInt32(HttpContext.Current.Session["USERID"]);
-        }
-        set { HttpContext.Current.Session["USERID"] = value; }
-    }
 
     /// <summary>
     /// The currently active pay period
@@ -158,22 +151,6 @@ public class G {
     }
 
 
-    public static string CurrentUserEmail {
-        get {
-            checkSessionValue("USEREMAIL");
-
-            return HttpContext.Current.Session["USEREMAIL"].ToString();
-        }
-        set {
-            //Check for emails that are multiple and strip out the second one
-
-            string szEmail = value;
-            if (szEmail.Contains(";")) {
-                szEmail = szEmail.Substring(0, szEmail.IndexOf(';'));
-            }
-            HttpContext.Current.Session["USEREMAIL"] = szEmail;
-        }
-    }
 
     public static string CurrentUserPermissions {
         get {
@@ -202,29 +179,49 @@ public class G {
         }
     }
 
-    public static int CurrentUserRoleID {
-        get {
-            checkSessionValue("ROLEID");
-            return Convert.ToInt32(HttpContext.Current.Session["ROLEID"]);
-        }
-        set { HttpContext.Current.Session["ROLEID"] = value; }
-    }
-
-    /// <summary>
-    /// Payroll type 0 - none, 1 - Normal, 2 - Paid in advance
-    /// </summary>
-    public static int CurrentUserPayrollTypeID {
-        get {
-            checkSessionValue("PAYROLLTYPEID");
-            return Convert.ToInt32(HttpContext.Current.Session["PAYROLLTYPEID"]);
-        }
-        set { HttpContext.Current.Session["PAYROLLTYPEID"] = value; }
-    }
+  
 
     /// <summary>
     /// Utility classes
     /// </summary>
     public static class User {
+
+        public static int ID {
+            get {
+                checkSessionValue("USERID");
+                return Convert.ToInt32(HttpContext.Current.Session["USERID"]);
+            }
+            set { HttpContext.Current.Session["USERID"] = value; }
+        }
+
+
+        public static string Email {
+            get {
+                checkSessionValue("USEREMAIL");
+
+                return HttpContext.Current.Session["USEREMAIL"].ToString();
+            }
+            set {
+                //Check for emails that are multiple and strip out the second one
+
+                string szEmail = value;
+                if (szEmail.Contains(";")) {
+                    szEmail = szEmail.Substring(0, szEmail.IndexOf(';'));
+                }
+                HttpContext.Current.Session["USEREMAIL"] = szEmail;
+            }
+        }
+       
+        /// <summary>
+        /// Payroll type 0 - none, 1 - Normal, 2 - Paid in advance
+        /// </summary>
+        public static int PayrollTypeID {
+            get {
+                checkSessionValue("PAYROLLTYPEID");
+                return Convert.ToInt32(HttpContext.Current.Session["PAYROLLTYPEID"]);
+            }
+            set { HttpContext.Current.Session["PAYROLLTYPEID"] = value; }
+        }
 
         /// <summary>
         /// Returns whether the current user can perform this action
@@ -239,7 +236,7 @@ public class G {
         // Implemented in user because multiple pages need to check this
         public static bool hasCampaignAccess {
             get {
-                return G.User.hasPermission(RolePermissionType.ViewCampaignModule) || G.CurrentUserRoleID == 6;
+                return G.User.hasPermission(RolePermissionType.ViewCampaignModule) || G.User.RoleID == 6;
             }
         }
 
@@ -313,6 +310,14 @@ public class G {
                 return Convert.ToInt32(HttpContext.Current.Session["USERID"]);
             }
             set { HttpContext.Current.Session["USERID"] = value; }
+        }
+
+        public static int RoleID {
+            get {
+                checkSessionValue("ROLEID");
+                return Convert.ToInt32(HttpContext.Current.Session["ROLEID"]);
+            }
+            set { HttpContext.Current.Session["ROLEID"] = value; }
         }
 
         /// <summary>

@@ -345,7 +345,7 @@ public class Utility {
     }
 
     public static void setListBoxItems(ref DropDownList oList, string ListValue) {
-        //if (G.CurrentUserID == 0)
+        //if (G.User.ID == 0)
         //    setListBoxItemsError(ref oList, ListValue);
         //else
         Utility.RemoveWhitespace(ListValue);

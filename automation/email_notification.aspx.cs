@@ -8,9 +8,9 @@ public partial class email_notification : Page {
 
     protected void Page_init(object sender, EventArgs e) {
         if (Valid.getBoolean("AUTORUN", false)) {
-            G.CurrentUserID = -1;
+            G.User.ID = -1;
             G.User.UserID = -1;
-            G.CurrentUserRoleID = 1;
+            G.User.RoleID = 1;
         }
 
         if (Valid.getBoolean("Check", false)) {
