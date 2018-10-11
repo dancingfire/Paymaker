@@ -203,6 +203,7 @@
                     <div class="panel-body">
                         You can select whether you want agents to show on the reports, and whether you want their totals to acrue to another agent.
                         <br />
+
                         <asp:Label ID="Label12" runat="server" CssClass="Label LabelPos">Agent EOMc</asp:Label>
                         <asp:DropDownList ID="lstAgentEOMReportSettings" runat="server" CssClass="Entry EntryPos">
                         </asp:DropDownList>
@@ -218,6 +219,10 @@
                         </asp:DropDownList>
                         <br class="Align" />
 
+                         <asp:Label ID="Label23" runat="server" CssClass="Label LabelPos">Admin PA for</asp:Label>
+                        <asp:DropDownList ID="lstAdminPA" runat="server" CssClass="Entry EntryPos">
+                        </asp:DropDownList>
+                        <br class="Align" />
                         <asp:Label ID="Label15" runat="server" CssClass="Label LabelPos">Hide on incentive report</asp:Label>
                         <asp:CheckBox ID="chkShowIncentiveSummary" runat="server" />
                         <br class="Align" />

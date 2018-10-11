@@ -45,6 +45,9 @@ public partial class user_update : Root {
         Utility.BindList(ref lstTopPerformer, DB.Paymaker_User.loadList("", false), "ID", "NAME");
         lstTopPerformer.Items.Insert(0, new ListItem("Hide on report", "-1"));
 
+        Utility.BindList(ref lstAdminPA, DB.Paymaker_User.loadList("3,4", false), "ID", "NAME");
+        lstAdminPA.Items.Insert(0, new ListItem("No one", "-1"));
+
         Utility.BindList(ref lstQuarterlyTopPerformer, DB.Paymaker_User.loadList("", false), "ID", "NAME");
         lstQuarterlyTopPerformer.Items.Insert(0, new ListItem("Hide on report", "-1"));
 
@@ -99,6 +102,7 @@ public partial class user_update : Root {
         Utility.setListBoxItems(ref lstAgentEOMReportSettings, dr["AGENTEOMBALANCEREPORTSETTINGS"].ToString());
         Utility.setListBoxItems(ref lstQuarterlyTopPerformer, dr["QUARTERLYTOPPERFORMERREPORTSETTINGS"].ToString());
         Utility.setListBoxItems(ref lstTopPerformer, dr["TOPPERFORMERREPORTSETTINGS"].ToString());
+        Utility.setListBoxItems(ref lstAdminPA, dr["ADMINPAFORUSERID"].ToString());
         chkIsPaid.Checked = Convert.ToBoolean(dr["ISPAID"]);
         chkShowIncentiveSummary.Checked = Convert.ToBoolean(dr["INCENTIVESUMMARYREPORTSETTINGS"]);
         //        Utility.setListBoxItems(ref lstTimesheetType, Convert.ToString(dr["TIMESHEETTYPEID"]));
@@ -170,6 +174,11 @@ public partial class user_update : Root {
             oSQL.addNull("TOPPERFORMERREPORTSETTINGS");
         else
             oSQL.add("TOPPERFORMERREPORTSETTINGS", lstTopPerformer.SelectedValue);
+        if (lstAdminPA.SelectedValue == "")
+            oSQL.addNull("ADMINPAFORUSERID");
+        else
+            oSQL.add("ADMINPAFORUSERID", lstAdminPA.SelectedValue);
+
         oSQL.add("INCENTIVESUMMARYREPORTSETTINGS", chkShowIncentiveSummary);
 
         if (intUserID == -1)
