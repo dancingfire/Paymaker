@@ -433,7 +433,7 @@ public class Sale {
         String szSQL = String.Format(@"
                     -- 0. BnD records to be imported
                     SELECT SL.ID AS BnDSALEID, *,
-						(SELECT SUM(AMOUNT) FROM SALESVOUCHERDEDUCTION WHERE (REASON = 'External Conjunctional' OR REASON = 'Referral/Conjunctional') AND SALESVOUCHERID = SV.ID) AS CONJUNCTIONAL,
+						(SELECT SUM(AMOUNT) FROM SALESVOUCHERDEDUCTION WHERE (REASON = 'External Conjunctional' OR REASON = 'Referral/Conjunctional' OR REASON like '%Conjunctional%') AND SALESVOUCHERID = SV.ID) AS CONJUNCTIONAL,
 	                    SUBSTRING ( -- Calculate purchaser suburb(s) in a comma seperated list if required
 		                    (SELECT ', ' + SUBURB FROM PROPERTY PUR_P
 			                    JOIN CONTACT C ON C.RESIDENTIALPROPERTYID = PUR_P.ID
