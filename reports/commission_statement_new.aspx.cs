@@ -123,13 +123,17 @@ namespace Paymaker {
             addSummaryValue("[CommissionSummary_OTHERINCOME]", Utility.formatReportMoney(UserTotals.OtherIncome));
             addSummaryValue("[CommissionSummary_DEDUCTIONS]", Utility.formatReportMoney(UserTotals.TotalDeductionAmount));
             sbHTML.Clear();
-double TotalAfterSuper = UserTotals.MonthlyIncomeWithRetainer;
+            double TotalAfterSuper = UserTotals.MonthlyIncomeWithRetainer;
             if (UserTotals.UseRetainer)
                 TotalAfterSuper = UserTotals.RetainerAmount;
             if (TotalAfterSuper >= 0) {
                 double Super = TotalAfterSuper * 0.095;
                 if (Super > 1710.95)
                     Super = 1720.95;
+                UserTotals.SuperAmount = Super;
+                if (Valid.getText("RecalcTotals", "No").ToUpper() == "YES") {
+                    DB.runNonQuery(String.Format("UPDATE USERPAYPERIOD SET SUPERPAID = {0} WHERE ID = {1}", Utility.formatReportMoney(Super), UserTotals.DBID));
+                }
                 TotalAfterSuper -= Super;
                 addValue("[MONTHLYSUPER]", Utility.formatReportMoney(Super));
                 addValue("[TOTALDISTRIBUTIONOFFUNDS]", Utility.formatReportMoney(TotalAfterSuper));

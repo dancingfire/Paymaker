@@ -93,6 +93,17 @@
                 <br class="Align" />
             </asp:Panel>
 
+             <asp:Panel ID="pOfficeCode" runat="server" Visible="false">
+                <asp:Label ID="Label7" runat="server" CssClass="Label LabelPos">MYOB Code</asp:Label>
+                <asp:TextBox ID="txtOfficeCode" runat="server" CssClass="Entry EntryPos" MaxLength="2"
+                    Text="" TabIndex="70"></asp:TextBox>
+                <br class="Align" />
+                 <asp:Label ID="Label8" runat="server" CssClass="Label LabelPos">MYOB Branch</asp:Label>
+                <asp:TextBox ID="txtMYOBBranch" runat="server" CssClass="Entry EntryPos" MaxLength="50"
+                    Text="" TabIndex="70"></asp:TextBox>
+                <br class="Align" />
+            </asp:Panel>
+
             <asp:Panel ID="pCompany" runat="server" Visible="false">
                 <asp:Label ID="Label1" runat="server" CssClass="Label LabelPos">Company</asp:Label>
                 <asp:DropDownList ID="lstCompany" runat="server" CssClass="Entry EntryPos"

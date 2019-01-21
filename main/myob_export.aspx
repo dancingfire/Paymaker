@@ -45,9 +45,7 @@
         <div class='LeftPanel' style="width: 160px;">
             <asp:Button ID="btnUpdate" Style="width: 85px;" runat="server" Text="Preview" CommandName="cancel"
                 CssClass="Button btn" TabIndex="100" OnClick="btnUpdate_Click" ValidationGroup="EXPORT"></asp:Button>
-            <asp:Button ID="btnCancel" Style="width: 85px;" runat="server" Text="Cancel" CommandName="cancel"
-                CssClass="Button btn TopSpace" CausesValidation="False" TabIndex="300" OnClick="btnCancel_Click"></asp:Button>
-        </div>
+         </div>
 
         <div runat="server" id="dValidate" class='ActionPanel Normal' style='width: 600px; font-weight: normal; padding: 5px; clear: both;'>
             <strong>Validate GL codes with MYOB</strong>

@@ -105,6 +105,7 @@
                     $("#spActive").show();
 
                     break;
+                case "COMMISSIONTOTAL":
                 case "MENTORCOMMISSION":
                 case "FARMCOMMISSION":
                     $("#lstFinancialYear option[value='']").remove();
@@ -513,6 +514,11 @@
                     var szParam = getFilterValues();
                     szParam += getSelectedUser(false);
                     break;
+            case "\COMMISSIONTOTAL":
+                    var szSrc = "commission_total.aspx";
+                    var szParam = getFilterValues();
+                    szParam += getSelectedUser(false);
+                    break;
                 case "FARMCOMMISSION":
                     var szSrc = "farming_commission.aspx";
                     var szParam = getFilterValues();
@@ -785,6 +791,7 @@
                 <option value="BUDGETREPORT">Budget report</option>
                 <option value="COMMISSION">Commission statement</option>
                 <option value="COMMISSION_NEW">Commission statement - NEW</option>
+                <option value="COMMISSIONTOTAL">Commission - Totals</option>
                 <option value="MENTORCOMMISSION">Commission - Mentoring</option>
                 <option value="FARMCOMMISSION">Commission - Service Area</option>
                 <option value="EXPENSESUMMARY">Expense summary</option>

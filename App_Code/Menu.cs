@@ -72,8 +72,7 @@ public class ClientMenu {
         }
         oM.addMenu("Help", "", MenuRole.Admin);
         oM.addMenuItem("About", "../main/about.aspx");
-        oM.addMenuItem("Reoffice DB", "../working/reoffice_data.aspx");
-
+ 
         oM.addMenu("Logout", "../login.aspx");
 
         if (G.User.RoleID == 1) {

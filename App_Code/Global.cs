@@ -474,6 +474,14 @@ public class G {
                 return checkSessionVar("SUPERANNUATIONMAX", 9.25);
             }
         }
+        /// <summary>
+        /// TheSuper GL account code
+        /// </summary>
+        public static string SuperGLCode {
+            get {
+                return checkSessionVar("SUPERGLCODE", "SUPER");
+            }
+        }
 
         /// <summary>
         /// Is the creation of bonus records turned on
