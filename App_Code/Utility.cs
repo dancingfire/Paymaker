@@ -994,16 +994,18 @@ public class ExtendedHashTable : Hashtable {
 
 public class CsvWriter {
 
-    public static string WriteToString(DataTable table, bool header, bool quoteall) {
+    public static string WriteToString(DataTable table, bool header, bool quoteall, bool IncludeParenthesis = true) {
         StringWriter writer = new StringWriter();
-        WriteToStream(writer, table, header, quoteall);
+        WriteToStream(writer, table, header, quoteall, IncludeParenthesis);
         return writer.ToString();
     }
 
-    public static void WriteToStream(TextWriter stream, DataTable table, bool header, bool quoteall) {
+    public static void WriteToStream(TextWriter stream, DataTable table, bool header, bool quoteall, bool IncludeParenthesis) {
         if (header) {
-            stream.Write("{}");
-            stream.Write(Environment.NewLine);
+            if (IncludeParenthesis) {
+                stream.Write("{}");
+                stream.Write(Environment.NewLine);
+            }
             for (int i = 0; i < table.Columns.Count; i++) {
                 WriteItem(stream, table.Columns[i].Caption, quoteall);
                 if (i < table.Columns.Count - 1)

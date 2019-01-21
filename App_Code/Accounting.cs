@@ -210,6 +210,7 @@ public class UserPayPeriod {
     public double GraphCommissionTotal { get; set; }
     public double RetainerAmount { get; set; }
     public double DeductionsAmount { get; set; }
+    public double SuperAmount { get; set; }
 
     /// <summary>
     /// Includes the full value of the deduction
@@ -291,6 +292,7 @@ public class UserPayPeriod {
                     HeldOver = DB.readDouble(dr["HELDOVERAMOUNT"], 0);
                     Income = DB.readDouble(dr["INCOME"], 0);
                     OtherIncome = DB.readDouble(dr["OTHERINCOME"], 0);
+                    SuperAmount = DB.readDouble(dr["SUPERPAID"], 0);
                     Pending = DB.readDouble(dr["PENDING"], 0);
                     EOFYBonus = DB.readDouble(dr["EOFYBonus"], 0);
                     TotalDistributionOfFunds = DB.readDouble(dr["DistributionOfFunds"], 0);
@@ -479,6 +481,7 @@ public class UserPayPeriod {
         oSQL.add("INCOME", Income);
         oSQL.add("OTHERINCOME", OtherIncome);
         oSQL.add("PENDING", Pending);
+        oSQL.add("SUPERPAID", SuperAmount);
         oSQL.add("EOFYBonus", EOFYBonus);
         oSQL.add("DistributionOfFunds", TotalDistributionOfFunds);
         if (DBID == -1)
