@@ -17,6 +17,15 @@ function processDataTableHeaderFilters() {
     })
 }
 
+
+function closeEditModal(blnRefresh) {
+    $("#fModalUpdate").attr('src', 'about:blank');
+    $("#mModalUpdate").modal("hide");
+    if (blnRefresh) {
+        location.href = location.href;
+    }
+}
+
 function editTimesheet(UserID, CycleID) {
     $('#mTimesheet').on('show.bs.modal', function () {
         params = "?IsPopup=true&blnReadOnly=" + blnReadOnly + "&UserID=" + UserID;
@@ -112,6 +121,39 @@ function refreshDataArea(szName, intObjectID) {
 function refreshDataAreaSuccess(szHTML) {
     $("#d" + szDataUpdateName).html(szHTML);
 }
+
+
+function resizeFrameToContent(obj) {
+    intHeight = obj.contentWindow.document.body.scrollHeight;
+    obj.height = (intHeight) + "px";
+
+    intMaxHeight = clientHeight() - 60;
+    $(".overlay-iframe").css("max-height", intMaxHeight).css("overflow", "auto");
+}
+
+function clientHeight() {
+    var myWidth = 0, myHeight = 0;
+    if (typeof (window.innerWidth) == 'number') {
+        // Non-IE browsers
+        // RAID 5984 - iPad layout issues under investigation...
+        if (navigator.userAgent.indexOf("iPad") != -1) {
+            window.innerWidth = 980;  // RAID 5984 - This seems to be the largest and stable width for an iPad...
+        }
+        myWidth = window.innerWidth;
+        myHeight = window.innerHeight;
+    } else if (document.documentElement && (document.documentElement.clientWidth || document.documentElement.clientHeight)) {
+        //IE 6+ in 'standards compliant mode'
+        myWidth = document.documentElement.clientWidth;
+        myHeight = document.documentElement.clientHeight;
+    } else if (document.body && (document.body.clientWidth || document.body.clientHeight)) {
+        //IE 4 compatible
+        myWidth = document.body.clientWidth;
+        myHeight = document.body.clientHeight;
+    }
+    return myHeight;
+}
+
+
 
 function createCalendar(ControlID, blnHideIcon) {
     szDateFormat = "M d, yy";

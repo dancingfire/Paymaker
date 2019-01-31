@@ -38,10 +38,12 @@ public class ClientMenu {
         oM.addSpacer();
         oM.addMenuItem("Setup user budgets", "../main/user_account_update.aspx");
         oM.addMenuItem("Import EOY values", "../admin/import_values.aspx");
-
         oM.addMenu("Campaign", "../campaign/campaign_dashboard.aspx", MenuRole.Campaign);
         if (Payroll.CanAccess)
             oM.addMenu("Payroll", "../payroll/payroll_dashboard.aspx");
+        if (G.User.UserID == 0 || G.User.UserID == 497) {
+            oM.addMenu("Leave", "../payroll/leave_dashboard.aspx");
+        }
         if (canAccessReports()) {
             oM.addMenu("Reports", "../reports/report_admin.aspx");
 
@@ -61,6 +63,8 @@ public class ClientMenu {
             oM.addSpacer();
             oM.addMenuItem("Branch locations", "../admin/list_detail.aspx?intListTypeID=1");
             oM.addMenuItem("Companies", "../admin/list_detail.aspx?intListTypeID=7");
+            oM.addSpacer();
+            oM.addMenuItem("Leave type", "../admin/list_detail.aspx?intListTypeID=11");
             oM.addSpacer();
             oM.addMenuItem("View logins", "../admin/application_audits.aspx", MenuRole.Admin);
             oM.addMenuItem("View change log", "../admin/log_detail.aspx", MenuRole.Admin);

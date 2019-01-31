@@ -6,6 +6,44 @@ using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 
+
+/// <summary>
+/// Code to show/hide the modal forms in the system
+/// </summary>
+public static class ModalForms {
+
+    /// <summary>
+    /// The code top open and close the layout update panel
+    /// </summary>
+    /// <returns></returns>
+    public static string createModalUpdate(string Header, string Width = "70%", string Height = "50vh", bool ReturnHTML = false) {
+        string szHTML = String.Format(@"
+            <div id='mModalUpdate' tabindex='-1' class='modal fade'>
+                <div class='modal-dialog modal-lg' style='width: {1}; height: {2}'>
+                    <div class='modal-content'>
+                        <div class='modal-header'>
+                            <h4 class='modal-title' id='mModalUpdateTitle'>{0}</h4>
+                        </div>
+                        <div class='modal-body'>
+                            <iframe id='fModalUpdate' src='about:blank' style='width: 100%; height: 700px; border: 0px; overflow: visible'   class='overlay-iframe' scrolling='auto'  onload='parent.resizeFrameToContent(this)' onresize='parent.resizeFrameToContent(this)'></iframe>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+            <script>
+                //Generated framework
+                 function closeModalUpdate( data) {{
+                    $('#mModalUpdate').modal('hide');
+                }}
+            </script>", Header, Width, Height); ;
+        if (ReturnHTML) {
+            return szHTML;
+        }
+        G.oRoot.Form.Controls.Add(new LiteralControl(szHTML));
+        return "";
+    }
+}
+
 /// <summary>
 /// Functions  that are used throughout the application
 /// </summary>
@@ -433,12 +471,22 @@ public static class HTML {
         return oList;
     }
 
-    public static void formatGridView(ref GridView oGV, bool FormatForFiltering = false) {
+    public static void formatGridView(ref GridView oGV, bool FormatForFiltering = false, bool TableHover = false) {
         if (oGV.Rows.Count > 0) {
-            if (FormatForFiltering)
+            if (FormatForFiltering) {
                 oGV.HeaderRow.TableSection = TableRowSection.TableHeader;
+                oGV.BorderStyle = BorderStyle.None;
+                oGV.BorderWidth = 0;
+               
+            }
             oGV.HeaderRow.CssClass = "ListHeader";
+            oGV.CssClass += " table table-condensed";
+            if (TableHover)
+                oGV.CssClass += " table-hover";
+
+            oGV.EmptyDataRowStyle.CssClass = "EmptyData";
         }
+        oGV.GridLines = GridLines.None;
     }
 
     public static DropDownList createAmountTypeListBox(string szID, string szClass, string szStyle) {

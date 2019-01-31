@@ -25,10 +25,16 @@ public class Payroll {
 
     public static Boolean IsPayrollSupervisor {
         get {
-            // Check if User has any staff that are on the payroll system
-            return DB.getScalar(string.Format(@"
+            if (HttpContext.Current.Session["ISPAYROLLSUPERVISOR"] == null) {
+                // Check if User has any staff that are on the payroll system
+                bool IsSuper = DB.getScalar(string.Format(@"
                     SELECT COUNT(*) FROM DB_USER S JOIN DB_USER U ON U.SUPERVISORID = S.ID
                     WHERE S.ID = {0} AND U.PAYROLLCYCLEID > 0 AND U.ISACTIVE = 1 AND U.ISDELETED = 0", G.User.UserID), 0) > 0;
+                HttpContext.Current.Session["ISPAYROLLSUPERVISOR"] = IsSuper;
+                return IsSuper;
+            } else {
+                return Convert.ToBoolean(HttpContext.Current.Session["ISPAYROLLSUPERVISOR"]);
+            }
         }
     }
 
