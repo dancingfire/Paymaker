@@ -101,7 +101,8 @@ namespace Paymaker {
 
                 Application.UnLock();
                 pPage.Visible = false;
-
+                //Clear the supervisor variable - it is set as required
+                HttpContext.Current.Session["ISPAYROLLSUPERVISOR"] = null;
                 // Load up the session vars
                 szSQL = "SELECT TOP 1 * FROM PAYPERIOD ORDER BY ID DESC";
                 SqlDataReader drSettings = DB.runReader(szSQL);

@@ -114,6 +114,10 @@ public partial class list_update : Root {
             case ListType.TXCategory:
                 szSQL = String.Format(@"SELECT COUNT(*) FROM USERTX WHERE TXCATEGORYID = {0} ", intItemID);
                 break;
+
+            case ListType.LeaveType:
+                szSQL = String.Format(@"SELECT COUNT(*) FROM LEAVEREQUEST WHERE LEAVETYPEID = {0} ", intItemID);
+                break;
         }
         intCount = DB.getScalar(szSQL, 0);
 

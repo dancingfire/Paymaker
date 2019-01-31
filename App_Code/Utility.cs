@@ -60,6 +60,8 @@ public enum ListType {
     MYOBExport = 8,
     CampaignGL = 9,
     TXCategory = 10,
+    LeaveType = 11,
+    LeaveStatus = 12
 }
 
 public enum AmountType {
@@ -155,6 +157,13 @@ public class Utility {
         File.WriteAllText(FileName, sb.ToString());
     }
 
+    public static void bindGV(ref GridView gv, DataSet oData, bool FormatForDataGrid = true, bool TableHover = true) {
+        gv.DataSource = oData;
+        gv.DataBind();
+        if (FormatForDataGrid) {
+            HTML.formatGridView(ref gv, true, TableHover);
+        }
+    }
     /// <summary>
     /// Return the start of the financial year given a date
     /// </summary>
