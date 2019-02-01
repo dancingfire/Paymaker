@@ -132,7 +132,7 @@ namespace Paymaker {
                     Super = 1720.95;
                 UserTotals.SuperAmount = Super;
                 if (Valid.getText("RecalcTotals", "No").ToUpper() == "YES") {
-                    DB.runNonQuery(String.Format("UPDATE USERPAYPERIOD SET SUPERPAID = {0} WHERE ID = {1}", Utility.formatReportMoney(Super), UserTotals.DBID));
+                    DB.runNonQuery(String.Format("UPDATE USERPAYPERIOD SET SUPERPAID = {0} WHERE ID = {1}", Super, UserTotals.DBID));
                 }
                 TotalAfterSuper -= Super;
                 addValue("[MONTHLYSUPER]", Utility.formatReportMoney(Super));

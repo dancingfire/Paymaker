@@ -39,7 +39,7 @@ namespace Paymaker {
                 if (lstCompany.SelectedValue != "" && Convert.ToInt32(lstCompany.SelectedValue) != DB.readInt(drCompany["ID"]))
                     continue;
                 string szFileName = Utility.formatDate(DateTime.Now) + "-MYOB-Commission-" + drCompany["NAME"] + ".txt";
-                createRecords(UpdateDB, DB.readInt(drCompany["ID"]), szFileName);
+               // createRecords(UpdateDB, DB.readInt(drCompany["ID"]), szFileName);
                 szFileName = Utility.formatDate(DateTime.Now) + "-MYOB-Commission-ADVANCED" + drCompany["NAME"] + ".csv";
                 createRecordsAdvanced(UpdateDB, DB.readInt(drCompany["ID"]), szFileName);
             }
@@ -118,12 +118,12 @@ namespace Paymaker {
                 }
             }
 
-            if (!UpdateDB) {
+           /* if (!UpdateDB) {
                 gvData.DataSource = dtTotal;
                 gvData.DataBind();
                 gvData.Visible = true;
                 HTML.formatGridView(ref gvData, true);
-            }
+            }*/
         }
 
         private void processTable(DataView dt, DataTable dtNew, string szJournalNumber, string Type, int MYOBExportID, bool UpdateDB) {
@@ -301,7 +301,7 @@ namespace Paymaker {
                     double Super = DB.readDouble(rCurr["SUPERPAID"]);
                     if (Super > 0) {
                         createDataRowAdvanced(ref rCurr, oP.EndDate, G.Settings.SuperGLCode, Super, true);
-                        createDataRowAdvanced(ref rCurr, oP.EndDate, G.Settings.SuperGLCode, Super, false);
+                        createDataRowAdvanced(ref rCurr, oP.EndDate, "2-3000", Super, false);
                     }
                     CurrUserID = DB.readInt(rCurr["USERID"]);
                 }

@@ -33,6 +33,10 @@
           <DataField>SALARY</DataField>
           <rd:TypeName>System.Double</rd:TypeName>
         </Field>
+        <Field Name="SUPER">
+          <DataField>SUPER</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
       </Fields>
     </DataSet>
   </DataSets>
@@ -827,7 +831,7 @@ ALLOW</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!SALARY.Value</Value>
+                                  <Value />
                                   <Style>
                                     <FontSize>8pt</FontSize>
                                     <Format>'$'0.00;('$'0.00)</Format>
@@ -856,16 +860,18 @@ ALLOW</Value>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="LISTEROFFICE">
+                        <Textbox Name="SALARY1">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>=Fields!SALARY.Value</Value>
                                   <Style>
                                     <FontSize>8pt</FontSize>
+                                    <Format>'$'0.00;('$'0.00)</Format>
+                                    <rd:FormatSymbolCulture>en-US</rd:FormatSymbolCulture>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -874,7 +880,7 @@ ALLOW</Value>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>LISTEROFFICE</rd:DefaultName>
+                          <rd:DefaultName>SALARY1</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -890,16 +896,18 @@ ALLOW</Value>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox14">
+                        <Textbox Name="SUPER">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>=Fields!SUPER.Value</Value>
                                   <Style>
                                     <FontSize>8pt</FontSize>
+                                    <Format>'$'0.00;('$'0.00)</Format>
+                                    <rd:FormatSymbolCulture>en-US</rd:FormatSymbolCulture>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -908,7 +916,7 @@ ALLOW</Value>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox14</rd:DefaultName>
+                          <rd:DefaultName>SUPER</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>

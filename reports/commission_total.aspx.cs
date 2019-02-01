@@ -76,14 +76,15 @@ public class CommissionTotal : Report {
             szUserActive = "";
 
         string szSQL = string.Format(@"
-               SELECT  U.LASTNAME + ',' +  U.FIRSTNAME AS EMPLOYEE, INCOME AS SALARY, C.NAME AS COMPANY, R.NAME
+               SELECT  MAX(U.LASTNAME) + ',' +  MAX(U.FIRSTNAME) AS EMPLOYEE, SUM(INCOME) AS SALARY, MAX(C.NAME) AS COMPANY,  MAX(L.OFFICEMYOBCODE) AS DEPT
+				, SUM(UPP.SUPERPAID) AS SUPER
                 from USERPAYPERIOD UPP JOIN DB_USER U ON UPP.USERID = U.ID
                 join LIST l on U.OFFICEID = l.ID 
                 JOIN LIST C ON L.COMPANYID = C.ID
                 JOIN PAYPERIOD P On UPP.PAYPERIODID = P.ID
-                JOIN ROLE R ON U.ROLEID = R.ID
                 WHERE U.ISPAID = 1 {0} {1}
-                ORDER BY P.ID DESC, C.NAME, U.LASTNAME, U.FIRSTNAME
+                GROUP BY C.NAME, U.ID
+				ORDER BY C.NAME, MAX(U.LASTNAME), MAX(U.FIRSTNAME)
                 ;", szFilter, szUserActive);
 
         DataSet ds = DB.runDataSet(szSQL);

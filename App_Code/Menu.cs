@@ -39,13 +39,28 @@ public class ClientMenu {
         oM.addMenuItem("Setup user budgets", "../main/user_account_update.aspx");
         oM.addMenuItem("Import EOY values", "../admin/import_values.aspx");
         oM.addMenu("Campaign", "../campaign/campaign_dashboard.aspx", MenuRole.Campaign);
-        if (Payroll.CanAccess)
-            oM.addMenu("Payroll", "../payroll/payroll_dashboard.aspx");
-        if (G.User.UserID == 0 || G.User.UserID == 497) {
-            oM.addMenu("Leave", "../payroll/leave_dashboard.aspx");
-            oM.addMenuItem("Public holidays", "../admin/holiday_detail.aspx", MenuRole.Admin);
-            oM.addMenuItem("Settings", "../admin/leave_settings.aspx", MenuRole.Admin);
+        if (Payroll.CanAccess) {
+            if (G.User.RoleID == 1) {
+                oM.addMenu("Payroll", "");
+                oM.addMenuItem("Dashboard", "../payroll/payroll_dashboard.aspx");
+                oM.addMenuItem("Payroll settings", "../admin/sales_settings.aspx", MenuRole.Admin);
+            } else {
+                oM.addMenu("Payroll", "../payroll/payroll_dashboard.aspx");
+            }
 
+        }
+        if (G.User.UserID == 0 || G.User.UserID == 497) {
+            if (G.User.RoleID == 1) {
+                oM.addMenu("Leave");
+                oM.addMenuItem("Dashboard", "../payroll/leave_dashboard.aspx");
+                oM.addSpacer();
+                oM.addMenuItem("Leave type", "../admin/list_detail.aspx?intListTypeID=11", MenuRole.Admin);
+                oM.addMenuItem("Public holidays", "../admin/holiday_detail.aspx", MenuRole.Admin);
+                oM.addMenuItem("Settings", "../admin/leave_settings.aspx", MenuRole.Admin);
+            } else {
+                oM.addMenu("Leave", "../payroll/leave_dashboard.aspx");
+            }
+          
         }
         if (canAccessReports()) {
             oM.addMenu("Reports", "../reports/report_admin.aspx");
@@ -67,8 +82,6 @@ public class ClientMenu {
             oM.addMenuItem("Branch locations", "../admin/list_detail.aspx?intListTypeID=1");
             oM.addMenuItem("Companies", "../admin/list_detail.aspx?intListTypeID=7");
             oM.addSpacer();
-            oM.addMenuItem("Leave type", "../admin/list_detail.aspx?intListTypeID=11");
-            oM.addSpacer();
             oM.addMenuItem("View logins", "../admin/application_audits.aspx", MenuRole.Admin);
             oM.addMenuItem("View change log", "../admin/log_detail.aspx", MenuRole.Admin);
             oM.addMenuItem("Admin functions", "../admin/admin_tasks.aspx", MenuRole.Admin);
@@ -77,9 +90,7 @@ public class ClientMenu {
             oM.addSpacer();
             oM.addMenuItem("Import Box Dice", "../boxdice/import.aspx");
         }
-        oM.addMenu("Help", "", MenuRole.Admin);
-        oM.addMenuItem("About", "../main/about.aspx");
- 
+     
         oM.addMenu("Logout", "../login.aspx");
 
         if (G.User.RoleID == 1) {
@@ -123,7 +134,7 @@ public class ClientMenu {
                     </span>
                 </div>
                 <div class='AppMenu'>
-                    <div style='float: left; width: 70%' >
+                    <div style='float: left; width: 80%' >
                         <nav id='custom-bootstrap-menu' class='navbar navbar-default'>
                             <div class='container-fluid'>
                                 <div class='navbar-header'>
@@ -144,14 +155,14 @@ public class ClientMenu {
                             </div><!-- /.container-fluid -->
                         </nav>
                     </div>
-                    <div style='float: right; width: 30%; text-align: right; '>
-                       <span style='color: white; width: 350px; font-size: 12px'>{1}</span>
+                    <div style='float: right; width: 20%; text-align: right; padding-top: 4px '>
+                       <span style='color: white; width: 350px; font-size: 12px;'>{1}</span>
                         <a href='../help/CAPSAgentViewingInfo.pdf'  target='_blank'>
                            <img src='../sys_images/help.gif' align='right' title='Click here to view help'/>
                         </a>
                     </div>
                 </div>
-            ", oM.createMenu(), G.User.UserName + " - " + System.DateTime.Now.ToString("D"));
+            ", oM.createMenu(), G.User.UserName + " - " + System.DateTime.Now.ToString("ddd, dd MMM yyy"));
         return szHTML;
     }
 }

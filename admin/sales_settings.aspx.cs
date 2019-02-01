@@ -10,7 +10,7 @@ public partial class sales_settings : Root {
             oConfigAdmin.addConfig("SUPERANNUATIONPERCENTAGE", "9.25");
             oConfigAdmin.addConfig("SUPERANNUATIONMAX", "25000");
             oConfigAdmin.addConfig("CALCULATEBONUS", "FALSE");
-            oConfigAdmin.addConfig("SUPERGLACCOUNT", "");
+            oConfigAdmin.addConfig("SUPERGLCODE", "");
 
             if (!Page.IsPostBack) {
                 loadSettings();
