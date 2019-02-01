@@ -50,15 +50,15 @@
         }
     </script>
 </head>
-<body onload='loadPage()' style="margin: 0px">
-    <form id="frmMain" method="post" runat="server" onsubmit="return validatePage();" class="form-horizontal">
+<body onload='loadPage()'>
+    <form id="frmMain" method="post" runat="server" onsubmit="return validatePage();" class="form-horizontal" enctype="application/x-www-form-urlencoded">
         <asp:HiddenField ID="hdTXID" runat="server" />
         <asp:HiddenField ID="hdDateUsed" runat="server" />
         <asp:HiddenField ID="hdReadOnly" runat="server" />
         <asp:HiddenField ID="hdFletcherAmountCalc" runat="server" Value="" />
         <div class="container-fluid">
             <div class="row">
-                <div class="col-xs-10">
+                <div class="col-xs-12">
                     <div class="form-group">
                         <label for="lstLeaveType" class="control-label col-xs-2">Leave type:</label>
                         <div class="col-xs-10">
@@ -92,22 +92,34 @@
                         </div>
                     </div>
 
+                    <div class="form-group">
+                        <label for="lblComments" class="control-label col-xs-2">Supporting evidence</label>
+                        <div class="col-xs-10">
+                            <asp:FileUpload ID="FileUpload1" runat="server" CssClass="Entry "  BorderStyle="0"/>
+                        </div>
+                    </div>
                 </div>
-
-                <div class='col-xs-2'>
-                    <asp:Button ID="btnUpdate" runat="server" Text="Update" CssClass="Button btn btn-block"
-                        CausesValidation="False" TabIndex="100" OnClick="btnUpdate_Click" OnClientClick="return validatePage()"
-                        Style="margin-bottom: 5px"></asp:Button>
-                    <button  class="Button btn btn-block" id="btnCancel"  runat="server" onclick="return cancelPage();" tabindex="120">Cancel</button>
-                    
-                    <asp:Button ID="btnDelete" runat="server" Text="Delete" CssClass="Button btn btn-block"
-                        CausesValidation="False" TabIndex="200" OnClick="btnDelete_Click" OnClientClick="return confirmDelete()"></asp:Button>
-                    <asp:Button ID="btnApprove" runat="server" Text="Approve" CssClass="Button btn btn-primary btn-block" 
+            </div>
+            <div class="row">
+                <div class='col-xs-3'>
+                    <asp:Button ID="btnApprove" runat="server" Text="Approve" CssClass="Button btn btn-primary btn-block"
                         CausesValidation="False" TabIndex="300" OnClientClick="return confirmApproval();" Visible="false"
                         Style="margin-bottom: 15px" OnClick="btnApprove_Click"></asp:Button>
-                    <asp:Button ID="btnReject" runat="server" Text="Reject" CssClass="Button btn btn-secondary btn-block"  Visible="false"
+
+                    <asp:Button ID="btnUpdate" runat="server" Text="Send approval request" CssClass="Button btn btn-block"
+                        CausesValidation="False" TabIndex="100" OnClick="btnUpdate_Click" OnClientClick="return validatePage()"
+                        Style="margin-bottom: 5px"></asp:Button>
+                </div>
+                <div class='col-xs-3 col-xs-offset-1'>
+                    <asp:Button ID="btnReject" runat="server" Text="Reject" CssClass="Button btn btn-secondary btn-block" Visible="false"
                         CausesValidation="False" TabIndex="300" OnClientClick="return confirmRejection();"
                         Style="margin-bottom: 15px" OnClick="btnReject_Click"></asp:Button>
+
+                    <asp:Button ID="btnDelete" runat="server" Text="Delete" CssClass="Button btn btn-block"
+                        CausesValidation="False" TabIndex="200" OnClick="btnDelete_Click" OnClientClick="return confirmDelete()"></asp:Button>
+                </div>
+                <div class='col-xs-3 col-xs-offset-1'>
+                    <button class="Button btn btn-block" id="btnCancel" runat="server" onclick="return cancelPage();" tabindex="120">Cancel</button>
                 </div>
             </div>
         </div>

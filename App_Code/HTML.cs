@@ -19,13 +19,13 @@ public static class ModalForms {
     public static string createModalUpdate(string Header, string Width = "70%", string Height = "50vh", bool ReturnHTML = false) {
         string szHTML = String.Format(@"
             <div id='mModalUpdate' tabindex='-1' class='modal fade'>
-                <div class='modal-dialog modal-lg' style='width: {1}; height: {2}'>
+                <div class='modal-dialog modal-lg' style='width: {1};'>
                     <div class='modal-content'>
                         <div class='modal-header'>
                             <h4 class='modal-title' id='mModalUpdateTitle'>{0}</h4>
                         </div>
                         <div class='modal-body'>
-                            <iframe id='fModalUpdate' src='about:blank' style='width: 100%; height: 700px; border: 0px; overflow: visible'   class='overlay-iframe' scrolling='auto'  onload='parent.resizeFrameToContent(this)' onresize='parent.resizeFrameToContent(this)'></iframe>
+                            <iframe id='fModalUpdate' src='about:blank' style='width: 100%; height: 200px; border: 0px; overflow: visible'   class='overlay-iframe' scrolling='auto'  onload='parent.resizeFrameToContent(this)' onresize='parent.resizeFrameToContent(this)'></iframe>
                         </div>
                     </div><!-- /.modal-content -->
                 </div><!-- /.modal-dialog -->

@@ -51,7 +51,6 @@ public partial class request_update : Root {
     private void loadDefaults() {
         txtStartDate.Text = Utility.formatDate(DateTime.Now);
         btnDelete.Visible = false;
-        btnUpdate.Text = "Insert";
     }
 
     private void loadRequest() {

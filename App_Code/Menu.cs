@@ -43,6 +43,9 @@ public class ClientMenu {
             oM.addMenu("Payroll", "../payroll/payroll_dashboard.aspx");
         if (G.User.UserID == 0 || G.User.UserID == 497) {
             oM.addMenu("Leave", "../payroll/leave_dashboard.aspx");
+            oM.addMenuItem("Public holidays", "../admin/holiday_detail.aspx", MenuRole.Admin);
+            oM.addMenuItem("Settings", "../admin/leave_settings.aspx", MenuRole.Admin);
+
         }
         if (canAccessReports()) {
             oM.addMenu("Reports", "../reports/report_admin.aspx");

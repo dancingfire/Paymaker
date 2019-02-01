@@ -122,12 +122,13 @@ function refreshDataAreaSuccess(szHTML) {
     $("#d" + szDataUpdateName).html(szHTML);
 }
 
-
 function resizeFrameToContent(obj) {
     intHeight = obj.contentWindow.document.body.scrollHeight;
     obj.height = (intHeight) + "px";
-
     intMaxHeight = clientHeight() - 60;
+    //$(".modal-dialog,.modal-body").css("height", intHeight + 'px');
+    //alert($(".modal-dialog").css("height"))
+    $(".overlay-iframe").css("height", intHeight);
     $(".overlay-iframe").css("max-height", intMaxHeight).css("overflow", "auto");
 }
 

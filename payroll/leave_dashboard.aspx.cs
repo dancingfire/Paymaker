@@ -16,7 +16,7 @@ namespace Paymaker {
                 loadRequests();
                 checkSupervisorStatus();
             }
-            ModalForms.createModalUpdate("Leave request", "60%", "35vh");
+            ModalForms.createModalUpdate("Leave request", "60%", "350px");
         }
 
         void checkSupervisorStatus() {
