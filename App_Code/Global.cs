@@ -92,7 +92,6 @@ public class G {
         }
     }
 
-
     /// <summary>
     /// The currently active pay period
     /// </summary>
@@ -106,8 +105,8 @@ public class G {
 
     public static Payroll.TimeSheetCycleReferenceList TimeSheetCycleReferences {
         get {
-            // 
-            if (HttpContext.Current.Application["TIMESHEETCR"] == null) 
+            //
+            if (HttpContext.Current.Application["TIMESHEETCR"] == null)
                 HttpContext.Current.Application["TIMESHEETCR"] = Payroll.getTimeSheetCycleReferences();
 
             return (Payroll.TimeSheetCycleReferenceList)HttpContext.Current.Application["TIMESHEETCR"];
@@ -150,8 +149,6 @@ public class G {
         }
     }
 
-
-
     public static string CurrentUserPermissions {
         get {
             if (HttpContext.Current.Session["SESSIONROLEPERMISSIONS"] != null)
@@ -179,8 +176,6 @@ public class G {
         }
     }
 
-  
-
     /// <summary>
     /// Utility classes
     /// </summary>
@@ -193,7 +188,6 @@ public class G {
             }
             set { HttpContext.Current.Session["USERID"] = value; }
         }
-
 
         public static string Email {
             get {
@@ -211,7 +205,7 @@ public class G {
                 HttpContext.Current.Session["USEREMAIL"] = szEmail;
             }
         }
-       
+
         /// <summary>
         /// Payroll type 0 - none, 1 - Normal, 2 - Paid in advance
         /// </summary>
@@ -384,6 +378,7 @@ public class G {
                 return System.Configuration.ConfigurationManager.AppSettings["AppDataPath"];
             }
         }
+
         public static string MYOBDir {
             get {
                 return System.Configuration.ConfigurationManager.AppSettings["AppMYOBPath"];
@@ -393,7 +388,6 @@ public class G {
         public static string DomainName {
             get { return HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) + HttpContext.Current.Request.ApplicationPath; }
         }
-
 
         public static string FileDir {
             get {
@@ -454,6 +448,15 @@ public class G {
         }
 
         /// <summary>
+        /// The email address for people who don't have a supervisor email set
+        /// </summary>
+        public static string CatchAllEmail {
+            get {
+                return checkSessionVar("LEAVECATCHALLEMAIL", "jacqui.litvik@fletchers.net.au");
+            }
+        }
+
+        /// <summary>
         /// The amount that will be paid out if there is not enough income on the month
         /// </summary>
         public static double RetainerThreshhold {
@@ -479,6 +482,7 @@ public class G {
                 return checkSessionVar("SUPERANNUATIONMAX", 9.25);
             }
         }
+
         /// <summary>
         /// TheSuper GL account code
         /// </summary>

@@ -444,6 +444,36 @@ public enum DBLogType {
     EmailAutomation = 12
 }
 
+public enum EmailType {
+    LeaveRequest = 0,
+    Approval = 1,
+    Rejection = 2,
+    Reminder = 3,
+    General = 4
+}
+
+public class EmailLog {
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="Type"></param>
+    /// <param name="Entry"></param>
+    /// <param name="ObjectID"></param>
+    /// <param name="ChildObjectID"></param>
+    public static void addLog(EmailType Type, string Subject, string From, string To, string CC, string Body, int ObjectID) {
+        sqlUpdate oSQL = new sqlUpdate("EMAILLOG", "ID", -1);
+        oSQL.add("TYPEID", (int)Type);
+        oSQL.add("SUBJECT", Subject);
+        oSQL.add("SENTFROM", From);
+        oSQL.add("SENTTO", To);
+        oSQL.add("CC", CC);
+        oSQL.add("Body", Body);
+        oSQL.add("OBJECTID", ObjectID);
+        DB.runNonQuery(oSQL.createInsertSQL());
+    }
+}
+
 public class DBLog {
     public string szTableName = "";
     public int intUserID = 0;
@@ -458,7 +488,7 @@ public class DBLog {
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="Type"></param>
     /// <param name="Entry"></param>
@@ -489,7 +519,7 @@ public class DBLog {
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="Type"></param>
     /// <param name="Entry"></param>

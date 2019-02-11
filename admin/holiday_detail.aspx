@@ -43,10 +43,17 @@
             </div>
             <div class='AdminActionPanel' style='float: left; text-align: right; width: 100%'><a href='javascript: viewItem(-1)'>
                 <asp:Label ID="lblInsertText" runat="server" Text="Add holiday" CssClass="LinkButton"></asp:Label></a></div>
-                <asp:FileUpload ID="FileUpload1" runat="server" />
-        <asp:Button ID="btnUploadFile" runat="server" Text="Upload file" OnClick="btnUploadFile_Click"  OnClientClick="uploadFile()" />
+               
+            <div>
+                You can upload the public holidays from a iCal file provided by the <a href='https://www.vic.gov.au/calendar.html' target="_blank">Victorian government</a>.
+            </div>
+            <div style="float: left; width: 70%">
+                 <asp:FileUpload ID="FileUpload1" Class="form-control" runat="server" />
+            </div>
+            <div style="float: right; width: 20%">
+                <asp:Button ID="btnUploadFile" runat="server" Text="Upload file" OnClick="btnUploadFile_Click"  OnClientClick="uploadFile()" />
+            </div>
         </div>
-
      
         <iframe id='frmUpdate' name='frmUpdate' class='AdminUpdateFrame' frameborder='0' src='../blank.html'></iframe>
     </form>

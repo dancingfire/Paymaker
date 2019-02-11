@@ -3,8 +3,8 @@ using System.IO;
 
 namespace Paymaker {
 
-    public partial class myob_doc : Root {
-        private string Directory = G.Settings.MYOBDir;
+    public partial class view_doc : Root {
+        private string Directory = G.Settings.DataDir;
 
         protected void Page_Load(object sender, System.EventArgs e) {
             /* SECURITY : DO NOT REMOVE
@@ -21,15 +21,14 @@ namespace Paymaker {
             string szTest = file.ToUpper();
 
             // Lists only files that are *.txt or *.csv
-            if (!szTest.EndsWith(".CSV") && !szTest.EndsWith(".TXT"))
+            if (!szTest.EndsWith(".JPG") && !szTest.EndsWith(".PDF"))
                 throw new Exception("Invalid file type");
 
-            byte[] bytes = File.ReadAllBytes(Directory + file);
+            byte[] bytes = File.ReadAllBytes(Path.Combine(Directory, file));
             Response.Buffer = true;
             Response.Clear();
-            Response.ContentType = "text/csv";
-            if (szTest.EndsWith(".TXT"))
-                Response.ContentType = "text/plain";
+            Response.ContentType = "text/" + Path.GetExtension(file).ToLower();
+            Response.ContentType = "text/plain";
             Response.AddHeader("content-disposition", @"attachment; filename=""" + file + @"""");
             Response.BinaryWrite(bytes);
             Response.Flush();

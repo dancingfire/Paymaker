@@ -49,9 +49,9 @@ public class Email {
     /// <param name="szBCC"></param>
     /// <param name="SendToUserID">In the case that emails are sent while there is no logged in user eg. Password reset, a user Id needs to be provided to log emails against</param>
     ///
-    public static void sendMail(string To, string szFrom, string Subject, string HTMLBody, string szCC = "", string szBCC = "", Attachment IncludeFile = null, int LogObjectID = -1) {
+    public static void sendMail(string To, string szFrom, string Subject, string HTMLBody, string szCC = "", string szBCC = "", Attachment IncludeFile = null, int LogObjectID = -1, EmailType Type = EmailType.General) {
         MailMessage msg = new MailMessage();
-        string szLog = String.Format(@" 
+        string szLog = String.Format(@"
             From: {0}
             To: {1}
             CC: {2}
@@ -59,8 +59,7 @@ public class Email {
             Subject: {4}
             Body: {5}
             ", szFrom, To, szCC, szBCC, Subject, HTMLBody);
-
-        DBLog.addGenericRecord(DBLogType.Email, szLog, LogObjectID);
+        EmailLog.addLog(Type, Subject, szFrom, To, szCC, HTMLBody, LogObjectID);
         msg.IsBodyHtml = true;
 
         if (!String.IsNullOrWhiteSpace(To)) {
