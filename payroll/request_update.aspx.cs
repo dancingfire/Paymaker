@@ -1,15 +1,16 @@
 using System;
+using System.Data;
 using System.IO;
 using System.Web;
 using System.Web.UI.WebControls;
 
 public partial class request_update : Root {
     protected int intID = -1;
-    LeaveRequest l = null;
+    private LeaveRequest l = null;
 
     protected void Page_Load(object sender, System.EventArgs e) {
         blnShowMenu = false;
-      
+
         Response.Cache.SetCacheability(HttpCacheability.NoCache);
         Response.Cache.SetExpires(System.DateTime.Now);
         intID = Valid.getInteger("id", -1);
@@ -25,13 +26,27 @@ public partial class request_update : Root {
     }
 
     private void bindData() {
-       
         string szSQL = String.Format("SELECT ID, NAME FROM LIST WHERE LISTTYPEID = {0} ORDER BY SEQUENCENO, NAME", (int)ListType.LeaveType);
         Utility.BindList(ref lstLeaveType, DB.runReader(szSQL), "ID", "NAME");
         lstLeaveType.Items.Insert(0, new ListItem("Select leave type...", ""));
+
+        using (DataSet ds = DB.runDataSet("select * from PUBLICHOLIDAY WHERE HOLIDAYDATE > DateAdd(d, -100, getdate())")) {
+            string szJS = "";
+            foreach (DataRow dr in ds.Tables[0].Rows) {
+                Utility.Append(ref szJS, "'" + DB.readDate(dr["HOLIDAYDATE"]).ToString("MMM dd, yyyy") + "'", ",");
+            }
+            sbStartJS.AppendFormat(@"
+                arHolidayDates = [{0}];
+            ", szJS);
+        }
     }
 
-    void checkSupervisorSettings() {
+    private void checkSupervisorSettings() {
+        if (intID == -1) {
+            dHistory.Visible = false;
+            return;
+        }
+
         if (Payroll.IsPayrollSupervisor && intID > -1 && l.UserID != G.User.UserID) {
             if (l.LeaveStatus == LeaveRequestStatus.Requested) {
                 btnApprove.Visible = btnReject.Visible = true;
@@ -39,6 +54,18 @@ public partial class request_update : Root {
             btnDelete.Visible = btnUpdate.Visible = false;
             btnCancel.InnerHtml = "Close";
             hdReadOnly.Value = "true";
+            txtComments.ReadOnly = true;
+            FileUpload1.Visible = false;
+            pApprovalPanel.Visible = true;
+        } else {
+            if (l.ManagerComments != "") {
+                txtManagerComments.Text = l.ManagerComments;
+                pApprovalPanel.Visible = true;
+                txtManagerComments.ReadOnly = true;
+            } else if (l.StartDate < DateTime.Now) {
+                //Readonly after the start date
+                hdReadOnly.Value = "true";
+            }
         }
     }
 
@@ -52,60 +79,69 @@ public partial class request_update : Root {
         txtStartDate.Text = Utility.formatDate(l.StartDate);
         txtEndDate.Text = Utility.formatDate(l.EndDate);
         txtComments.Text = l.Comment;
-        if(l.SupportingFile != "") {
-            lExistingFile.Text = "<a href='view"
+        txtManagerComments.Text = l.ManagerComments;
+        if (l.SupportingFile != "") {
+            string FullPath = Path.Combine(G.Settings.DataDir, l.SupportingFile);
+            lExistingFile.Text = string.Format("<a href='view_doc.aspx?file={0}' target='_blank'>View file</a> <br/>", Server.UrlEncode(FullPath), FullPath);
         }
         Utility.setListBoxItems(ref lstLeaveType, l.LeaveTypeID.ToString());
+        loadHistory();
     }
 
-    protected void btnUpdate_Click(object sender, System.EventArgs e) {
-        string szSQL;
-        sqlUpdate oSQL = new sqlUpdate("LEAVEREQUEST", "ID", intID);
-        oSQL.add("STARTDATE", txtStartDate.Text);
-        oSQL.add("ENDDATE", txtEndDate.Text);
-        oSQL.add("COMMENTS", txtComments.Text);
-        oSQL.add("LEAVETYPEID", lstLeaveType.SelectedValue);
-       
-        if (intID == -1) {
-            oSQL.add("USERID", G.User.ID);
-            szSQL = oSQL.createInsertSQL();
-        } else
-            szSQL = oSQL.createUpdateSQL();
+    void loadHistory() {
+        using(DataSet ds = DB.runDataSet(String.Format(@"
+            SELECT TYPEID, '' As ACTION, SENTDATE, ''AS COMMENTS
+            FROM EMAILLOG L 
+            WHERE OBJECTID = {0} AND TYPEID IN (0, 1, 2, 3)
+            ORDER BY SENTDATE 
+        ", intID))) {
+            foreach(DataRow dr in ds.Tables[0].Rows) {
+                EmailType Type = (EmailType)DB.readInt(dr["TYPEID"]);
+                if ( Type == EmailType.LeaveRequest) {
+                    dr["ACTION"] = "Initial request";
 
-        DB.runNonQuery(szSQL);
-        if(intID == -1) {
-            intID = DB.getScalar("SELECT MAX(ID) FROM LEAVEREQUEST WHERE USERID = " + G.User.ID, -1);
+                } else if (Type == EmailType.Approval) {
+                    dr["Action"] = "Approved";
+                    dr["Comments"] = l.ManagerComments;
+                } else if (Type == EmailType.Rejection) {
+                    dr["Action"] = "Rejected";
+                    dr["Comments"] = l.ManagerComments;
+                } else if(Type == EmailType.Reminder) {
+                    dr["Action"] = "Reminder sent";
+                }
+            }
+            Utility.bindGV(ref gvHistory, ds, false);
+
         }
-        if (FileUpload1.HasFile) {
-            string FileName = "Evidence" + intID + "." + Path.GetExtension(FileUpload1.FileName);
-            FileUpload1.SaveAs(Path.Combine(G.Settings.DataDir, FileName));
-            DB.runNonQuery(String.Format("UPDATE LEAVEREQUEST SET SUPPORTINGFILE = '{0}' WHERE ID = {1}", DB.escape(FileName), intID));
-        }
+    }
+    protected void btnUpdate_Click(object sender, System.EventArgs e) {
+        l = new LeaveRequest(intID);
+        l.StartDate = Convert.ToDateTime(txtStartDate.Text);
+        l.EndDate = Convert.ToDateTime(txtEndDate.Text);
+        l.Comment = txtComments.Text;
+        l.LeaveTypeID = Convert.ToInt32(lstLeaveType.SelectedValue);
+        l.TotalDays = Convert.ToInt32(txtTotalDays.Text);
+        l.LeaveType = lstLeaveType.SelectedItem.Text;
+        l.updateDB();
+        l.addFile(FileUpload1);
         sbStartJS.Append("parent.closeEditModal(true);");
     }
 
     protected void btnDelete_Click(object sender, System.EventArgs e) {
-        string szSQL = string.Format(@"
-            UPDATE LEAVEREQUEST
-            SET ISDELETED = 1 WHERE ID = {0}", intID);
-        DB.runNonQuery(szSQL);
+        l = new LeaveRequest(intID);
+        l.delete();
         sbStartJS.Append("parent.closeEditModal(true);");
     }
 
     protected void btnApprove_Click(object sender, EventArgs e) {
-        string szSQL = string.Format(@"
-            UPDATE LEAVEREQUEST
-            SET LEAVESTATUSID = 1, MANAGERSIGNOFFDATE = getdate() WHERE ID = {0}", intID);
-        DB.runNonQuery(szSQL);
+        l = new LeaveRequest(intID);
+        l.managerUpdate(txtManagerComments.Text, true);
         sbStartJS.Append("parent.closeEditModal(true);");
-      
     }
 
     protected void btnReject_Click(object sender, EventArgs e) {
-        string szSQL = string.Format(@"
-            UPDATE LEAVEREQUEST
-            SET  LEAVESTATUSID = 2, MANAGERSIGNOFFDATE = getdate() WHERE ID = {0}", intID);
-        DB.runNonQuery(szSQL);
+        l = new LeaveRequest(intID);
+        l.managerUpdate(txtManagerComments.Text, false);
         sbStartJS.Append("parent.closeEditModal(true);");
     }
 }

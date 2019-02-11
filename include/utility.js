@@ -26,6 +26,42 @@ function closeEditModal(blnRefresh) {
     }
 }
 
+
+function disableForm(frmName, blnAllowNotes) {
+    $("#" + frmName).find(':input').not(".Search").addClass("readonly").prop('disabled', true).attr('placeholder', '');
+
+    // Make sure we show the seach field - the 'not' doesn't appear to be working
+    $("input[type='hidden']").removeClass("readonly").removeAttr('disabled');
+   
+    $(".ImageAdd").hide();
+    $("#btnCancel, #btnClose, .close").removeAttr("disabled");
+    $("#chkShowInactiveProjects").removeAttr("disabled");
+
+    $("select").each(function () {
+        var val = $(this).val();
+        szID = $(this).prop("id");
+        szVal = $("#" + szID + " option:selected").text();
+        szClass = $(this).prop("class");
+        if (szClass.indexOf("doNotDisable") == -1) {
+            szStyle = $(this).attr("style");
+            if ($("#" + szID).val() == "" || $("#" + szID).val() == "-1")
+                szVal = "";
+
+            $(this).replaceWith("<div id='" + szID + "' class='" + szClass + "' style='" + szStyle + "'>" + szVal + "</div>");
+        }
+    });
+
+    $("textarea").not(".Search").each(function () {
+        szID = $(this).prop("id");
+        if (szID == "txtNotes" && blnAllowNotes) {
+            ;
+        } else {
+            $(this).replaceWith("<div id='" + szID + "' class='Entry EntryPos' >" + $(this).val() + "</div>");
+        }
+    });
+}
+
+
 function editTimesheet(UserID, CycleID) {
     $('#mTimesheet').on('show.bs.modal', function () {
         params = "?IsPopup=true&blnReadOnly=" + blnReadOnly + "&UserID=" + UserID;
@@ -158,8 +194,9 @@ function clientHeight() {
 
 function createCalendar(ControlID, blnHideIcon) {
     szDateFormat = "M d, yy";
+    o = null;
     if (blnHideIcon) {
-        $("#" + ControlID).datepicker({
+       o = $("#" + ControlID).datepicker({
             changeMonth: true,
             changeYear: true,
             showButtonPanel: true,
@@ -168,7 +205,7 @@ function createCalendar(ControlID, blnHideIcon) {
             showOptions: { distance: 1, direction: 'up' }
         })
     } else {
-        $("#" + ControlID).datepicker({
+        o =$("#" + ControlID).datepicker({
             showOn: 'both',
             buttonImage: '../sys_images/calendar.gif',
             buttonImageOnly: true,
@@ -180,6 +217,7 @@ function createCalendar(ControlID, blnHideIcon) {
             showOptions: { distance: 1, direction: 'up' }
         })
     }
+    return o;
 }
 
 function createDataTable(szGrid, blnUseSorting, blnUseFiltering, intHeight, blnScrollCollapse, UseKeys) {
