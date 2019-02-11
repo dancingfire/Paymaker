@@ -1,30 +1,50 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Web;
+using System.Web.UI.WebControls;
 
 public partial class myob_export : Root {
     protected int intItemID = -1;
     private int intMYOBExportID = 0;
-
+    DateTime dtStart = DateTime.MaxValue;
+    DateTime dtEnd = DateTime.MaxValue;
+    PayPeriod oP = null;
     protected void Page_Load(object sender, System.EventArgs e) {
         Response.Cache.SetCacheability(HttpCacheability.NoCache);
         Response.Cache.SetExpires(System.DateTime.Now);
         hdItemID.Value = intItemID.ToString();
         if (!IsPostBack) {
-            initPage();
+            loadFilters();
+        } else {
+            dtStart = DateTime.MaxValue;
+            dtEnd = DateTime.MaxValue;
+            oP = G.PayPeriodInfo.getPayPeriod(Convert.ToInt32(lstPayPeriod.SelectedValue));
+            if (oP != null) {
+                dtStart = oP.StartDate;
+                dtEnd = oP.EndDate;
+            }
         }
     }
 
-    private void initPage() {
-        txtStartDate.Text = Utility.formatDate(G.CurrentPayPeriodStart);
-        txtEndDate.Text = Utility.formatDate(G.CurrentPayPeriodEnd);
+    protected void loadFilters() {
+        string szSQL = string.Format("select ID, STARTDATE , ENDDATE, '' AS NAME from PAYPERIOD ORDER BY ID DESC");
+        DataSet ds = DB.runDataSet(szSQL);
+
+        foreach (DataRow dr in ds.Tables[0].Rows) {
+            dr["NAME"] = Utility.formatDate(dr["StartDate"].ToString()) + " - " + Utility.formatDate(dr["ENDDATE"].ToString());
+        }
+        Utility.BindList(ref lstPayPeriod, ds, "ID", "NAME");
+
+        Utility.BindList(ref lstCompany, DB.runDataSet(string.Format("SELECT ID, NAME FROM LIST WHERE LISTTYPEID = {0}", (int)ListType.Company)), "ID", "NAME");
+        lstCompany.Items.Insert(0, new ListItem("All", ""));
     }
 
     protected void btnUpdate_Click(object sender, System.EventArgs e) {
         if (btnUpdate.Text == "Preview") {
-            DataTable dtData = getDataTable(false);
+            DataTable dtData = getAdvancedDataTable(false);
             gvPreview.DataSource = dtData;
             gvPreview.DataBind();
             HTML.formatGridView(ref gvPreview);
@@ -93,26 +113,29 @@ public partial class myob_export : Root {
     /// <returns></returns>
     private DataTable getAdvancedDataTable(bool UpdateDB, int intCompanyID = -1) {
         sqlUpdate oSQL = new sqlUpdate("MYOBEXPORT", "ID", -1);
-        string szName = txtEndDate.Text + "_USERTX_ADVANCED_" + Convert.ToString(DB.getScalar("SELECT ISNULL(COUNT(ID), 0) FROM MYOBEXPORT WHERE UPDATETIME = getdate()", 0) + 1) + ".csv";
+        string szName = Utility.formatDate(dtStart) + "_USERTX_ADVANCED_" + Convert.ToString(DB.getScalar("SELECT ISNULL(COUNT(ID), 0) FROM MYOBEXPORT WHERE UPDATETIME = getdate()", 0) + 1) + ".csv";
 
         if (UpdateDB)
             intMYOBExportID = Utility.getMYOBExportID(ExportType.UserTx, szName);
 
         string szSQL = string.Format(@"
-            SELECT L_COMP.OFFICEMYOBBRANCH as Branch, '2-3000' AS Account, L_COMP.OFFICEMYOBCODE + '-' + u.INITIALSCODE  AS Subaccount,
-            '' as [Debit Amount], '' as [Credit Amount], '' as [Ref. Number], '' AS [Transaction Description],
+            SELECT L_OFF.OFFICEMYOBBRANCH as Branch, '2-3000' AS Account, L_OFF.OFFICEMYOBCODE + '-' + U.INITIALSCODE  AS Subaccount,
+            '' as [Debit Amount], '' as [Credit Amount], '' as [Ref. Number], L_CAT.NAME AS [Transaction Description],
             '' as STOP, L_OFF.COMPANYID, L_COMP.NAME AS COMPANY,
             --Debit Info
             TX.ACCOUNTID AS DEBITACCOUNT, L.NAME AS DEBITACCOUNTNAME,TX.DEBITGLCODE AS DEBITACCOUNTGLCODE,
             --Credit info
             U.ID AS CREDITACCOUNT, U.INITIALSCODE + ' ' + FIRSTNAME + ' ' + LASTNAME as CREDITACCOUNTNAME, TX.CREDITGLCODE AS CREDITACCOUNTGLCODE,
-             TX.CREDITJOBCODE, TX.DEBITJOBCODE,  TX.ID AS TXID, TX.AMOUNT, TX.TXDATE
+             TX.CREDITJOBCODE, TX.DEBITJOBCODE,  TX.ID AS TXID, TX.AMOUNT, TX.TXDATE, TX.USERID, ISNULL(UPP.SUPERPAID, 0) as SUPERPAID
             FROM USERTX TX
             JOIN DB_USER U ON  U.ID = TX.USERID AND TX.ISDELETED = 0
             JOIN LIST L ON L.ID = TX.ACCOUNTID
             JOIN LIST L_OFF ON L_OFF.ID = U.OFFICEID
             JOIN LIST L_COMP ON L_COMP.ID = L_OFF.COMPANYID
-            WHERE TX.TXDATE BETWEEN  '{0} 00:00:00' AND '{1} 23:59:59'  AND TX.AMOUNT != 0", txtStartDate.Text, txtEndDate.Text);
+            LEFT JOIN  list L_CAT on ACCOUNTID = L_CAT.ID
+            JOIN USERPAYPERIOD UPP ON U.ID = UPP.USERID AND UPP.PAYPERIODID = {2}
+            WHERE TX.TXDATE BETWEEN  '{0} 00:00:00' AND '{1} 23:59:59'  AND TX.AMOUNT != 0
+            ", Utility.formatDate(dtStart), Utility.formatDate(dtEnd), oP.ID);
         DataSet dsTX = DB.runDataSet(szSQL);
         DataTable dtNew = dsTX.Tables[0].Clone();
         string szJournalNumber = txtJournalNumber.Text;
@@ -120,10 +143,12 @@ public partial class myob_export : Root {
         if (intCompanyID > -1)
             dv.RowFilter = "COMPANYID = " + intCompanyID;
         DataTable dtFiltered = dv.ToTable();
+
+        List<int> lSuperUsers = new List<int>();
         foreach (DataRow tx in dtFiltered.Rows) {
             dtNew.ImportRow(tx);
             DataRow rCurr = dtNew.Rows[dtNew.Rows.Count - 1];
-
+            //53050
             //Debit
             rCurr["Ref. Number"] = Utility.formatDate(Convert.ToDateTime(rCurr["TXDATE"]));
             rCurr["Account"] = rCurr["DEBITACCOUNTGLCODE"];
@@ -136,7 +161,27 @@ public partial class myob_export : Root {
             rCurr["Ref. Number"] = Utility.formatDate(Convert.ToDateTime(rCurr["TXDATE"]));
             rCurr["ACCOUNT"] = rCurr["CREDITACCOUNTGLCODE"];
             rCurr["CREDIT AMOUNT"] = rCurr["AMOUNT"];
+          
+            if (!lSuperUsers.Contains(DB.readInt(rCurr["USERID"]))) {
+                lSuperUsers.Add(DB.readInt(rCurr["USERID"]));
+                //Output the super record -  if it is > 0
+                double Super = DB.readDouble(rCurr["SUPERPAID"]);
+                if (Super > 0) {
+                    dtNew.ImportRow(tx);
+                    rCurr = dtNew.Rows[dtNew.Rows.Count - 1];
+                    rCurr["Ref. Number"] = "";
+                    rCurr["Transaction Description"] = "Super";
+                    rCurr["ACCOUNT"] = "23050";
+                    rCurr["DEBIT AMOUNT"] = Utility.formatMoney(Super);
 
+                    dtNew.ImportRow(tx);
+                    rCurr = dtNew.Rows[dtNew.Rows.Count - 1];
+                    rCurr["Ref. Number"] = "";
+                    rCurr["Transaction Description"] = "Super";
+                    rCurr["ACCOUNT"] = G.Settings.SuperGLCode;
+                    rCurr["CREDIT AMOUNT"] = Super;
+                }
+            }
             szSQL = String.Format(@"
                 UPDATE USERTX SET MYOBEXPORTID = {0}
                 WHERE ID = {1}", intMYOBExportID, rCurr["TXID"].ToString());
@@ -165,7 +210,7 @@ public partial class myob_export : Root {
     /// <returns></returns>
     private DataTable getDataTable(bool UpdateDB, int intCompanyID = -1) {
         sqlUpdate oSQL = new sqlUpdate("MYOBEXPORT", "ID", -1);
-        string szName = txtEndDate.Text + "_USERTX_" + Convert.ToString(DB.getScalar("SELECT ISNULL(COUNT(ID), 0) FROM MYOBEXPORT WHERE UPDATETIME = getdate()", 0) + 1) + ".csv";
+        string szName = Utility.formatDate(dtStart) + "_USERTX_" + Convert.ToString(DB.getScalar("SELECT ISNULL(COUNT(ID), 0) FROM MYOBEXPORT WHERE UPDATETIME = getdate()", 0) + 1) + ".csv";
 
         if (UpdateDB)
             intMYOBExportID = Utility.getMYOBExportID(ExportType.UserTx, szName);
@@ -184,7 +229,7 @@ public partial class myob_export : Root {
             JOIN LIST L ON L.ID = TX.ACCOUNTID
             JOIN LIST L_OFF ON L_OFF.ID = U.OFFICEID
             JOIN LIST L_COMP ON L_COMP.ID = L_OFF.COMPANYID
-            WHERE TX.TXDATE BETWEEN  '{0} 00:00:00' AND '{1} 23:59:59'  AND TX.AMOUNT != 0", txtStartDate.Text, txtEndDate.Text);
+            WHERE TX.TXDATE BETWEEN  '{0} 00:00:00' AND '{1} 23:59:59'  AND TX.AMOUNT != 0", Utility.formatDate(dtStart), Utility.formatDate(dtEnd));
         DataSet dsTX = DB.runDataSet(szSQL);
         DataTable dtNew = dsTX.Tables[0].Clone();
         string szJournalNumber = txtJournalNumber.Text;

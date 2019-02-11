@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Web.UI;
@@ -171,7 +172,7 @@ namespace Paymaker {
                     Amount = DB.readDouble(rCurr["COMMAMOUNT"]);
                     IsCredit = true;
                 }
-                createDataRow(ref rCurr, szJournalNumber, dtTX, szAccount, Amount, IsCredit, szJobCode);
+                createDataRow(ref rCurr, szJournalNumber, dtTX, "23050", Amount, IsCredit, szJobCode);
 
                 if (UpdateDB) {
                     if (Type == "COMM") {
@@ -207,10 +208,10 @@ namespace Paymaker {
 
             string szSQL = string.Format(@"
                 -- 0) All normal commissions
-                SELECT  L_COMP.OFFICEMYOBBRANCH as Branch, '2-3000' AS Account, L_COMP.OFFICEMYOBCODE + '-' + u.INITIALSCODE  AS Subaccount,
+                SELECT  L_OFF.OFFICEMYOBBRANCH as Branch, '2-3000' AS Account, L_OFF.OFFICEMYOBCODE + '-' + u.INITIALSCODE  AS Subaccount,
                     '' as [Debit Amount], '' as [Credit Amount], '' as [Ref. Number], S.ADDRESS AS [Transaction Description], '' as STOP,
                    U.CREDITGLCODE AS USERCREDITGLCODE, U.DEBITGLCODE AS USERDEBITGLCODE, USS.ACTUALPAYMENT as COMMAMOUNT, l_OFF.JOBCODE,
-                    S.ID,  S.SALEDATE as ACTUALDATE, ISNULL(UPP.SUPERPAID, 0) as SUPERPAID, UPP.USERID
+                    S.ID,  S.SALEDATE as ACTUALDATE
                 FROM SALE S
                 JOIN SALESPLIT SS ON S.ID = SS.SALEID AND SS.RECORDSTATUS = 0
                 JOIN USERSALESPLIT USS ON USS.SALESPLITID = SS.ID AND USS.RECORDSTATUS < 1
@@ -219,9 +220,7 @@ namespace Paymaker {
                 JOIN LIST L_OFF ON L_OFF.ID = USS.OFFICEID
                 JOIN LIST L_COMP ON L_COMP.ID = L_OFF.COMPANYID AND L_OFF.COMPANYID = {0}
                     AND S.SALEDATE BETWEEN '{1} 00:00:00' AND '{2} 23:59:59' AND S.STATUSID IN (1, 2) AND USS.ACTUALPAYMENT > 0
-                JOIN USERPAYPERIOD UPP ON U.ID = UPP.USERID AND UPP.PAYPERIODID = {3}
                 ORDER BY S.SALEDATE;
-                --1) Super paid to staff
 
                 ", CompanyID, Utility.formatDate(dtStart), Utility.formatDate(dtEnd), oP.ID);
 
@@ -273,8 +272,6 @@ namespace Paymaker {
         }
 
         private void processTableAdvanced(DataView dt, DataTable dtNew,  string Type, int MYOBExportID, bool UpdateDB) {
-            int CurrUserID = -1;
-
             foreach (DataRowView tx in dt) {
                 dtNew.ImportRow(tx.Row);
                 DataRow rCurr = dtNew.Rows[dtNew.Rows.Count - 1];
@@ -284,27 +281,17 @@ namespace Paymaker {
                 string szJobCode = DB.readString(rCurr["JOBCODE"]);
                
                 DateTime dtTX = DB.readDate(rCurr["ACTUALDATE"]);
-                if (Amount == 0)
-                    continue; //Can't import zero values
-
+                
                 //Debit
-                createDataRowAdvanced(ref rCurr, dtTX, szAccount, Amount, false);
+                createDataRowAdvanced(ref rCurr, dtTX, "53050", Amount, false);
 
                 //Do the same for the inverse of this transaction
                 //Credit
                 dtNew.ImportRow(tx.Row);
                 rCurr = dtNew.Rows[dtNew.Rows.Count - 1];
                 szAccount = DB.readString(rCurr["USERCREDITGLCODE"]);
-                createDataRowAdvanced(ref rCurr, dtTX, szAccount, Amount, true);
-                if(CurrUserID != DB.readInt(rCurr["USERID"])){
-                    //Output the super record -  if it is > 0
-                    double Super = DB.readDouble(rCurr["SUPERPAID"]);
-                    if (Super > 0) {
-                        createDataRowAdvanced(ref rCurr, oP.EndDate, G.Settings.SuperGLCode, Super, true);
-                        createDataRowAdvanced(ref rCurr, oP.EndDate, "2-3000", Super, false);
-                    }
-                    CurrUserID = DB.readInt(rCurr["USERID"]);
-                }
+                createDataRowAdvanced(ref rCurr, dtTX, "23050", Amount, true);
+               
                 if (UpdateDB) {
                     DB.runNonQuery(String.Format(@"UPDATE SALE SET MYOBEXPORTID = {0} WHERE ID = {1}", MYOBExportID, rCurr["ID"].ToString())) ;
                 }

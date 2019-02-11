@@ -24,13 +24,18 @@
         </div>
         <asp:Panel ID="pPageNotification" runat="server" Visible="false" CssClass="PageNotificationPanel"></asp:Panel>
         <div style="width: 500px; float: left">
-            <asp:Label ID="Label1" runat="server" CssClass="Label LabelPos">Start date</asp:Label>
-            <asp:TextBox CssClass="Entry EntryPos" ID="txtStartDate" runat="server" Text="" MaxLength="40"></asp:TextBox>
-            <br class="Align" />
-
-            <asp:Label ID="lblName" runat="server" CssClass="Label LabelPos">End date</asp:Label>
-            <asp:TextBox CssClass="Entry EntryPos" ID="txtEndDate" runat="server" Text="" MaxLength="40"></asp:TextBox>
-            <br class="Align" />
+           
+            <asp:Label ID="Label1" CssClass="Label LabelPos" runat="server" Text="Pay period">
+            </asp:Label>
+            <asp:DropDownList ID="lstPayPeriod" CssClass="Entry EntryPos" runat="server">
+            </asp:DropDownList>
+                <br class='Align' />
+             <asp:Label ID="Label4" CssClass="Label LabelPos" runat="server" Text="Select Company">
+                    </asp:Label>
+                    <asp:DropDownList ID="lstCompany" CssClass="Entry EntryPos" runat="server">
+                        <asp:ListItem Text="All" Value=""></asp:ListItem>
+                    </asp:DropDownList>
+                    <br class='Align' />
             <asp:Label ID="Label2" runat="server" CssClass="Label LabelPos">Journal #</asp:Label>
             <asp:TextBox CssClass="Entry EntryPos" ID="txtJournalNumber" runat="server" Text="" MaxLength="40"></asp:TextBox><asp:RequiredFieldValidator
                 ID="RequiredFieldValidator1" runat="server" ValidationGroup="EXPORT" ControlToValidate="txtJournalNumber" ErrorMessage="You must enter the journal number" EnableClientScript="true" Display="Dynamic"></asp:RequiredFieldValidator>

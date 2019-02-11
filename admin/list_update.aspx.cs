@@ -42,7 +42,7 @@ public partial class list_update : Root {
         pJobCode.Visible = oListType == ListType.Office || oListType == ListType.Expense || oListType == ListType.Income;
         pCreditGLCode.Visible = oListType == ListType.Expense || oListType == ListType.CampaignGL;
         pDebitGLCode.Visible = oListType == ListType.Income;
-        pOfficeCode.Visible =  oListType == ListType.Company;
+        pOfficeCode.Visible =  oListType == ListType.Company || oListType == ListType.Office;
         if (oListType == ListType.CampaignGL)
             lblDescription.Text = "MYOB text";
     }
