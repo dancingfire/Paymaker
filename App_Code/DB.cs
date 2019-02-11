@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Text;
 using System.Web;
 
+
 /// <summary>
 /// Summary description for DB.
 /// </summary>
@@ -41,7 +42,7 @@ public class DB {
     /// </summary>
     public static string DBConn {
         get {
-            string szCnn = ConfigurationSettings.AppSettings["DB"];
+            string szCnn = ConfigurationManager.AppSettings["DB"];
             return szCnn.Replace("DBNAME", Client.DBName);
         }
     }
@@ -51,7 +52,7 @@ public class DB {
     /// </summary>
     public static string BoxDiceDBConn {
         get {
-            string szCnn = ConfigurationSettings.AppSettings["DB"];
+            string szCnn = ConfigurationManager.AppSettings["DB"];
             return szCnn.Replace("DBNAME", "Fletchers_BoxDiceAPI").Replace("Paymaker", "Fletchers_BoxDiceAPI");
         }
     }

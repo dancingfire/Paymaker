@@ -16,7 +16,7 @@ namespace ExceptionHandler {
         private string szSMTPServer = "";
         private string szUserName = "";
         private string szUserEmail = "";
-        private string szDetailURL = "http://secure.researchreporter.com/version3/config/ErrorLogReport.aspx";
+        private string szDetailURL = "";
         private string szReferrer;
         private string szMessage;
         private string szForm;
@@ -112,21 +112,14 @@ namespace ExceptionHandler {
         private void saveToDB(Exception ex) {
             sqlUpdate oSQL = new sqlUpdate("RWASPERRORLOG", "EVENTID", -1);
             string szSource = Convert.ToString(ex.Source);
-            if (szSource.Length > 100)
-                szSource = ex.Source.Substring(0, 100);
             oSQL.add("SOURCE", szSource);
             oSQL.add("MESSAGE", szMessage);
             oSQL.add("FORM", szForm);
-            if (szQuery != null && szQuery.Length > 2000)
-                szQuery = szQuery.Substring(0, 2000);
+          
             oSQL.add("QUERYSTRING", szQuery);
             string szTargetSite = Convert.ToString(ex.TargetSite);
-            if (szTargetSite.Length > 300)
-                szTargetSite = szTargetSite.Substring(0, 300);
             oSQL.add("TARGETSITE", szTargetSite);
             oSQL.add("STACKTRACE", Convert.ToString(ex.StackTrace));
-            if (szReferrer.Length > 200)
-                szReferrer = szReferrer.Substring(0, 200);
             oSQL.add("REFERER", szReferrer);
             if (HttpContext.Current.Session != null && HttpContext.Current.Session["USERID"] != null)
                 oSQL.add("USERID", Convert.ToInt32(HttpContext.Current.Session["USERID"]));

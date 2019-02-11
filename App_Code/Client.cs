@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
 
 public enum ClientID {
     HeadOffice = 0,
@@ -23,11 +25,7 @@ public static class Client {
     /// </summary>
     public static int EOFYBonusMonthDelay {
         get {
-            switch (G.Settings.ClientID) {
-                case ClientID.Eltham: return 0;
-                case ClientID.HeadOffice: return 2;
-            }
-            return 0;
+            return Convert.ToInt32(ConfigurationManager.AppSettings["EOFYBonusMonthDelay"].ToString());
         }
     }
 

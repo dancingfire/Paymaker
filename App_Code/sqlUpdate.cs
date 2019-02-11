@@ -9,7 +9,7 @@ public class sqlUpdate {
     private string szTable;
     private string szPrimaryKey;
     private int intPrimaryKeyID;
-    private string oCnn = ConfigurationSettings.AppSettings["DB"];
+    private string oCnn = ConfigurationManager.AppSettings["DB"];
     private ArrayList oCol = new ArrayList();
     private ArrayList oValue = new ArrayList();
     private ArrayList oType = new ArrayList();

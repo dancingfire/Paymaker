@@ -379,6 +379,11 @@ public class G {
 
     public static class Settings {
 
+        public static string DataDir {
+            get {
+                return System.Configuration.ConfigurationManager.AppSettings["AppDataPath"];
+            }
+        }
         public static string MYOBDir {
             get {
                 return System.Configuration.ConfigurationManager.AppSettings["AppMYOBPath"];
