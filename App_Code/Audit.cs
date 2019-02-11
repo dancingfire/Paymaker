@@ -440,7 +440,8 @@ public enum DBLogType {
     CampaignContributionSplit = 8,
     EOFYBonus = 9,
     PayrollModification = 10,
-    Email = 11
+    Email = 11,
+    EmailAutomation = 12
 }
 
 public class DBLog {
@@ -464,7 +465,7 @@ public class DBLog {
     /// <param name="ObjectID"></param>
     /// <param name="ChildObjectID"></param>
     public static void addGenericRecord(DBLogType Type, string Entry, int ObjectID, int ChildObjectID = -1) {
-        addRecord(Type, Entry, ObjectID, ChildObjectID);
+        addRecord(Type, Entry, ObjectID, ChildObjectID, G.User.UserID);
     }
 
     /// <summary>
@@ -494,16 +495,12 @@ public class DBLog {
     /// <param name="Entry"></param>
     /// <param name="ObjectID"></param>
     /// <param name="ChildObjectID"></param>
-    private static void addRecord(DBLogType Type, string Entry, int ObjectID, int ChildObjectID) {
+    /// <param name="UserID"></param>
+    public static void addRecord(DBLogType Type, string Entry, int ObjectID, int ChildObjectID, int UserID = -1) {
         sqlUpdate oSQL = new sqlUpdate("LOGV2", "ID", -1);
         oSQL.add("TYPEID", (int)Type);
         oSQL.add("VALUE", Entry);
-
-        // Certain records are logged when user is not logged in - for example log of email sent to log user in
-        if (G.User.IsLoggedIn)
-            oSQL.add("USERID", G.User.UserID);
-        else
-            oSQL.add("USERID", -1);
+        oSQL.add("USERID", -1);
 
         if (ObjectID > -1)
             oSQL.add("OBJECTID", ObjectID);

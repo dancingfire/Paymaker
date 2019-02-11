@@ -8,7 +8,7 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Paymaker", ".", "{1FA47EDD-
 		SccAuxPath = "Svn"
 		SccLocalPath = "Svn"
 		SccProvider = "SubversionScc"
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.5"
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.7.2"
 		Debug.AspNetCompiler.VirtualPath = "/Paymaker"
 		Debug.AspNetCompiler.PhysicalPath = "..\Paymaker\"
 		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\Paymaker\"
@@ -24,6 +24,7 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Paymaker", ".", "{1FA47EDD-
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
 		VWDPort = "55695"
+		SlnRelativePath = "..\Paymaker\"
 		StartServerOnDebug = "false"
 	EndProjectSection
 EndProject
