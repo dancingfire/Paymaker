@@ -19,6 +19,7 @@ public class LeaveRequest {
     public DateTime EndDate { get; set; }
     public int TotalDays { get; set; }
     public string Comment { get; set; }
+    public string SupportingFile { get; set; }
 
     /// <summary>
     /// Loads an object for the given transaction
@@ -38,6 +39,7 @@ public class LeaveRequest {
             EnteredDate = DB.readDate(dr["ENTRYDATE"]);
             StartDate = DB.readDate(dr["STARTDATE"]);
             EndDate = DB.readDate(dr["ENDDATE"]);
+            SupportingFile = DB.readString(dr["SUPPORTINGFILE"]);
         }
     }
 }

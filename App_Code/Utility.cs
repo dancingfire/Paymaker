@@ -613,7 +613,7 @@ public class Utility {
         if (szHTTPs.ToLower() == "on")
             szReturn = "https://";
         szReturn += szServer;
-        string szVirtualDir = ConfigurationSettings.AppSettings["VirtualDirectory"];
+        string szVirtualDir = ConfigurationManager.AppSettings["VirtualDirectory"];
         szReturn += szVirtualDir;
         return szReturn;
     }

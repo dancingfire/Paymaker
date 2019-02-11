@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Web;
 using System.Web.UI.WebControls;
 
@@ -28,13 +29,6 @@ public partial class request_update : Root {
         string szSQL = String.Format("SELECT ID, NAME FROM LIST WHERE LISTTYPEID = {0} ORDER BY SEQUENCENO, NAME", (int)ListType.LeaveType);
         Utility.BindList(ref lstLeaveType, DB.runReader(szSQL), "ID", "NAME");
         lstLeaveType.Items.Insert(0, new ListItem("Select leave type...", ""));
-
-     /*   szSQL = String.Format("Select ID, Name from LIST where LISTTYPEID = {0} ORDER BY SEQUENCENO, NAME", (int)ListType.LeaveStatus);
-        Utility.BindList(ref lstIncomeAccounts, DB.runReader(szSQL), "ID", "NAME");
-        lstIncomeAccounts.Items.Insert(0, new ListItem("Select an account...", "-1"));
-        */
-     
-       
     }
 
     void checkSupervisorSettings() {
@@ -58,6 +52,9 @@ public partial class request_update : Root {
         txtStartDate.Text = Utility.formatDate(l.StartDate);
         txtEndDate.Text = Utility.formatDate(l.EndDate);
         txtComments.Text = l.Comment;
+        if(l.SupportingFile != "") {
+            lExistingFile.Text = "<a href='view"
+        }
         Utility.setListBoxItems(ref lstLeaveType, l.LeaveTypeID.ToString());
     }
 
@@ -68,14 +65,22 @@ public partial class request_update : Root {
         oSQL.add("ENDDATE", txtEndDate.Text);
         oSQL.add("COMMENTS", txtComments.Text);
         oSQL.add("LEAVETYPEID", lstLeaveType.SelectedValue);
-
+       
         if (intID == -1) {
             oSQL.add("USERID", G.User.ID);
-
             szSQL = oSQL.createInsertSQL();
         } else
             szSQL = oSQL.createUpdateSQL();
+
         DB.runNonQuery(szSQL);
+        if(intID == -1) {
+            intID = DB.getScalar("SELECT MAX(ID) FROM LEAVEREQUEST WHERE USERID = " + G.User.ID, -1);
+        }
+        if (FileUpload1.HasFile) {
+            string FileName = "Evidence" + intID + "." + Path.GetExtension(FileUpload1.FileName);
+            FileUpload1.SaveAs(Path.Combine(G.Settings.DataDir, FileName));
+            DB.runNonQuery(String.Format("UPDATE LEAVEREQUEST SET SUPPORTINGFILE = '{0}' WHERE ID = {1}", DB.escape(FileName), intID));
+        }
         sbStartJS.Append("parent.closeEditModal(true);");
     }
 

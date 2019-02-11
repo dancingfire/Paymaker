@@ -1,4 +1,4 @@
-<%@ Page Language="c#" Inherits="PAYMAKER.admin_tasks" CodeFile="admin_tasks.aspx.cs" %>
+<%@ Page Language="c#" Inherits="PAYMAKER.admin_tasks" CodeFile="admin_tasks.aspx.cs"  Async="true"%>
 
 <!DOCTYPE html>
 <html>
@@ -35,6 +35,15 @@
         <asp:Panel ID="Panel2" runat="server" CssClass="DBAction">
             <asp:Label ID="Label2" runat="server" Width="250px" Text="Update graph totals from Jul 2014 onwards" CssClass="LabelPos"></asp:Label>
             <asp:Button ID="btnUpdateGraphTotals" CssClass="Button" runat="server" Width="150px" Text="Update totals" OnClientClick="showWait('Updating totals...');" OnClick="btnUpdateGraphTotals_Click" />
+        </asp:Panel>
+        
+        <asp:Panel ID="Panel5" runat="server" CssClass="DBAction">
+            <asp:Label ID="Label5" runat="server" Width="250px" Text="Start the email scheduler. If this errors when loading, that means it was already running" CssClass="LabelPos"></asp:Label>
+            <asp:Button ID="Button2" CssClass="Button" runat="server" Width="150px" Text="Start scheduler"  OnClick="btnStart_Click" />
+        </asp:Panel>
+   <asp:Panel ID="Panel6" runat="server" CssClass="DBAction">
+            <asp:Label ID="Label6" runat="server" Width="250px" Text="Test the timesheet email" CssClass="LabelPos"></asp:Label>
+            <asp:Button ID="Button3" CssClass="Button" runat="server" Width="150px" Text="Test email"  OnClick="btnTestTimesheet_Click" />
         </asp:Panel>
 
         <asp:Panel ID="Panel1" runat="server" CssClass="DBAction">

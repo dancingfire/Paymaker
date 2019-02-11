@@ -93,9 +93,10 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="lblComments" class="control-label col-xs-2">Supporting evidence</label>
+                        <label for="FileUpload1" class="control-label col-xs-2">Supporting evidence</label>
                         <div class="col-xs-10">
-                            <asp:FileUpload ID="FileUpload1" runat="server" CssClass="Entry "  BorderStyle="0"/>
+                            <asp:FileUpload ID="FileUpload1" runat="server" CssClass="Entry "  BorderStyle="0"  accept=".pdf,.jpg"/>
+                            <asp:Literal ID="lExistingFile" runat="server"></asp:Literal>
                         </div>
                     </div>
                 </div>
