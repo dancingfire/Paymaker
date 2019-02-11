@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
-using System.Data.Odbc;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web.UI.WebControls;
@@ -395,7 +393,6 @@ public class Sale {
             oSE.delete();
     }
 
-  
     /// <summary>
     /// Used to check for various null / invalid date values.  including DateTime.MinVal & 1900-01-01
     /// </summary>
@@ -567,74 +564,18 @@ public class Sale {
     /// <summary>
     /// Checks to see if any sales have been withdrawn, and sets the gross commission to 0 as a result
     /// </summary>
-    static void checkWithdrawnSales() {
+    private static void checkWithdrawnSales() {
         string szSQL = String.Format(@"
                 UPDATE   {0}.dbo.SALE
-                    SET GROSSCOMMISSION = 0 
+                    SET GROSSCOMMISSION = 0
                 WHERE BNDSALEID in (
                     SELECT ID
-                    FROM SALESLISTING 
-                    WHERE (WITHDRAWNON IS NOT NULL AND STATUS = 'listing_cancelled') 
+                    FROM SALESLISTING
+                    WHERE (WITHDRAWNON IS NOT NULL AND STATUS = 'listing_cancelled')
 				);", Client.DBName);
         DB.runNonQuery(szSQL, DB.BoxDiceDBConn);
-
     }
-    /// <summary>
-    /// Returns the SaleID
-    /// </summary>
-    /// <param name="dr"></param>
-    /// <returns></returns>
-    private static int processImport(DataRow dr) {
-        //Check it the Sale is already imported
-        int intDbID = DB.getScalar(string.Format("SELECT ID FROM SALE WHERE REOFFICEID = {0}", dr["BU_BUSINESSID"]), -1);
-        Sale oS = new Sale(intDbID, false, false);
-        bool blnDataChanged = false;
-        sqlUpdate oSQL = new sqlUpdate("SALE", "ID", intDbID);
-        oSQL.add("REOFFICEID", dr["BU_BUSINESSID"].ToString());
-        oSQL.add("CODE", dr["BU_CODE"].ToString());
-        oSQL.add("ADDRESS", dr["ADDRESS"].ToString());
-        DateTime dtSaleDate = Valid.checkDate(dr["SALEDATE"].ToString(), DateTime.MinValue);
 
-        if (dtSaleDate == DateTime.MinValue || dtSaleDate == new DateTime(1900, 1, 1))
-            oSQL.addNull("SALEDATE");
-        else
-            oSQL.add("SALEDATE", Utility.formatDate(dtSaleDate));
-
-        DateTime dtEntitlement = Valid.checkDate(dr["ENTITLEMENTDATE"].ToString(), DateTime.MinValue);
-
-        if (dtEntitlement == DateTime.MinValue || dtEntitlement == new DateTime(1900, 1, 1))
-            oSQL.addNull("ENTITLEMENTDATE");
-        else
-            oSQL.add("ENTITLEMENTDATE", Utility.formatDate(dtEntitlement));
-
-        if (Valid.isNumeric(dr["SALEPRICE"].ToString())) {
-            oSQL.add("SALEPRICE", dr["SALEPRICE"].ToString());
-        } else
-            oSQL.add("SALEPRICE", 0);
-
-        if (oS.dConjCommission != Convert.ToDouble(dr["CONJUNCTIONALCOMMISSION"])) {
-            blnDataChanged = true;
-            DBLog.addGenericRecord(DBLogType.SaleData, "Commission modified on property: " + dr["BU_CODE"].ToString() + " From: " + oS.ConjCommission + " to " + Convert.ToDouble(dr["CONJUNCTIONALCOMMISSION"]), oS.SaleID);
-        }
-        oSQL.add("SUBURB", Convert.ToString(dr["BU_SUBURB"]));
-        oSQL.add("CONJUNCTIONALCOMMISSION", dr["CONJUNCTIONALCOMMISSION"].ToString());
-        oSQL.add("CONJUNCTIONALAGENT", dr["CONJUNCTIONALAGENT"].ToString());
-        oSQL.add("GROSSCOMMISSION", dr["BU_GROSSCOMMISSION"].ToString());
-        oSQL.add("SETTLEMENTDATE", Utility.formatDate(Valid.checkDate(dr["BU_ACTUALSETTLEMENT"].ToString(), DateTime.MinValue)));
-
-        if (intDbID == -1) {
-            DB.runNonQuery(oSQL.createInsertSQL());
-            intDbID = DB.getScalar("SELECT MAX(ID) FROM SALE", 0);
-        } else {
-            // CHeck to see if we are updating a current or future record and flag it as such
-            if (blnDataChanged && dtEntitlement != DateTime.MinValue && dtEntitlement >= G.CurrentPayPeriodStart)
-                oSQL.add("ISSOURCEMODIFIED", 1);
-
-            DB.runNonQuery(oSQL.createUpdateSQL());
-        }
-        return intDbID;
-    }
-    
     /// <summary>
     /// Loads all the records where a salesperson has a part of the splits
     /// </summary>

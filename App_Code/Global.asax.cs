@@ -12,6 +12,9 @@ namespace Paymaker {
         }
 
         protected void Application_Start(Object sender, EventArgs e) {
+
+            Automation.JobScheduler js = new Automation.JobScheduler();
+            js.Start();
         }
 
         protected void Session_Start(Object sender, EventArgs e) {

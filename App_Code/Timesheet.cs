@@ -631,7 +631,7 @@ public class TimesheetCycle {
     /// Tests the auto emails by looking 10 days into the future to see whether we would be sending any emails...
     /// </summary>
     public static void testAutomatedEmails() {
-        AppConfigAdmin oConfigAdmin = new AppConfigAdmin();
+        AppConfigAdmin oConfigAdmin = new AppConfigAdmin(G.szCnn);
 
         DateTime oDTLastSent = DateTime.Now.AddDays(-1);
 
