@@ -165,7 +165,7 @@ namespace Paymaker {
                     Amount = DB.readDouble(rCurr["COMMAMOUNT"]);
                     IsCredit = true;
                 }
-                createDataRow(ref rCurr, szJournalNumber, dtTX, "23050", Amount, IsCredit, szJobCode);
+                createDataRow(ref rCurr, szJournalNumber, dtTX, szAccount, Amount, IsCredit, szJobCode);
 
                 if (UpdateDB) {
                     if (Type == "COMM") {
@@ -293,7 +293,7 @@ namespace Paymaker {
 
         private void createDataRowAdvanced(ref DataRow dr, DateTime TxDate, string AccountCode, double Amount, bool IsCredit) {
             dr["REf. Number"] = Utility.formatDate(TxDate);
-            dr["ACCOUNT"] = AccountCode;
+            dr["ACCOUNT"] = AccountCode.Replace("-", "");
             if (IsCredit) {
                 dr["CREDIT AMOUNT"] = Utility.formatMoney(Amount);
             } else {
