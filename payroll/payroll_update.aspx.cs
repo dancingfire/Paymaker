@@ -1,4 +1,5 @@
 using System;
+using System.Data;
 using System.IO;
 using System.Net.Mail;
 using System.Web.UI;
@@ -10,6 +11,8 @@ public partial class payroll_update : Root {
     private int intUserPayrollCycleID;
     private int intCycleRef;
     bool blnIsAdminView = false;
+    DateTime dtStart;
+    DateTime dtEnd;
 
     protected void Page_Load(object sender, System.EventArgs e) {
         blPopup = false;
@@ -42,8 +45,8 @@ public partial class payroll_update : Root {
     private void loadData() {
         lstCycle.Items.Clear();
         foreach (int c in G.TimeSheetCycleReferences.dValues.Keys) {
-            DateTime dtStart = G.TimeSheetCycleReferences[c].NormalCycle.StartDate;
-            DateTime dtEnd = G.TimeSheetCycleReferences[c].NormalCycle.EndDate;
+            dtStart = G.TimeSheetCycleReferences[c].NormalCycle.StartDate;
+            dtEnd = G.TimeSheetCycleReferences[c].NormalCycle.EndDate;
             if (G.UserInfo.getUser(intUserID).PayrollCycleID == 2) {
                 dtStart = G.TimeSheetCycleReferences[c].PayAdvanceCycle.StartDate;
                 dtEnd = G.TimeSheetCycleReferences[c].PayAdvanceCycle.EndDate;
@@ -107,8 +110,31 @@ public partial class payroll_update : Root {
 
             btnDownload.HRef = string.Format("../reports/manual_timesheet.aspx?UserID={0}&CycleID={1}", G.User.ID, intUserPayrollCycleID);
         }
+        loadLeave();
     }
 
+    void loadLeave() {
+        if (intCycleRef > -1) {
+            dtStart = G.TimeSheetCycleReferences[intCycleRef].NormalCycle.StartDate;
+            dtEnd = G.TimeSheetCycleReferences[intCycleRef].NormalCycle.EndDate;
+            if (G.UserInfo.getUser(intUserID).PayrollCycleID == 2) {
+                dtStart = G.TimeSheetCycleReferences[intCycleRef].PayAdvanceCycle.StartDate;
+                dtEnd = G.TimeSheetCycleReferences[intCycleRef].PayAdvanceCycle.EndDate;
+            }
+
+            string szSQL = string.Format(@"
+            SELECT  LR.*, L.NAME AS LEAVETYPE, LS.NAME AS LEAVESTATUS
+            FROM LEAVEREQUEST LR JOIN LIST L ON L.ID = LR.LEAVETYPEID
+            JOIN LEAVESTATUS LS ON LS.ID = LR.LEAVESTATUSID
+            WHERE LR.USERID = {0} AND ISDELETED = 0 
+                AND (LR.STARTDATE BETWEEN '{1}' AND '{2}' OR LR.ENDDATE BETWEEN '{1}' AND '{2}')
+            ORDER BY LR.ENTRYDATE DESC", G.User.ID, Utility.formatDate(dtStart), Utility.formatDate(dtEnd));
+            using (DataSet ds = DB.runDataSet(szSQL)) {
+                Utility.bindGV(ref gvLeave, ds, true);
+            }
+        }
+        
+    }
     private double getValue(string Value, int ID) {
         string szValue = Valid.getText(string.Format("txt{0}_{1}", Value, ID), "");
         return szValue == "" ? double.MinValue : Convert.ToDouble(szValue);

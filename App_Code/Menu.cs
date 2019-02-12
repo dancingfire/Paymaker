@@ -54,6 +54,8 @@ public class ClientMenu {
                 oM.addMenu("Leave");
                 oM.addMenuItem("Dashboard", "../payroll/leave_dashboard.aspx");
                 oM.addSpacer();
+                oM.addMenuItem("Export leave requests", "../reports/leave_request.aspx", MenuRole.Admin);
+                oM.addSpacer();
                 oM.addMenuItem("Leave type", "../admin/list_detail.aspx?intListTypeID=11", MenuRole.Admin);
                 oM.addMenuItem("Public holidays", "../admin/holiday_detail.aspx", MenuRole.Admin);
                 oM.addMenuItem("Settings", "../admin/leave_settings.aspx", MenuRole.Admin);
