@@ -658,7 +658,7 @@ public class TimesheetCycle {
     /// Check for Timesheet Cycles that trigger emails to outstanding staff today
     /// </summary>
     public static void checkAutomatedEmails() {
-        AppConfigAdmin oConfigAdmin = new AppConfigAdmin();
+        AppConfigAdmin oConfigAdmin = new AppConfigAdmin(G.szCnn);
         // Note: Default value is yesterday (if no value is held in config).
         oConfigAdmin.addConfig("AUTOEMAILSLASTSENT", Utility.formatDate(DateTime.Now.AddDays(-1)));
         oConfigAdmin.loadValuesFromDB();

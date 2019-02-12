@@ -25,12 +25,24 @@ public static class Automation {
 
             IJobDetail job = JobBuilder.Create<EmailJob>()
                 .WithIdentity("Timesheet trigger", "Email")
+                .UsingJobData("DBCnn", G.szCnn)
                 .Build();
 
+            /* ITrigger trigger = TriggerBuilder.Create()
+                   .WithSchedule(CronScheduleBuilder.DailyAtHourAndMinute(9, 00)) // execute job daily at 9:30
+                   .StartNow()
+                   .Build();
+                   */
             ITrigger trigger = TriggerBuilder.Create()
-                  .WithSchedule(CronScheduleBuilder.DailyAtHourAndMinute(9, 00)) // execute job daily at 9:30
-                  .StartNow()
-                  .Build();
+        .WithSimpleSchedule
+          (s =>
+             s.WithIntervalInSeconds(10)
+             .RepeatForever()
+             .WithMisfireHandlingInstructionFireNow()
+           )
+          
+          .StartNow()
+        .Build();
 
             await sched.ScheduleJob(job, trigger);
         }
@@ -39,15 +51,16 @@ public static class Automation {
     public class EmailJob : IJob {
 
         public async Task Execute(IJobExecutionContext context) {
-            try {
-                DBLog.addRecord(DBLogType.EmailAutomation, "Checking Timesheet emails", -1, -1);
-                /*   G.User.ID = -1;
-                   G.User.UserID = -1;
-                   G.User.RoleID = 1;
-                   TimesheetCycle.checkAutomatedEmails();*/
-            } catch (JobExecutionException e) {
-                DBLog.addRecord(DBLogType.EmailAutomation, e.Message, -1, -1);
-            }
+            JobDataMap dataMap = context.JobDetail.JobDataMap;
+            string szCnn = dataMap.GetString("DBCnn");
+             DB.runNonQuery("--1", szCnn);
+           
+          //  DBLog.addRecord(DBLogType.EmailAutomation, "Checking Timesheet emails", -1,-1, DBCnn: szCnn);
+            //   G.User.ID = -1;
+            //    G.User.UserID = -1;
+            //    G.User.RoleID = 1;
+                //// TimesheetCycle.checkAutomatedEmails();
+            
         }
     }
 }

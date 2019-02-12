@@ -526,18 +526,18 @@ public class DBLog {
     /// <param name="ObjectID"></param>
     /// <param name="ChildObjectID"></param>
     /// <param name="UserID"></param>
-    public static void addRecord(DBLogType Type, string Entry, int ObjectID, int ChildObjectID, int UserID = -1) {
+    public static void addRecord(DBLogType Type, string Entry, int ObjectID, int ChildObjectID, int UserID = -1, string DBCnn = null) {
         sqlUpdate oSQL = new sqlUpdate("LOGV2", "ID", -1);
         oSQL.add("TYPEID", (int)Type);
         oSQL.add("VALUE", Entry);
-        oSQL.add("USERID", -1);
+        oSQL.add("USERID", UserID);
 
         if (ObjectID > -1)
             oSQL.add("OBJECTID", ObjectID);
         if (ChildObjectID > -1)
             oSQL.add("CHILDOBJECTID", ChildObjectID);
 
-        DB.runNonQuery(oSQL.createInsertSQL());
+        DB.runNonQuery(oSQL.createInsertSQL(), DBCnn);
         oSQL = null;
     }
 }
