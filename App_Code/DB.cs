@@ -369,7 +369,7 @@ public class DB {
     #region ExecuteNonQuery
 
     public static void runNonQuery(string SQL, string connectionString = null) {
-        if (connectionString == null)
+        if (String.IsNullOrEmpty(connectionString ))
             connectionString = DBConn;
 
         int intDBAttempt = 1;

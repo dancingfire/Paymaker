@@ -40,7 +40,7 @@ namespace Paymaker {
                 if (lstCompany.SelectedValue != "" && Convert.ToInt32(lstCompany.SelectedValue) != DB.readInt(drCompany["ID"]))
                     continue;
                 string szFileName = Utility.formatDate(DateTime.Now) + "-MYOB-Commission-" + drCompany["NAME"] + ".txt";
-               // createRecords(UpdateDB, DB.readInt(drCompany["ID"]), szFileName);
+                createRecords(UpdateDB, DB.readInt(drCompany["ID"]), szFileName);
                 szFileName = Utility.formatDate(DateTime.Now) + "-MYOB-Commission-ADVANCED" + drCompany["NAME"] + ".csv";
                 createRecordsAdvanced(UpdateDB, DB.readInt(drCompany["ID"]), szFileName);
             }
@@ -110,14 +110,7 @@ namespace Paymaker {
                 output.Flush();
                 output.Close();
                 oLinks.InnerHtml += string.Format("<a href='../admin/myob_doc.aspx?file={0}' target='_blank'>{1}</a> <br/>", Server.UrlEncode(FileName), FileName);
-            } else {
-                if (dtTotal == null)
-                    dtTotal = dtNew.Clone();
-                //Add these rows to the overalloutput so we can see the data
-                foreach (DataRow dr in dtNew.Rows) {
-                    dtTotal.Rows.Add(dr.ItemArray);
-                }
-            }
+            } 
 
            /* if (!UpdateDB) {
                 gvData.DataSource = dtTotal;
