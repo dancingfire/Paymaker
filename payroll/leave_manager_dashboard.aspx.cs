@@ -14,15 +14,8 @@ namespace Paymaker {
             // Check which pages user should have access to
             if (!Page.IsPostBack) {
                 loadRequests();
-                loadDates();
             }
             ModalForms.createModalUpdate("Leave request");
-        }
-
-        void loadDates() {
-            txtStartDate.Text = Utility.formatDate(DateTime.Now.AddDays(-14));
-            txtEndDate.Text = Utility.formatDate(DateTime.Now);
-
         }
 
         private void loadRequests() {

@@ -8,9 +8,6 @@
     <script type="text/javascript">
 
          $(document).ready(function () {
-            createCalendar("txtStartDate", true);
-            createCalendar("txtEndDate", true);
-            $("#txtStartDate, #txtEndDate").attr("readonly", "readonly")
             createDataTable("gvList", false, true, 520, false, true);
 
         });
@@ -26,18 +23,6 @@
          <asp:HiddenField ID="hdCycleRef" runat="server" Value=""></asp:HiddenField>
 
         <div class="container-fluid">
-            <div class="row" id="dAdminControls" runat="server">
-                <div class="col-sm-12">
-                    <div class="PageHeader" style="margin-bottom: 15px">
-                        <label>Date range</label>
-
-                        <asp:TextBox ID="txtStartDate" runat="server" CssClass="form-field" Width="100"></asp:TextBox>
-                        &nbsp;to &nbsp;<asp:TextBox ID="txtEndDate" runat="server" CssClass="formfied" Width="100"></asp:TextBox>
-                    
-                        <a id="btnComplete" style="width: 150px; float: right; margin-right: 20px;" runat="server" onclick="return checkComplete();" class="Button btn" href='../reports/payroll_timesheets.aspx'>View report</a>
-                    </div>
-                </div>
-            </div>
             <div class="row">
                 <div class="col-sm-12">
                     
