@@ -48,28 +48,12 @@
             </div>
         </div>
         <div class='LeftPanel' style="width: 160px;">
-            <asp:Button ID="btnUpdate" Style="width: 85px;" runat="server" Text="Preview" CommandName="cancel"
-                CssClass="Button btn" TabIndex="100" OnClick="btnUpdate_Click" ValidationGroup="EXPORT"></asp:Button>
+            <asp:Button ID="btnExport" Style="width: 85px;" runat="server" Text="Export" 
+                CssClass="Button btn" TabIndex="100" OnClick="btnExport_Click" ValidationGroup="EXPORT"></asp:Button> <br /><br />
+            <asp:Button ID="btnPreview" Style="width: 85px;" runat="server" Text="Preview" 
+                CssClass="Button btn" TabIndex="100" OnClick="btnPreview_Click"></asp:Button>
          </div>
 
-        <div runat="server" id="dValidate" class='ActionPanel Normal' style='width: 600px; font-weight: normal; padding: 5px; clear: both;'>
-            <strong>Validate GL codes with MYOB</strong>
-            <br />
-            <br />
-            Export the accounts information (Select <i>tab delimited</i> in the options and <i>Account code</i> in the list of fields) from MYOB.
-
-            Select the export file below and we will match it against the codes contained in the current export.
-            <br class="Align" />
-            <br class="Align" />
-
-            <div style="float: right; clear: right; width: 95px;">
-                <asp:Button ID="btnMYOBValidate" Style="width: 85px;" runat="server"
-                    Text="Validate" CommandName="MYOB"
-                    CssClass="Button btn" TabIndex="100" OnClick="btnMYOBValidate_Click"></asp:Button>
-            </div>
-            <asp:Label ID="Label3" runat="server" CssClass="Label LabelPos" Style='width: 150px'>MYOB accounts file</asp:Label>
-            <asp:FileUpload ID="fuMYOBAccount" runat="server" />
-        </div>
         <div style="clear: both;">
             <asp:GridView ID="gvPreview" runat="server" Visible="false" EnableViewState="false">
             </asp:GridView>

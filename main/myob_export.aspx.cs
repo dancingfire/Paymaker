@@ -42,20 +42,19 @@ public partial class myob_export : Root {
         lstCompany.Items.Insert(0, new ListItem("All", ""));
     }
 
-    protected void btnUpdate_Click(object sender, System.EventArgs e) {
-        if (btnUpdate.Text == "Preview") {
-            DataTable dtData = getAdvancedDataTable(false);
-            gvPreview.DataSource = dtData;
-            gvPreview.DataBind();
-            HTML.formatGridView(ref gvPreview);
-            btnUpdate.Text = "Export";
-            gvPreview.Visible = true;
-            dValidate.Visible = false;
-        } else {
-            gvPreview.Visible = false;
-            processExport();
-            processExportAdvanced();
-        }
+    protected void btnPreview_Click(object sender, System.EventArgs e) {
+       
+        DataTable dtData = getAdvancedDataTable(false);
+        gvPreview.DataSource = dtData;
+        gvPreview.DataBind();
+        HTML.formatGridView(ref gvPreview);
+        gvPreview.Visible = true;
+    }
+
+    protected void btnExport_Click(object sender, System.EventArgs e) {
+        gvPreview.Visible = false;
+        processExport();
+        processExportAdvanced();
     }
 
     private void processExport() {
@@ -118,6 +117,10 @@ public partial class myob_export : Root {
         if (UpdateDB)
             intMYOBExportID = Utility.getMYOBExportID(ExportType.UserTx, szName);
 
+        string szWhere = "";
+        if(lstCompany.SelectedValue != "") {
+            szWhere = " AND L_COMP.ID = " + lstCompany.SelectedValue;
+        }
         string szSQL = string.Format(@"
             SELECT L_OFF.OFFICEMYOBBRANCH as Branch, '2-3000' AS Account, L_OFF.OFFICEMYOBCODE + '-' + U.INITIALSCODE  AS Subaccount,
             '' as [Debit Amount], '' as [Credit Amount], '' as [Ref. Number], L_CAT.NAME AS [Transaction Description],
@@ -134,8 +137,8 @@ public partial class myob_export : Root {
             JOIN LIST L_COMP ON L_COMP.ID = L_OFF.COMPANYID
             LEFT JOIN  list L_CAT on ACCOUNTID = L_CAT.ID
             JOIN USERPAYPERIOD UPP ON U.ID = UPP.USERID AND UPP.PAYPERIODID = {2}
-            WHERE TX.TXDATE BETWEEN  '{0} 00:00:00' AND '{1} 23:59:59'  AND TX.AMOUNT != 0
-            ", Utility.formatDate(dtStart), Utility.formatDate(dtEnd), oP.ID);
+            WHERE TX.TXDATE BETWEEN  '{0} 00:00:00' AND '{1} 23:59:59'  AND TX.AMOUNT != 0 {3}
+            ", Utility.formatDate(dtStart), Utility.formatDate(dtEnd), oP.ID, szWhere);
         DataSet dsTX = DB.runDataSet(szSQL);
         DataTable dtNew = dsTX.Tables[0].Clone();
         string szJournalNumber = txtJournalNumber.Text;
@@ -151,7 +154,7 @@ public partial class myob_export : Root {
             //53050
             //Debit
             rCurr["Ref. Number"] = Utility.formatDate(Convert.ToDateTime(rCurr["TXDATE"]));
-            rCurr["Account"] = rCurr["DEBITACCOUNTGLCODE"];
+            rCurr["Account"] = Convert.ToString(rCurr["DEBITACCOUNTGLCODE"]).Replace("-", "");
             rCurr["DEBIT AMOUNT"] = rCurr["AMOUNT"];
 
             //Do the same for the inverse of this transaction
@@ -159,7 +162,7 @@ public partial class myob_export : Root {
             dtNew.ImportRow(tx);
             rCurr = dtNew.Rows[dtNew.Rows.Count - 1];
             rCurr["Ref. Number"] = Utility.formatDate(Convert.ToDateTime(rCurr["TXDATE"]));
-            rCurr["ACCOUNT"] = rCurr["CREDITACCOUNTGLCODE"];
+            rCurr["ACCOUNT"] = Convert.ToString(rCurr["CREDITACCOUNTGLCODE"]).Replace("-", "");
             rCurr["CREDIT AMOUNT"] = rCurr["AMOUNT"];
           
             if (!lSuperUsers.Contains(DB.readInt(rCurr["USERID"]))) {
@@ -283,39 +286,4 @@ public partial class myob_export : Root {
         Response.Redirect("../blank.html");
     }
 
-    protected void btnMYOBValidate_Click(object sender, EventArgs e) {
-        Hashtable ht = new Hashtable();
-        if (!fuMYOBAccount.HasFile) {
-            PageNotificationManager.PageNotificationInfo.addPageNotification(PageNotificationType.Error, "File not selected", "Please select the MYOB export file");
-            PageNotificationManager.PageNotificationInfo.showPageNotification();
-            return;
-        }
-
-        using (StreamReader reader = new StreamReader(fuMYOBAccount.FileContent)) {
-            do {
-                string szCode = reader.ReadLine();
-                if (szCode.Contains("-"))
-                    szCode = szCode.Replace("-", "");
-                ht.Add(szCode, szCode);
-            } while (reader.Peek() != -1);
-        }
-        DataTable dtData = getDataTable(false);
-        string szErrorMessage = "";
-        foreach (DataRow dr in dtData.Rows) {
-            string szAccountNumber = dr["ACCOUNTNUMBER"].ToString();
-            if (szAccountNumber.Contains("-"))
-                szAccountNumber = szAccountNumber.Replace("-", "");
-            if (!ht.ContainsKey(szAccountNumber)) {
-                szErrorMessage += szAccountNumber + "<br/>";
-            }
-        }
-
-        if (!String.IsNullOrEmpty(szErrorMessage)) {
-            szErrorMessage = "The following account codes need to be added to MYOB: <br/><br/>" + szErrorMessage;
-            PageNotificationManager.PageNotificationInfo.addPageNotification(PageNotificationType.Warning, "MYOB codes out of date", szErrorMessage);
-        } else {
-            PageNotificationManager.PageNotificationInfo.addPageNotification(PageNotificationType.Success, "MYOB codes valid", "All the GL codes are up to date.");
-        }
-        PageNotificationManager.PageNotificationInfo.showPageNotification();
-    }
 }

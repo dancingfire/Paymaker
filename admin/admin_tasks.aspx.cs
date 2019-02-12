@@ -45,20 +45,6 @@ namespace PAYMAKER {
         }
 
 
-        protected void btnStart_Click(object sender, EventArgs e) {
-            string Msg = "Started correctly.";
-            try {
-                Automation.JobScheduler js = new Automation.JobScheduler();
-                js.Start();
-
-            } catch (Exception e1) {
-                Msg = "Error: " + e1.Message;
-            }
-
-            G.Notifications.addPageNotification(PageNotificationType.Success, "Status", Msg);
-            G.Notifications.showPageNotification();
-        }
-
         protected void btnUpdateAgentActual_Click(object sender, EventArgs e) {
             string szPPID = G.PayPeriodInfo.getPayPeriodsForYTD(-1, Convert.ToInt32(lstAgentFinYear.SelectedValue));
 
