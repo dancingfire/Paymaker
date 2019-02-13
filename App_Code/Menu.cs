@@ -40,7 +40,7 @@ public class ClientMenu {
         oM.addMenuItem("Import EOY values", "../admin/import_values.aspx");
         oM.addMenu("Campaign", "../campaign/campaign_dashboard.aspx", MenuRole.Campaign);
         if (Payroll.CanAccess) {
-            if (G.User.RoleID == 1) {
+            if (G.User.RoleID == 1) { 
                 oM.addMenu("Payroll", "");
                 oM.addMenuItem("Dashboard", "../payroll/payroll_dashboard.aspx");
                 oM.addMenuItem("Payroll settings", "../admin/sales_settings.aspx", MenuRole.Admin);
@@ -49,7 +49,7 @@ public class ClientMenu {
             }
 
         }
-        if (Utility.InCommaSeparatedString(G.User.UserID.ToString(), G.Settings.LeaveTestingUsers)) {
+        if (false && Utility.InCommaSeparatedString(G.User.UserID.ToString(), G.Settings.LeaveTestingUsers)) {
             if (G.User.RoleID == 1 || G.User.UserID == 497) {
                 oM.addMenu("Leave");
                 oM.addMenuItem("Dashboard", "../payroll/leave_dashboard.aspx");
@@ -62,8 +62,8 @@ public class ClientMenu {
             } else {
                 oM.addMenu("Leave", "../payroll/leave_dashboard.aspx");
             }
-          
         }
+
         if (canAccessReports()) {
             oM.addMenu("Reports", "../reports/report_admin.aspx");
 

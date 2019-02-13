@@ -12,16 +12,12 @@
 
         $(document).ready(function () {
             addFormValidation('frmMain');
-            $("#lstPermittedUsers").select2();
-            $("#frmMain").submit(function () {
-                $("#hdLeaveTesters").val($("#lstPermittedUsers").val());
-            })
+          
         });
     </script>
 </head>
 <body class='AdminPage'>
     <form id="frmMain" name="frmMain" method="post" runat="server">
-        <asp:HiddenField ID="hdLeaveTesters" runat="server" />
         <div class="PageHeader" style="z-index: 107; left: -1px; width: 100%; top: 1px">
             Application settings
         </div>

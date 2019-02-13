@@ -600,6 +600,8 @@ public class UserDetail {
 
     public string Name { get { return LastName + ", " + FirstName + "(" + Initials + ")"; } }
 
+    public string NameFLI { get { return FirstName + " " + LastName + "(" + Initials + ")"; } }
+
     public UserDetail(int ID, string Initials, string First, string Last, string Email, int RoleID, int OfficeID, int MentorID, int Salary, int PayrollCycleID, int SupervisorID, string CreditGLCode, string DebitGLCode, string JobCode) {
         this.ID = ID;
         this.Initials = Initials;
@@ -1088,7 +1090,7 @@ public class UserInformation {
         string szSQL = @"
             --User info
             SELECT U.ID, INITIALSCODE, FIRSTNAME, LASTNAME, EMAIL, ROLEID, ISNULL(TEAMID, -1) AS TEAM, SALARY, U.CREDITGLCODE, U.DEBITGLCODE, L_OFF.JOBCODE, U.OFFICEID, U.PAYROLLCYCLEID, U.SUPERVISORID
-            FROM DB_USER U  JOIN LIST L_OFF ON L_OFF.ID = U.OFFICEID;";
+            FROM DB_USER U  JOIN LIST L_OFF ON L_OFF.ID = U.OFFICEID ORDER BY LASTNAME, FIRSTNAME";
 
         using (DataSet ds = DB.runDataSet(szSQL)) {
             foreach (DataRow dr in ds.Tables[0].Rows) {
@@ -1110,7 +1112,7 @@ public class UserInformation {
             loadItems();
 
         foreach (UserDetail b in lUsers) {
-            l.Items.Add(new ListItem(b.Name, b.ID.ToString()));
+            l.Items.Add(new ListItem(b.NameFLI, b.ID.ToString()));
         }
     }
 }
