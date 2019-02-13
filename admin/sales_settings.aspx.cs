@@ -11,6 +11,7 @@ public partial class sales_settings : Root {
             oConfigAdmin.addConfig("SUPERANNUATIONMAX", "25000");
             oConfigAdmin.addConfig("CALCULATEBONUS", "FALSE");
             oConfigAdmin.addConfig("SUPERGLCODE", "");
+            oConfigAdmin.addConfig("PERMITTEDLEAVETESTERS", "");
 
             if (!Page.IsPostBack) {
                 loadSettings();
@@ -25,6 +26,8 @@ public partial class sales_settings : Root {
         txtSuperMax.Text = oConfigAdmin.getValue("SUPERANNUATIONMAX");
         txtSuperGLCode.Text = oConfigAdmin.getValue("SUPERGLCODE");
         Utility.setListBoxItems(ref lstCalcBonus, oConfigAdmin.getValue("CALCULATEBONUS"));
+        G.UserInfo.loadList(ref lstPermittedUsers);
+        Utility.setListBoxItems(ref lstPermittedUsers, oConfigAdmin.getValue("PERMITTEDLEAVETESTERS"));
     }
 
     protected void btnUpdate_Click(object sender, EventArgs e) {
@@ -33,6 +36,7 @@ public partial class sales_settings : Root {
         oConfigAdmin.updateConfigValueSQL("SUPERANNUATIONMAX", Utility.formatForDB(txtSuperMax.Text));
         oConfigAdmin.updateConfigValueSQL("CALCULATEBONUS", Utility.formatForDB(lstCalcBonus.SelectedValue));
         oConfigAdmin.updateConfigValueSQL("SUPERGLCODE", Utility.formatForDB(txtSuperGLCode.Text));
+        oConfigAdmin.updateConfigValueSQL("PERMITTEDLEAVETESTERS", hdLeaveTesters.Value);
     }
 
     protected void btnDeleteBonus_Click(object sender, EventArgs e) {
