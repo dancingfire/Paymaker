@@ -5,6 +5,7 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Web;
+using System.Web.UI.WebControls;
 
 /// <summary>
 /// The global object that we can access throughout the app...
@@ -489,6 +490,15 @@ public class G {
         public static string SuperGLCode {
             get {
                 return checkSessionVar("SUPERGLCODE", "SUPER");
+            }
+        }
+
+        /// <summary>
+        /// People permitted to test the leave system
+        /// </summary>
+        public static string LeaveTestingUsers {
+            get {
+                return checkSessionVar("PERMITTEDLEAVETESTERS", "0,497");
             }
         }
 
@@ -1075,12 +1085,10 @@ public class UserInformation {
     }
 
     private void loadItems() {
-        string szSQL = String.Format(@"
+        string szSQL = @"
             --User info
             SELECT U.ID, INITIALSCODE, FIRSTNAME, LASTNAME, EMAIL, ROLEID, ISNULL(TEAMID, -1) AS TEAM, SALARY, U.CREDITGLCODE, U.DEBITGLCODE, L_OFF.JOBCODE, U.OFFICEID, U.PAYROLLCYCLEID, U.SUPERVISORID
-            FROM DB_USER U  JOIN LIST L_OFF ON L_OFF.ID = U.OFFICEID;
-
-           ", G.CurrentPayPeriod);
+            FROM DB_USER U  JOIN LIST L_OFF ON L_OFF.ID = U.OFFICEID;";
 
         using (DataSet ds = DB.runDataSet(szSQL)) {
             foreach (DataRow dr in ds.Tables[0].Rows) {
@@ -1090,6 +1098,19 @@ public class UserInformation {
                     DB.readInt(dr["SUPERVISORID"]), DB.readString(dr["CREDITGLCODE"]), DB.readString(dr["DEBITGLCODE"]), DB.readString(dr["JOBCODE"])));
             }
             blnIsLoaded = true;
+        }
+    }
+    /// <summary>
+    /// Loads the list from the object
+    /// </summary>
+    /// <param name="l"></param>
+    /// <param name="IncludeSelect"></param>
+    public void loadList(ref ListBox l, bool IncludeSelect = true) {
+        if (blnIsLoaded == false || lUsers == null)
+            loadItems();
+
+        foreach (UserDetail b in lUsers) {
+            l.Items.Add(new ListItem(b.Name, b.ID.ToString()));
         }
     }
 }

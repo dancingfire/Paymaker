@@ -12,11 +12,16 @@
 
         $(document).ready(function () {
             addFormValidation('frmMain');
+            $("#lstPermittedUsers").select2();
+            $("#frmMain").submit(function () {
+                $("#hdLeaveTesters").val($("#lstPermittedUsers").val());
+            })
         });
     </script>
 </head>
 <body class='AdminPage'>
     <form id="frmMain" name="frmMain" method="post" runat="server">
+        <asp:HiddenField ID="hdLeaveTesters" runat="server" />
         <div class="PageHeader" style="z-index: 107; left: -1px; width: 100%; top: 1px">
             Application settings
         </div>
@@ -42,6 +47,12 @@
                 <asp:ListItem Text="False" Value="FALSE"></asp:ListItem>
                 <asp:ListItem Text="True" Value="TRUE"></asp:ListItem>
             </asp:DropDownList>
+            <br class='Align' />
+
+              <asp:Label ID="Label5" runat="server" CssClass="Label LabelPos" Text="Leave process testers" Style="width: 200px" ToolTip="Select the people you want to be able to see the leave testing"></asp:Label>
+             <asp:ListBox ID="lstPermittedUsers" runat="server" CssClass="Entry EntryPos" SelectionMode="Multiple"  >
+            </asp:ListBox>
+
             <br class='Align' />
             <asp:Button ID="btnDelete" runat="server" Text="Remove all bonus records" CssClass="Button btn" OnClick="btnDeleteBonus_Click"  Visible="false"/>
         </div>

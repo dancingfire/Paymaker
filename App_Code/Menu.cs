@@ -29,7 +29,7 @@ public class ClientMenu {
 
         oM.addMenuItem("View dashboard", "../main/accounting_dashboard.aspx");
         oM.addMenuItem("Search tx", "../main/tx_search.aspx");
-        oM.addMenuItem("Finalize Commission", "../reports/commission_statement_finalize.aspx", MenuRole.Admin);
+        oM.addMenuItem("Finalize Commission", "../main/commission_statement_finalize.aspx", MenuRole.Admin);
         oM.addMenuItem("MYOB exceptions", "../reports/myob_modifications.aspx", MenuRole.Admin);
         oM.addSpacer();
         oM.addMenuItem("Export to MYOB", "../main/MYOB_export.aspx");
@@ -49,8 +49,8 @@ public class ClientMenu {
             }
 
         }
-        if (G.User.UserID == 0 || G.User.UserID == 497) {
-            if (G.User.RoleID == 1) {
+        if (Utility.InCommaSeparatedString(G.User.UserID.ToString(), G.Settings.LeaveTestingUsers)) {
+            if (G.User.RoleID == 1 || G.User.UserID == 497) {
                 oM.addMenu("Leave");
                 oM.addMenuItem("Dashboard", "../payroll/leave_dashboard.aspx");
                 oM.addSpacer();

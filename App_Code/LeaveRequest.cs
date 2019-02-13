@@ -103,7 +103,7 @@ public class LeaveRequest {
 
     private void sendEmailToManager() {
         //Find the manager of this user
-        UserDetail u = G.UserInfo.getUser(G.User.UserID);
+        UserDetail u = G.UserInfo.getUser(UserID);
         UserDetail m = G.UserInfo.getUser(u.SupervisorID);
         string szTo = G.Settings.CatchAllEmail;
 
@@ -122,5 +122,55 @@ public class LeaveRequest {
             ", u.Name, this.LeaveType, Utility.formatDate(StartDate), Utility.formatDate(EndDate), Utility.nl2br(Comment));
 
         Email.sendMail(szTo, u.Email, "Leave request", szEmail, LogObjectID: intID, Type: EmailType.LeaveRequest);
+    }
+
+    public void sendReminderEmailToManager() {
+
+        //Find the manager of this user
+        UserDetail u = G.UserInfo.getUser(UserID);
+        UserDetail m = G.UserInfo.getUser(u.SupervisorID);
+        string szTo = G.Settings.CatchAllEmail;
+
+        if (m != null && !String.IsNullOrWhiteSpace(m.Email)) {
+            szTo = m.Email;
+        }
+
+        string szEmail = String.Format(@"
+            <strong>This is a reminder email.</strong><br/><br/>
+            {0} has requested leave for the following period:<br/><br/>
+                Type: {1} <br/>
+                Start: {2}<br/>
+                End: {3}</br/>
+                Comments: {4} <br/><br/>
+
+               Please <a href='https://commission.fletchers.net.au'>login to CAPS </a> to respond to this request.
+            ", u.Name, this.LeaveType, Utility.formatDate(StartDate), Utility.formatDate(EndDate), Utility.nl2br(Comment));
+
+        Email.sendMail(szTo, u.Email, "Leave request reminder", szEmail, LogObjectID: intID, Type: EmailType.Reminder);
+    }
+}
+
+
+/// <summary>
+/// Manages the reminder email process - we send out a reminder every three days
+/// </summary>
+public static class LeaveReminders {
+
+    public static void checkReminders() {
+        string szSQL = @"    
+            SELECT LR.ID
+            FROM LEAVEREQUEST LR JOIN LIST L ON L.ID = LR.LEAVETYPEID
+            JOIN LEAVESTATUS LS ON LS.ID = LR.LEAVESTATUSID
+            JOIN DB_USER U ON LR.USERID = U.ID
+            WHERE LR.ISDELETED = 0   AND MANAGERSIGNOFFDATE IS NULL
+                AND DATEDIFF(d, getdate(), entrydate) %2 = 0 AND Convert(Date, ENTRYDATE) < Convert(Date, getDate())
+                ORDER BY LR.ENTRYDATE";
+
+        using (DataSet ds = DB.runDataSet(szSQL)) {
+            foreach (DataRow dr in ds.Tables[0].Rows) {
+                LeaveRequest l = new LeaveRequest(DB.readInt(dr["ID"]));
+                l.sendReminderEmailToManager();
+            }
+        }
     }
 }
