@@ -158,6 +158,17 @@ public class Utility {
         File.WriteAllText(FileName, sb.ToString());
     }
 
+    public static string formatMYOBAccount(string Account, bool IncludeDash = true) {
+        if (!IncludeDash) 
+            return Account.Replace("-", "");
+        
+        if (Account.Trim().Length == 6)
+            return Account;
+        else if(Account.Trim().Length == 5) 
+            return Account.Substring(0, 1) + "-" + Account.Substring(1);
+        return Account;
+    }
+        
     public static void bindGV(ref GridView gv, DataSet oData, bool FormatForDataGrid = true, bool TableHover = true) {
         gv.DataSource = oData;
         gv.DataBind();
