@@ -174,7 +174,7 @@ public partial class myob_export : Root {
                     rCurr = dtNew.Rows[dtNew.Rows.Count - 1];
                     rCurr["Ref. Number"] = "";
                     rCurr["Transaction Description"] = "Super";
-                    rCurr["ACCOUNT"] = "2-3050";
+                    rCurr["ACCOUNT"] = "2-3000";
                     rCurr["DEBIT AMOUNT"] = Utility.formatMoney(Super);
 
                     dtNew.ImportRow(tx);
