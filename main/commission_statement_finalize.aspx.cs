@@ -276,14 +276,14 @@ namespace Paymaker {
                 DateTime dtTX = DB.readDate(rCurr["ACTUALDATE"]);
                 
                 //Debit
-                createDataRowAdvanced(ref rCurr, dtTX, "5-3050", Amount, false);
+                createDataRowAdvanced(ref rCurr, dtTX, "5-1010", Amount, false);
 
                 //Do the same for the inverse of this transaction
                 //Credit
                 dtNew.ImportRow(tx.Row);
                 rCurr = dtNew.Rows[dtNew.Rows.Count - 1];
                 szAccount = DB.readString(rCurr["USERCREDITGLCODE"]);
-                createDataRowAdvanced(ref rCurr, dtTX, "2-3050", Amount, true);
+                createDataRowAdvanced(ref rCurr, dtTX, "2-3000", Amount, true);
                
                 if (UpdateDB) {
                     DB.runNonQuery(String.Format(@"UPDATE SALE SET MYOBEXPORTID = {0} WHERE ID = {1}", MYOBExportID, rCurr["ID"].ToString())) ;
