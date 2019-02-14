@@ -154,7 +154,7 @@ public partial class myob_export : Root {
             //53050
             //Debit
             rCurr["Ref. Number"] = Utility.formatDate(Convert.ToDateTime(rCurr["TXDATE"]));
-            rCurr["Account"] = Convert.ToString(rCurr["DEBITACCOUNTGLCODE"]);
+            rCurr["Account"] = Utility.formatMYOBAccount(Convert.ToString(rCurr["DEBITACCOUNTGLCODE"]));
             rCurr["DEBIT AMOUNT"] = rCurr["AMOUNT"];
 
             //Do the same for the inverse of this transaction
@@ -162,7 +162,7 @@ public partial class myob_export : Root {
             dtNew.ImportRow(tx);
             rCurr = dtNew.Rows[dtNew.Rows.Count - 1];
             rCurr["Ref. Number"] = Utility.formatDate(Convert.ToDateTime(rCurr["TXDATE"]));
-            rCurr["ACCOUNT"] = Convert.ToString(rCurr["CREDITACCOUNTGLCODE"]);
+            rCurr["ACCOUNT"] = Utility.formatMYOBAccount(Convert.ToString(rCurr["CREDITACCOUNTGLCODE"]));
             rCurr["CREDIT AMOUNT"] = rCurr["AMOUNT"];
           
             if (!lSuperUsers.Contains(DB.readInt(rCurr["USERID"]))) {
@@ -181,7 +181,7 @@ public partial class myob_export : Root {
                     rCurr = dtNew.Rows[dtNew.Rows.Count - 1];
                     rCurr["Ref. Number"] = "";
                     rCurr["Transaction Description"] = "Super";
-                    rCurr["ACCOUNT"] = G.Settings.SuperGLCode;
+                    rCurr["ACCOUNT"] = Utility.formatMYOBAccount(G.Settings.SuperGLCode);
                     rCurr["CREDIT AMOUNT"] = Super;
                 }
             }
@@ -247,7 +247,7 @@ public partial class myob_export : Root {
             //Debit
             rCurr["JOURNAL NUMBER"] = szJournalNumber;
             rCurr["DATE"] = Utility.formatDateForMYOBExport(rCurr["DATE"].ToString());
-            rCurr["Account number"] = rCurr["DEBITACCOUNTGLCODE"];
+            rCurr["Account number"] = Utility.formatMYOBAccount(Convert.ToString(rCurr["DEBITACCOUNTGLCODE"]));
             rCurr["AMOUNT"] = rCurr["AMOUNT"];
             rCurr["JOB"] = rCurr["DEBITJOBCODE"];
 
@@ -257,7 +257,7 @@ public partial class myob_export : Root {
             rCurr = dtNew.Rows[dtNew.Rows.Count - 1];
             rCurr["JOURNAL NUMBER"] = szJournalNumber;
             rCurr["DATE"] = Utility.formatDateForMYOBExport(rCurr["DATE"].ToString());
-            rCurr["ACCOUNT NUMBER"] = rCurr["CREDITACCOUNTGLCODE"];
+            rCurr["ACCOUNT NUMBER"] = Utility.formatMYOBAccount(Convert.ToString(rCurr["CREDITACCOUNTGLCODE"]));
             rCurr["JOB"] = rCurr["CREDITJOBCODE"];
             rCurr["IS CREDIT"] = "Y";
 
