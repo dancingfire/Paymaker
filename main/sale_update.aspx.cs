@@ -67,7 +67,7 @@ public partial class sale_update : Root {
         }
 
         Utility.setListBoxItems(ref lstStatus, oS.Status.ToString());
-
+        hdCurrStatusID.Value = oS.Status.ToString();
         drawSaleExpense(oS);
         sbHTML.AppendFormat(@"<table class='Box1' id='tSalesInfo' width='100%'><thead class='Box1Head'><tr><td colspan='5'></td><tr></thead>");
         int rowCount = 0;
@@ -226,6 +226,13 @@ public partial class sale_update : Root {
         }
         DB.runNonQuery(oSQL.createUpdateSQL());
 
+        if (hdCurrStatusID.Value != lstStatus.SelectedValue) {
+            if (lstStatus.SelectedValue == "1") {
+                DBLog.addGenericRecord(DBLogType.SaleCompleted, "Completed", Convert.ToInt32(hdSaleID.Value));
+            } else if (lstStatus.SelectedValue == "2") {
+                DBLog.addGenericRecord(DBLogType.SaleFinalized, "Finalized", Convert.ToInt32(hdSaleID.Value));
+            }
+        }
         Sale oS = new Sale(Convert.ToInt32(hdSaleID.Value));
 
         string szSQLUpdate = "";

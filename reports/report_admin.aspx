@@ -25,8 +25,10 @@
                 return;
             switch (szReportVal) {
                 case "AR_REPORT":
+                case "CASHFLOW":
+                case "CASHFLOWPREDICTION":
                     $("#spDate").show();
-                    $("#spCompany").show();
+                    $("#spOffice").show();
                     break;
                 case "AGENTOFFTHETOP":
                     $("#spUser").show();
@@ -378,6 +380,14 @@
                     break;
                 case "AR_REPORT":
                     var szSrc = "AR_report.aspx";
+                    var szParam = getFilterValues();
+                    break;
+                 case "CASHFLOW":
+                    var szSrc = "cash_flow.aspx";
+                    var szParam = getFilterValues();
+                    break;
+                 case "CASHFLOWPREDICTION":
+                    var szSrc = "cash_flow_prediction.aspx";
                     var szParam = getFilterValues();
                     break;
                 case "SECTION27":
@@ -819,6 +829,8 @@
                 <option value="MENTORBONUSSUMMARY">Mentor bonus summary</option>
 
                 <optgroup label='Forecasting reports' />
+                <option value="CASHFLOW">Sales statistics</option>
+                <option value="CASHFLOWPREDICTION">Cash flow prediction</option>
                 <option value="AR_REPORT">Proposed income</option>
                 <option value="SECTION27">Section 27 proposed income</option>
                 <option value="MISSINGSECTION27">Missing section 27</option>

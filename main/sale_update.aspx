@@ -623,6 +623,7 @@
 <body>
     <form id="frmMain" method="post" runat="server" target="_self">
         <asp:HiddenField ID="hdSaleID" runat="server" Value="-1" />
+        <asp:HiddenField ID="hdCurrStatusID" runat="server" Value="-1" />
         <asp:HiddenField ID="hdReadOnly" runat="server" Value="false" />
         <asp:HiddenField ID="hdGrossCommission" runat="server" Value="0" />
         <asp:HiddenField ID="hdSplitAmount" runat="server" Value="0" />

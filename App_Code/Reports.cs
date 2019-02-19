@@ -134,6 +134,8 @@ public class ReportFilters {
         if (CompanyNames == "null")
             CompanyNames = "";
 
+        OfficeIDList = Valid.getText("szOfficeID", "", VT.TextNormal);
+      
         string szStartDate = Valid.getText("szStartDate", "", VT.TextNormal);
         string szEndDate = Valid.getText("szEndDate", "", VT.TextNormal);
 

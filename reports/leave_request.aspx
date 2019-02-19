@@ -23,7 +23,7 @@
                     &nbsp;to &nbsp;<asp:TextBox ID="txtEndDate" runat="server" CssClass="formfied" Width="100"></asp:TextBox>
                 </div>
                 <div class="col-sm-2">
-                    <asp:Button ID="btnViewReport" runat="server" Text="View excel report" CssClass="Button btn btn-block" OnClick="btnViewReport_Click" /><br />
+                    <asp:Button ID="btnViewReport" runat="server" Text="View report" CssClass="Button btn btn-block" OnClick="btnViewReport_Click" /><br />
                     <asp:Button ID="btnExportExcel" runat="server" Text="Export to excel" CssClass="Button btn btn-block" style="margin-top: 10px" OnClick="btnExportExcel_Click" />
                 </div>
             </div>
