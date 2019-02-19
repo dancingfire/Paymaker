@@ -212,7 +212,7 @@ public partial class user_update : Root {
             DB.runNonQuery(szSQL);
         }
         G.UserInfo.forceReload();
-        sbStartJS.Append("parent.refreshPage();");
+        sbStartJS.Append("//parent.refreshPage();");
     }
 
     private void doClose() {

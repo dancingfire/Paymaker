@@ -441,7 +441,9 @@ public enum DBLogType {
     EOFYBonus = 9,
     PayrollModification = 10,
     Email = 11,
-    EmailAutomation = 12
+    EmailAutomation = 12,
+    SaleCompleted = 13,
+    SaleFinalized = 14
 }
 
 public enum EmailType {
