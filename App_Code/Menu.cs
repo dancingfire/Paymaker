@@ -49,8 +49,8 @@ public class ClientMenu {
             }
 
         }
-        if (false && Utility.InCommaSeparatedString(G.User.UserID.ToString(), G.Settings.LeaveTestingUsers)) {
-            if (G.User.RoleID == 1 || G.User.UserID == 497) {
+        if (Utility.InCommaSeparatedString(G.User.UserID.ToString(), G.Settings.LeaveTestingUsers)) {
+            if (G.User.RoleID == 1 || G.User.UserID == 497 || G.User.UserID == 178) {
                 oM.addMenu("Leave");
                 oM.addMenuItem("Dashboard", "../payroll/leave_dashboard.aspx");
                 oM.addSpacer();
@@ -59,6 +59,8 @@ public class ClientMenu {
                 oM.addMenuItem("Leave type", "../admin/list_detail.aspx?intListTypeID=11", MenuRole.Admin);
                 oM.addMenuItem("Public holidays", "../admin/holiday_detail.aspx", MenuRole.Admin);
                 oM.addMenuItem("Settings", "../admin/leave_settings.aspx", MenuRole.Admin);
+                oM.addMenuItem("Staff admin", "../admin/user_detail.aspx", MenuRole.Admin);
+
             } else {
                 oM.addMenu("Leave", "../payroll/leave_dashboard.aspx");
             }

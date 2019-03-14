@@ -30,7 +30,7 @@ public partial class user_detail : Root {
         gvList.DataSource = dsTest;
         gvList.DataBind();
 
-        HTML.formatGridView(ref gvList, true);
+        HTML.formatGridView(ref gvList, true, true);
     }
 
     protected void chkIncludeInactive_CheckedChanged(object sender, EventArgs e) {

@@ -498,7 +498,7 @@ public class G {
         /// </summary>
         public static string LeaveTestingUsers {
             get {
-                return checkSessionVar("PERMITTEDLEAVETESTERS", "0,497");
+                return checkSessionVar("PERMITTEDLEAVETESTERS", "0,178,497");
             }
         }
 
