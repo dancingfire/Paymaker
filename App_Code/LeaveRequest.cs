@@ -55,8 +55,8 @@ public class LeaveRequest {
     public int updateDB() {
         string szSQL = "";
         sqlUpdate oSQL = new sqlUpdate("LEAVEREQUEST", "ID", intID);
-        oSQL.add("STARTDATE", Convert.ToString(StartDate));
-        oSQL.add("ENDDATE", Convert.ToString(EndDate));
+        oSQL.add("STARTDATE", Utility.formatDate(StartDate));
+        oSQL.add("ENDDATE", Utility.formatDate(EndDate));
         oSQL.add("COMMENTS", Comment);
         oSQL.add("LEAVETYPEID", LeaveTypeID);
         oSQL.add("TOTALDAYS", TotalDays);
