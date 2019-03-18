@@ -81,8 +81,8 @@ public partial class request_update : Root {
         txtComments.Text = l.Comment;
         txtManagerComments.Text = l.ManagerComments;
         if (l.SupportingFile != "") {
-            string FullPath = Path.Combine(G.Settings.DataDir, l.SupportingFile);
-            lExistingFile.Text = string.Format("<a href='view_doc.aspx?file={0}' target='_blank'>View file</a> <br/>", Server.UrlEncode(FullPath), FullPath);
+           
+            lExistingFile.Text = string.Format("<a href='view_doc.aspx?file={0}' target='_blank'>View file</a> <br/>", Server.UrlEncode(l.SupportingFile), l.SupportingFile);
         }
         Utility.setListBoxItems(ref lstLeaveType, l.LeaveTypeID.ToString());
         loadHistory();
@@ -116,11 +116,11 @@ public partial class request_update : Root {
     }
     protected void btnUpdate_Click(object sender, System.EventArgs e) {
         l = new LeaveRequest(intID);
-        l.StartDate = Convert.ToDateTime(txtStartDate.Text);
-        l.EndDate = Convert.ToDateTime(txtEndDate.Text);
+        l.StartDate = Valid.getDate("txtStartDate");
+        l.EndDate = Valid.getDate("txtEndDate");
         l.Comment = txtComments.Text;
         l.LeaveTypeID = Convert.ToInt32(lstLeaveType.SelectedValue);
-        l.TotalDays = Convert.ToInt32(txtTotalDays.Text);
+        l.TotalDays = Valid.getInteger("txtTotalDays");
         l.LeaveType = lstLeaveType.SelectedItem.Text;
         l.updateDB();
         l.addFile(FileUpload1);

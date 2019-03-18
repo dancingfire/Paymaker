@@ -11,7 +11,7 @@ namespace Paymaker {
             * This code checks if user is logged in.
             * This protects WebServices from being accessed by users not logged in. */
             int a = G.User.UserID;
-
+           
             string file = Valid.getText("file", "", VT.NoValidation);
 
             // Check for dot dot slash attack (directory traversal)
@@ -19,12 +19,13 @@ namespace Paymaker {
                 throw new Exception("Potential malicious file name");
 
             string szTest = file.ToUpper();
-
+           
             // Lists only files that are *.txt or *.csv
             if (!szTest.EndsWith(".JPG") && !szTest.EndsWith(".PDF"))
                 throw new Exception("Invalid file type");
 
             byte[] bytes = File.ReadAllBytes(Path.Combine(Directory, file));
+          
             Response.Buffer = true;
             Response.Clear();
             Response.ContentType = "text/" + Path.GetExtension(file).ToLower();

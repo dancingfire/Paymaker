@@ -9,6 +9,10 @@
             createCalendar("txtStartDate", true);
             createCalendar("txtEndDate", true);
             $("#txtStartDate, #txtEndDate").attr("readonly", "readonly")
+
+            $("#frmMain").submit(){
+                $("input").removeAttr("readonly");
+            }
         });
     </script>
 </head>
