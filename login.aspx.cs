@@ -11,7 +11,7 @@ namespace Paymaker {
     public partial class Paymaker_Form : Root {
         protected System.Data.SqlClient.SqlConnection cnn;
         private string szForgotUserNameEntered = string.Empty;
-
+        bool blnLeave = false;
         protected void Page_Init(object sender, System.EventArgs e) {
             blnUseSession = false;
             blnIsRoot = true;
@@ -29,8 +29,10 @@ namespace Paymaker {
             // This ensures session is logged out when people log out or time out
             if (!IsPostBack && HttpContext.Current.Session != null)
                 HttpContext.Current.Session.Abandon();
+            //Check whether we are redirecting to the leave page
+            blnLeave = Request.QueryString["LEAVE"] != null;
 
-            if (Request.QueryString["Timeout"] != null) {
+                if (Request.QueryString["Timeout"] != null) {
                 lblTimeout.Visible = true;
             } else {
                 lblTimeout.Visible = false;
@@ -90,7 +92,9 @@ namespace Paymaker {
                     G.CurrentUserPermissions = dr["PERMISSIONS"].ToString();
                 FormsAuthentication.SetAuthCookie(Session["LOGIN"].ToString(), false);
                 string szStartPage = "main/sales_dashboard.aspx";
-                if (G.User.RoleID == 1) {
+                if (blnLeave) {
+                    szStartPage = "payroll/leave_manager_dashboard.aspx";
+                } else  if (G.User.RoleID == 1) {
                     szStartPage = "main/admin_dashboard.aspx";
                 } else if (G.User.hasPermission(RolePermissionType.ViewCampaignModule)) {
                     szStartPage = "campaign/campaign_dashboard.aspx";

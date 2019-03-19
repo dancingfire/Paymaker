@@ -47,7 +47,7 @@ public partial class request_update : Root {
             return;
         }
 
-        if (Payroll.IsPayrollSupervisor && intID > -1 && l.UserID != G.User.UserID) {
+        if (Payroll.IsLeaveSupervisor && intID > -1 && l.UserID != G.User.UserID) {
             if (l.LeaveStatus == LeaveRequestStatus.Requested) {
                 btnApprove.Visible = btnReject.Visible = true;
             }

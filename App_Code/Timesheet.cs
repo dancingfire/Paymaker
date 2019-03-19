@@ -37,6 +37,20 @@ public class Payroll {
             }
         }
     }
+    public static Boolean IsLeaveSupervisor {
+        get {
+            if (HttpContext.Current.Session["ISLEAVESUPERVISOR"] == null) {
+                // Check if User has any staff that are on the payroll system
+                bool IsSuper = DB.getScalar(string.Format(@"
+                    SELECT COUNT(*) FROM DB_USER 
+                    WHERE SUPERVISORID = {0} AND ISACTIVE = 1 AND ISDELETED = 0", G.User.UserID), 0) > 0;
+                HttpContext.Current.Session["ISLEAVESUPERVISOR"] = IsSuper;
+                return IsSuper;
+            } else {
+                return Convert.ToBoolean(HttpContext.Current.Session["ISLEAVESUPERVISOR"]);
+            }
+        }
+    }
 
     public static Boolean IsAdmin {
         get {
