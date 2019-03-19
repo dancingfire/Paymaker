@@ -69,6 +69,7 @@
 
             if ($("#hdReadOnly").val() == "true") {
                 disableForm("frmMain", false);
+                $("#btnApprove, #btnReject").removeAttr("readonly").removeAttr("disabled");
             }
         }
         function validatePage() {

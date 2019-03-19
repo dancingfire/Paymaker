@@ -20,7 +20,7 @@ namespace Paymaker {
         }
 
         void checkSupervisorStatus() {
-            if (Payroll.IsPayrollSupervisor) {
+            if (Payroll.IsLeaveSupervisor) {
                 btnSuperviser.Visible = true;
             }
         }
