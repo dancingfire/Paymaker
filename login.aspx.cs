@@ -86,6 +86,7 @@ namespace Paymaker {
                 G.User.Email = Convert.ToString(dr["EMAIL"]);
                 G.User.RoleID = Convert.ToInt32(dr["ROLEID"]);
                 G.User.PayrollTypeID = Convert.ToInt32(dr["PAYROLLCYCLEID"]);
+                HttpContext.Current.Session["ISLEAVESUPERVISOR"] = null;
                 if (String.IsNullOrEmpty(dr["PERMISSIONS"].ToString()))
                     G.CurrentUserPermissions = "";
                 else
