@@ -566,7 +566,7 @@ public class DB {
         public static SqlDataReader loadList(string RoleList, bool IncludeAll, int CurrentValue = -1, bool CommissionOnly = false) {
             string szSQL = "SELECT ID, INITIALSCODE + ' ' + FIRSTNAME + ' ' + LASTNAME AS NAME, 1 AS SORTORDER FROM DB_USER  ";
 
-            string szFilter = " WHERE (ISACTIVE = 1 AND ID > 0 AND ISDELETED = 0 ";
+            string szFilter = " WHERE (ISACTIVE = 1 AND ISDELETED = 0 ";
             if (RoleList != "")
                 szFilter += " AND  ROLEID IN (" + RoleList + ")";
             if (CommissionOnly)

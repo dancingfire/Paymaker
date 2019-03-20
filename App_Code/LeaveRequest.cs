@@ -121,7 +121,7 @@ public class LeaveRequest {
                Please <a href='https://commission.fletchers.net.au/login.aspx?LEAVE=true'>login to CAPS </a> to respond to this request.
             ", u.Name, this.LeaveType, Utility.formatDate(StartDate), Utility.formatDate(EndDate), Utility.nl2br(Comment));
 
-        Email.sendMail(szTo, u.Email, "Leave request", szEmail, LogObjectID: intID, Type: EmailType.LeaveRequest);
+        Email.sendMail(szTo, "do-not-reply@fletchers.net.au", "Leave request", szEmail, LogObjectID: intID, Type: EmailType.LeaveRequest);
     }
 
     public void sendReminderEmailToManager() {
