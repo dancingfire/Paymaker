@@ -58,11 +58,11 @@ public partial class request_update : Root {
             FileUpload1.Visible = false;
             pApprovalPanel.Visible = true;
         } else {
-            if (l.ManagerComments != "") {
-                txtManagerComments.Text = l.ManagerComments;
-                pApprovalPanel.Visible = true;
-                txtManagerComments.ReadOnly = true;
-            } else if (l.StartDate < DateTime.Now) {
+           
+            txtManagerComments.Text = l.ManagerComments;
+            pApprovalPanel.Visible = true;
+            txtManagerComments.ReadOnly = true;
+            if (l.StartDate < DateTime.Now) {
                 //Readonly after the start date
                 hdReadOnly.Value = "true";
             }
@@ -81,10 +81,14 @@ public partial class request_update : Root {
         txtComments.Text = l.Comment;
         txtManagerComments.Text = l.ManagerComments;
         if (l.SupportingFile != "") {
-           
             lExistingFile.Text = string.Format("<a href='view_doc.aspx?file={0}' target='_blank'>View file</a> <br/>", Server.UrlEncode(l.SupportingFile), l.SupportingFile);
         }
         Utility.setListBoxItems(ref lstLeaveType, l.LeaveTypeID.ToString());
+        if(l.LeaveStatus != LeaveRequestStatus.Requested) {
+            txtComments.ReadOnly = true;
+            btnUpdate.Visible = false;
+            btnDelete.Visible = false;
+        }
         loadHistory();
     }
 

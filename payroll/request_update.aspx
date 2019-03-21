@@ -68,10 +68,11 @@
         function checkForReadOnly() {
 
             if ($("#hdReadOnly").val() == "true") {
-                disableForm("frmMain", false);
+                
                 $("#btnApprove, #btnReject").removeAttr("readonly").removeAttr("disabled");
             }
         }
+
         function validatePage() {
             if ($("#txtStartDate").val() == "" || $("#txtEndDate").val() == "") {
                 alert('Please enter a valid start and end date');
