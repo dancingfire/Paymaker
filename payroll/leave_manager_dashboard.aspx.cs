@@ -15,7 +15,7 @@ namespace Paymaker {
             if (!Page.IsPostBack) {
                 loadRequests();
             }
-            ModalForms.createModalUpdate("Leave request");
+            ModalForms.createModalUpdate("Leave request", "60%", "500px", false, true);
         }
 
         private void loadRequests() {
