@@ -8,12 +8,14 @@
         function confirmDelete() {
             return confirm("Are you sure you want to delete this request?");
         }
+
         function confirmApproval() {
             return confirm("Are you sure you want to approve this request?");
         }
+
         function confirmRejection() {
             if ($("#txtManagerComments").val() == "") {
-                alert("Pleased enter the reason why you are rejecting this request.");
+                alert("Please enter the reason why you are rejecting this request.");
                 return false;
             }
             return confirm("Are you sure you want to reject this request?  ");
@@ -52,6 +54,7 @@
             $("#txtStartDate, #txtEndDate, #txtTotalDays").attr("readonly", "readonly");
             checkDiff();
             checkForReadOnly();
+
         });
 
         function checkDiff() {

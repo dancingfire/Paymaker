@@ -92,6 +92,32 @@ public class LeaveRequest {
             SET LEAVESTATUSID = {1}, MANAGERSIGNOFFDATE = getdate(), MANAGERCOMMENTS = '{2}'
             WHERE ID = {0}", intID, Approve ? "1" : "2", DB.escape(Comment));
         DB.runNonQuery(szSQL);
+        sendEmailToStaff(Approve, Comment);
+    }
+
+
+    private void sendEmailToStaff(bool Accepted, string ManagerComment) {
+        //Find the manager of this user
+        UserDetail u = G.UserInfo.getUser(UserID);
+        UserDetail m = G.UserInfo.getUser(u.SupervisorID);
+        string Subject = "Leave request approved";
+        if (!Accepted) {
+            Subject = "Leave request rejected";
+        }
+
+         string szEmail = String.Format(@"
+            The following leave request has been approved. <br/><br/>
+                Type: {1} <br/>
+                Start: {2}<br/>
+                End: {3}<br/>
+                Comments: {4} <br/><br/>
+            ", u.Name, this.LeaveType, Utility.formatDate(StartDate), Utility.formatDate(EndDate), Utility.nl2br(Comment));
+        if (!Accepted) {
+            szEmail += "The reason for the rejection was: <br/><br/>" + Utility.nl2br(ManagerComment);
+        } else{
+            szEmail += "The following comment was left: <br/><br/>" + Utility.nl2br(ManagerComment);
+        }
+        Email.sendMail(u.Email, "do-not-reply@fletchers.net.au", Subject, szEmail, LogObjectID: intID, Type: EmailType.LeaveRequest);
     }
 
     public void delete() {
@@ -115,7 +141,7 @@ public class LeaveRequest {
             {0} has requested leave for the following period:<br/><br/>
                 Type: {1} <br/>
                 Start: {2}<br/>
-                End: {3}</br/>
+                End: {3}<br/>
                 Comments: {4} <br/><br/>
 
                Please <a href='https://commission.fletchers.net.au/login.aspx?LEAVE=true'>login to CAPS </a> to respond to this request.
