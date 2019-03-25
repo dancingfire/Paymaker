@@ -148,6 +148,9 @@
                     <asp:Button ID="btnApprove" runat="server" Text="Approve" CssClass="Button btn btn-primary btn-block"
                         CausesValidation="False" TabIndex="300" OnClientClick="return confirmApproval();" Visible="false"
                         Style="margin-bottom: 15px" OnClick="btnApprove_Click"></asp:Button>
+                    <asp:Button ID="btnDiscussion" runat="server" Text="Discussion required" CssClass="Button btn btn-primary btn-block"
+                        CausesValidation="False" TabIndex="300" OnClientClick="return confirmDiscussion();" Visible="false"
+                        Style="margin-bottom: 15px" OnClick="btnDiscussion_Click"></asp:Button>
 
                     <asp:Button ID="btnUpdate" runat="server" Text="Send approval request" CssClass="Button btn btn-block"
                         CausesValidation="False" TabIndex="100" OnClick="btnUpdate_Click" OnClientClick="return validatePage()"

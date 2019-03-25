@@ -48,8 +48,8 @@ public partial class request_update : Root {
         }
 
         if (Payroll.IsLeaveSupervisor && intID > -1 && l.UserID != G.User.UserID) {
-            if (l.LeaveStatus == LeaveRequestStatus.Requested) {
-                btnApprove.Visible = btnReject.Visible = true;
+            if (l.LeaveStatus == LeaveRequestStatus.Requested || l.LeaveStatus == LeaveRequestStatus.DiscussionRequired) {
+                btnApprove.Visible = btnReject.Visible = btnDiscussion.Visible = true;
             }
             btnDelete.Visible = btnUpdate.Visible = false;
             btnCancel.InnerHtml = "Close";
@@ -84,10 +84,11 @@ public partial class request_update : Root {
             lExistingFile.Text = string.Format("<a href='view_doc.aspx?file={0}' target='_blank'>View file</a> <br/>", Server.UrlEncode(l.SupportingFile), l.SupportingFile);
         }
         Utility.setListBoxItems(ref lstLeaveType, l.LeaveTypeID.ToString());
-        if(l.LeaveStatus != LeaveRequestStatus.Requested) {
+        if(l.LeaveStatus == LeaveRequestStatus.Approved || l.LeaveStatus == LeaveRequestStatus.Rejected) {
             txtComments.ReadOnly = true;
             btnUpdate.Visible = false;
             btnDelete.Visible = false;
+            btnDiscussion.Visible = false;
         }
         loadHistory();
     }
@@ -106,6 +107,9 @@ public partial class request_update : Root {
 
                 } else if (Type == EmailType.Approval) {
                     dr["Action"] = "Approved";
+                    dr["Comments"] = l.ManagerComments;
+                } else if (Type == EmailType.DiscussionRequired) {
+                    dr["Action"] = "Discussion required";
                     dr["Comments"] = l.ManagerComments;
                 } else if (Type == EmailType.Rejection) {
                     dr["Action"] = "Rejected";
@@ -139,13 +143,19 @@ public partial class request_update : Root {
 
     protected void btnApprove_Click(object sender, EventArgs e) {
         l = new LeaveRequest(intID);
-        l.managerUpdate(txtManagerComments.Text, true);
+        l.managerUpdate(txtManagerComments.Text, LeaveRequestStatus.Approved);
+        sbStartJS.Append("parent.closeEditModal(true);");
+    }
+
+    protected void btnDiscussion_Click(object sender, EventArgs e) {
+        l = new LeaveRequest(intID);
+        l.managerUpdate(txtManagerComments.Text, LeaveRequestStatus.DiscussionRequired);
         sbStartJS.Append("parent.closeEditModal(true);");
     }
 
     protected void btnReject_Click(object sender, EventArgs e) {
         l = new LeaveRequest(intID);
-        l.managerUpdate(txtManagerComments.Text, false);
+        l.managerUpdate(txtManagerComments.Text, LeaveRequestStatus.Rejected);
         sbStartJS.Append("parent.closeEditModal(true);");
     }
 }

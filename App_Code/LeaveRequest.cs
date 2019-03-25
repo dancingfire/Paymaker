@@ -6,7 +6,8 @@ using System.Web.UI.WebControls;
 public enum LeaveRequestStatus {
     Requested = 0,
     Approved = 1,
-    Rejected = 2
+    Rejected = 2,
+    DiscussionRequired = 3
 }
 
 /// <summary>
@@ -63,6 +64,7 @@ public class LeaveRequest {
 
         if (intID == -1) {
             oSQL.add("USERID", G.User.ID);
+            UserID = G.User.ID;
             szSQL = oSQL.createInsertSQL();
         } else
             szSQL = oSQL.createUpdateSQL();
@@ -86,38 +88,52 @@ public class LeaveRequest {
         }
     }
 
-    public void managerUpdate(string Comment, bool Approve) {
+    public void managerUpdate(string Comment, LeaveRequestStatus Status) {
+        string SignOffDate = ", MANAGERSIGNOFFDATE = getdate() ";
+        if (Status == LeaveRequestStatus.DiscussionRequired)
+            SignOffDate = "";
         string szSQL = string.Format(@"
             UPDATE LEAVEREQUEST
-            SET LEAVESTATUSID = {1}, MANAGERSIGNOFFDATE = getdate(), MANAGERCOMMENTS = '{2}'
-            WHERE ID = {0}", intID, Approve ? "1" : "2", DB.escape(Comment));
+            SET LEAVESTATUSID = {1},  MANAGERCOMMENTS = '{2}' {3}
+            WHERE ID = {0}", intID, (int)Status, DB.escape(Comment),SignOffDate);
         DB.runNonQuery(szSQL);
-        sendEmailToStaff(Approve, Comment);
+        sendEmailToStaff(Status, Comment);
     }
 
 
-    private void sendEmailToStaff(bool Accepted, string ManagerComment) {
+    private void sendEmailToStaff(LeaveRequestStatus Status, string ManagerComment) {
         //Find the manager of this user
         UserDetail u = G.UserInfo.getUser(UserID);
         UserDetail m = G.UserInfo.getUser(u.SupervisorID);
         string Subject = "Leave request approved";
-        if (!Accepted) {
+        if (Status == LeaveRequestStatus.Rejected) {
             Subject = "Leave request rejected";
+        } else  if (Status == LeaveRequestStatus.DiscussionRequired) {
+            Subject = "Leave request - discussion required";
         }
-
-         string szEmail = String.Format(@"
-            The following leave request has been approved. <br/><br/>
+        string szEmail = "The following leave request has been approved. <br/><br/>";
+        string szLeaveDetails = String.Format(@"
+            
                 Type: {1} <br/>
                 Start: {2}<br/>
                 End: {3}<br/>
                 Comments: {4} <br/><br/>
             ", u.Name, this.LeaveType, Utility.formatDate(StartDate), Utility.formatDate(EndDate), Utility.nl2br(Comment));
-        if (!Accepted) {
+        EmailType EType = EmailType.Approval;
+        if (Status == LeaveRequestStatus.Approved) {
+            szEmail = "The following leave request has been approved. <br/><br/>" + szLeaveDetails;
             szEmail += "The reason for the rejection was: <br/><br/>" + Utility.nl2br(ManagerComment);
-        } else{
+        } else if (Status == LeaveRequestStatus.Rejected) {
+            EType = EmailType.Rejection;
+            szEmail = "The following leave request has been rejected. <br/><br/>" + szLeaveDetails;
             szEmail += "The following comment was left: <br/><br/>" + Utility.nl2br(ManagerComment);
+        } else {
+            szEmail = "Further discussion is required for this request. <br/><br/>" + szLeaveDetails;
+            EType = EmailType.DiscussionRequired;
+            szEmail += "The following clarification is requested: <br/><br/>" + Utility.nl2br(ManagerComment);
         }
-        Email.sendMail(u.Email, "do-not-reply@fletchers.net.au", Subject, szEmail, LogObjectID: intID, Type: EmailType.LeaveRequest);
+
+        Email.sendMail(u.Email, "do-not-reply@fletchers.net.au", Subject, szEmail, LogObjectID: intID, Type: EType);
     }
 
     public void delete() {
