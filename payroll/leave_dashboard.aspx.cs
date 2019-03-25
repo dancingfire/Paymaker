@@ -14,16 +14,11 @@ namespace Paymaker {
             // Check which pages user should have access to
             if (!Page.IsPostBack) {
                 loadRequests();
-                checkSupervisorStatus();
+                btnSuperviser.Visible = Payroll.IsLeaveSupervisor;
             }
             ModalForms.createModalUpdate("Leave request", "60%", "500px", false, true);
         }
 
-        void checkSupervisorStatus() {
-            if (Payroll.IsLeaveSupervisor) {
-                btnSuperviser.Visible = true;
-            }
-        }
         private void loadRequests() {
             string szSQL = string.Format(@"
                 SELECT  LR.*, L.NAME AS LEAVETYPE, LS.NAME AS LEAVESTATUS
