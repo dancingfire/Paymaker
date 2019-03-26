@@ -185,7 +185,7 @@ public class LeaveRequest {
                 End: {3}</br/>
                 Comments: {4} <br/><br/>
 
-               Please <a href='https://commission.fletchers.net.au'>login to CAPS </a> to respond to this request.
+               Please <a href='https://commission.fletchers.net.au?LEAVE=true'>login to CAPS </a> to respond to this request.
             ", u.Name, this.LeaveType, Utility.formatDate(StartDate), Utility.formatDate(EndDate), Utility.nl2br(Comment));
 
         Email.sendMail(szTo, u.Email, "Leave request reminder", szEmail, LogObjectID: intID, Type: EmailType.Reminder);
