@@ -155,6 +155,8 @@ public partial class myob_export : Root {
             //Debit
             rCurr["Ref. Number"] = Utility.formatDate(Convert.ToDateTime(rCurr["TXDATE"]));
             rCurr["Account"] = Utility.formatMYOBAccount(Convert.ToString(rCurr["DEBITACCOUNTGLCODE"]));
+            rCurr["Subaccount"] = Utility.formatMYOBAccount(Convert.ToString(rCurr["DEBITJOBCODE"]));
+            
             rCurr["DEBIT AMOUNT"] = rCurr["AMOUNT"];
 
             //Do the same for the inverse of this transaction
@@ -163,6 +165,7 @@ public partial class myob_export : Root {
             rCurr = dtNew.Rows[dtNew.Rows.Count - 1];
             rCurr["Ref. Number"] = Utility.formatDate(Convert.ToDateTime(rCurr["TXDATE"]));
             rCurr["ACCOUNT"] = Utility.formatMYOBAccount(Convert.ToString(rCurr["CREDITACCOUNTGLCODE"]));
+            rCurr["Subaccount"] = Utility.formatMYOBAccount(Convert.ToString(rCurr["CREDITJOBCODE"]));
             rCurr["CREDIT AMOUNT"] = rCurr["AMOUNT"];
           
             if (!lSuperUsers.Contains(DB.readInt(rCurr["USERID"]))) {
