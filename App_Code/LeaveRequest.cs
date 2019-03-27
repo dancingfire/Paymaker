@@ -122,7 +122,9 @@ public class LeaveRequest {
         EmailType EType = EmailType.Approval;
         if (Status == LeaveRequestStatus.Approved) {
             szEmail = "The following leave request has been approved. <br/><br/>" + szLeaveDetails;
-            szEmail += "The reason for the rejection was: <br/><br/>" + Utility.nl2br(ManagerComment);
+            if (ManagerComment != "") {
+                szEmail += "The following comments were left: <br/><br/>" + Utility.nl2br(ManagerComment);
+            }
         } else if (Status == LeaveRequestStatus.Rejected) {
             EType = EmailType.Rejection;
             szEmail = "The following leave request has been rejected. <br/><br/>" + szLeaveDetails;
