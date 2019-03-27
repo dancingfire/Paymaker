@@ -10,7 +10,7 @@
         }
 
         function confirmApproval() {
-            return confirm("Are you sure you want to approve this request?");
+            return confirm("Please confirm your approval of this request?");
         }
 
         function confirmRejection() {
@@ -19,6 +19,14 @@
                 return false;
             }
             return confirm("Are you sure you want to reject this request?  ");
+        }
+
+        function confirmDiscussion() {
+            if ($("#txtManagerComments").val() == "") {
+                alert("Please enter the reason why you would like further discussion.");
+                return false;
+            }
+            return true;
         }
 
         function cancelPage() {

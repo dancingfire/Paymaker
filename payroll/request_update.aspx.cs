@@ -26,7 +26,7 @@ public partial class request_update : Root {
     }
 
     private void bindData() {
-        string szSQL = String.Format("SELECT ID, NAME FROM LIST WHERE LISTTYPEID = {0} ORDER BY SEQUENCENO, NAME", (int)ListType.LeaveType);
+        string szSQL = String.Format("SELECT ID, NAME FROM LIST WHERE LISTTYPEID = {0} AND ISACTIVE = 1 ORDER BY SEQUENCENO, NAME", (int)ListType.LeaveType);
         Utility.BindList(ref lstLeaveType, DB.runReader(szSQL), "ID", "NAME");
         lstLeaveType.Items.Insert(0, new ListItem("Select leave type...", ""));
 
