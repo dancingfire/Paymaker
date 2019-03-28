@@ -79,6 +79,8 @@ public class LeaveRequest : Report {
     public LeaveRequest(ReportViewer Viewer, ReportFilters oFilter, DateTime StartDate, DateTime EndDate) {
         this.dtStart = StartDate;
         this.dtEnd = EndDate;
+        oFilter.StartDate = StartDate;
+        oFilter.EndDate = EndDate;
 
         if (G.User.RoleID != 1)
             throw new Exception("Non-Admin user attempting to access admin report - leave request");

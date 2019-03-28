@@ -45,7 +45,7 @@
                 <asp:Label ID="lblInsertText" runat="server" Text="Add holiday" CssClass="LinkButton"></asp:Label></a></div>
                
             <div>
-                You can upload the public holidays from a iCal file provided by the <a href='https://www.vic.gov.au/calendar.html' target="_blank">Victorian government</a>.
+                You can upload the public holidays from an iCal file provided by the <a href='https://www.vic.gov.au/calendar.html' target="_blank">Victorian government</a>.
             </div>
             <div style="float: left; width: 70%">
                  <asp:FileUpload ID="FileUpload1" Class="form-control" runat="server" />

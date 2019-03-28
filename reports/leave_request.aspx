@@ -10,9 +10,9 @@
             createCalendar("txtEndDate", true);
             $("#txtStartDate, #txtEndDate").attr("readonly", "readonly")
 
-            $("#frmMain").submit(){
+            $("#frmMain").submit(function () {
                 $("input").removeAttr("readonly");
-            }
+            });
         });
     </script>
 </head>
@@ -20,15 +20,17 @@
     <form id="frmMain" method="post" runat="server">
         <div class="container-fluid" id="dAdminControls" runat="server">
             <div class="row">
-                <div class="col-sm-3">
+                <div class="col-sm-5">
                     <label>Date range</label>
 
                     <asp:TextBox ID="txtStartDate" runat="server" CssClass="form-field" Width="100"></asp:TextBox>
                     &nbsp;to &nbsp;<asp:TextBox ID="txtEndDate" runat="server" CssClass="formfied" Width="100"></asp:TextBox>
                 </div>
                 <div class="col-sm-2">
-                    <asp:Button ID="btnViewReport" runat="server" Text="View report" CssClass="Button btn btn-block" OnClick="btnViewReport_Click" /><br />
-                    <asp:Button ID="btnExportExcel" runat="server" Text="Export to excel" CssClass="Button btn btn-block" style="margin-top: 10px" OnClick="btnExportExcel_Click" />
+                    <asp:Button ID="btnViewReport" runat="server" Text="View report" CssClass="Button btn btn-block" OnClick="btnViewReport_Click" />
+               </div>
+                <div class="col-sm-2">
+                    <asp:Button ID="btnExportExcel" runat="server" Text="Export to excel" CssClass="Button btn btn-block" OnClick="btnExportExcel_Click" />
                 </div>
             </div>
         </div>
