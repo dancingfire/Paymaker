@@ -42,11 +42,12 @@ public partial class holiday_detail : Root {
                 DateTime dt = DateTime.MinValue;
                 delim[0] = ':';
                 for (int i = 0; i < lines.Length; i++) {
-                    if (lines[i].Contains("DESCRIPTION:")) {
-                        Name = lines[i].Replace("DESCRIPTION:", "");
+                    if (lines[i].Contains("SUMMARY:")) {
+                        Name = lines[i].Replace("SUMMARY:", "");
                     }
                     if (lines[i].Contains("DTSTART;VALUE=DATE:")) {
                         string stString = lines[i].Replace("DTSTART;VALUE=DATE:", "");
+                        stString = stString.Replace("\r", "");
                         dt = DateTime.ParseExact(stString, "yyyyMd", CultureInfo.InvariantCulture);
                         int DBID = DB.getScalar(String.Format(@"
                             SELECT ID

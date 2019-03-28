@@ -49,7 +49,10 @@ public partial class request_update : Root {
 
         if (Payroll.IsLeaveSupervisor && intID > -1 && l.UserID != G.User.UserID) {
             if (l.LeaveStatus == LeaveRequestStatus.Requested || l.LeaveStatus == LeaveRequestStatus.DiscussionRequired) {
-                btnApprove.Visible = btnReject.Visible = btnDiscussion.Visible = true;
+                btnApprove.Visible = btnDiscussion.Visible = true;
+            }
+            if(l.LeaveStatus == LeaveRequestStatus.DiscussionRequired) {
+                btnReject.Visible = true;
             }
             btnDelete.Visible = btnUpdate.Visible = false;
             btnCancel.InnerHtml = "Close";

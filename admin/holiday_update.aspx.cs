@@ -14,7 +14,7 @@ public partial class holiday_update : Root {
         intItemID = Valid.getInteger("intItemID");
         hdItemID.Value = intItemID.ToString();
         hdItemID.Value = intItemID.ToString();
-        btnDelete.Enabled = false;
+        
         if (!IsPostBack) {
             if (intItemID != -1)
                 loadItem();
@@ -28,10 +28,8 @@ public partial class holiday_update : Root {
 
         txtName.Text = dr["Name"].ToString();
         txtHolidayDate.Text = DB.readDateString(dr["HOLIDAYDATE"]);
-        btnDelete.Enabled = DB.readDate(dr["HOLIDAYDATE"]) > DateTime.Now;
     }
-
-
+    
 
     protected void btnUpdate_Click(object sender, System.EventArgs e) {
         string szSQL;

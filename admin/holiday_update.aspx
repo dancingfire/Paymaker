@@ -6,7 +6,7 @@
     <title>User update</title>
     <script type="text/javascript">
         function confirmDelete() {
-            return confirm("Are you sure you want to delete this item?");
+            return confirm("Are you sure you want to delete this holiday?");
         }
 
         function validatePage() {
