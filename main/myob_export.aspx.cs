@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Web;
+using System.Web.UI;
 using System.Web.UI.WebControls;
 
 public partial class myob_export : Root {
@@ -27,6 +28,7 @@ public partial class myob_export : Root {
                 dtEnd = oP.EndDate;
             }
         }
+        Form.Controls.Add(new LiteralControl(HTML.createModalUpdate("Tx", "User transaction", "630px", 600, "tx_update.aspx")));
     }
 
     protected void loadFilters() {
@@ -43,42 +45,16 @@ public partial class myob_export : Root {
     }
 
     protected void btnPreview_Click(object sender, System.EventArgs e) {
-       
         DataTable dtData = getAdvancedDataTable(false);
         gvPreview.DataSource = dtData;
         gvPreview.DataBind();
-        HTML.formatGridView(ref gvPreview);
+        HTML.formatGridView(ref gvPreview, true, true);
         gvPreview.Visible = true;
     }
 
     protected void btnExport_Click(object sender, System.EventArgs e) {
         gvPreview.Visible = false;
-        processExport();
         processExportAdvanced();
-    }
-
-    private void processExport() {
-        //Load all Company
-        string szSQL = string.Format("SELECT ID, NAME FROM LIST WHERE LISTTYPEID = {0}", (int)ListType.Company);
-
-        DataSet dsCompany = DB.runDataSet(szSQL);
-        foreach (DataRow drCompany in dsCompany.Tables[0].Rows) {
-            DataTable dtData = getDataTable(true, Convert.ToInt32(drCompany["ID"]));
-            if (dtData.Rows.Count == 0)
-                continue;
-            string szFileName = txtJournalNumber.Text + "_USERTX_" + drCompany["NAME"].ToString() + ".txt";
-            string szPath = G.Settings.MYOBDir + szFileName;
-            if (File.Exists(szPath))
-                File.Delete(szPath);
-            StreamWriter output = new StreamWriter(szPath);
-
-            // Use CsvWriter class to output the datatable to a CSV file with the same name as the journal entry
-            output.Write(CsvWriter.WriteToString(dtData, true, false));
-            output.Flush();
-            output.Close();
-            oLinks.InnerHtml += string.Format("<a href='../admin/myob_doc.aspx?file={0}' target='_blank'>{1}</a> <br/>", Server.UrlEncode(szFileName), szFileName);
-            oLinks.Visible = true;
-        }
     }
 
     protected void processExportAdvanced() {
@@ -123,13 +99,13 @@ public partial class myob_export : Root {
         }
         string szSQL = string.Format(@"
             SELECT L_OFF.OFFICEMYOBBRANCH as Branch, '2-3000' AS Account, L_OFF.OFFICEMYOBCODE + '-' + U.INITIALSCODE  AS Subaccount,
-            '' as [Debit Amount], '' as [Credit Amount], '' as [Ref. Number], L_CAT.NAME AS [Transaction Description],
+            '' as [Debit Amount], '' as [Credit Amount], '' as [Ref. Number], L_CAT.NAME AS [Transaction Description], TX.ID AS TXID,
             '' as STOP, L_OFF.COMPANYID, L_COMP.NAME AS COMPANY,
             --Debit Info
             TX.ACCOUNTID AS DEBITACCOUNT, L.NAME AS DEBITACCOUNTNAME,TX.DEBITGLCODE AS DEBITACCOUNTGLCODE,
             --Credit info
             U.ID AS CREDITACCOUNT, U.INITIALSCODE + ' ' + FIRSTNAME + ' ' + LASTNAME as CREDITACCOUNTNAME, TX.CREDITGLCODE AS CREDITACCOUNTGLCODE,
-             TX.CREDITJOBCODE, TX.DEBITJOBCODE,  TX.ID AS TXID, TX.AMOUNT, TX.TXDATE, TX.USERID, ISNULL(UPP.SUPERPAID, 0) as SUPERPAID
+             TX.CREDITJOBCODE, TX.DEBITJOBCODE,   TX.AMOUNT, TX.TXDATE, TX.USERID, ISNULL(UPP.SUPERPAID, 0) as SUPERPAID
             FROM USERTX TX
             JOIN DB_USER U ON  U.ID = TX.USERID AND TX.ISDELETED = 0
             JOIN LIST L ON L.ID = TX.ACCOUNTID
@@ -208,85 +184,17 @@ public partial class myob_export : Root {
 
         return dtNew;
     }
-
-    /// <summary>
-    /// Returns the datatable for the type of export that we are doing
-    /// </summary>
-    /// <param name="UpdateDB">When true, we need to create a MYOB export record and tag each transaction we are exporting with the MYOBExportID</param>
-    /// <returns></returns>
-    private DataTable getDataTable(bool UpdateDB, int intCompanyID = -1) {
-        sqlUpdate oSQL = new sqlUpdate("MYOBEXPORT", "ID", -1);
-        string szName = Utility.formatDate(dtStart) + "_USERTX_" + Convert.ToString(DB.getScalar("SELECT ISNULL(COUNT(ID), 0) FROM MYOBEXPORT WHERE UPDATETIME = getdate()", 0) + 1) + ".csv";
-
-        if (UpdateDB)
-            intMYOBExportID = Utility.getMYOBExportID(ExportType.UserTx, szName);
-
-        string szSQL = string.Format(@"
-            SELECT '' as [Journal Number], '' AS [Date], '' as Memo, 'P' AS [GST (BAS) Reporting], '0' AS Inclusive, '' AS [Account Number], 'N' AS [Is Credit], TX.AMOUNT AS Amount,
-             '' as Job, 'N-T' as TAXCODE,
-            '' as STOP, L_OFF.COMPANYID, L_COMP.NAME AS COMPANY,
-            --Debit Info
-            TX.ACCOUNTID AS DEBITACCOUNT, L.NAME AS DEBITACCOUNTNAME, REPLACE(TX.DEBITGLCODE, '-', '') AS DEBITACCOUNTGLCODE,
-            --Credit info
-            U.ID AS CREDITACCOUNT, U.INITIALSCODE + ' ' + FIRSTNAME + ' ' + LASTNAME as CREDITACCOUNTNAME, REPLACE(TX.CREDITGLCODE, '-','') AS CREDITACCOUNTGLCODE,
-             TX.CREDITJOBCODE, TX.DEBITJOBCODE,  TX.ID AS TXID
-            FROM USERTX TX
-            JOIN DB_USER U ON  U.ID = TX.USERID AND TX.ISDELETED = 0
-            JOIN LIST L ON L.ID = TX.ACCOUNTID
-            JOIN LIST L_OFF ON L_OFF.ID = U.OFFICEID
-            JOIN LIST L_COMP ON L_COMP.ID = L_OFF.COMPANYID
-            WHERE TX.TXDATE BETWEEN  '{0} 00:00:00' AND '{1} 23:59:59'  AND TX.AMOUNT != 0", Utility.formatDate(dtStart), Utility.formatDate(dtEnd));
-        DataSet dsTX = DB.runDataSet(szSQL);
-        DataTable dtNew = dsTX.Tables[0].Clone();
-        string szJournalNumber = txtJournalNumber.Text;
-        DataView dv = dsTX.Tables[0].DefaultView;
-        if (intCompanyID > -1)
-            dv.RowFilter = "COMPANYID = " + intCompanyID;
-        DataTable dtFiltered = dv.ToTable();
-        foreach (DataRow tx in dtFiltered.Rows) {
-            dtNew.ImportRow(tx);
-            DataRow rCurr = dtNew.Rows[dtNew.Rows.Count - 1];
-
-            //Debit
-            rCurr["JOURNAL NUMBER"] = szJournalNumber;
-            rCurr["DATE"] = Utility.formatDateForMYOBExport(rCurr["DATE"].ToString());
-            rCurr["Account number"] = Utility.formatMYOBAccount(Convert.ToString(rCurr["DEBITACCOUNTGLCODE"]));
-            rCurr["AMOUNT"] = rCurr["AMOUNT"];
-            rCurr["JOB"] = rCurr["DEBITJOBCODE"];
-
-            //Do the same for the inverse of this transaction
-            //Credit
-            dtNew.ImportRow(tx);
-            rCurr = dtNew.Rows[dtNew.Rows.Count - 1];
-            rCurr["JOURNAL NUMBER"] = szJournalNumber;
-            rCurr["DATE"] = Utility.formatDateForMYOBExport(rCurr["DATE"].ToString());
-            rCurr["ACCOUNT NUMBER"] = Utility.formatMYOBAccount(Convert.ToString(rCurr["CREDITACCOUNTGLCODE"]));
-            rCurr["JOB"] = rCurr["CREDITJOBCODE"];
-            rCurr["IS CREDIT"] = "Y";
-
-            szSQL = String.Format(@"
-                UPDATE USERTX SET MYOBEXPORTID = {0}
-                WHERE ID = {1}", intMYOBExportID, rCurr["TXID"].ToString());
-            DB.runNonQuery(szSQL);
-        }
-        dtNew.AcceptChanges();
-
-        //Remove the datacolumns that are beyond the STOP in dtNew
-        int intSTOPColumnOrdinal = 0;
-        foreach (DataColumn dc in dtNew.Columns) {
-            if (dc.ColumnName == "STOP") {
-                intSTOPColumnOrdinal = dc.Ordinal;
-            }
-        }
-        while (dtNew.Columns.Count > intSTOPColumnOrdinal) {
-            dtNew.Columns.RemoveAt(intSTOPColumnOrdinal);
-        }
-
-        return dtNew;
-    }
-
+    
     private void doClose() {
         Response.Redirect("../blank.html");
     }
 
+    protected void gvPreview_RowDataBound(object sender, GridViewRowEventArgs e) {
+        
+            if (e.Row.RowType == DataControlRowType.DataRow) {
+                string szID = ((DataRowView)e.Row.DataItem)["TXID"].ToString();
+                e.Row.Attributes["onclick"] = "viewTx(" + szID + ")";
+            }
+        
+    }
 }

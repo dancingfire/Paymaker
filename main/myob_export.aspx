@@ -55,7 +55,7 @@
          </div>
 
         <div style="clear: both;">
-            <asp:GridView ID="gvPreview" runat="server" Visible="false" EnableViewState="false">
+            <asp:GridView ID="gvPreview" runat="server" Visible="false" EnableViewState="false" OnRowDataBound="gvPreview_RowDataBound">
             </asp:GridView>
         </div>
     </form>

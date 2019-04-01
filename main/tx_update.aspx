@@ -119,15 +119,16 @@
             $("#lstAmountType").unbind('change').bind('change', function () { recalFletcherContribution(); });
             $("#lstIncomeAccounts").unbind('change').bind('change', function () { getBudgetAmount(); });
             $("#lstExpenseAccounts").unbind('change').bind('change', function () { getBudgetAmount(); });
-            $("#lstUserID").unbind('change').bind('change', function () { getBudgetAmount(); });
             $("#txtFletcherContribution").bind('change', function () { getExGSTAmount(); });
             $("#txtAmount").unbind('change').bind('change', function () { getExGSTAmount(); });
-            /*$(".Entry").focus(function () {
-                // only select if the text has not changed
-                if (this.value == this.defaultValue) {
-                    this.select();
-                }
-            });*/
+            $("#txtJobCredit, #txtJobDebit").select2({
+                tags: true
+            });
+            $("#lstUserID").select2().change(function () { getBudgetAmount(); });
+
+            $(".select2-selection").on("focus", function () {
+                $(this).parent().parent().prev().select2("open");
+            });
         });
 
         function showAccountList(blnGetAmount) {
@@ -163,14 +164,19 @@
             checkForReadOnly();
         }
     </script>
+    <style>
+        .EntryPos {
+            width: 250px;
+        }
+    </style>
 </head>
-<body onload='doLoad()' style="margin: 0px">
+<body onload='doLoad()' style="margin: 0px" id="txBody">
     <form id="frmMain" method="post" runat="server">
         <asp:HiddenField ID="hdTXID" runat="server" />
         <asp:HiddenField ID="hdDateUsed" runat="server" />
         <asp:HiddenField ID="hdReadOnly" runat="server" />
         <asp:HiddenField ID="hdFletcherAmountCalc" runat="server" Value="" />
-        <div style="width: 400px; float: left">
+        <div style="width: 500px; float: left">
             <asp:Label ID="Label4" runat="server" CssClass="Label LabelPos">User</asp:Label>
             <asp:DropDownList ID="lstUserID" runat="server" CssClass="Entry EntryPos">
             </asp:DropDownList>
@@ -202,7 +208,7 @@
             <br class="Align" />
             <asp:Label ID="lblAmount" runat="server" CssClass="Label LabelPos">Total amount</asp:Label>
             <asp:TextBox CssClass="Entry EntryPos numbersOnly" ID="txtAmount" runat="server"
-                Text="" Width="120"></asp:TextBox>
+                Text="" Width="170"></asp:TextBox>
             <asp:CheckBox ID="chkIncludeGST" CssClass="Entry" runat="server" Text="Exclude GST"
                 Width="100" Style='float: left; clear: right' />
             <br class="Align" />
@@ -211,7 +217,7 @@
             <br class="Align" />
             <asp:Label ID="lblFletcher" runat="server" CssClass="Label LabelPos">Fletcher's contribution</asp:Label>
             <asp:TextBox ID="txtFletcherContribution" runat="server" CssClass="Entry EntryPos"
-                MaxLength="80" Text="50" Style="width: 150px; margin-right: 5px"></asp:TextBox>
+                MaxLength="80" Text="50" Style="width: 210px; margin-right: 5px"></asp:TextBox>
             <asp:DropDownList ID="lstAmountType" runat="server" CssClass="Entry EntryPos" onchange="checkValidation();"
                 Style="width: 40px">
                 <asp:ListItem Text="%" Value="1"></asp:ListItem>
@@ -221,13 +227,13 @@
             <asp:Label ID="Label2" runat="server" CssClass="Label LabelPos">User amount</asp:Label>
             <asp:TextBox CssClass="Entry EntryPos" ID="txtUserAmount" runat="server" Text=""></asp:TextBox>
             <br class="Align" />
-            <table style='width: 330px; float: left; table-layout: fixed' cellpadding="2">
+            <table style='width: 410px; float: left; table-layout: fixed' cellpadding="2">
                 <tr>
                     <td width="125">&nbsp;
                     </td>
-                    <td width="100" class="TableHeader">GL code
+                    <td width="145" class="TableHeader">GL code
                     </td>
-                    <td width="100" class="TableHeader">Job
+                    <td width="140" class="TableHeader">Job
                     </td>
                 </tr>
                 <tr>
@@ -237,7 +243,7 @@
                         <asp:TextBox CssClass="Entry" ID="txtGLCredit" runat="server" Text="" Style='width: 100%'></asp:TextBox>
                     </td>
                     <td>
-                        <asp:TextBox CssClass="Entry" ID="txtJobCredit" runat="server" Text="" Style='width: 90%'></asp:TextBox>
+                        <asp:DropDownList ID="txtJobCredit" CssClass="Entry" runat="server" Style='width: 90%'></asp:DropDownList>
                     </td>
                 </tr>
                 <tr>
@@ -247,8 +253,8 @@
                         <asp:TextBox CssClass="Entry" ID="txtGLDebit" runat="server" Text="" Style='width: 100%'></asp:TextBox>
                     </td>
                     <td>
-                        <asp:TextBox CssClass="Entry" ID="txtJobDebit" runat="server" Text="" Style='width: 90%'></asp:TextBox>
-                    </td>
+                        <asp:DropDownList ID="txtJobDebit" CssClass="Entry" runat="server" Style='width: 90%'></asp:DropDownList>
+                   </td>
                 </tr>
             </table>
             <asp:Label ID="Label10" runat="server" CssClass="Label LabelPos">Override codes</asp:Label>
