@@ -200,7 +200,11 @@
             $("#txtJobCredit" + intRow).bind('change', function (e) { lockAccounts(getID(e.target)); });
             $("#txtJobDebit" + intRow).bind('change', function (e) { lockAccounts(getID(e.target)); });
             $("#imgSearch" + intRow).bind('click', function (e) { showAgentTXHistory(getID(e.target)); });
-
+            $("#txtJobCredit" + intRow).select2({ tags: true });
+            $("#txtJobDebit" + intRow).select2({ tags: true });
+          $(".select2-selection").on("focus", function () {
+                $(this).parent().parent().prev().select2("open");
+            });
             $("#r" + intRow + ".Entry").focus(function () {
                 // only select if the text has not changed
                 if (this.value == this.defaultValue) {
@@ -247,6 +251,7 @@
                 blnAllowClose = true;
                 window.onbeforeunload = null;
             });
+              
         }
     </script>
     <style>
@@ -327,13 +332,13 @@
                         <asp:TextBox CssClass="Entry EntryPos" ID="txtGLCredit_ROWNUM" runat="server" Text="" Width="55px" TabIndex="100"></asp:TextBox>
                     </td>
                     <td>
-                        <asp:TextBox CssClass="Entry EntryPos" ID="txtJobCredit_ROWNUM" runat="server" Text="" Width="55px" TabIndex="100"></asp:TextBox>
+                        <asp:DropDownList CssClass="Entry EntryPos" ID="txtJobCredit_ROWNUM" runat="server"  Width="55px" TabIndex="100"></asp:DropDownList>
                     </td>
                     <td>
                         <asp:TextBox CssClass="Entry EntryPos" ID="txtGLDebit_ROWNUM" runat="server" Text="" Width="55px" TabIndex="100"></asp:TextBox>
                     </td>
                     <td>
-                        <asp:TextBox CssClass="Entry EntryPos" ID="txtJobDebit_ROWNUM" runat="server" Text="" Width="55px" TabIndex="100"></asp:TextBox>
+                        <asp:DropDownList CssClass="Entry EntryPos" ID="txtJobDebit_ROWNUM" runat="server"  Width="55px" TabIndex="100"></asp:DropDownList>
                     </td>
                     <td>
                         <asp:CheckBox ID="chkOverrideCodes_ROWNUM" CssClass="Entry EntryPos" runat="server" Width="30px" TabIndex="100" />
