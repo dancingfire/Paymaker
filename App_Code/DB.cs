@@ -583,6 +583,23 @@ public class DB {
         }
     }
 
+
+    public class MYOBAccount {
+        /// <summary>
+        /// Returns the list of subaccount codes 
+        /// </summary>
+        /// <returns></returns>
+        public static DataSet getSubAccountList() {
+            return DB.runDataSet(@"
+                SELECT REPLACE(REPLACE(REPLACE(L_OFF.OFFICEMYOBCODE, 'BA', 'FL'), 'CA', 'FL'), 'DO', 'FL') + '-' + U.INITIALSCODE  AS NAME 
+                FROM DB_USER U 
+                JOIN LIST L_OFF ON L_OFF.ID = U.OFFICEID
+                WHERE U.ISACTIVE = 1 AND U.INITIALSCODE != ''  AND U.ISDELETED = 0 AND U.ID > 0
+                    AND L_OFF.OFFICEMYOBCODE + '-' + U.INITIALSCODE IS NOT NULL
+                ORDER BY 1 ");
+        }
+    }
+
     public class Office {
 
         /// <summary>

@@ -39,16 +39,11 @@ public partial class multiple_tx_update : Root {
             ORDER BY U.INITIALSCODE + ' ' + FIRSTNAME + ' ' + LASTNAME"), "ID", "NAME");
         lstUserID_ROWNUM.Items.Insert(0, new ListItem("Select a user...", "-1"));
         chkIncludeGST_ROWNUM.Attributes["onclick"] = "getExGSTAmount()";
-        using (DataSet ds = DB.runDataSet(@"
-            SELECT L_OFF.OFFICEMYOBCODE + '-' + U.INITIALSCODE  AS NAME , L_OFF.OFFICEMYOBCODE + '-' + U.INITIALSCODE  AS ID 
-            FROM DB_USER U 
-            JOIN LIST L_OFF ON L_OFF.ID = U.OFFICEID
-            WHERE U.ISACTIVE = 1 AND U.INITIALSCODE != ''  AND U.ISDELETED = 0 AND U.ID > 0
-                AND L_OFF.OFFICEMYOBCODE + '-' + U.INITIALSCODE IS NOT NULL
-            ORDER BY L_OFF.OFFICEMYOBCODE + '-' + U.INITIALSCODE")) {
-            Utility.BindList(ref txtJobCredit_ROWNUM, ds);
+
+        using (DataSet ds = DB.MYOBAccount.getSubAccountList()) {
+            Utility.BindList(ref txtJobCredit_ROWNUM, ds, "NAME", "NAME");
             txtJobCredit_ROWNUM.Items.Insert(0, new ListItem(""));
-            Utility.BindList(ref txtJobDebit_ROWNUM, ds);
+            Utility.BindList(ref txtJobDebit_ROWNUM, ds, "NAME", "NAME");
             txtJobDebit_ROWNUM.Items.Insert(0, new ListItem(""));
         }
     }

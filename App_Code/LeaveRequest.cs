@@ -15,7 +15,7 @@ public enum LeaveRequestStatus {
 /// </summary>
 public class LeaveRequest {
     public int intID { get; set; }
-    public int UserID { get; set; }
+    public int RequestUserID { get; set; }
     public int LeaveTypeID { get; set; }
     public LeaveRequestStatus LeaveStatus { get; set; }
     public DateTime EnteredDate { get; set; }
@@ -39,7 +39,7 @@ public class LeaveRequest {
             DataSet dsSale = DB.runDataSet(szSQL);
             foreach (DataRow dr in dsSale.Tables[0].Rows) {
                 LeaveTypeID = Convert.ToInt32(dr["LEAVETYPEID"]);
-                UserID = Convert.ToInt32(dr["USERID"]);
+                RequestUserID = Convert.ToInt32(dr["USERID"]);
                 LeaveStatus = (LeaveRequestStatus)Convert.ToInt32(dr["LEAVESTATUSID"]);
                 TotalDays = Convert.ToInt32(dr["TotalDays"]);
                 Comment = Convert.ToString(dr["COMMENTS"]);
@@ -64,7 +64,7 @@ public class LeaveRequest {
 
         if (intID == -1) {
             oSQL.add("USERID", G.User.ID);
-            UserID = G.User.ID;
+            RequestUserID = G.User.ID;
             szSQL = oSQL.createInsertSQL();
         } else
             szSQL = oSQL.createUpdateSQL();
@@ -103,7 +103,7 @@ public class LeaveRequest {
 
     private void sendEmailToStaff(LeaveRequestStatus Status, string ManagerComment) {
         //Find the manager of this user
-        UserDetail u = G.UserInfo.getUser(UserID);
+        UserDetail u = G.UserInfo.getUser(RequestUserID);
         UserDetail m = G.UserInfo.getUser(u.SupervisorID);
         string Subject = "Leave request approved";
         if (Status == LeaveRequestStatus.Rejected) {
@@ -147,7 +147,7 @@ public class LeaveRequest {
 
     private void sendEmailToManager() {
         //Find the manager of this user
-        UserDetail u = G.UserInfo.getUser(UserID);
+        UserDetail u = G.UserInfo.getUser(RequestUserID);
         UserDetail m = G.UserInfo.getUser(u.SupervisorID);
         string szTo = G.Settings.CatchAllEmail;
 
@@ -171,7 +171,7 @@ public class LeaveRequest {
     public void sendReminderEmailToManager() {
 
         //Find the manager of this user
-        UserDetail u = G.UserInfo.getUser(UserID);
+        UserDetail u = G.UserInfo.getUser(RequestUserID);
         UserDetail m = G.UserInfo.getUser(u.SupervisorID);
         string szTo = G.Settings.CatchAllEmail;
 
@@ -207,7 +207,7 @@ public static class LeaveReminders {
             JOIN LEAVESTATUS LS ON LS.ID = LR.LEAVESTATUSID
             JOIN DB_USER U ON LR.USERID = U.ID
             WHERE LR.ISDELETED = 0   AND MANAGERSIGNOFFDATE IS NULL
-                AND DATEDIFF(d, getdate(), entrydate) %2 = 0 AND Convert(Date, ENTRYDATE) < Convert(Date, getDate())
+                AND DATEDIFF(d, getdate(), entrydate) % 3 = 0 AND Convert(Date, ENTRYDATE) < Convert(Date, getDate())
                 ORDER BY LR.ENTRYDATE";
 
         using (DataSet ds = DB.runDataSet(szSQL)) {

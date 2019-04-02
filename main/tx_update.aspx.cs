@@ -41,16 +41,10 @@ public partial class tx_update : Root {
             WHERE U.ISACTIVE = 1
             ORDER BY U.INITIALSCODE + ' ' + FIRSTNAME + ' ' + LASTNAME"), "ID", "NAME");
         lstUserID.Items.Insert(0, new ListItem("Select a user...", "-1"));
-        using (DataSet ds = DB.runDataSet(@"
-            SELECT L_OFF.OFFICEMYOBCODE + '-' + U.INITIALSCODE  AS NAME , L_OFF.OFFICEMYOBCODE + '-' + U.INITIALSCODE  AS ID 
-            FROM DB_USER U 
-            JOIN LIST L_OFF ON L_OFF.ID = U.OFFICEID
-            WHERE U.ISACTIVE = 1 AND U.INITIALSCODE != ''  AND U.ISDELETED = 0 AND U.ID > 0
-                AND L_OFF.OFFICEMYOBCODE + '-' + U.INITIALSCODE IS NOT NULL
-            ORDER BY L_OFF.OFFICEMYOBCODE + '-' + U.INITIALSCODE")) {
-            Utility.BindList(ref txtJobCredit, ds);
+        using (DataSet ds = DB.MYOBAccount.getSubAccountList()) {
+            Utility.BindList(ref txtJobCredit, ds, "NAME", "NAME");
             txtJobCredit.Items.Insert(0, new ListItem(""));
-            Utility.BindList(ref txtJobDebit, ds);
+            Utility.BindList(ref txtJobDebit, ds, "NAME", "NAME");
             txtJobDebit.Items.Insert(0, new ListItem(""));
         }
 
@@ -107,25 +101,30 @@ public partial class tx_update : Root {
         txtGLCredit.Text = tx.CreditGLCode;
         txtGLDebit.Text = tx.DebitGLCode;
         if (tx.CreditJobCode != "") {
-            Utility.setListBoxItems(ref txtJobCredit, tx.CreditJobCode);
+            ListItem li = txtJobCredit.Items.FindByValue(tx.CreditJobCode);
+            txtJobCredit.ClearSelection();
+            if (li == null) {
+                //Add the code dynamically
+                ListItem liNew = new ListItem(tx.CreditJobCode, tx.CreditJobCode);
+                liNew.Selected = true;
+                txtJobCredit.Items.Add(liNew);
+            } else {
+                li.Selected = true;
+            }
         }
-        if(txtJobCredit.SelectedIndex == 0) {
-            txtJobCredit.Items[0].Selected = false;
-            //Add the code dynamically
-            ListItem li = new ListItem(tx.CreditJobCode, tx.CreditJobCode);
-            li.Selected = true;
-            txtJobCredit.Items.Add(li);
-        }
-        if (tx.DebitJobCode != "") {
-            Utility.setListBoxItems(ref txtJobDebit, tx.DebitJobCode);
-        }
+        
         if (txtJobDebit.SelectedIndex == 0) {
-            txtJobDebit.Items[0].Selected = false;
+            txtJobDebit.ClearSelection();
 
-            //Add the code dynamically
-            ListItem li = new ListItem(tx.DebitJobCode, tx.DebitJobCode);
-            li.Selected = true;
-            txtJobDebit.Items.Add(li);
+            ListItem li = txtJobDebit.Items.FindByValue(tx.DebitJobCode);
+            if (li == null) { 
+                //Add the code dynamically
+                ListItem liNew = new ListItem(tx.DebitJobCode, tx.DebitJobCode);
+                liNew.Selected = true;
+                txtJobDebit.Items.Add(liNew);
+            } else {
+                li.Selected = true;
+            }
         }
 
         if (tx.MYOBExportID != -1 && !G.User.hasPermission(RolePermissionType.UpdatePreviousPayPeriod))
@@ -143,8 +142,8 @@ public partial class tx_update : Root {
         oSQL.add("TXDATE", txtTxDate.Text);
         oSQL.add("CREDITGLCODE", txtGLCredit.Text);
         oSQL.add("DEBITGLCODE", txtGLDebit.Text);
-        oSQL.add("CREDITJOBCODE", txtJobCredit.SelectedValue);
-        oSQL.add("DEBITJOBCODE", txtJobDebit.SelectedValue);
+        oSQL.add("CREDITJOBCODE", Valid.getText("txtJobCredit", ""));
+        oSQL.add("DEBITJOBCODE", Valid.getText("txtJobDebit", ""));
         oSQL.add("SHOWEXGST", chkIncludeGST);
         oSQL.add("OVERRIDEGLCODES", chkOverrideCodes);
         if (lstCategory.SelectedValue == "")
