@@ -243,7 +243,7 @@
                         <asp:TextBox CssClass="Entry" ID="txtGLCredit" runat="server" Text="" Style='width: 100%'></asp:TextBox>
                     </td>
                     <td>
-                        <asp:DropDownList ID="txtJobCredit" CssClass="Entry" runat="server" Style='width: 90%'></asp:DropDownList>
+                        <asp:DropDownList ID="txtJobCredit" CssClass="Entry" runat="server" Style='width: 90%' EnableViewState="false"></asp:DropDownList>
                     </td>
                 </tr>
                 <tr>
@@ -253,7 +253,7 @@
                         <asp:TextBox CssClass="Entry" ID="txtGLDebit" runat="server" Text="" Style='width: 100%'></asp:TextBox>
                     </td>
                     <td>
-                        <asp:DropDownList ID="txtJobDebit" CssClass="Entry" runat="server" Style='width: 90%'></asp:DropDownList>
+                        <asp:DropDownList ID="txtJobDebit" CssClass="Entry" runat="server" Style='width: 90%'  EnableViewState="false"></asp:DropDownList>
                    </td>
                 </tr>
             </table>
