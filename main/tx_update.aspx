@@ -1,4 +1,4 @@
-<%@ Page Language="c#" Inherits="tx_update" EnableViewState="True" AutoEventWireup="true" CodeFile="tx_update.aspx.cs" %>
+<%@ Page Language="c#" Inherits="tx_update" EnableViewState="True" AutoEventWireup="true" CodeFile="tx_update.aspx.cs"  EnableEventValidation="false"%>
 
 <!DOCTYPE html>
 <html>

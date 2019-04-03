@@ -596,6 +596,8 @@ public class DB {
                 JOIN LIST L_OFF ON L_OFF.ID = U.OFFICEID
                 WHERE U.ISACTIVE = 1 AND U.INITIALSCODE != ''  AND U.ISDELETED = 0 AND U.ID > 0
                     AND L_OFF.OFFICEMYOBCODE + '-' + U.INITIALSCODE IS NOT NULL
+                UNION SELECT 'AD-SAL'
+                UNION SELECT 'AD-FLE'
                 ORDER BY 1 ");
         }
     }

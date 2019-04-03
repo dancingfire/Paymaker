@@ -164,8 +164,7 @@ public class Utility {
         
         if (Account.Trim().Length == 6)
             return Account;
-        else if(Account.Trim().Length == 5) 
-            return Account.Substring(0, 1) + "-" + Account.Substring(1);
+       
         return Account;
     }
         
