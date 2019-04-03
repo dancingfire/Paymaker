@@ -15,7 +15,7 @@
 
             var winHeight = $(window).height();
 
-            $("#mTx .modal-dialog").css({ width: '95%' });
+            $("#mTx .modal-dialog").css({ width: '99%' });
             $("#mTx .modal-body").css({ height: winHeight - 100 });
             $("#fTx").css({ height: winHeight - 110 });
             $('#mTx').modal('show');

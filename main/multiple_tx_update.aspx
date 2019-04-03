@@ -272,18 +272,18 @@
             <thead>
                 <tr class="TableHeader">
                     <th style="width: 8%">User</th>
-                    <th style="width: 8%">Type</th>
+                    <th style="width: 6%">Type</th>
                     <th style="width: 7%">Account</th>
-                    <th style="width: 5%">Budget amount</th>
+                    <th style="width: 4%">Budget amount</th>
                     <th style="width: 5%">Total amount</th>
-                    <th style="width: 5%">Exclude GST</th>
+                    <th style="width: 4%">Exclude GST</th>
                     <th style="width: 5%">Total amount (ex GST)</th>
                     <th style="width: 8%">Fletcher's contrib</th>
                     <th style="width: 5%">User amount</th>
                     <th style="width: 5%">Credit GL</th>
-                    <th style="width: 5%">Credit Job</th>
+                    <th style="width: 7%">Credit Job</th>
                     <th style="width: 5%">Debit  GL</th>
-                    <th style="width: 5%">Debit Job</th>
+                    <th style="width: 7%">Debit Job</th>
                     <th style="width: 5%">Override codes</th>
                     <th style="width: 8%">Category</th>
                     <th style="width: 11%">Comments</th>
@@ -332,13 +332,13 @@
                         <asp:TextBox CssClass="Entry EntryPos" ID="txtGLCredit_ROWNUM" runat="server" Text="" Width="55px" TabIndex="100"></asp:TextBox>
                     </td>
                     <td>
-                        <asp:DropDownList CssClass="Entry EntryPos" ID="txtJobCredit_ROWNUM" runat="server"  Width="55px" TabIndex="100"></asp:DropDownList>
+                        <asp:DropDownList CssClass="Entry EntryPos" ID="txtJobCredit_ROWNUM" runat="server"  Width="100%" TabIndex="100"></asp:DropDownList>
                     </td>
                     <td>
                         <asp:TextBox CssClass="Entry EntryPos" ID="txtGLDebit_ROWNUM" runat="server" Text="" Width="55px" TabIndex="100"></asp:TextBox>
                     </td>
                     <td>
-                        <asp:DropDownList CssClass="Entry EntryPos" ID="txtJobDebit_ROWNUM" runat="server"  Width="55px" TabIndex="100"></asp:DropDownList>
+                        <asp:DropDownList CssClass="Entry EntryPos" ID="txtJobDebit_ROWNUM" runat="server"  Width="100%" TabIndex="100"></asp:DropDownList>
                     </td>
                     <td>
                         <asp:CheckBox ID="chkOverrideCodes_ROWNUM" CssClass="Entry EntryPos" runat="server" Width="30px" TabIndex="100" />

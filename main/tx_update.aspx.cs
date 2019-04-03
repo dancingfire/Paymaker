@@ -13,7 +13,7 @@ public partial class tx_update : Root {
         intTxID = Valid.getInteger("intItemID");
         hdTXID.Value = intTxID.ToString();
         btnDelete.Attributes.Add("onClick", "return confirm('Are you sure you want to delete this transaction?')");
-        if (!IsPostBack) {
+        if (!Page.IsPostBack) {
             bindData();
             if (intTxID == -1)
                 loadDefaults();
@@ -42,8 +42,13 @@ public partial class tx_update : Root {
             ORDER BY U.INITIALSCODE + ' ' + FIRSTNAME + ' ' + LASTNAME"), "ID", "NAME");
         lstUserID.Items.Insert(0, new ListItem("Select a user...", "-1"));
         using (DataSet ds = DB.MYOBAccount.getSubAccountList()) {
+            txtJobCredit.ClearSelection();
+            txtJobCredit.SelectedValue = null;
+
             Utility.BindList(ref txtJobCredit, ds, "NAME", "NAME");
             txtJobCredit.Items.Insert(0, new ListItem(""));
+            txtJobDebit.SelectedValue = null;
+            txtJobDebit.ClearSelection();
             Utility.BindList(ref txtJobDebit, ds, "NAME", "NAME");
             txtJobDebit.Items.Insert(0, new ListItem(""));
         }
