@@ -478,7 +478,7 @@
                                   <Value>=Fields!STARTDATE.Value</Value>
                                   <Style>
                                     <FontSize>9pt</FontSize>
-                                    <Format>d</Format>
+                                    <Format>MMM d, yyyy</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -511,7 +511,7 @@
                                   <Value>=Fields!ENDDATE.Value</Value>
                                   <Style>
                                     <FontSize>9pt</FontSize>
-                                    <Format>d</Format>
+                                    <Format>MMM d, yyyy</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -530,6 +530,7 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>

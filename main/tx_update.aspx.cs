@@ -38,7 +38,7 @@ public partial class tx_update : Root {
         Utility.BindList(ref lstUserID, DB.runReader(@"
             SELECT U.id, U.INITIALSCODE + ' ' + FIRSTNAME + ' ' + LASTNAME AS NAME
             FROM [DB_USER] U
-            WHERE U.ISACTIVE = 1
+            WHERE U.ISACTIVE = 1 AND U.ISDELETED = 0
             ORDER BY U.INITIALSCODE + ' ' + FIRSTNAME + ' ' + LASTNAME"), "ID", "NAME");
         lstUserID.Items.Insert(0, new ListItem("Select a user...", "-1"));
         using (DataSet ds = DB.MYOBAccount.getSubAccountList()) {
