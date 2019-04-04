@@ -101,10 +101,12 @@ public class LeaveRequest : Report {
 
     public override DataSet getData() {
         string szSQL = string.Format(@"
-                SELECT  LR.*, L.NAME AS LEAVETYPE, LS.NAME AS STATUS, U.FIRSTNAME + ' ' + U.LASTNAME AS STAFF
+                SELECT  LR.*, L.NAME AS LEAVETYPE, LS.NAME AS STATUS, U.FIRSTNAME + ' ' + U.LASTNAME AS STAFF,
+                U.FIRSTNAME + ' ' + U.LASTNAME AS MANAGER
                 FROM LEAVEREQUEST LR JOIN LIST L ON L.ID = LR.LEAVETYPEID
                 JOIN LEAVESTATUS LS ON LS.ID = LR.LEAVESTATUSID
                 JOIN DB_USER U ON LR.USERID = U.ID
+                JOIN DB_USER M ON U.SUPERVISORID = M.ID
                 WHERE LR.ISDELETED = 0   AND LR.STARTDATE BETWEEN '{0}' AND '{1}'
                 ORDER BY LR.ENTRYDATE DESC", Utility.formatDate(dtStart), Utility.formatDate(dtEnd));
         return DB.runDataSet(szSQL);
