@@ -565,9 +565,15 @@ public class UserDetail {
     public int PayrollCycleID { get; set; }
     public int SupervisorID { get; set; }
     public string FirstName { get; set; }
+    public string OfficeGLCode { get; set; }
     public string LastName { get; set; }
     public string Email { get; set; }
     public string Initials { get; set; }
+    public string GLSubAccount {
+        get {
+            return OfficeGLCode.Replace("BA", "FL").Replace("CA", "FL").Replace("DO", "FL") + "-" + Initials;
+        }
+    }
 
     public PayBand PaymentStructure {
         get;
@@ -602,7 +608,7 @@ public class UserDetail {
 
     public string NameFLI { get { return FirstName + " " + LastName + "(" + Initials + ")"; } }
 
-    public UserDetail(int ID, string Initials, string First, string Last, string Email, int RoleID, int OfficeID, int MentorID, int Salary, int PayrollCycleID, int SupervisorID, string CreditGLCode, string DebitGLCode, string JobCode) {
+    public UserDetail(int ID, string Initials, string First, string Last, string Email, int RoleID, int OfficeID, string OfficeGLCode, int MentorID, int Salary, int PayrollCycleID, int SupervisorID, string CreditGLCode, string DebitGLCode, string JobCode) {
         this.ID = ID;
         this.Initials = Initials;
         this.FirstName = First;
@@ -612,6 +618,7 @@ public class UserDetail {
         this.MentorID = MentorID;
         this.OfficeID = OfficeID;
         this.Salary = Salary;
+        this.OfficeGLCode = OfficeGLCode;
         this.CreditGL = CreditGLCode;
         this.DebitGL = DebitGLCode;
         this.OfficeJobCode = JobCode;
@@ -1089,14 +1096,15 @@ public class UserInformation {
     private void loadItems() {
         string szSQL = @"
             --User info
-            SELECT U.ID, INITIALSCODE, FIRSTNAME, LASTNAME, EMAIL, ROLEID, ISNULL(TEAMID, -1) AS TEAM, SALARY, U.CREDITGLCODE, U.DEBITGLCODE, L_OFF.JOBCODE, U.OFFICEID, U.PAYROLLCYCLEID, U.SUPERVISORID
+            SELECT U.ID, INITIALSCODE, FIRSTNAME, LASTNAME, EMAIL, ROLEID, ISNULL(TEAMID, -1) AS TEAM, SALARY, 
+             U.CREDITGLCODE, U.DEBITGLCODE, L_OFF.JOBCODE, U.OFFICEID, U.PAYROLLCYCLEID, U.SUPERVISORID, L_OFF.OFFICEMYOBCODE
             FROM DB_USER U  JOIN LIST L_OFF ON L_OFF.ID = U.OFFICEID ORDER BY LASTNAME, FIRSTNAME";
 
         using (DataSet ds = DB.runDataSet(szSQL)) {
             foreach (DataRow dr in ds.Tables[0].Rows) {
                 int intID = Convert.ToInt32(dr["ID"]);
                 lUsers.Add(new UserDetail(intID, DB.readString(dr["INITIALSCODE"]), DB.readString(dr["FIRSTNAME"]), DB.readString(dr["LASTNAME"]), DB.readString(dr["EMAIL"]),
-                    DB.readInt(dr["ROLEID"]), DB.readInt(dr["OFFICEID"]), DB.readInt(dr["TEAM"]), DB.readInt(dr["SALARY"]), DB.readInt(dr["PAYROLLCYCLEID"]),
+                    DB.readInt(dr["ROLEID"]), DB.readInt(dr["OFFICEID"]), DB.readString(dr["OFFICEMYOBCODE"]), DB.readInt(dr["TEAM"]), DB.readInt(dr["SALARY"]), DB.readInt(dr["PAYROLLCYCLEID"]),
                     DB.readInt(dr["SUPERVISORID"]), DB.readString(dr["CREDITGLCODE"]), DB.readString(dr["DEBITGLCODE"]), DB.readString(dr["JOBCODE"])));
             }
             blnIsLoaded = true;

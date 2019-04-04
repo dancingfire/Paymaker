@@ -19,7 +19,7 @@
             }
             return false;
         }
-
+        
         function recalFletcherContribution(Row) {
             var floatUserAmount = 0;
             var fExGST = parseFloat($.trim($("#lblAmountExGST" + Row).html()));
@@ -81,6 +81,12 @@
                 intAjaxRow = Row;
                 callWebMethod("../web_services/ws_Paymaker.asmx", "getBudgetAmount", ["AccountID", intAccountID, "UserID", $("#lstUserID" + Row).val(), "blnIsExpense", blnIsExpense], getBudgetAmountSuccess);
             }
+        }
+
+         function getUserGLSuccess(val) {
+            Row = intAjaxRow;
+            $("#txtJobCredit" + Row).val(val).select2().trigger('change');
+            $("#txtJobDebit" + Row).val(val).select2().trigger('change');
         }
 
         function getBudgetAmountSuccess(szResult) {
@@ -191,7 +197,11 @@
             $("#lstAmountType" + intRow).bind('change', function (e) { recalFletcherContribution(getID(e.target)); });
             $("#lstIncomeAccounts" + intRow).bind('change', function (e) { getBudgetAmount(getID(e.target)); });
             $("#lstExpenseAccounts" + intRow).bind('change', function (e) { getBudgetAmount(getID(e.target)); });
-            $("#lstUserID" + intRow).bind('change', function (e) { getBudgetAmount(getID(e.target)); });
+            $("#lstUserID" + intRow).bind('change', function (e) {
+                getBudgetAmount(getID(e.target));
+                 intAjaxRow = getID(e.target);
+                callWebMethod("../web_services/ws_Paymaker.asmx", "getUserGLSubAccount", ["UserID", $("#lstUserID" + intRow).val()], getUserGLSuccess);
+            });
             $("#txtFletcherContribution" + intRow).bind('change', function (e) { getExGSTAmount(getID(e.target)); });
             $("#txtAmount" + intRow).bind('change', function (e) { getExGSTAmount(getID(e.target)); });
             $("#chkIncludeGST" + intRow).bind('change', function (e) { getExGSTAmount(getID(e.target)); });
