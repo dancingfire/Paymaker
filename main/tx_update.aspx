@@ -112,6 +112,10 @@
             addValidation();
         }
 
+        function getUserGLSuccess(val) {
+            $("#txtJobCredit").val(val).select2().trigger('change');
+            $("#txtJobDebit").val(val).select2().trigger('change');
+        }
         $(document).ready(function () {
             createCalendar("txtTxDate");
             checkValidation();
@@ -124,7 +128,10 @@
             $("#txtJobCredit, #txtJobDebit").select2({
                 tags: true
             });
-            $("#lstUserID").select2().change(function () { getBudgetAmount(); });
+            $("#lstUserID").select2().change(function () {
+                getBudgetAmount();
+                callWebMethod("../web_services/ws_Paymaker.asmx", "getUserGLSubAccount", ["UserID", $("#lstUserID").val()], getUserGLSuccess);
+            });
 
             $(".select2-selection").on("focus", function () {
                 $(this).parent().parent().prev().select2("open");
