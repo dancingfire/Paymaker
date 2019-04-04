@@ -56,7 +56,8 @@
 
             moment.updateLocale('au', {
                 holidays: arHolidayDates,
-                holidayFormat: szMomentFormat
+                holidayFormat: szMomentFormat,
+                workingWeekdays: [1, 2, 3, 4, 5]
             });
 
             $("#txtStartDate, #txtEndDate, #txtTotalDays").attr("readonly", "readonly");
@@ -71,7 +72,7 @@
             if ($("#txtStartDate").val() != "" && $("#txtEndDate").val() != "") {
                 d1 = moment($("#txtStartDate").datepicker("getDate"), szMomentFormat);
                 d2 = moment($("#txtEndDate").datepicker("getDate"), szMomentFormat);
-                diff = d1.businessDiff(d2) + 1;
+                diff = d1.businessDiff(d2) ;
             }
             $("#txtTotalDays").val(diff);
         }

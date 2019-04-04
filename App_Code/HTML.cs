@@ -71,7 +71,7 @@ public static class HTML {
             //arFiles.Add("https://cdn.datatables.net/v/dt/dt-1.10.16/b-1.5.0/fh-3.1.3/kt-2.3.2/datatables.min.js");
             arFiles.Add("https://cdn.datatables.net/v/bs/jszip-2.5.0/dt-1.10.18/b-1.5.2/b-html5-1.5.2/fh-3.1.4/datatables.min.js");
         arFiles.Add(szDir + "include/jquery.mods.js?v=13");
-        arFiles.Add(szDir + "include/moment-business-days/index.js");
+        arFiles.Add(szDir + "include/moment-business-days/index.js?t=1");
         arFiles.Add("https://code.jquery.com/ui/1.12.1/jquery-ui.min.js");
         arFiles.Add("https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js");
         arFiles.Add(szDir + "include/bootstrap/3.3.6/js/bootstrap.min.js");

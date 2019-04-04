@@ -21,6 +21,10 @@
           <DataField>STAFF</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="MANAGER">
+          <DataField>MANAGER</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="STARTDATE">
           <DataField>STARTDATE</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -87,6 +91,9 @@
                 </TablixColumn>
                 <TablixColumn>
                   <Width>5.38396cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>2.5cm</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>5.86021cm</Width>
@@ -327,6 +334,41 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox42</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>="WhiteSmoke"</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Manager</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox1</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -622,6 +664,38 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
+                        <Textbox Name="MANAGER">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!MANAGER.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>MANAGER</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
                         <Textbox Name="MANAGERCOMMENTS1">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
@@ -666,6 +740,7 @@
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
+                <TablixMember />
               </TablixMembers>
             </TablixColumnHierarchy>
             <TablixRowHierarchy>
@@ -682,7 +757,7 @@
             <Top>0.17639cm</Top>
             <Left>0.3937cm</Left>
             <Height>1.2cm</Height>
-            <Width>27.14375cm</Width>
+            <Width>29.64375cm</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -697,7 +772,7 @@
           </Border>
         </Style>
       </Body>
-      <Width>275.37449mm</Width>
+      <Width>300.3745mm</Width>
       <Page>
         <PageHeader>
           <Height>12.93684mm</Height>

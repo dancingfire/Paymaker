@@ -6,7 +6,7 @@ if (typeof require === 'function') {
 
 moment.fn.isHoliday = function () {
   var locale = this.localeData();
-
+  
   if (locale._holidays) {
     if (locale._holidays.indexOf(this.format(locale._holidayFormat)) >= 0)
       return true;
@@ -26,7 +26,6 @@ moment.fn.isBusinessDay = function () {
   var locale = this.localeData();
   var defaultWorkingWeekdays = [1, 2, 3, 4, 5];
   var workingWeekdays = locale._workingWeekdays || defaultWorkingWeekdays;
-
   if (this.isHoliday()) return false;
   if (workingWeekdays.indexOf(this.day()) >= 0) return true;
 
@@ -57,17 +56,21 @@ moment.fn.businessDiff = function (param) {
   var daysBetween = 0;
 
   if (start.format('DD/MM/YYYY') === end.format('DD/MM/YYYY')) {
-    return daysBetween;
+    return 1;
   }
 
-  while (start < end) {
-    if (start.isBusinessDay()) {
-      daysBetween++;
+    while (start < end) {
+       
+        if (start.isBusinessDay()) {
+          daysBetween++;
+        }
+        console.log(start.format('M-DD-YY') + 'Days: ' + daysBetween);
+        start.add(1, 'd');
     }
-    start.add(1, 'd');
-  }
+    if (!end.isBusinessDay())
+        daysBetween--;
 
-  return daysBetween;
+  return daysBetween + 1;
 };
 
 moment.fn.businessAdd = function (number, period) {
