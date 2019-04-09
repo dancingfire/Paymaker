@@ -72,7 +72,7 @@
         }
 
         function getBudgetAmountSuccess(szResult) {
-            // Result format: BudgetAmount***CreditGLCode***DebitGLCode***AccountJobCode***OfficeJobCode
+            // Result format: BudgetAmount***CreditGLCode***AccountJobCode
             arResult = szResult.split("***");
             $("#lblBudgetAmount").html(arResult[0]);
             if ($("#chkOverrideCodes").is(':checked'))
@@ -80,14 +80,10 @@
             $("#lblBudgetAmount").html(arResult[0]);
             if ($("#rbExpense").is(':checked')) {
                 $("#txtGLCredit").val(arResult[1]);     //User Credit GL code
-                $("#txtJobCredit").val(arResult[2]);    // User's office job code
                 $("#txtGLDebit").val(arResult[3]);      //Account Debit GL code
-                $("#txtJobDebit").val(arResult[4]);     //Account job code
             } else {
                 $("#txtGLDebit").val(arResult[1]);     //User Credit GL code
-                $("#txtJobDebit").val(arResult[2]);    // User's office job code
                 $("#txtGLCredit").val(arResult[3]);      //Account Debit GL code
-                $("#txtJobCredit").val(arResult[4]);     //Account job code
             }
         }
 

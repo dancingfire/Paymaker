@@ -90,7 +90,7 @@
         }
 
         function getBudgetAmountSuccess(szResult) {
-            // Result format: BudgetAmount***CreditGLCode***DebitGLCode***AccountJobCode***OfficeJobCode
+            // Result format: BudgetAmount***CreditGLCode***DebitGLCode
             Row = intAjaxRow;
             arResult = szResult.split("***");
             if ($("#chkOverrideCodes" + Row).is(':checked'))
@@ -98,14 +98,11 @@
             $("#lblBudgetAmount" + Row).html(arResult[0]);
             if ($("#lstType" + Row).val().toUpperCase() == "EXPENSE") {
                 $("#txtGLCredit" + Row).val(arResult[1]);     //User Credit GL code
-                $("#txtJobCredit" + Row).val(arResult[2]);    // User's office job code
-                $("#txtGLDebit" + Row).val(arResult[3]);      //Account Debit GL code
-                $("#txtJobDebit" + Row).val(arResult[4]);     //Account job code
+                 $("#txtGLDebit" + Row).val(arResult[3]);      //Account Debit GL code
             } else {
                 $("#txtGLDebit" + Row).val(arResult[1]);     //User Credit GL code
-                $("#txtJobDebit" + Row).val(arResult[2]);    // User's office job code
                 $("#txtGLCredit" + Row).val(arResult[3]);      //Account Debit GL code
-                $("#txtJobCredit" + Row).val(arResult[4]);     //Account job code
+                
             }
         }
 
@@ -207,8 +204,6 @@
             $("#chkIncludeGST" + intRow).bind('change', function (e) { getExGSTAmount(getID(e.target)); });
             $("#txtGLCredit" + intRow).bind('change', function (e) { lockAccounts(getID(e.target)); });
             $("#txtGLDebit" + intRow).bind('change', function (e) { lockAccounts(getID(e.target)); });
-            $("#txtJobCredit" + intRow).bind('change', function (e) { lockAccounts(getID(e.target)); });
-            $("#txtJobDebit" + intRow).bind('change', function (e) { lockAccounts(getID(e.target)); });
             $("#imgSearch" + intRow).bind('click', function (e) { showAgentTXHistory(getID(e.target)); });
             $("#txtJobCredit" + intRow).select2({ tags: true });
             $("#txtJobDebit" + intRow).select2({ tags: true });
