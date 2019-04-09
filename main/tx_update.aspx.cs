@@ -58,9 +58,7 @@ public partial class tx_update : Root {
         chkIncludeGST.Attributes["onclick"] = "getExGSTAmount()";
 
         txtGLCredit.Attributes["onchange"] = "lockAccounts();";
-        txtGLDebit.Attributes["onchange"] = "lockAccounts();";
-        txtJobCredit.Attributes["onchange"] = "lockAccounts();";
-        txtJobDebit.Attributes["onchange"] = "lockAccounts();";
+        txtGLDebit.Attributes["onchange"] = "lockAccounts();";      
     }
 
     private void loadDefaults() {
