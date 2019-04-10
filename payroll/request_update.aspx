@@ -112,13 +112,13 @@
                     <div class="form-group">
                         <label for="txtStartDate" class="control-label col-xs-2">Start date:</label>
                         <div class="col-xs-10">
-                            <asp:TextBox CssClass="Entry  form-control" ID="txtStartDate" runat="server" Text="" required></asp:TextBox>
+                            <asp:TextBox CssClass="Entry  form-control" ID="txtStartDate" runat="server" Text="" required style="background: white"></asp:TextBox>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="txtEndDate" class="control-label col-xs-2">End date:</label>
                         <div class="col-xs-10">
-                            <asp:TextBox CssClass="Entry  form-control" ID="txtEndDate" runat="server" Text="" required></asp:TextBox>
+                            <asp:TextBox CssClass="Entry  form-control" ID="txtEndDate" runat="server" Text="" required style="background: white"></asp:TextBox>
                         </div>
                     </div>
 

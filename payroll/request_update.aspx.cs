@@ -87,7 +87,7 @@ public partial class request_update : Root {
             lExistingFile.Text = string.Format("<a href='view_doc.aspx?file={0}' target='_blank'>View file</a> <br/>", Server.UrlEncode(l.SupportingFile), l.SupportingFile);
         }
         Utility.setListBoxItems(ref lstLeaveType, l.LeaveTypeID.ToString());
-        if(l.LeaveStatus == LeaveRequestStatus.Approved || l.LeaveStatus == LeaveRequestStatus.Rejected) {
+        if (l.LeaveStatus == LeaveRequestStatus.Rejected || (l.LeaveStatus == LeaveRequestStatus.Approved && l.StartDate < DateTime.Now)) {
             txtComments.ReadOnly = true;
             btnUpdate.Visible = false;
             btnDelete.Visible = false;
