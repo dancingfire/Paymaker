@@ -46,7 +46,7 @@
                     </asp:GridView>
                 </div>
                 <div class="col-md-2">
-                    <button type="button" class="btn btn-primary btn-block Button" onclick="editRequest(-1);">Add request</button>
+                    <button type="button" class="btn btn-primary btn-block Button" onclick="editRequest(-1);">Apply for leave</button>
 
                     <asp:Button ID="btnSuperviser" runat="server" Text="Manage staff requests" CssClass="btn btn-secondary btn-block Button" OnClientClick="return showManagerDashboard()" />
                 </div>

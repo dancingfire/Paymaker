@@ -55,6 +55,11 @@ public class LeaveRequest {
 
     public int updateDB() {
         string szSQL = "";
+        LeaveRequest lOld = null;
+        //Check the old status in case we need to show the history
+        if (this.LeaveStatus == LeaveRequestStatus.Approved) {
+            lOld = new LeaveRequest(this.intID);
+        }
         sqlUpdate oSQL = new sqlUpdate("LEAVEREQUEST", "ID", intID);
         oSQL.add("STARTDATE", Utility.formatDate(StartDate));
         oSQL.add("ENDDATE", Utility.formatDate(EndDate));
@@ -74,7 +79,7 @@ public class LeaveRequest {
             intID = DB.getScalar("SELECT MAX(ID) FROM LEAVEREQUEST WHERE USERID = " + G.User.ID, -1);
         }
 
-        sendEmailToManager();
+        sendEmailToManager(lOld);
         return intID;
     }
 
@@ -145,7 +150,11 @@ public class LeaveRequest {
         DB.runNonQuery(szSQL);
     }
 
-    private void sendEmailToManager() {
+    /// <summary>
+    /// lOld can contain the previous leave request details if this is an alteration to an existing approved leave request
+    /// </summary>
+    /// <param name="lOld"></param>
+    private void sendEmailToManager(LeaveRequest lOld = null) {
         //Find the manager of this user
         UserDetail u = G.UserInfo.getUser(RequestUserID);
         UserDetail m = G.UserInfo.getUser(u.SupervisorID);
@@ -165,7 +174,17 @@ public class LeaveRequest {
                Please <a href='https://commission.fletchers.net.au/login.aspx?LEAVE=true'>login to CAPS </a> to respond to this request.
             ", u.Name, this.LeaveType, Utility.formatDate(StartDate), Utility.formatDate(EndDate), Utility.nl2br(Comment));
 
-        Email.sendMail(szTo, "do-not-reply@fletchers.net.au", "Leave request", szEmail, LogObjectID: intID, Type: EmailType.LeaveRequest);
+        string szSubject = "Leave request";
+        if(lOld != null) {
+            szSubject = "Updated leave request";
+            szEmail += String.Format(@"<p> The original request details are below: </p>
+                Type: {0} <br/>
+                Start: {1}<br/>
+                End: {2}<br/>
+                Comments: {3} <br/><br/>", lOld.LeaveType, Utility.formatDate(lOld.StartDate), Utility.formatDate(lOld.EndDate), Utility.nl2br(lOld.Comment));
+
+        }
+        Email.sendMail(szTo, "do -not-reply@fletchers.net.au", szSubject, szEmail, LogObjectID: intID, Type: EmailType.LeaveRequest);
     }
 
     public void sendReminderEmailToManager() {
