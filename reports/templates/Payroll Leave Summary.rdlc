@@ -835,29 +835,9 @@
                 <Paragraph>
                   <TextRuns>
                     <TextRun>
-                      <Value>Reporting Period:</Value>
+                      <Value />
                       <Style>
                         <FontWeight>Bold</FontWeight>
-                      </Style>
-                    </TextRun>
-                    <TextRun>
-                      <Value xml:space="preserve"> </Value>
-                      <Style />
-                    </TextRun>
-                    <TextRun>
-                      <Value>=Parameters!param_startDate.Value</Value>
-                      <Style>
-                        <Format>d MMMM yyyy</Format>
-                      </Style>
-                    </TextRun>
-                    <TextRun>
-                      <Value> - </Value>
-                      <Style />
-                    </TextRun>
-                    <TextRun>
-                      <Value>=Parameters!param_endDate.Value</Value>
-                      <Style>
-                        <Format>d MMMM yyyy</Format>
                       </Style>
                     </TextRun>
                   </TextRuns>

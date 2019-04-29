@@ -48,7 +48,7 @@ public partial class request_update : Root {
         }
 
         if (Payroll.IsLeaveSupervisor && intID > -1 && l.RequestUserID != G.User.UserID) {
-            if (l.LeaveStatus == LeaveRequestStatus.Requested || l.LeaveStatus == LeaveRequestStatus.DiscussionRequired) {
+            if (l.LeaveStatus == LeaveRequestStatus.Requested || l.LeaveStatus == LeaveRequestStatus.DiscussionRequired || l.LeaveStatus == LeaveRequestStatus.ChangeRequest) {
                 btnApprove.Visible = btnDiscussion.Visible = true;
             }
             if(l.LeaveStatus == LeaveRequestStatus.DiscussionRequired) {
@@ -65,7 +65,7 @@ public partial class request_update : Root {
             txtManagerComments.Text = l.ManagerComments;
             pApprovalPanel.Visible = true;
             txtManagerComments.ReadOnly = true;
-            if (l.StartDate < DateTime.Now) {
+            if (l.StartDate < DateTime.Now.AddDays(-100)) {
                 //Readonly after the start date
                 hdReadOnly.Value = "true";
             }
@@ -87,11 +87,14 @@ public partial class request_update : Root {
             lExistingFile.Text = string.Format("<a href='view_doc.aspx?file={0}' target='_blank'>View file</a> <br/>", Server.UrlEncode(l.SupportingFile), l.SupportingFile);
         }
         Utility.setListBoxItems(ref lstLeaveType, l.LeaveTypeID.ToString());
-        if (l.LeaveStatus == LeaveRequestStatus.Rejected || (l.LeaveStatus == LeaveRequestStatus.Approved && l.StartDate < DateTime.Now)) {
+        if (l.LeaveStatus == LeaveRequestStatus.Rejected || (l.LeaveStatus == LeaveRequestStatus.Approved && l.StartDate < DateTime.Now.AddDays(-100))) {
             txtComments.ReadOnly = true;
             btnUpdate.Visible = false;
             btnDelete.Visible = false;
             btnDiscussion.Visible = false;
+        } else if (l.LeaveStatus == LeaveRequestStatus.Approved || l.LeaveStatus == LeaveRequestStatus.ChangeRequest) {
+            btnDelete.Visible = false;
+            btnUpdate.Text = "Resend approval request";
         }
         loadHistory();
     }
@@ -100,14 +103,15 @@ public partial class request_update : Root {
         using(DataSet ds = DB.runDataSet(String.Format(@"
             SELECT TYPEID, '' As ACTION, SENTDATE, ''AS COMMENTS
             FROM EMAILLOG L 
-            WHERE OBJECTID = {0} AND TYPEID IN (0, 1, 2, 3)
+            WHERE OBJECTID = {0} AND TYPEID IN (0, 1, 2, 3, 5,  6)
             ORDER BY SENTDATE 
         ", intID))) {
             foreach(DataRow dr in ds.Tables[0].Rows) {
                 EmailType Type = (EmailType)DB.readInt(dr["TYPEID"]);
-                if ( Type == EmailType.LeaveRequest) {
+                if (Type == EmailType.LeaveRequest) {
                     dr["ACTION"] = "Initial request";
-
+                } else if ( Type == EmailType.ChangeRequest) {
+                    dr["ACTION"] = "Change request";
                 } else if (Type == EmailType.Approval) {
                     dr["Action"] = "Approved";
                     dr["Comments"] = l.ManagerComments;
