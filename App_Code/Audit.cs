@@ -452,7 +452,8 @@ public enum EmailType {
     Rejection = 2,
     Reminder = 3,
     General = 4,
-    DiscussionRequired = 5
+    DiscussionRequired = 5,
+    ChangeRequest = 6
 }
 
 public class EmailLog {

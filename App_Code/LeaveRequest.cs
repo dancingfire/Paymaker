@@ -7,7 +7,8 @@ public enum LeaveRequestStatus {
     Requested = 0,
     Approved = 1,
     Rejected = 2,
-    DiscussionRequired = 3
+    DiscussionRequired = 3,
+    ChangeRequest = 4
 }
 
 /// <summary>
@@ -56,11 +57,13 @@ public class LeaveRequest {
     public int updateDB() {
         string szSQL = "";
         LeaveRequest lOld = null;
-        //Check the old status in case we need to show the history
-        if (this.LeaveStatus == LeaveRequestStatus.Approved) {
-            lOld = new LeaveRequest(this.intID);
-        }
         sqlUpdate oSQL = new sqlUpdate("LEAVEREQUEST", "ID", intID);
+
+        //Check the old status in case we need to show the earlier request in the email
+        if (this.LeaveStatus == LeaveRequestStatus.Approved || this.LeaveStatus == LeaveRequestStatus.ChangeRequest) {
+            lOld = new LeaveRequest(this.intID);
+            oSQL.add("LEAVESTATUSID", (int)LeaveRequestStatus.ChangeRequest);
+        }
         oSQL.add("STARTDATE", Utility.formatDate(StartDate));
         oSQL.add("ENDDATE", Utility.formatDate(EndDate));
         oSQL.add("COMMENTS", Comment);
@@ -175,6 +178,7 @@ public class LeaveRequest {
             ", u.Name, this.LeaveType, Utility.formatDate(StartDate), Utility.formatDate(EndDate), Utility.nl2br(Comment));
 
         string szSubject = "Leave request";
+        EmailType typeOfRequest = EmailType.LeaveRequest;
         if(lOld != null) {
             szSubject = "Updated leave request";
             szEmail += String.Format(@"<p> The original request details are below: </p>
@@ -182,9 +186,9 @@ public class LeaveRequest {
                 Start: {1}<br/>
                 End: {2}<br/>
                 Comments: {3} <br/><br/>", lOld.LeaveType, Utility.formatDate(lOld.StartDate), Utility.formatDate(lOld.EndDate), Utility.nl2br(lOld.Comment));
-
+            typeOfRequest = EmailType.ChangeRequest;
         }
-        Email.sendMail(szTo, "do -not-reply@fletchers.net.au", szSubject, szEmail, LogObjectID: intID, Type: EmailType.LeaveRequest);
+        Email.sendMail(szTo, "do -not-reply@fletchers.net.au", szSubject, szEmail, LogObjectID: intID, Type: typeOfRequest);
     }
 
     public void sendReminderEmailToManager() {
