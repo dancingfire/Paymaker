@@ -14,7 +14,7 @@ public partial class log_detail : Root {
             szSQL = String.Format(@"
                 SELECT *, U.FIRSTNAME + ' ' + U.LASTNAME AS PERSON, S.CODE + ' ' + S.ADDRESS AS INFO
                 FROM LOG L JOIN DB_USER U ON L.USERID = U.ID
-                JOIN SALE S ON S.ID = L.OBJECTID
+                JOIN SALE S ON S.ID = L.PRIMARYKEYID
                 WHERE L.TYPEID IN ({0}) AND (S.ADDRESS LIKE '%{0}%' OR S.CODE LIKE '%{0}%')
                 ORDER BY CHANGEDATE DESC
                 ", DB.escape(txtSearch.Text), lstType.SelectedValue);
@@ -22,7 +22,7 @@ public partial class log_detail : Root {
             szSQL = string.Format(@"
                 SELECT *, U.FIRSTNAME + ' ' + U.LASTNAME AS PERSON, C.ORIGCAMPAIGNNUMBER + ' ' + C.ADDRESS1  AS INFO
                 FROM LOG L JOIN DB_USER U ON L.USERID = U.ID
-                JOIN CAMPAIGN C ON C.ID = L.OBJECTID
+                JOIN CAMPAIGN C ON C.ID = L.PRIMARYKEYID
                  WHERE (C.ADDRESS1 LIKE '%{0}%' OR C.ADDRESS2 LIKE '%{0}%' OR C.ORIGCAMPAIGNNUMBER LIKE '%{0}%')
                 AND TYPEID IN ({1})
                 ORDER BY CHANGEDATE DESC", DB.escape(txtSearch.Text), lstType.SelectedValue);
