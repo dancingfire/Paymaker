@@ -64,7 +64,7 @@ public static class HTML {
         string szDir = "../";
         if (IsRoot)
             szDir = "";
-        arFiles.Add(szDir + "include/utility.js?v=12");
+        arFiles.Add(szDir + "include/utility.js?v=13");
         arFiles.Add(szDir + "include/ckeditor/adapters/jquery.js");
         arFiles.Add(szDir + "include/ckeditor/ckeditor.js");
         arFiles.Add("https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js");

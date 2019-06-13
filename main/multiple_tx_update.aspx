@@ -218,6 +218,8 @@
             });
 
             $("#r" + intRow).show();
+            select2Setup();
+
             $("#lstUserID" + intRow).focus().focus();
         }
 
@@ -256,7 +258,7 @@
                 blnAllowClose = true;
                 window.onbeforeunload = null;
             });
-              
+         
         }
     </script>
     <style>
@@ -270,7 +272,7 @@
         <asp:HiddenField ID="hdSkipIDs" runat="server" />
         <asp:HiddenField ID="hdTXCount" runat="server" />
         <asp:Label ID="Label3" runat="server" CssClass="Label LabelPos">Date</asp:Label>
-        <asp:TextBox CssClass="Entry EntryPos" ID="txtTxDate" runat="server" Text=""></asp:TextBox>
+        <asp:TextBox CssClass="Entry EntryPos" ID="txtTxDate" runat="server" Text="" TabIndex="0"></asp:TextBox>
         <br class="Align" />
 
         <table id="tTX" style="table-layout: fixed; width: 100%">

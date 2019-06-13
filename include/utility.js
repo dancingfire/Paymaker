@@ -26,6 +26,28 @@ function closeEditModal(blnRefresh) {
     }
 }
 
+function select2Setup() {
+    $(".select2-selection").on("focus", function () {
+        $(this).parent().parent().prev().select2("open");
+    });
+
+    $('.select2-selection').keydown((ev) => {
+        if (ev.which < 32)
+            return;
+
+        var target = jQuery(ev.target).closest('.select2-container');
+        if (!target.length)
+            return;
+
+        target = target.prev();
+        target.select2('open');
+
+        var search = target.data('select2').dropdown.$search ||
+            target.data('select2').selection.$search;
+
+        search.focus();
+    });
+}
 
 function disableForm(frmName, blnAllowNotes) {
     $("#" + frmName).find(':input').not(".Search").addClass("readonly").prop('disabled', true).attr('placeholder', '');
