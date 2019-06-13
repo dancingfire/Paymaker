@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head runat="server">
-    <title>MLS details</title>
+    <title>SQL</title>
     <script type="text/javascript">
 
     function loadPage() {
@@ -16,7 +16,7 @@
         <asp:HiddenField ID="hdCompanyTypeID" runat="server" Value="0" />
         
         <div class='RightActionPanel' style="width: 14%; height: 540px; padding-top: 20px; text-align: center; float: right">
-            <asp:Button ID="btnUpdate" runat="server" Text="Save" CssClass="Button" OnClick="btnUpdate_Click" />
+            <asp:Button ID="btnUpdate" runat="server" Text="Run SQL" CssClass="Button" OnClick="btnUpdate_Click" />
             <br />
         </div>
         <asp:Label ID="dOut" runat="server" />

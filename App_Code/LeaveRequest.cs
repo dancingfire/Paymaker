@@ -161,6 +161,9 @@ public class LeaveRequest {
         //Find the manager of this user
         UserDetail u = G.UserInfo.getUser(RequestUserID);
         UserDetail m = G.UserInfo.getUser(u.SupervisorID);
+        if (u.SupervisorID == 0)
+            m = null;
+
         string szTo = G.Settings.CatchAllEmail;
 
         if (m != null && !String.IsNullOrWhiteSpace(m.Email)) {
