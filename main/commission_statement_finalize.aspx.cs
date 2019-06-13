@@ -299,6 +299,7 @@ namespace Paymaker {
             } else {
                 dr["DEBIT AMOUNT"] = Utility.formatMoney(Amount);
             }
+            dr["SUBACCOUNT"] = Utility.fixGLOfficeCode(Convert.ToString(dr["SUBACCOUNT"]));
         }
 
 

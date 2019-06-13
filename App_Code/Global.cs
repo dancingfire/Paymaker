@@ -571,7 +571,7 @@ public class UserDetail {
     public string Initials { get; set; }
     public string GLSubAccount {
         get {
-            return OfficeGLCode.Replace("BA", "FL").Replace("CA", "FL").Replace("DO", "FL") + "-" + Initials;
+            return Utility.fixGLOfficeCode(OfficeGLCode) + "-" + Initials;
         }
     }
 
