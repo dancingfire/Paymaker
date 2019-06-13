@@ -158,16 +158,26 @@ public class Utility {
         File.WriteAllText(FileName, sb.ToString());
     }
 
-    public static string formatMYOBAccount(string Account, bool IncludeDash = true) {
-        if (!IncludeDash) 
-            return Account.Replace("-", "");
-        
+    public static string formatMYOBAccount(string Account) {
+
         if (Account.Trim().Length == 6)
             return Account;
        
         return Account;
     }
         
+    /// <summary>
+    /// Head office GL code must start with 'FL' so we replace this for BALWYN, CANTERBURY AND DONCASTER
+    /// </summary>
+    /// <param name="OfficeGLCode"></param>
+    /// <returns></returns>
+    public static string fixGLOfficeCode(string OfficeGLCode) {
+        if(OfficeGLCode.StartsWith("BA") || OfficeGLCode.StartsWith("CA") || OfficeGLCode.StartsWith("DO")) {
+            return OfficeGLCode.Replace("BA", "FL").Replace("CA", "FL").Replace("DO", "FL");
+        }
+        return OfficeGLCode;
+    }
+
     public static void bindGV(ref GridView gv, DataSet oData, bool FormatForDataGrid = true, bool TableHover = true) {
         gv.DataSource = oData;
         gv.DataBind();

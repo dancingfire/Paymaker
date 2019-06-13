@@ -131,7 +131,7 @@ public partial class myob_export : Root {
             //Debit
             rCurr["Ref. Number"] = Utility.formatDate(Convert.ToDateTime(rCurr["TXDATE"]));
             rCurr["Account"] = Utility.formatMYOBAccount(Convert.ToString(rCurr["DEBITACCOUNTGLCODE"]));
-            rCurr["Subaccount"] = Utility.formatMYOBAccount(Convert.ToString(rCurr["DEBITJOBCODE"]));
+            rCurr["Subaccount"] = Utility.fixGLOfficeCode(Convert.ToString(rCurr["DEBITJOBCODE"]));
             
             rCurr["DEBIT AMOUNT"] = rCurr["AMOUNT"];
 
@@ -141,7 +141,7 @@ public partial class myob_export : Root {
             rCurr = dtNew.Rows[dtNew.Rows.Count - 1];
             rCurr["Ref. Number"] = Utility.formatDate(Convert.ToDateTime(rCurr["TXDATE"]));
             rCurr["ACCOUNT"] = Utility.formatMYOBAccount(Convert.ToString(rCurr["CREDITACCOUNTGLCODE"]));
-            rCurr["Subaccount"] = Utility.formatMYOBAccount(Convert.ToString(rCurr["CREDITJOBCODE"]));
+            rCurr["Subaccount"] = Utility.fixGLOfficeCode(Convert.ToString(rCurr["CREDITJOBCODE"]));
             rCurr["CREDIT AMOUNT"] = rCurr["AMOUNT"];
           
             if (!lSuperUsers.Contains(DB.readInt(rCurr["USERID"]))) {
@@ -155,6 +155,7 @@ public partial class myob_export : Root {
                     rCurr["Transaction Description"] = "Super";
                     rCurr["ACCOUNT"] = "2-3000";
                     rCurr["DEBIT AMOUNT"] = Utility.formatMoney(Super);
+                    rCurr["SUBACCOUNT"] = Utility.fixGLOfficeCode(Convert.ToString(rCurr["SUBACCOUNT"]));
 
                     dtNew.ImportRow(tx);
                     rCurr = dtNew.Rows[dtNew.Rows.Count - 1];
@@ -162,12 +163,16 @@ public partial class myob_export : Root {
                     rCurr["Transaction Description"] = "Super";
                     rCurr["ACCOUNT"] = Utility.formatMYOBAccount(G.Settings.SuperGLCode);
                     rCurr["CREDIT AMOUNT"] = Super;
+                    rCurr["SUBACCOUNT"] = Utility.fixGLOfficeCode(Convert.ToString(rCurr["SUBACCOUNT"]));
+
                 }
             }
-            szSQL = String.Format(@"
+            if (UpdateDB) {
+                szSQL = String.Format(@"
                 UPDATE USERTX SET MYOBEXPORTID = {0}
                 WHERE ID = {1}", intMYOBExportID, rCurr["TXID"].ToString());
-            DB.runNonQuery(szSQL);
+                DB.runNonQuery(szSQL);
+            }
         }
         dtNew.AcceptChanges();
 
