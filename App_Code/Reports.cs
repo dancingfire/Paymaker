@@ -1693,7 +1693,7 @@ public class Payroll_Timesheets : Report {
             SELECT TC.STARTDATE, TC.ENDDATE, U.FIRSTNAME + ' ' + U.LASTNAME AS STAFFNAME, TS.* FROM TIMESHEETENTRY TS
                 JOIN DB_USER U ON TS.USERID = U.ID
                 JOIN TIMESHEETCYCLE TC ON TC.ID = TS.TIMESHEETCYCLEID
-            WHERE {0}
+            WHERE {0} AND U.ISDELETED = 0
             ORDER BY U.LASTNAME", szReportType));
 
         return ds;
@@ -1756,7 +1756,7 @@ public class Payroll_Summary : Report {
             JOIN DB_USER U ON U.ID = TS.USERID
             JOIN LIST O ON O.ID = U.OFFICEID
             JOIN TIMESHEETCYCLE TSC ON TSC.ID = TS.TIMESHEETCYCLEID
-            WHERE TSC.ID in ({0},{1})
+            WHERE TSC.ID in ({0},{1}) AND U.ISDELETED = 0
             GROUP BY TIMESHEETCYCLEID, USERID, TSC.CYCLETYPEID, SUPERVISORID
 			UNION
             SELECT LASTNAME, U.FIRSTNAME, U.PAYROLLCYCLEID, U.ID, U.FIRSTNAME + ' ' + U.LASTNAME AS NAME,
@@ -1767,7 +1767,7 @@ public class Payroll_Summary : Report {
                 'User hasn''t entered details' AS DETAILS
             FROM DB_USER U
             JOIN LIST O ON O.ID = U.OFFICEID
-            WHERE U.PAYROLLCYCLEID > 0
+            WHERE U.PAYROLLCYCLEID > 0 AND U.ISDELETED = 0
                 AND U.ID NOT IN (SELECT DISTINCT USERID FROM TIMESHEETENTRY WHERE TIMESHEETCYCLEID IN ((SELECT MIN(ID) FROM TIMESHEETCYCLE WHERE CYCLETYPEID = 1 AND COMPLETED = 0),(SELECT MIN(ID) FROM TIMESHEETCYCLE WHERE CYCLETYPEID = 2 AND COMPLETED = 0)))
 			ORDER BY TSC.CYCLETYPEID, LASTNAME",
                         G.TimeSheetCycleReferences[CycleRef].NormalCycle.CycleID,

@@ -65,7 +65,7 @@ public partial class payroll_summary : Root {
                     JOIN DB_USER U ON U.ID = TS.USERID
                     JOIN LIST O ON O.ID = U.OFFICEID
                     JOIN TIMESHEETCYCLE TSC ON TSC.ID = TS.TIMESHEETCYCLEID
-                    WHERE TSC.ID = {1}
+                    WHERE TSC.ID = {1} AND U.ISDELETED = 0
                     {0}
                     GROUP BY TIMESHEETCYCLEID, USERID, SUPERVISORID
                     UNION
@@ -77,7 +77,7 @@ public partial class payroll_summary : Root {
                         'User hasn''t entered details' AS DETAILS
                     FROM DB_USER U
                     JOIN LIST O ON O.ID = U.OFFICEID
-                    WHERE U.PAYROLLCYCLEID = 1 {0}
+                    WHERE U.PAYROLLCYCLEID = 1 {0} AND U.ISDELETED = 0
                         AND U.ID NOT IN (SELECT DISTINCT USERID FROM TIMESHEETENTRY WHERE TIMESHEETCYCLEID = {1})
                     ORDER BY 2;
 
@@ -100,7 +100,7 @@ public partial class payroll_summary : Root {
                     JOIN DB_USER U ON U.ID = TS.USERID
                     JOIN LIST O ON O.ID = U.OFFICEID
                     JOIN TIMESHEETCYCLE TSC ON TSC.ID = TS.TIMESHEETCYCLEID
-                    WHERE TSC.ID = {2}
+                    WHERE TSC.ID = {2} AND U.ISDELETED = 0
                     {0}
                     GROUP BY TIMESHEETCYCLEID, USERID, SUPERVISORID
                     UNION
@@ -112,7 +112,7 @@ public partial class payroll_summary : Root {
                         'User hasn''t entered details' AS DETAILS
                     FROM DB_USER U
                     JOIN LIST O ON O.ID = U.OFFICEID
-                    WHERE U.PAYROLLCYCLEID = 2 {0}
+                    WHERE U.PAYROLLCYCLEID = 2 {0} AND U.ISDELETED = 0
                         AND U.ID NOT IN (SELECT DISTINCT USERID FROM TIMESHEETENTRY WHERE TIMESHEETCYCLEID = {2})
                     ORDER BY 2;
 ", 

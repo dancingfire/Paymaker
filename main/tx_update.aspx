@@ -129,9 +129,7 @@
                 callWebMethod("../web_services/ws_Paymaker.asmx", "getUserGLSubAccount", ["UserID", $("#lstUserID").val()], getUserGLSuccess);
             });
 
-            $(".select2-selection").on("focus", function () {
-                $(this).parent().parent().prev().select2("open");
-            });
+            select2Setup();
         });
 
         function showAccountList(blnGetAmount) {
