@@ -89,6 +89,7 @@ public class ClientMenu {
             oM.addMenuItem("View logins", "../admin/application_audits.aspx", MenuRole.Admin);
             oM.addMenuItem("View change log", "../admin/log_detail.aspx", MenuRole.Admin);
             oM.addMenuItem("View log v2", "../admin/logv2_detail.aspx", MenuRole.Admin);
+            oM.addMenuItem("View email log", "../admin/email_log.aspx", MenuRole.Admin);
             oM.addMenuItem("Admin functions", "../admin/admin_tasks.aspx", MenuRole.Admin);
             oM.addSpacer();
             oM.addMenuItem("View commission PDFs", "../main/commission_statement_dashboard.aspx", MenuRole.Admin);
