@@ -1,7 +1,10 @@
 .BodyBackground {
     background: #B7C6AA;
 }
-
+.btn-primary {
+    background-color: #be9d52 !important;
+    border-color:#be9d52;
+}
 body.report {
     background: white;
 }

@@ -549,19 +549,19 @@ public class TimesheetCycle {
 
         return string.Format(@"
                 -- Check for outstanding staff signoff
-                SELECT U.ID AS OUTSTANDING, U.EMAIL AS USER_EMAIL, SUP.EMAIL AS SUPERVISOR_EMAIL, SUM(ISNULL(TE.ACTUAL, 0)) AS TOTALHOURS, 
+                SELECT U.ID AS OUTSTANDING, U.EMAIL AS USER_EMAIL, ISNULL(SUP.EMAIL, '') AS SUPERVISOR_EMAIL, SUM(ISNULL(TE.ACTUAL, 0)) AS TOTALHOURS, 
                     CASE WHEN MIN(TE.USERSIGNOFFDATE) IS NULL THEN 'EMAIL' ELSE '' END AS EMAILFLAG
                 FROM DB_USER U
-                JOIN DB_USER SUP ON SUP.ID = U.SUPERVISORID
+                LEFT JOIN DB_USER SUP ON SUP.ID = U.SUPERVISORID
                 LEFT JOIN TIMESHEETENTRY TE ON TE.USERID = U.ID AND TE.TIMESHEETCYCLEID = {0}
                 WHERE {1} {2}
 	                 U.PAYROLLCYCLEID = (SELECT CYCLETYPEID FROM TIMESHEETCYCLE WHERE ID = {0})
                 GROUP BY U.ID, U.EMAIL, SUP.EMAIL
 
                 -- Check for outstanding supervisor signoff
-                SELECT U.ID AS OUTSTANDING, U.EMAIL AS USER_EMAIL, SUP.EMAIL AS SUPERVISOR_EMAIL
+                SELECT U.ID AS OUTSTANDING, U.EMAIL AS USER_EMAIL, ISNULL(SUP.EMAIL, '') AS SUPERVISOR_EMAIL
                 FROM DB_USER U
-                JOIN DB_USER SUP ON SUP.ID = U.SUPERVISORID
+                LEFT JOIN DB_USER SUP ON SUP.ID = U.SUPERVISORID
                 LEFT JOIN TIMESHEETENTRY TE ON TE.USERID = U.ID AND TE.TIMESHEETCYCLEID = {0}
                 WHERE {1} TE.USERSIGNOFFDATE IS NOT NULL
 	                AND U.SUPERVISORID IS NOT NULL AND TE.SIGNEDOFFDATE IS NULL
@@ -642,7 +642,7 @@ public class TimesheetCycle {
     }
 
     /// <summary>
-    /// Tests the auto emails by looking 10 days into the future to see whether we would be sending any emails...
+    /// Tests the auto emails by looking 28 days into the future to see whether we would be sending any emails...
     /// </summary>
     public static void testAutomatedEmails() {
         AppConfigAdmin oConfigAdmin = new AppConfigAdmin(G.szCnn);
@@ -651,7 +651,7 @@ public class TimesheetCycle {
 
         // checks for automated emails starting 1 day after last sent
         // Email 1. Please fill in your
-        for (DateTime dtC = oDTLastSent.AddDays(1); dtC <= DateTime.Now.AddDays(14); dtC = dtC.AddDays(1)) {
+        for (DateTime dtC = oDTLastSent.AddDays(1); dtC <= DateTime.Now.AddDays(28); dtC = dtC.AddDays(1)) {
             HttpContext.Current.Response.Write(Utility.formatDate(dtC) + "<br/>");
             string szSQL = string.Format(@"
                 SELECT ID FROM TIMESHEETCYCLE
