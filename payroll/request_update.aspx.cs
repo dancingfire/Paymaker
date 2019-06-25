@@ -54,7 +54,8 @@ public partial class request_update : Root {
             if(l.LeaveStatus == LeaveRequestStatus.DiscussionRequired) {
                 btnReject.Visible = true;
             }
-            btnDelete.Visible = btnUpdate.Visible = false;
+            btnDelete.Visible = G.User.RoleID == 1; //Admin can always delete
+            btnUpdate.Visible = false;
             btnCancel.InnerHtml = "Close";
             hdReadOnly.Value = "true";
             txtComments.ReadOnly = true;
@@ -90,10 +91,10 @@ public partial class request_update : Root {
         if (l.LeaveStatus == LeaveRequestStatus.Rejected || (l.LeaveStatus == LeaveRequestStatus.Approved && l.StartDate < DateTime.Now.AddDays(-100))) {
             txtComments.ReadOnly = true;
             btnUpdate.Visible = false;
-            btnDelete.Visible = false;
+            btnDelete.Visible = G.User.RoleID == 1; //Admin can see the delete button;
             btnDiscussion.Visible = false;
         } else if (l.LeaveStatus == LeaveRequestStatus.Approved || l.LeaveStatus == LeaveRequestStatus.ChangeRequest) {
-            btnDelete.Visible = false;
+            btnDelete.Visible = G.User.RoleID == 1; //Admin can see the delete button
             btnUpdate.Text = "Resend approval request";
         }
         loadHistory();
