@@ -128,8 +128,8 @@ namespace Paymaker {
                 TotalAfterSuper = UserTotals.RetainerAmount;
             if (TotalAfterSuper >= 0) {
                 double Super = TotalAfterSuper * 0.095;
-                if (Super > 1710.95)
-                    Super = 1720.95;
+                if (Super > 1750.2)
+                    Super = 1750.2;
                 UserTotals.SuperAmount = Super;
                 if (Valid.getText("RecalcTotals", "No").ToUpper() == "YES") {
                     DB.runNonQuery(String.Format("UPDATE USERPAYPERIOD SET SUPERPAID = {0} WHERE ID = {1}", Super, UserTotals.DBID));
