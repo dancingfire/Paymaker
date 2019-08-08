@@ -1,14 +1,13 @@
-<%@ Page Language="c#" Inherits="Paymaker.kpi_office_agents_NEW" CodeFile="kpi_office_agents_NEW.aspx.cs" %>
+<%@ Page Language="c#" Inherits="Paymaker.kpi_agent_card" CodeFile="kpi_agent_card.aspx.cs" %>
 
 <!DOCTYPE html>
 <html>
 <head runat="server">
     <title>KPI</title>
     <script type="text/javascript">
-            function printReport()
-            {
-                window.print();
-            }
+        function printReport() {
+            window.print();
+        }
     </script>
     <style>
         table.Report {

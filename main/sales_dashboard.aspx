@@ -113,6 +113,7 @@
 </head>
 <body style='margin-top: 5px'>
     <form id="frmMain" method="post" runat="server" target="_self">
+        <asp:DropDownList ID="lstUsers" runat="server"></asp:DropDownList>
         <div class='DataPanel' style='width: 16%; height: 340px'>
             <div class='DataPanelHeader'>
                 Monthly commission

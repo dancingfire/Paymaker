@@ -49,12 +49,10 @@ namespace Paymaker {
             oFilter.EndDate = dtEnd;
             oFilter.OfficeIDList = Valid.getText("szOfficeID", "", VT.NoValidation);
             oFilter.UserIDList = Valid.getText("szUserID", "", VT.NoValidation);
-            //oFilter.OfficeNameList = Valid.getText("HDOfficeNameList", "", VT.NoValidation);
-            //oFilter.OfficeNameList = oFilter.OfficeNameList.TrimEnd(',');
-            //oFilter.UserNameList = Valid.getText("HDUserNameList", "", VT.NoValidation);
-            //oFilter.UserNameList = oFilter.UserNameList.TrimEnd(',');
             Report oR = new KPI_Office_agents(rViewer, oFilter);
             return oR;
         }
     }
+
+
 }

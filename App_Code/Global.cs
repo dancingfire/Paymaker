@@ -6,6 +6,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Web;
 using System.Web.UI.WebControls;
+using BootstrapWrapper;
 
 /// <summary>
 /// The global object that we can access throughout the app...
@@ -559,6 +560,7 @@ public class UserDetail {
 
     public int ID { get; set; }
     public int MentorID { get; set; }
+    public bool IsActive{ get; set; }
     public int RoleID { get; set; }
     public int Salary { get; set; }
     public int OfficeID { get; set; }
@@ -608,8 +610,9 @@ public class UserDetail {
 
     public string NameFLI { get { return FirstName + " " + LastName + "(" + Initials + ")"; } }
 
-    public UserDetail(int ID, string Initials, string First, string Last, string Email, int RoleID, int OfficeID, string OfficeGLCode, int MentorID, int Salary, int PayrollCycleID, int SupervisorID, string CreditGLCode, string DebitGLCode, string JobCode) {
+    public UserDetail(int ID, bool IsActive, string Initials, string First, string Last, string Email, int RoleID, int OfficeID, string OfficeGLCode, int MentorID, int Salary, int PayrollCycleID, int SupervisorID, string CreditGLCode, string DebitGLCode, string JobCode) {
         this.ID = ID;
+        this.IsActive = IsActive;
         this.Initials = Initials;
         this.FirstName = First;
         this.LastName = Last;
@@ -1096,20 +1099,40 @@ public class UserInformation {
     private void loadItems() {
         string szSQL = @"
             --User info
-            SELECT U.ID, INITIALSCODE, FIRSTNAME, LASTNAME, EMAIL, ROLEID, ISNULL(TEAMID, -1) AS TEAM, SALARY, 
+            SELECT U.ID, U.ISACTIVE, INITIALSCODE, FIRSTNAME, LASTNAME, EMAIL, ROLEID, ISNULL(TEAMID, -1) AS TEAM, SALARY, 
              U.CREDITGLCODE, U.DEBITGLCODE, L_OFF.JOBCODE, U.OFFICEID, U.PAYROLLCYCLEID, U.SUPERVISORID, L_OFF.OFFICEMYOBCODE
             FROM DB_USER U  JOIN LIST L_OFF ON L_OFF.ID = U.OFFICEID ORDER BY LASTNAME, FIRSTNAME";
 
         using (DataSet ds = DB.runDataSet(szSQL)) {
             foreach (DataRow dr in ds.Tables[0].Rows) {
                 int intID = Convert.ToInt32(dr["ID"]);
-                lUsers.Add(new UserDetail(intID, DB.readString(dr["INITIALSCODE"]), DB.readString(dr["FIRSTNAME"]), DB.readString(dr["LASTNAME"]), DB.readString(dr["EMAIL"]),
+                lUsers.Add(new UserDetail(intID, DB.readBool(dr["ISACTIVE"]), DB.readString(dr["INITIALSCODE"]), DB.readString(dr["FIRSTNAME"]), DB.readString(dr["LASTNAME"]), DB.readString(dr["EMAIL"]),
                     DB.readInt(dr["ROLEID"]), DB.readInt(dr["OFFICEID"]), DB.readString(dr["OFFICEMYOBCODE"]), DB.readInt(dr["TEAM"]), DB.readInt(dr["SALARY"]), DB.readInt(dr["PAYROLLCYCLEID"]),
                     DB.readInt(dr["SUPERVISORID"]), DB.readString(dr["CREDITGLCODE"]), DB.readString(dr["DEBITGLCODE"]), DB.readString(dr["JOBCODE"])));
             }
             blnIsLoaded = true;
         }
     }
+
+    /// <summary>
+    /// Loads the list from the object
+    /// </summary>
+    /// <param name="l"></param>
+    /// <param name="IncludeSelect"></param>
+    public void loadList(ref bwDropDownList l, bool IncludeSelect = true, bool IncludeInactive = false) {
+        if (blnIsLoaded == false || lUsers == null)
+            loadItems();
+        if (IncludeSelect) {
+            l.Items.Add(new ListItem("Select a user...", "-1"));
+        }
+        foreach (UserDetail b in lUsers) {
+            if (!IncludeInactive && !b.IsActive)
+                continue;
+
+            l.Items.Add(new ListItem(b.Name, b.ID.ToString()));
+        }
+    }
+
     /// <summary>
     /// Loads the list from the object
     /// </summary>

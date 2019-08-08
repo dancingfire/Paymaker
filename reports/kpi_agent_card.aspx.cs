@@ -3,7 +3,7 @@ using System.Web.UI;
 
 namespace Paymaker {
 
-    public partial class kpi_office_agents_NEW : Root {
+    public partial class kpi_agent_card : Root {
         private bool blnPrint = false;
         private DateTime dtStart = DateTime.MaxValue;
         private DateTime dtEnd = DateTime.MaxValue;
@@ -49,12 +49,10 @@ namespace Paymaker {
             oFilter.EndDate = dtEnd;
             oFilter.OfficeIDList = Valid.getText("szOfficeID", "", VT.NoValidation);
             oFilter.UserIDList = Valid.getText("szUserID", "", VT.NoValidation);
-            //oFilter.OfficeNameList = Valid.getText("HDOfficeNameList", "", VT.NoValidation);
-            //oFilter.OfficeNameList = oFilter.OfficeNameList.TrimEnd(',');
-            //oFilter.UserNameList = Valid.getText("HDUserNameList", "", VT.NoValidation);
-            //oFilter.UserNameList = oFilter.UserNameList.TrimEnd(',');
-            Report oR = new KPI_Office_agents_NEW(rViewer, oFilter);
+            Report oR = new KPI_Agent_Card(rViewer, oFilter);
             return oR;
         }
     }
+
+
 }

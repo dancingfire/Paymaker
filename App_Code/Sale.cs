@@ -587,6 +587,7 @@ public class Sale {
             szLocationFilter = String.Format(" AND (CODE LIKE '%{0}%' or S.ADDRESS LIKE '%{0}%' )", Utility.formatForDB(LocationFilter));
 
         string szSQL = String.Format(@"
+            -- Sales
             SELECT S.ID, S.ENTITLEMENTDATE, MIN(S.CODE) AS CODE, S.ADDRESS, MIN(S.SALEDATE) AS SALEDATE,  MIN(S.SETTLEMENTDATE) AS SETTLEMENTDATE, min(S.SALEPRICE) AS SALEPRICE, SUM(USS.CALCULATEDAMOUNT) AS COMMISSIONTOTAL
             FROM SALE S
             JOIN SALESPLIT SS ON S.ID = SS.SALEID AND SS.RECORDSTATUS = 0
@@ -605,6 +606,7 @@ public class Sale {
     /// <returns></returns>
     public static DataSet loadYTDSalesForSalesPerson(int UserID, DateTime StartDate) {
         string szSQL = String.Format(@"
+            -- YTD
             SELECT P.ID AS PAYPERIODID, DATENAME(mm, P.STARTDATE) AS MONTH, DATEPART(yyyy,P.STARTDATE) as YEAR, SUM(ISNULL(USS.CALCULATEDAMOUNT, 0)) AS COMMISSIONTOTAL,  SUM(ISNULL(USS.GRAPHCOMMISSION, 0)) AS GRAPHCOMMISSION
             FROM PAYPERIOD P
             LEFT JOIN SALE S ON S.PAYPERIODID = P.ID

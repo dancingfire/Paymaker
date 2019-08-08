@@ -25,6 +25,9 @@
                 return;
             switch (szReportVal) {
                 case "AR_REPORT":
+                    $("#spDate").show();
+                    $("#spCompany").show();
+                    break;
                 case "CASHFLOW":
                 case "CASHFLOWPREDICTION":
                     $("#spDate").show();
@@ -97,6 +100,7 @@
 
                     break;
                 case "KPIOFFICE":
+                case "KPICARD":
                 case "KPIOFFICENEW":
                 case "KPIOFFICEAUCTION":
                     $("#lstFinancialYear option[value='']").remove();
@@ -500,8 +504,8 @@
                     var szParam = getFilterValues();
                     szParam += getSelectedUser(false);
                     break;
-                case "KPIOFFICENEW":
-                    var szSrc = "kpi_office_agents_NEW.aspx";
+                case "KPICARD":
+                    var szSrc = "kpi_agent_card.aspx";
                     var szParam = getFilterValues();
                     szParam += getSelectedUser(false);
                     break;
@@ -788,9 +792,9 @@
                 <option value="KPIAGENT">KPI agent detail</option>
                 <option value="KPIMUNICIPALITY">KPI municipality detail</option>
                 <option value="KPISUBURB">KPI suburb detail</option>
-                <option value="KPIOFFICE">KPI Office agents BETA</option>
-                <option value="KPIOFFICENEW">KPI Office agents NEW BETA</option>
-                <option value="KPIOFFICEAUCTION">KPI Office agents Auction Details</option>
+                <option value="KPIOFFICE">KPI Office agents</option>
+                <option value="KPICARD">KPI agent card</option>
+                <option value="KPIOFFICEAUCTION">KPI Office agents auction details</option>
                 <optgroup label='EOFY reports' />
                 <option value="SALESLETTER">Sales letter</option>
 

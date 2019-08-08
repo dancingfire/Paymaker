@@ -34,7 +34,7 @@
                             <asp:BoundField DataField="LeaveType" HeaderText="Leave type" ItemStyle-Width="10%" HtmlEncode="false" />
                             <asp:BoundField DataField="StartDate" HeaderText="Start date" ItemStyle-Width="15%" HtmlEncode="false" DataFormatString="{0: MMM dd, yyyy}" />
                             <asp:BoundField DataField="EndDate" HeaderText="End date" ItemStyle-Width="15%" HtmlEncode="false" DataFormatString="{0: MMM dd, yyyy}" />
-                            <asp:BoundField DataField="TotalDays" HeaderText="Total days" ItemStyle-Width="10%" HtmlEncode="false"  ItemStyle-HorizontalAlign="Center"/>
+                            <asp:BoundField DataField="Duration" HeaderText="Duration" ItemStyle-Width="10%" HtmlEncode="false" ItemStyle-HorizontalAlign="Center"/>
                             <asp:BoundField DataField="EntryDate" HeaderText="Requested" ItemStyle-Width="10%" HtmlEncode="false" DataFormatString="{0: MMM dd, yyyy}" />
                             <asp:BoundField DataField="Comments" HeaderText="Notes" ItemStyle-Width="50%" HtmlEncode="false" />
                         </Columns>
