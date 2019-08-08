@@ -1,9 +1,14 @@
 .BodyBackground {
     background: #B7C6AA;
 }
+
+.tooltipLink {
+    font-size: larger;
+    color: #2F3437;
+}
 .btn-primary {
     background-color: #be9d52 !important;
-    border-color:#be9d52;
+    border-color: #be9d52;
 }
 body.report {
     background: white;
@@ -938,4 +943,15 @@ img.RWLeft {
     background-repeat: no-repeat;
     background-position: center center;
     text-indent: -9999px;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+input[type=number] {
+    -moz-appearance: textfield; /* Firefox */
 }

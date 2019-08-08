@@ -14,6 +14,7 @@
             $("#lstReport, #lstUserReport").change(function () {
                 showFilter();
             });
+            $("#lstReport").select2();
             $("#fReport").height($("#dReportFilter").height())
             $(".DataPanel").corner();
         });
@@ -92,20 +93,24 @@
                     break;
                 case "MAINKPI":
                     $("#lstFinancialYear option[value='']").remove();
-                    //$("#spUser").show();
-                    //$("#spOffice").show();
                     $("#spCompany").show();
                     $("#spDate").show();
                     $("#spActive").show();
 
                     break;
-                case "KPIOFFICE":
+
                 case "KPICARD":
+                    $("#spDate").hide();
+                    //  $("#spUser").show();
+                    $("#spMonth").show();
+                    $("#spQuarter").show();
+                    $("#spActive").show();
+                    break;
+
+                case "KPIOFFICE":
                 case "KPIOFFICENEW":
                 case "KPIOFFICEAUCTION":
                     $("#lstFinancialYear option[value='']").remove();
-                    //$("#spUser").show();
-                    //$("#spOffice").show();
                     $("#spCompany").show();
                     $("#spDate").show();
                     $("#spActive").show();
@@ -337,6 +342,7 @@
             szParam += "&szRoleID=" + $("#lstRole").val();
             szParam += "&szFY=" + $("#lstFinancialYear").val();
             szParam += "&szQuarter=" + $("#lstQuarter").val();
+            szParam += "&szMonth=" + $("#lstMonth").val();
             szParam += "&szStartDate=" + $("#txtStartDate").val();
             szParam += "&szEndDate=" + $("#txtEndDate").val();
             if ($("#lstIncludeInactive").val() == "YES")
@@ -910,6 +916,12 @@
                 <asp:Label ID="Label1" CssClass="FilterLabel" runat="server" Text="Off the top account">
                 </asp:Label>
                 <asp:ListBox ID="lstOffTheTop" runat="server" CssClass="Entry" SelectionMode="Single" Rows="1"></asp:ListBox>
+                <br class='Align' />
+            </span>
+             <span id="spMonth" class="Filter">
+                <asp:Label ID="Label17" CssClass="FilterLabel" runat="server" Text="Month">
+                </asp:Label>
+                <asp:ListBox ID="lstMonth" runat="server" CssClass="Entry" SelectionMode="Single" Rows="1"></asp:ListBox>
                 <br class='Align' />
             </span>
             <span id="spQuarter" class="Filter">

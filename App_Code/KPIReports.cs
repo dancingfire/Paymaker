@@ -45,11 +45,11 @@ public class KPI_Agent_Card : Report {
 
     public List<ReportData> loadReportObjects() {
         szCurrentPeriodFilter = String.Format("BETWEEN '{0}' AND '{1}'", oFilter.getDBSafeStartDate(), oFilter.getDBSafeEndDate());
-        szOverallFilter = String.Format("BETWEEN '{0}' AND '{1}'", Utility.formatDate(Utility.getFinYearStart(oFilter.StartDate)), Utility.formatDate(Utility.getFinYearEnd(oFilter.StartDate)));
+        szOverallFilter = String.Format("BETWEEN '{0}' AND '{1}'", Utility.formatDate(Utility.getFinYearStart(oFilter.StartDate)), oFilter.getDBSafeEndDate());
 
         DateTime dtPreviousPeriodEnd = oFilter.StartDate.AddSeconds(-1);
 
-        string szFilter = String.Format(" ((S.SALEDATE BETWEEN '{0}' AND '{1}') OR (S.SALEDATE IS NULL AND S.FALLENTHROUGHDATE BETWEEN '{0}' AND '{1}'))", Utility.formatDate(Utility.getFinYearStart(oFilter.StartDate)), Utility.formatDate(Utility.getFinYearEnd(oFilter.StartDate)));
+        string szFilter = String.Format(" ((S.SALEDATE BETWEEN '{0}' AND '{1}') OR (S.SALEDATE IS NULL AND S.FALLENTHROUGHDATE BETWEEN '{0}' AND '{1}'))", Utility.formatDate(Utility.getFinYearStart(oFilter.StartDate)), oFilter.getDBSafeEndDate());
         string szUserFilter = "";
         if (!String.IsNullOrWhiteSpace(oFilter.OfficeIDList)) {
             szUserFilter += (" AND USR.OFFICEID IN (" + oFilter.OfficeIDList + ")");
@@ -434,10 +434,9 @@ public class KPI_Agent_Card : Report {
                 SELECT
 					USR.ID AS AGENTID,
 				(SELECT TOP 1 CONTACTCOUNT FROM AGENTCONTACTCOUNT ACC WHERE MONTHDATE < '{4}' AND ACC.USERID = USR.ID ORDER BY MONTHDATE DESC) AS TOTAL,
-				(SELECT TOP 1CONTACTCOUNT FROM AGENTCONTACTCOUNT ACC WHERE MONTHDATE < '{2}' AND ACC.USERID = USR.ID  ORDER BY MONTHDATE DESC) AS PERIOD
+				(SELECT TOP 1 CONTACTCOUNT FROM AGENTCONTACTCOUNT ACC WHERE MONTHDATE < '{2}' AND ACC.USERID = USR.ID  ORDER BY MONTHDATE DESC) AS PERIOD,
+                (SELECT TOP 1 CONTACTCOUNT FROM AGENTCONTACTCOUNT ACC WHERE MONTHDATE <  DATEADD(m, -{5}, '{2}') AND ACC.USERID = USR.ID  ORDER BY MONTHDATE DESC) AS PREVPERIOD
 				FROM DB_USER USR
-                    JOIN AGENTCONTACTCOUNT ACC ON ACC.USERID = USR.ID
-                            AND (MONTHDATE  {0})
 				WHERE USR.ID IN ({1});
 
 			    -- 2 Listing Sources (Same temporary view is used for query -- 4)
@@ -486,7 +485,8 @@ public class KPI_Agent_Card : Report {
                 SELECT * FROM USERKPIBUDGET
                 WHERE USERID IN ({1}) AND VALUE != ''
                 ORDER BY USERID;
-                ", szOverallFilter, szUserIDs, oFilter.getDBSafeEndDate(), szCurrentPeriodFilter, Utility.formatDate(Utility.getFinYearEnd(oFilter.StartDate)));
+                ", szOverallFilter, szUserIDs, oFilter.getDBSafeEndDate(), szCurrentPeriodFilter, Utility.formatDate(Utility.getFinYearEnd(oFilter.StartDate)),
+                oFilter.MonthsinPeriod);
 
         DataSet ds1 = DB.runDataSet(szSQL);
 
@@ -524,7 +524,7 @@ public class KPI_Agent_Card : Report {
                 u = findDataRow(AgentID);
                 CurrAgentID = AgentID;
             }
-            u.NUMBEROFCONTACTSPERIOD = DB.readDouble(dr["PERIOD"], 0);
+            u.NUMBEROFCONTACTSPERIOD = DB.readDouble(dr["PERIOD"], 0) - DB.readDouble(dr["PREVPERIOD"], 0);
             u.NUMBEROFCONTACTS = DB.readDouble(dr["TOTAL"], 0);
         }
 

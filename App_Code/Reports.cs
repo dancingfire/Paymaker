@@ -66,6 +66,11 @@ public class ReportFilters {
         }
     }
 
+    /// <summary>
+    /// The number of months in the date range (only valid for monthly and quarterly reports)
+    /// </summary>
+    public int MonthsinPeriod{ get; set; }
+    
     //REturns a single financial year
     public int getSingleFinancialYear() {
         if (szFY == "")
@@ -138,6 +143,24 @@ public class ReportFilters {
       
         string szStartDate = Valid.getText("szStartDate", "", VT.TextNormal);
         string szEndDate = Valid.getText("szEndDate", "", VT.TextNormal);
+
+        //Check if this is a monthly or quarterly report - override normal filter processing
+        string szMonth = Valid.getText("szMonth", "", VT.TextNormal);
+        string szQuarter = Valid.getText("szQuarter", "", VT.TextNormal);
+
+        if (szQuarter != "") {
+            string[] arDate = Utility.SplitByString(szQuarter.Replace("Between  '", ""), "' AND '");
+            szStartDate = arDate[0];
+            szEndDate = arDate[1].Replace("'", "");
+            MonthsinPeriod = 3;
+        }
+
+        if (szMonth != "") {
+            string[] arDate = Utility.SplitByString(szMonth.Replace("Between  '", ""), "' AND '");
+            szStartDate = arDate[0];
+            szEndDate = arDate[1].Replace("'", "");
+            MonthsinPeriod = 1;
+        }
 
         if (!String.IsNullOrEmpty(szStartDate)) {
             dtStart = DateTime.Parse(szStartDate);
