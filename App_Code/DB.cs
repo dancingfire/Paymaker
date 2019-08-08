@@ -77,8 +77,13 @@ public class DB {
     public static double readDouble(object Value, double NullValue = Double.MinValue) {
         if (Value == System.DBNull.Value)
             return NullValue;
-        else
-            return Convert.ToDouble(Value);
+        else {
+            double dValue = Convert.ToDouble(Value);
+            if (dValue < 0.0001)
+                dValue = 0;
+            return dValue;
+        }
+
     }
 
     /// Returns either a valid string of DateVale

@@ -29,15 +29,15 @@
 
             <div class="row">
                 <div class="col-sm-10">
-                    <asp:GridView ID="gvList" runat="server" AutoGenerateColumns="false"   GridLines="None" EnableViewState="false"  OnRowDataBound="gvList_RowDataBound">
+                    <asp:GridView ID="gvList" runat="server" AutoGenerateColumns="false"   GridLines="None" EnableViewState="false"  OnRowDataBound="gvList_RowDataBound" HeaderStyle-HorizontalAlign="Center">
 
                         <Columns>
                             <asp:BoundField DataField="LeaveStatus" HeaderText="Status" ItemStyle-Width="10%" HtmlEncode="false" />
                             <asp:BoundField DataField="LeaveType" HeaderText="Leave type" ItemStyle-Width="10%" HtmlEncode="false" />
-                            <asp:BoundField DataField="StartDate" HeaderText="Start date" ItemStyle-Width="15%" HtmlEncode="false" DataFormatString="{0: MMM dd, yyyy}" />
-                            <asp:BoundField DataField="EndDate" HeaderText="End date" ItemStyle-Width="15%" HtmlEncode="false" DataFormatString="{0: MMM dd, yyyy}" />
-                            <asp:BoundField DataField="TotalDays" HeaderText="Total days" ItemStyle-Width="10%" HtmlEncode="false" ItemStyle-HorizontalAlign="Center"/>
-                            <asp:BoundField DataField="EntryDate" HeaderText="Requested" ItemStyle-Width="10%" HtmlEncode="false" DataFormatString="{0: MMM dd, yyyy}" />
+                            <asp:BoundField DataField="StartDate" HeaderText="Start date" ItemStyle-Width="15%" HtmlEncode="false" DataFormatString="{0: MMM dd, yyyy}"  ItemStyle-HorizontalAlign="Center"/>
+                            <asp:BoundField DataField="EndDate" HeaderText="End date" ItemStyle-Width="15%" HtmlEncode="false" DataFormatString="{0: MMM dd, yyyy}"  ItemStyle-HorizontalAlign="Center"/>
+                            <asp:BoundField DataField="Duration" HeaderText="Duration" ItemStyle-Width="10%" HtmlEncode="false" ItemStyle-HorizontalAlign="Center"/>
+                            <asp:BoundField DataField="EntryDate" HeaderText="Requested" ItemStyle-Width="10%" HtmlEncode="false" DataFormatString="{0: MMM dd, yyyy}"  ItemStyle-HorizontalAlign="Center"/>
                             <asp:BoundField DataField="Comments" HeaderText="Notes" ItemStyle-Width="50%" HtmlEncode="false" />
                         </Columns>
                         <EmptyDataTemplate>

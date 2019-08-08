@@ -24,7 +24,8 @@ namespace Paymaker {
                 szSupervisor = "";
 
             string szSQL = string.Format(@"
-                SELECT  LR.*, L.NAME AS LEAVETYPE, LS.NAME AS LEAVESTATUS, U.FIRSTNAME + ' ' + U.LASTNAME AS STAFFMEMBER
+                SELECT  LR.*, L.NAME AS LEAVETYPE, LS.NAME AS LEAVESTATUS, U.FIRSTNAME + ' ' + U.LASTNAME AS STAFFMEMBER,
+                    CASE WHEN HOURS = 0 THEN CAST(TOTALDAYS as VARCHAR) + ' Days' ELSE CAST(HOURS AS VARCHAR) + ' Hrs' END as DURATION
                 FROM LEAVEREQUEST LR JOIN LIST L ON L.ID = LR.LEAVETYPEID
                 JOIN LEAVESTATUS LS ON LS.ID = LR.LEAVESTATUSID
                 JOIN DB_USER U ON LR.USERID = U.ID

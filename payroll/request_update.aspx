@@ -46,6 +46,10 @@
                 }
             });
 
+            $("#lstPartial").change(function () {
+                checkPartial();
+            })
+
             $("#txtEndDate").datepicker({
                 dateFormat: szFormat,
                 minDate: $("#txtStartDate").val(),
@@ -53,7 +57,7 @@
                     checkDiff();
                 }
             });
-
+            
             moment.updateLocale('au', {
                 holidays: arHolidayDates,
                 holidayFormat: szMomentFormat,
@@ -63,8 +67,22 @@
             $("#txtStartDate, #txtEndDate, #txtTotalDays").attr("readonly", "readonly");
             checkDiff();
             checkForReadOnly();
-
+            checkPartial();
         });
+
+        function checkPartial() {
+            blnPartial = $("#lstPartial").val() == "PARTIAL";
+            if (blnPartial) {
+                $("#bwContainer-txtHours").show();
+                $("#bwContainer-txtTotalDays").hide();
+                $("#txtHours").prop('required', true);
+            } else {
+                $("#bwContainer-txtHours").hide();
+                $("#bwContainer-txtTotalDays").show();
+                $("#txtHours").removeAttr("required");
+
+            } 
+        }
 
         function checkDiff() {
             diff = "";
@@ -72,7 +90,7 @@
             if ($("#txtStartDate").val() != "" && $("#txtEndDate").val() != "") {
                 d1 = moment($("#txtStartDate").datepicker("getDate"), szMomentFormat);
                 d2 = moment($("#txtEndDate").datepicker("getDate"), szMomentFormat);
-                diff = d1.businessDiff(d2) ;
+                diff = d1.businessDiff(d2);
             }
             $("#txtTotalDays").val(diff);
         }
@@ -80,7 +98,7 @@
         function checkForReadOnly() {
 
             if ($("#hdReadOnly").val() == "true") {
-                
+
                 $("#btnApprove, #btnReject").removeAttr("readonly").removeAttr("disabled");
             }
         }
@@ -103,32 +121,18 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-xs-12">
-                    <div class="form-group">
-                        <label for="lstLeaveType" class="control-label col-xs-2">Leave type:</label>
-                        <div class="col-xs-10">
-                            <asp:DropDownList ID="lstLeaveType" runat="server" CssClass="Entry  form-control" required></asp:DropDownList>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="txtStartDate" class="control-label col-xs-2">Start date:</label>
-                        <div class="col-xs-10">
-                            <asp:TextBox CssClass="Entry  form-control" ID="txtStartDate" runat="server" Text="" required style="background: white"></asp:TextBox>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="txtEndDate" class="control-label col-xs-2">End date:</label>
-                        <div class="col-xs-10">
-                            <asp:TextBox CssClass="Entry  form-control" ID="txtEndDate" runat="server" Text="" required style="background: white"></asp:TextBox>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="txtTotalDays" class="control-label col-xs-2">Total days:</label>
-                        <div class="col-xs-10">
-                            <asp:TextBox CssClass="Entry  form-control" ID="txtTotalDays" runat="server"></asp:TextBox>
-                        </div>
-                    </div>
-
+                    <bw:bwDropDownList ID="lstLeaveType" runat="server" Label="Leave type" LabelCols="2" required/>
+                    <bw:bwTextBox ID="txtStartDate" runat="server" Label="start date" required Style="background: white" LabelCols="2"/>
+                    <bw:bwTextBox ID="txtEndDate" runat="server" Label="End date" required Style="background: white" LabelCols="2"/>
+                    
+                    <bw:bwDropDownList ID="lstPartial" runat="server" Label="Full/part day" HelpText="If this request is fopr a part day, select partial day and enter the number of hours" LabelCols="2">
+                        <asp:ListItem Value="" Text="Full days" />
+                        <asp:ListItem Value="PARTIAL" Text="Part day" />
+                    </bw:bwDropDownList>
+                    
+                    <bw:bwTextBox ID="txtTotalDays" runat="server" Label="TotalDays" LabelCols="2" />
+                    <bw:bwTextBox ID="txtHours" runat="server" Label="Hours:" LabelCols="2" type="number"/>
+                    
                     <div class="form-group">
                         <label for="lblComments" class="control-label col-xs-2">Reason</label>
                         <div class="col-xs-10">
@@ -157,7 +161,7 @@
                     <asp:Button ID="btnApprove" runat="server" Text="Approve" CssClass="Button btn btn-primary btn-block"
                         CausesValidation="False" TabIndex="300" OnClientClick="return confirmApproval();" Visible="false"
                         Style="margin-bottom: 15px" OnClick="btnApprove_Click"></asp:Button>
-                         <asp:Button ID="btnUpdate" runat="server" Text="Send approval request" CssClass="Button btn btn-block"
+                    <asp:Button ID="btnUpdate" runat="server" Text="Send approval request" CssClass="Button btn btn-block"
                         CausesValidation="False" TabIndex="100" OnClick="btnUpdate_Click" OnClientClick="return validatePage()"
                         Style="margin-bottom: 5px"></asp:Button>
                 </div>
@@ -165,7 +169,7 @@
                     <asp:Button ID="btnReject" runat="server" Text="Reject" CssClass="Button btn btn-secondary btn-block center-block" Visible="false"
                         CausesValidation="False" TabIndex="300" OnClientClick="return confirmRejection();"
                         Style="margin-bottom: 15px" OnClick="btnReject_Click"></asp:Button>
-                       
+
                     <asp:Button ID="btnDiscussion" runat="server" Text="Discussion required" CssClass="Button btn btn-primary btn-block"
                         CausesValidation="False" TabIndex="300" OnClientClick="return confirmDiscussion();" Visible="false"
                         Style="margin-bottom: 15px" OnClick="btnDiscussion_Click"></asp:Button>

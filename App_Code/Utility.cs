@@ -13,7 +13,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-
+using BootstrapWrapper;
 
 /// <summary>
 /// What is the payment structure for the current agent
@@ -354,6 +354,17 @@ public class Utility {
         }
     }
 
+    public static void setListBoxItems(BootstrapWrapper.bwDropDownList oList, string szListOfIDs) {
+        if (szListOfIDs == "")
+            return;
+        Utility.RemoveWhitespace(szListOfIDs);
+        szListOfIDs = "," + szListOfIDs + ",";
+
+        foreach (ListItem oLI in oList.Items) {
+            oLI.Selected = szListOfIDs.IndexOf("," + oLI.Value + ",") > -1;
+        }
+    }
+  
     public static void setListBoxItemsError(ref DropDownList oList, string ListValue) {
         Utility.RemoveWhitespace(ListValue);
         if (ListValue == "" || ListValue == "null" || ListValue == "NULL")
@@ -433,6 +444,13 @@ public class Utility {
         oList.DataBind();
         oData.Close();
         oData = null;
+    }
+
+    public static void bindListBW(bwDropDownList oList, DataSet oData, string szIDCol = "ID", string szValueCol = "NAME") {
+        oList.DataSource = oData;
+        oList.DataValueField = szIDCol;
+        oList.DataTextField = szValueCol;
+        oList.DataBind();
     }
 
     public static void BindList(ref ListBox oList, DataSet oData, string szIDCol = "ID", string szValueCol = "NAME") {

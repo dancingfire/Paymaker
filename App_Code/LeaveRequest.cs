@@ -23,6 +23,7 @@ public class LeaveRequest {
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public int TotalDays { get; set; }
+    public int TotalHours { get; set; }
     public string Comment { get; set; }
     public string ManagerComments { get; set; }
     public string SupportingFile { get; set; }
@@ -43,6 +44,7 @@ public class LeaveRequest {
                 RequestUserID = Convert.ToInt32(dr["USERID"]);
                 LeaveStatus = (LeaveRequestStatus)Convert.ToInt32(dr["LEAVESTATUSID"]);
                 TotalDays = Convert.ToInt32(dr["TotalDays"]);
+                TotalHours = Convert.ToInt32(dr["Hours"]);
                 Comment = Convert.ToString(dr["COMMENTS"]);
                 EnteredDate = DB.readDate(dr["ENTRYDATE"]);
                 StartDate = DB.readDate(dr["STARTDATE"]);
@@ -69,6 +71,7 @@ public class LeaveRequest {
         oSQL.add("COMMENTS", Comment);
         oSQL.add("LEAVETYPEID", LeaveTypeID);
         oSQL.add("TOTALDAYS", TotalDays);
+        oSQL.add("HOURS", TotalHours);
 
         if (intID == -1) {
             oSQL.add("USERID", G.User.ID);

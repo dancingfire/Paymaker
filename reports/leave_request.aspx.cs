@@ -102,7 +102,7 @@ public class LeaveRequest : Report {
     public override DataSet getData() {
         string szSQL = string.Format(@"
                 SELECT  LR.*, L.NAME AS LEAVETYPE, LS.NAME AS STATUS, U.FIRSTNAME + ' ' + U.LASTNAME AS STAFF,
-                U.FIRSTNAME + ' ' + U.LASTNAME AS MANAGER
+                U.FIRSTNAME + ' ' + U.LASTNAME AS MANAGER,  CASE WHEN HOURS = 0 THEN CAST(TOTALDAYS as VARCHAR) + ' Days' ELSE CAST(HOURS AS VARCHAR) + ' Hrs' END as DURATION
                 FROM LEAVEREQUEST LR JOIN LIST L ON L.ID = LR.LEAVETYPEID
                 JOIN LEAVESTATUS LS ON LS.ID = LR.LEAVESTATUSID
                 JOIN DB_USER U ON LR.USERID = U.ID

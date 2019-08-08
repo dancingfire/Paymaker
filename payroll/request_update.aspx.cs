@@ -27,7 +27,7 @@ public partial class request_update : Root {
 
     private void bindData() {
         string szSQL = String.Format("SELECT ID, NAME FROM LIST WHERE LISTTYPEID = {0} AND ISACTIVE = 1 ORDER BY SEQUENCENO, NAME", (int)ListType.LeaveType);
-        Utility.BindList(ref lstLeaveType, DB.runReader(szSQL), "ID", "NAME");
+        Utility.bindListBW( lstLeaveType, DB.runDataSet(szSQL), "ID", "NAME");
         lstLeaveType.Items.Insert(0, new ListItem("Select leave type...", ""));
 
         using (DataSet ds = DB.runDataSet("select * from PUBLICHOLIDAY WHERE HOLIDAYDATE > DateAdd(d, -100, getdate())")) {
@@ -84,10 +84,14 @@ public partial class request_update : Root {
         txtEndDate.Text = Utility.formatDate(l.EndDate);
         txtComments.Text = l.Comment;
         txtManagerComments.Text = l.ManagerComments;
+        txtHours.Text = l.TotalHours.ToString();
+        if(l.TotalHours > 0) {
+            lstPartial.SelectedValue = "PARTIAL";
+        }
         if (l.SupportingFile != "") {
             lExistingFile.Text = string.Format("<a href='view_doc.aspx?file={0}' target='_blank'>View file</a> <br/>", Server.UrlEncode(l.SupportingFile), l.SupportingFile);
         }
-        Utility.setListBoxItems(ref lstLeaveType, l.LeaveTypeID.ToString());
+        Utility.setListBoxItems(lstLeaveType, l.LeaveTypeID.ToString());
         if (l.LeaveStatus == LeaveRequestStatus.Rejected || (l.LeaveStatus == LeaveRequestStatus.Approved && l.StartDate < DateTime.Now.AddDays(-100))) {
             txtComments.ReadOnly = true;
             btnUpdate.Visible = false;
@@ -134,10 +138,10 @@ public partial class request_update : Root {
         l = new LeaveRequest(intID);
         l.StartDate = Valid.getDate("txtStartDate");
         l.EndDate = Valid.getDate("txtEndDate");
-        l.Comment = txtComments.Text;
-        l.LeaveTypeID = Convert.ToInt32(lstLeaveType.SelectedValue);
+        l.Comment = Valid.getText("txtComments", "");
+        l.LeaveTypeID = Valid.getInteger("lstLeaveType");
         l.TotalDays = Valid.getInteger("txtTotalDays");
-        l.LeaveType = lstLeaveType.SelectedItem.Text;
+        l.TotalHours = Valid.getInteger("txtHours");
         l.updateDB();
         l.addFile(FileUpload1);
         sbStartJS.Append("parent.closeEditModal(true);");
