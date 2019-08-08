@@ -15,13 +15,7 @@ namespace Paymaker {
         /// <param name="e"></param>
         protected void Page_Load(object sender, System.EventArgs e) {
             blnShowMenu = false;
-            string szStartDate = Valid.getText("szStartDate", "", VT.TextNormal);
-            string szEndDate = Valid.getText("szEndDate", "", VT.TextNormal);
-            if (!String.IsNullOrEmpty(szStartDate)) {
-                dtStart = DateTime.Parse(szStartDate);
-                if (!String.IsNullOrEmpty(szEndDate))
-                    dtEnd = DateTime.Parse(szEndDate);
-            }
+            
             blnPrint = Valid.getBoolean("blnPrint", false);
 
             if (blnPrint) {
@@ -44,11 +38,6 @@ namespace Paymaker {
         private Report getReport() {
             //Load the parameters from the page
             ReportFilters oFilter = new ReportFilters();
-
-            oFilter.StartDate = dtStart;
-            oFilter.EndDate = dtEnd;
-            oFilter.OfficeIDList = Valid.getText("szOfficeID", "", VT.NoValidation);
-            oFilter.UserIDList = Valid.getText("szUserID", "", VT.NoValidation);
             Report oR = new KPI_Agent_Card(rViewer, oFilter);
             return oR;
         }

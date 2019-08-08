@@ -125,12 +125,12 @@
                     <bw:bwTextBox ID="txtStartDate" runat="server" Label="start date" required Style="background: white" LabelCols="2"/>
                     <bw:bwTextBox ID="txtEndDate" runat="server" Label="End date" required Style="background: white" LabelCols="2"/>
                     
-                    <bw:bwDropDownList ID="lstPartial" runat="server" Label="Full/part day" HelpText="If this request is fopr a part day, select partial day and enter the number of hours" LabelCols="2">
+                    <bw:bwDropDownList ID="lstPartial" runat="server" Label="Full/part day" HelpText="If this request is for a part day, select part day and enter the number of hours" LabelCols="2">
                         <asp:ListItem Value="" Text="Full days" />
                         <asp:ListItem Value="PARTIAL" Text="Part day" />
                     </bw:bwDropDownList>
                     
-                    <bw:bwTextBox ID="txtTotalDays" runat="server" Label="TotalDays" LabelCols="2" />
+                    <bw:bwTextBox ID="txtTotalDays" runat="server" Label="Duration" LabelCols="2"  HelpText="The duration of the leave request, excluding any public holidays"/>
                     <bw:bwTextBox ID="txtHours" runat="server" Label="Hours:" LabelCols="2" type="number"/>
                     
                     <div class="form-group">

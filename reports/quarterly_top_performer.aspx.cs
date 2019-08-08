@@ -29,7 +29,7 @@ namespace Paymaker {
                 szCompanyFilter += String.Format(" AND L_OFFICE.COMPANYID IN ({0})", szCompanyIDList);
 
             string szSQL = string.Format(@"
-                SELECT SUM(USS.GRAPHCOMMISSION AS COMMISSION,
+                SELECT SUM(USS.GRAPHCOMMISSION) AS COMMISSION,
                 SUM(CASE
                     WHEN COMMISSIONTYPEID = 6 THEN  (USS.CALCULATEDAMOUNT/SS.CALCULATEDAMOUNT) * .11 --lead
                     WHEN COMMISSIONTYPEID = 10 THEN  (USS.CALCULATEDAMOUNT/SS.CALCULATEDAMOUNT) * .45 --list
