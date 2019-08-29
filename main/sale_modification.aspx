@@ -32,26 +32,26 @@
                 OnClick="btnSearch_Click" />
         </div>
 
-        <asp:Panel ID="pDetails" runat="server" Visible="false">
+        <asp:Panel ID="pDetails" runat="server" Visible="false" style="margin-top:15px; float: left">
 
-            <asp:GridView ID="gvSales" runat="server" AutoGenerateColumns="false" Style="width: 750px; cursor: pointer"
+            <asp:GridView ID="gvSales" runat="server" AutoGenerateColumns="false" Style="width: 850px; cursor: pointer"
                 OnRowDataBound="gvSales_RowDataBound" DataKeyNames="ID" ClientIDMode="Predictable">
                 <Columns>
-                    <asp:BoundField DataField="CODE" HeaderText="Code" ReadOnly="true" DataFormatString="{0:MMM dd, yyyy}" HeaderStyle-Width="100" />
-                    <asp:BoundField DataField="ADDRESS" HeaderText="Address" ReadOnly="true" DataFormatString="{0:MMM dd, yyyy}" HeaderStyle-Width="300" />
-                    <asp:BoundField DataField="ENTITLEMENTDATE" HeaderText="Entitlement date" ReadOnly="true" DataFormatString="{0:MMM dd, yyyy}" HeaderStyle-Width="100" />
-                    <asp:TemplateField HeaderText="Status" HeaderStyle-Width="100" ItemStyle-HorizontalAlign="Center">
+                    <asp:BoundField DataField="CODE" HeaderText="Code" ReadOnly="true" DataFormatString="{0:MMM dd, yyyy}" HeaderStyle-Width="10%" />
+                    <asp:BoundField DataField="ADDRESS" HeaderText="Address" ReadOnly="true" DataFormatString="{0:MMM dd, yyyy}" HeaderStyle-Width="30%" />
+                    <asp:BoundField DataField="ENTITLEMENTDATE" HeaderText="Entitlement date" ReadOnly="true" DataFormatString="{0:MMM dd, yyyy}" HeaderStyle-Width="20%" />
+                    <asp:TemplateField HeaderText="Status" HeaderStyle-Width="15%" ItemStyle-HorizontalAlign="Center">
                         <ItemTemplate>
                             <asp:Label ID="lblStatus" runat="server" Text='<%# getStatus(Convert.ToInt32(Eval("STATUSID"))) %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
 
-                    <asp:TemplateField HeaderText="Pay Period" HeaderStyle-Width="100" ItemStyle-HorizontalAlign="Center">
+                    <asp:TemplateField HeaderText="Pay Period" HeaderStyle-Width="15%" ItemStyle-HorizontalAlign="Center">
                         <ItemTemplate>
                             <asp:Label ID="lblPayPeriodID" runat="server" Text='<%# Eval("PAYPERIOD") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Locked" HeaderStyle-Width="60" ItemStyle-HorizontalAlign="Center">
+                    <asp:TemplateField HeaderText="Locked" HeaderStyle-Width="10%" ItemStyle-HorizontalAlign="Center">
                         <ItemTemplate>
                             <asp:Label ID="lblLocked" runat="server" Text='<%# getLocked(Convert.ToInt32(Eval("LOCKCOMMISSION"))) %>' />
                         </ItemTemplate>

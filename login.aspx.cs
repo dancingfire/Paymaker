@@ -11,7 +11,7 @@ namespace Paymaker {
     public partial class Paymaker_Form : Root {
         protected System.Data.SqlClient.SqlConnection cnn;
         private string szForgotUserNameEntered = string.Empty;
-
+        bool blnLeave = false;
         protected void Page_Init(object sender, System.EventArgs e) {
             blnUseSession = false;
             blnIsRoot = true;
@@ -29,8 +29,10 @@ namespace Paymaker {
             // This ensures session is logged out when people log out or time out
             if (!IsPostBack && HttpContext.Current.Session != null)
                 HttpContext.Current.Session.Abandon();
+            //Check whether we are redirecting to the leave page
+            blnLeave = Request.QueryString["LEAVE"] != null;
 
-            if (Request.QueryString["Timeout"] != null) {
+                if (Request.QueryString["Timeout"] != null) {
                 lblTimeout.Visible = true;
             } else {
                 lblTimeout.Visible = false;
@@ -71,7 +73,7 @@ namespace Paymaker {
         }
 
         private void loginSuccess(int intResult) {
-            G.CurrentUserID = intResult;
+            G.User.ID = intResult;
             string szSQL = "SELECT * FROM DB_USER WHERE ID = " + intResult.ToString();
 
             SqlDataReader dr = DB.runReader(szSQL);
@@ -79,28 +81,33 @@ namespace Paymaker {
                 dr.Read();
                 UserLogin.writeLog(intResult, Convert.ToString(dr["LOGIN"]), true);
                 Session["LOGIN"] = Convert.ToString(dr["LOGIN"]);
-                G.CurrentUserName = Convert.ToString(dr["FirstName"] + " " + dr["LastName"]);
-                G.CurrentUserEmail = Convert.ToString(dr["EMAIL"]);
-                G.CurrentUserRoleID = Convert.ToInt32(dr["ROLEID"]);
-                G.CurrentUserPayrollTypeID = Convert.ToInt32(dr["PAYROLLCYCLEID"]);
+                G.User.UserName = Convert.ToString(dr["FirstName"] + " " + dr["LastName"]);
+                G.User.AdminPAForThisUser = DB.readInt(dr["ADMINPAFORUSERID"]);
+                G.User.Email = Convert.ToString(dr["EMAIL"]);
+                G.User.RoleID = Convert.ToInt32(dr["ROLEID"]);
+                G.User.PayrollTypeID = Convert.ToInt32(dr["PAYROLLCYCLEID"]);
+                HttpContext.Current.Session["ISLEAVESUPERVISOR"] = null;
                 if (String.IsNullOrEmpty(dr["PERMISSIONS"].ToString()))
                     G.CurrentUserPermissions = "";
                 else
                     G.CurrentUserPermissions = dr["PERMISSIONS"].ToString();
                 FormsAuthentication.SetAuthCookie(Session["LOGIN"].ToString(), false);
                 string szStartPage = "main/sales_dashboard.aspx";
-                if (G.CurrentUserRoleID == 1) {
+                if (blnLeave) {
+                    szStartPage = "payroll/leave_manager_dashboard.aspx";
+                } else  if (G.User.RoleID == 1) {
                     szStartPage = "main/admin_dashboard.aspx";
                 } else if (G.User.hasPermission(RolePermissionType.ViewCampaignModule)) {
                     szStartPage = "campaign/campaign_dashboard.aspx";
-                } else if (G.CurrentUserRoleID == 5) {
+                } else if (G.User.RoleID == 5) {
                     szStartPage = "payroll/payroll_dashboard.aspx";
                 }
                 sbEndJS.AppendFormat("window.top.location.href = '{0}';", szStartPage);
 
                 Application.UnLock();
                 pPage.Visible = false;
-
+                //Clear the supervisor variable - it is set as required
+                HttpContext.Current.Session["ISPAYROLLSUPERVISOR"] = null;
                 // Load up the session vars
                 szSQL = "SELECT TOP 1 * FROM PAYPERIOD ORDER BY ID DESC";
                 SqlDataReader drSettings = DB.runReader(szSQL);

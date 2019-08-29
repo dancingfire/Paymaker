@@ -12,6 +12,7 @@
 
         $(document).ready(function () {
             addFormValidation('frmMain');
+          
         });
     </script>
 </head>
@@ -33,13 +34,23 @@
             <asp:TextBox ID="txtSuperMax" runat="server" CssClass="Entry EntryPos number required"></asp:TextBox>
             <br class='Align' />
 
+            <asp:Label ID="Label4" runat="server" CssClass="Label LabelPos" Text="Super GL code" Style="width: 200px" ToolTip="The GL code for the super amount"></asp:Label>
+            <asp:TextBox ID="txtSuperGLCode" runat="server" CssClass="Entry EntryPos required"></asp:TextBox>
+            <br class='Align' />
+
             <asp:Label ID="Label3" runat="server" CssClass="Label LabelPos" Text="Calculate bonus" Style="width: 200px" ToolTip="Calculate and show the bonuses on the commission statements"></asp:Label>
             <asp:DropDownList ID="lstCalcBonus" runat="server" CssClass="Entry EntryPos">
                 <asp:ListItem Text="False" Value="FALSE"></asp:ListItem>
                 <asp:ListItem Text="True" Value="TRUE"></asp:ListItem>
             </asp:DropDownList>
             <br class='Align' />
-            <asp:Button ID="btnDelete" runat="server" Text="Remove all bonus records" CssClass="Button btn" OnClick="btnDeleteBonus_Click" />
+
+              <asp:Label ID="Label5" runat="server" CssClass="Label LabelPos" Text="Leave process testers" Style="width: 200px" ToolTip="Select the people you want to be able to see the leave testing"></asp:Label>
+             <asp:ListBox ID="lstPermittedUsers" runat="server" CssClass="Entry EntryPos" SelectionMode="Multiple"  >
+            </asp:ListBox>
+
+            <br class='Align' />
+            <asp:Button ID="btnDelete" runat="server" Text="Remove all bonus records" CssClass="Button btn" OnClick="btnDeleteBonus_Click"  Visible="false"/>
         </div>
         <div class='AdminActionPanel' style='float: left; text-align: right; width: 100px'>
             <asp:Button ID="btnUpdate" runat="server" Text="Update" CssClass="Button btn" OnClick="btnUpdate_Click" />

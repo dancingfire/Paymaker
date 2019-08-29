@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
-using System.Data.Odbc;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web.UI.WebControls;
@@ -395,7 +393,6 @@ public class Sale {
             oSE.delete();
     }
 
-  
     /// <summary>
     /// Used to check for various null / invalid date values.  including DateTime.MinVal & 1900-01-01
     /// </summary>
@@ -433,7 +430,7 @@ public class Sale {
         String szSQL = String.Format(@"
                     -- 0. BnD records to be imported
                     SELECT SL.ID AS BnDSALEID, *,
-						(SELECT SUM(AMOUNT) FROM SALESVOUCHERDEDUCTION WHERE (REASON = 'External Conjunctional' OR REASON = 'Referral/Conjunctional') AND SALESVOUCHERID = SV.ID) AS CONJUNCTIONAL,
+						(SELECT SUM(AMOUNT) FROM SALESVOUCHERDEDUCTION WHERE (REASON = 'External Conjunctional' OR REASON = 'Referral/Conjunctional' OR REASON like '%Conjunctional%') AND SALESVOUCHERID = SV.ID) AS CONJUNCTIONAL,
 	                    SUBSTRING ( -- Calculate purchaser suburb(s) in a comma seperated list if required
 		                    (SELECT ', ' + SUBURB FROM PROPERTY PUR_P
 			                    JOIN CONTACT C ON C.RESIDENTIALPROPERTYID = PUR_P.ID
@@ -567,74 +564,18 @@ public class Sale {
     /// <summary>
     /// Checks to see if any sales have been withdrawn, and sets the gross commission to 0 as a result
     /// </summary>
-    static void checkWithdrawnSales() {
+    private static void checkWithdrawnSales() {
         string szSQL = String.Format(@"
                 UPDATE   {0}.dbo.SALE
-                    SET GROSSCOMMISSION = 0 
-                WHERE ID in (
+                    SET GROSSCOMMISSION = 0
+                WHERE BNDSALEID in (
                     SELECT ID
-                    FROM SALESLISTING 
-                    WHERE (WITHDRAWNON IS NOT NULL AND STATUS = 'listing_cancelled') 
+                    FROM SALESLISTING
+                    WHERE (WITHDRAWNON IS NOT NULL AND STATUS = 'listing_cancelled')
 				);", Client.DBName);
         DB.runNonQuery(szSQL, DB.BoxDiceDBConn);
-
     }
-    /// <summary>
-    /// Returns the SaleID
-    /// </summary>
-    /// <param name="dr"></param>
-    /// <returns></returns>
-    private static int processImport(DataRow dr) {
-        //Check it the Sale is already imported
-        int intDbID = DB.getScalar(string.Format("SELECT ID FROM SALE WHERE REOFFICEID = {0}", dr["BU_BUSINESSID"]), -1);
-        Sale oS = new Sale(intDbID, false, false);
-        bool blnDataChanged = false;
-        sqlUpdate oSQL = new sqlUpdate("SALE", "ID", intDbID);
-        oSQL.add("REOFFICEID", dr["BU_BUSINESSID"].ToString());
-        oSQL.add("CODE", dr["BU_CODE"].ToString());
-        oSQL.add("ADDRESS", dr["ADDRESS"].ToString());
-        DateTime dtSaleDate = Valid.checkDate(dr["SALEDATE"].ToString(), DateTime.MinValue);
 
-        if (dtSaleDate == DateTime.MinValue || dtSaleDate == new DateTime(1900, 1, 1))
-            oSQL.addNull("SALEDATE");
-        else
-            oSQL.add("SALEDATE", Utility.formatDate(dtSaleDate));
-
-        DateTime dtEntitlement = Valid.checkDate(dr["ENTITLEMENTDATE"].ToString(), DateTime.MinValue);
-
-        if (dtEntitlement == DateTime.MinValue || dtEntitlement == new DateTime(1900, 1, 1))
-            oSQL.addNull("ENTITLEMENTDATE");
-        else
-            oSQL.add("ENTITLEMENTDATE", Utility.formatDate(dtEntitlement));
-
-        if (Valid.isNumeric(dr["SALEPRICE"].ToString())) {
-            oSQL.add("SALEPRICE", dr["SALEPRICE"].ToString());
-        } else
-            oSQL.add("SALEPRICE", 0);
-
-        if (oS.dConjCommission != Convert.ToDouble(dr["CONJUNCTIONALCOMMISSION"])) {
-            blnDataChanged = true;
-            DBLog.addGenericRecord(DBLogType.SaleData, "Commission modified on property: " + dr["BU_CODE"].ToString() + " From: " + oS.ConjCommission + " to " + Convert.ToDouble(dr["CONJUNCTIONALCOMMISSION"]), oS.SaleID);
-        }
-        oSQL.add("SUBURB", Convert.ToString(dr["BU_SUBURB"]));
-        oSQL.add("CONJUNCTIONALCOMMISSION", dr["CONJUNCTIONALCOMMISSION"].ToString());
-        oSQL.add("CONJUNCTIONALAGENT", dr["CONJUNCTIONALAGENT"].ToString());
-        oSQL.add("GROSSCOMMISSION", dr["BU_GROSSCOMMISSION"].ToString());
-        oSQL.add("SETTLEMENTDATE", Utility.formatDate(Valid.checkDate(dr["BU_ACTUALSETTLEMENT"].ToString(), DateTime.MinValue)));
-
-        if (intDbID == -1) {
-            DB.runNonQuery(oSQL.createInsertSQL());
-            intDbID = DB.getScalar("SELECT MAX(ID) FROM SALE", 0);
-        } else {
-            // CHeck to see if we are updating a current or future record and flag it as such
-            if (blnDataChanged && dtEntitlement != DateTime.MinValue && dtEntitlement >= G.CurrentPayPeriodStart)
-                oSQL.add("ISSOURCEMODIFIED", 1);
-
-            DB.runNonQuery(oSQL.createUpdateSQL());
-        }
-        return intDbID;
-    }
-    
     /// <summary>
     /// Loads all the records where a salesperson has a part of the splits
     /// </summary>
@@ -646,6 +587,7 @@ public class Sale {
             szLocationFilter = String.Format(" AND (CODE LIKE '%{0}%' or S.ADDRESS LIKE '%{0}%' )", Utility.formatForDB(LocationFilter));
 
         string szSQL = String.Format(@"
+            -- Sales
             SELECT S.ID, S.ENTITLEMENTDATE, MIN(S.CODE) AS CODE, S.ADDRESS, MIN(S.SALEDATE) AS SALEDATE,  MIN(S.SETTLEMENTDATE) AS SETTLEMENTDATE, min(S.SALEPRICE) AS SALEPRICE, SUM(USS.CALCULATEDAMOUNT) AS COMMISSIONTOTAL
             FROM SALE S
             JOIN SALESPLIT SS ON S.ID = SS.SALEID AND SS.RECORDSTATUS = 0
@@ -664,6 +606,7 @@ public class Sale {
     /// <returns></returns>
     public static DataSet loadYTDSalesForSalesPerson(int UserID, DateTime StartDate) {
         string szSQL = String.Format(@"
+            -- YTD
             SELECT P.ID AS PAYPERIODID, DATENAME(mm, P.STARTDATE) AS MONTH, DATEPART(yyyy,P.STARTDATE) as YEAR, SUM(ISNULL(USS.CALCULATEDAMOUNT, 0)) AS COMMISSIONTOTAL,  SUM(ISNULL(USS.GRAPHCOMMISSION, 0)) AS GRAPHCOMMISSION
             FROM PAYPERIOD P
             LEFT JOIN SALE S ON S.PAYPERIODID = P.ID
@@ -688,7 +631,8 @@ public class Sale {
             SELECT '' AS COMMISSIONNAME, SS.COMMISSIONTYPEID, S.CODE, S.ADDRESS, S.ENTITLEMENTDATE,
                 S.CONJUNCTIONALCOMMISSION AS CONJUNCTIONALCOMMISSION, S.GROSSCOMMISSION,
             USS.AMOUNT AS AMOUNT, USS.AMOUNTTYPEID, USS.ACTUALPAYMENT, USS.CALCULATEDAMOUNT AS GRAPHTOTAL,
-                CASE WHEN SS.AMOUNTTYPEID = 1 THEN CAST(SS.AMOUNT as varchar) + '%' ELSE '$'+ CAST(SS.AMOUNT as varchar) END AS SS_AMOUNT, USS.COMMISSIONTIERID
+                CASE WHEN SS.AMOUNTTYPEID = 1 THEN CAST(SS.AMOUNT as varchar) + '%' ELSE '$'+ CAST(SS.AMOUNT as varchar) END AS SS_AMOUNT, USS.COMMISSIONTIERID,
+            (SELECT SUM(CALCULATEDAMOUNT) FROM SALEEXPENSE WHERE SALEID = S.ID) AS OTTEXP, SS.AMOUNT AS TOTALCOMMPERCENTAGE
 
             FROM USERSALESPLIT USS
             JOIN SALESPLIT SS ON USS.SALESPLITID = SS.ID AND SS.RECORDSTATUS = 0 AND USS.RECORDSTATUS < 1   AND USS.RECORDSTATUS < 1
@@ -787,7 +731,7 @@ public class Sale {
                 S.CONJUNCTIONALCOMMISSION AS CONJUNCTIONALCOMMISSION, S.GROSSCOMMISSION, SS.ID AS SALESPLITID,
                 USS.AMOUNT AS AMOUNT, USS.AMOUNTTYPEID, USS.ACTUALPAYMENT, USS.ID AS USERSPLITID, USS.CALCULATEDAMOUNT,
                 CASE WHEN SS.AMOUNTTYPEID = 1 THEN CAST(SS.AMOUNT as varchar) + '%' ELSE '$'+ CAST(SS.AMOUNT as varchar) END AS SS_AMOUNT,
-                USS.OFFICEID
+                USS.OFFICEID, (SELECT SUM(CALCULATEDAMOUNT) FROM SALEEXPENSE WHERE SALEID = S.ID) AS OTTEXP,  SS.AMOUNT AS TOTALCOMMPERCENTAGE
 
             FROM USERSALESPLIT USS
             JOIN SALESPLIT SS ON USS.SALESPLITID = SS.ID AND SS.RECORDSTATUS = 0 AND USS.RECORDSTATUS < 1

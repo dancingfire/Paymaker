@@ -19,7 +19,7 @@
             }
             return false;
         }
-
+        
         function recalFletcherContribution(Row) {
             var floatUserAmount = 0;
             var fExGST = parseFloat($.trim($("#lblAmountExGST" + Row).html()));
@@ -83,8 +83,14 @@
             }
         }
 
+         function getUserGLSuccess(val) {
+            Row = intAjaxRow;
+            $("#txtJobCredit" + Row).val(val).select2().trigger('change');
+            $("#txtJobDebit" + Row).val(val).select2().trigger('change');
+        }
+
         function getBudgetAmountSuccess(szResult) {
-            // Result format: BudgetAmount***CreditGLCode***DebitGLCode***AccountJobCode***OfficeJobCode
+            // Result format: BudgetAmount***CreditGLCode***DebitGLCode
             Row = intAjaxRow;
             arResult = szResult.split("***");
             if ($("#chkOverrideCodes" + Row).is(':checked'))
@@ -92,14 +98,11 @@
             $("#lblBudgetAmount" + Row).html(arResult[0]);
             if ($("#lstType" + Row).val().toUpperCase() == "EXPENSE") {
                 $("#txtGLCredit" + Row).val(arResult[1]);     //User Credit GL code
-                $("#txtJobCredit" + Row).val(arResult[2]);    // User's office job code
-                $("#txtGLDebit" + Row).val(arResult[3]);      //Account Debit GL code
-                $("#txtJobDebit" + Row).val(arResult[4]);     //Account job code
+                 $("#txtGLDebit" + Row).val(arResult[3]);      //Account Debit GL code
             } else {
                 $("#txtGLDebit" + Row).val(arResult[1]);     //User Credit GL code
-                $("#txtJobDebit" + Row).val(arResult[2]);    // User's office job code
                 $("#txtGLCredit" + Row).val(arResult[3]);      //Account Debit GL code
-                $("#txtJobCredit" + Row).val(arResult[4]);     //Account job code
+                
             }
         }
 
@@ -191,16 +194,22 @@
             $("#lstAmountType" + intRow).bind('change', function (e) { recalFletcherContribution(getID(e.target)); });
             $("#lstIncomeAccounts" + intRow).bind('change', function (e) { getBudgetAmount(getID(e.target)); });
             $("#lstExpenseAccounts" + intRow).bind('change', function (e) { getBudgetAmount(getID(e.target)); });
-            $("#lstUserID" + intRow).bind('change', function (e) { getBudgetAmount(getID(e.target)); });
+            $("#lstUserID" + intRow).bind('change', function (e) {
+                getBudgetAmount(getID(e.target));
+                 intAjaxRow = getID(e.target);
+                callWebMethod("../web_services/ws_Paymaker.asmx", "getUserGLSubAccount", ["UserID", $("#lstUserID" + intRow).val()], getUserGLSuccess);
+            });
             $("#txtFletcherContribution" + intRow).bind('change', function (e) { getExGSTAmount(getID(e.target)); });
             $("#txtAmount" + intRow).bind('change', function (e) { getExGSTAmount(getID(e.target)); });
             $("#chkIncludeGST" + intRow).bind('change', function (e) { getExGSTAmount(getID(e.target)); });
             $("#txtGLCredit" + intRow).bind('change', function (e) { lockAccounts(getID(e.target)); });
             $("#txtGLDebit" + intRow).bind('change', function (e) { lockAccounts(getID(e.target)); });
-            $("#txtJobCredit" + intRow).bind('change', function (e) { lockAccounts(getID(e.target)); });
-            $("#txtJobDebit" + intRow).bind('change', function (e) { lockAccounts(getID(e.target)); });
             $("#imgSearch" + intRow).bind('click', function (e) { showAgentTXHistory(getID(e.target)); });
-
+            $("#txtJobCredit" + intRow).select2({ tags: true });
+            $("#txtJobDebit" + intRow).select2({ tags: true });
+          $(".select2-selection").on("focus", function () {
+                $(this).parent().parent().prev().select2("open");
+            });
             $("#r" + intRow + ".Entry").focus(function () {
                 // only select if the text has not changed
                 if (this.value == this.defaultValue) {
@@ -209,6 +218,8 @@
             });
 
             $("#r" + intRow).show();
+            select2Setup();
+
             $("#lstUserID" + intRow).focus().focus();
         }
 
@@ -247,6 +258,7 @@
                 blnAllowClose = true;
                 window.onbeforeunload = null;
             });
+         
         }
     </script>
     <style>
@@ -260,25 +272,25 @@
         <asp:HiddenField ID="hdSkipIDs" runat="server" />
         <asp:HiddenField ID="hdTXCount" runat="server" />
         <asp:Label ID="Label3" runat="server" CssClass="Label LabelPos">Date</asp:Label>
-        <asp:TextBox CssClass="Entry EntryPos" ID="txtTxDate" runat="server" Text=""></asp:TextBox>
+        <asp:TextBox CssClass="Entry EntryPos" ID="txtTxDate" runat="server" Text="" TabIndex="0"></asp:TextBox>
         <br class="Align" />
 
         <table id="tTX" style="table-layout: fixed; width: 100%">
             <thead>
                 <tr class="TableHeader">
                     <th style="width: 8%">User</th>
-                    <th style="width: 8%">Type</th>
+                    <th style="width: 6%">Type</th>
                     <th style="width: 7%">Account</th>
-                    <th style="width: 5%">Budget amount</th>
+                    <th style="width: 4%">Budget amount</th>
                     <th style="width: 5%">Total amount</th>
-                    <th style="width: 5%">Exclude GST</th>
+                    <th style="width: 4%">Exclude GST</th>
                     <th style="width: 5%">Total amount (ex GST)</th>
                     <th style="width: 8%">Fletcher's contrib</th>
                     <th style="width: 5%">User amount</th>
                     <th style="width: 5%">Credit GL</th>
-                    <th style="width: 5%">Credit Job</th>
+                    <th style="width: 7%">Credit Job</th>
                     <th style="width: 5%">Debit  GL</th>
-                    <th style="width: 5%">Debit Job</th>
+                    <th style="width: 7%">Debit Job</th>
                     <th style="width: 5%">Override codes</th>
                     <th style="width: 8%">Category</th>
                     <th style="width: 11%">Comments</th>
@@ -327,13 +339,13 @@
                         <asp:TextBox CssClass="Entry EntryPos" ID="txtGLCredit_ROWNUM" runat="server" Text="" Width="55px" TabIndex="100"></asp:TextBox>
                     </td>
                     <td>
-                        <asp:TextBox CssClass="Entry EntryPos" ID="txtJobCredit_ROWNUM" runat="server" Text="" Width="55px" TabIndex="100"></asp:TextBox>
+                        <asp:DropDownList CssClass="Entry EntryPos" ID="txtJobCredit_ROWNUM" runat="server"  Width="100%" TabIndex="100"></asp:DropDownList>
                     </td>
                     <td>
                         <asp:TextBox CssClass="Entry EntryPos" ID="txtGLDebit_ROWNUM" runat="server" Text="" Width="55px" TabIndex="100"></asp:TextBox>
                     </td>
                     <td>
-                        <asp:TextBox CssClass="Entry EntryPos" ID="txtJobDebit_ROWNUM" runat="server" Text="" Width="55px" TabIndex="100"></asp:TextBox>
+                        <asp:DropDownList CssClass="Entry EntryPos" ID="txtJobDebit_ROWNUM" runat="server"  Width="100%" TabIndex="100"></asp:DropDownList>
                     </td>
                     <td>
                         <asp:CheckBox ID="chkOverrideCodes_ROWNUM" CssClass="Entry EntryPos" runat="server" Width="30px" TabIndex="100" />

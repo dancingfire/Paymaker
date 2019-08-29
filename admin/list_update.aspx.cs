@@ -42,6 +42,7 @@ public partial class list_update : Root {
         pJobCode.Visible = oListType == ListType.Office || oListType == ListType.Expense || oListType == ListType.Income;
         pCreditGLCode.Visible = oListType == ListType.Expense || oListType == ListType.CampaignGL;
         pDebitGLCode.Visible = oListType == ListType.Income;
+        pOfficeCode.Visible =  oListType == ListType.Company || oListType == ListType.Office;
         if (oListType == ListType.CampaignGL)
             lblDescription.Text = "MYOB text";
     }
@@ -57,6 +58,8 @@ public partial class list_update : Root {
         txtSortOrder.Text = dr["SEQUENCENO"].ToString();
         txtCreditGLCode.Text = dr["CREDITGLCode"].ToString();
         txtDebitGLCode.Text = dr["DEBITGLCode"].ToString();
+        txtOfficeCode.Text = dr["OFFICEMYOBCODE"].ToString();
+        txtMYOBBranch.Text = dr["OFFICEMYOBBRANCH"].ToString();
         Utility.setListBoxItems(ref lstAmountValue, dr["AMOUNTTYPEID"].ToString());
         Utility.setListBoxItems(ref lstStatus, Convert.ToInt32(dr["ISACTIVE"]).ToString());
         if (pCompany.Visible)
@@ -111,6 +114,10 @@ public partial class list_update : Root {
             case ListType.TXCategory:
                 szSQL = String.Format(@"SELECT COUNT(*) FROM USERTX WHERE TXCATEGORYID = {0} ", intItemID);
                 break;
+
+            case ListType.LeaveType:
+                szSQL = String.Format(@"SELECT COUNT(*) FROM LEAVEREQUEST WHERE LEAVETYPEID = {0} ", intItemID);
+                break;
         }
         intCount = DB.getScalar(szSQL, 0);
 
@@ -135,6 +142,11 @@ public partial class list_update : Root {
         }
         if (pCreditGLCode.Visible)
             oSQL.add("CREDITGLCODE", txtCreditGLCode.Text);
+        if (pOfficeCode.Visible) {
+            oSQL.add("OFFICEMYOBCODE", txtOfficeCode.Text);
+            oSQL.add("OFFICEMYOBBRANCH", txtMYOBBranch.Text);
+
+        }
         if (pDebitGLCode.Visible)
             oSQL.add("DEBITGLCODE", txtDebitGLCode.Text);
         if (pCompany.Visible)

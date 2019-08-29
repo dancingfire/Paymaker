@@ -102,6 +102,20 @@ public class ws_Paymaker : System.Web.Services.WebService {
     /// <param name="UserID"></param>
     /// <returns>BudgetAmount***GLCode***AccountJobCode***UserAccount***UserOfficeJobCode</returns>
     [WebMethod(EnableSession = true)]
+    public string getUserGLSubAccount(int UserID) {
+        UserDetail d = G.UserInfo.getUser(UserID);
+        if (d == null)
+            return "";
+        return d.GLSubAccount;
+    }
+
+    /// <summary>
+    /// Returns the account amount, along with the GLcodes for the account and the user
+    /// </summary>
+    /// <param name="AccountID"></param>
+    /// <param name="UserID"></param>
+    /// <returns>BudgetAmount***GLCode***AccountJobCode***UserAccount***UserOfficeJobCode</returns>
+    [WebMethod(EnableSession = true)]
     public string getBudgetAmount(int AccountID, int UserID, bool blnIsExpense) {
         string szSQL = string.Format(@"
             SELECT SUM(FLETCHERCONTRIBTOTAL)

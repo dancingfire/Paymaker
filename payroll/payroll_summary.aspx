@@ -75,6 +75,7 @@
             <a id="btnComplete" style="width: 150px; float: right; margin-right: 20px;" runat="server" onclick="return checkComplete();" class="Button btn" href='../reports/payroll_timesheets.aspx'>Create timesheet pdf</a>
             <asp:Button ID="btnUnlock"  Visible="false" runat="server" Text="Unlock cycle"  style="width: 150px; float: right; margin-right: 20px;" CssClass="Button btn"  OnClick="btnUnlock_Click"/>
             <a id="btnExport" style="width: 150px; float: right; margin-right: 20px;" runat="server" class="Button btn" href='../reports/payroll_summary_rpt.aspx'>Export</a>
+            <a id="btnExportSummary" style="width: 150px; float: right; margin-right: 20px;" runat="server" class="Button btn" href='../reports/payroll_leave_summary_rpt.aspx'>Export leave summary</a>
         </div>
 
         <div class="PageContent">

@@ -26,6 +26,7 @@
                 "info": false,
                 "stateSave": true,
                 scrollY: '70vh',
+                dom: 'Bfrtip',
                 scrollCollapse: true,
                 fixedHeader: true,
                 initComplete: function () {
@@ -49,11 +50,17 @@
                         });
                     });
                     processDataTableHeaderFilters();
-                }
+                },
+                buttons: ['excelHtml5']
             });
 
         });
     </script>
+    <style>
+        .dt-buttons {
+            display: inline
+        }
+    </style>
 </head>
 <body class='AdminPage'>
     <form id="frmMain" name="frmMain" method="post" runat="server">

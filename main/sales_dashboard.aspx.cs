@@ -8,10 +8,10 @@ public partial class sales_dashboard : Root {
     private int CurrentUserID;
 
     protected void Page_Load(object sender, System.EventArgs e) {
-        CurrentUserID = G.CurrentUserID;
+        CurrentUserID = G.User.ID;
 
         // This is for debuging and hard coded only to allow Gord's login to access other users details
-        if (CurrentUserID == 0 && G.CurrentUserName == "Gord Funk") {
+        if (CurrentUserID == 0 && G.User.UserName == "Gord Funk") {
             int intAltUser = Valid.getInteger("UserID", -1);
             if (intAltUser > -1)
                 CurrentUserID = intAltUser;
@@ -60,7 +60,7 @@ public partial class sales_dashboard : Root {
     }
 
     private void loadCampaignActions() {
-        DataSet dsCampaign = CampaignDB.loadCampaignActions(G.CurrentUserID);
+        DataSet dsCampaign = CampaignDB.loadCampaignActions(G.User.ID);
         DataView dvSpend = dsCampaign.Tables[1].DefaultView;
         DataView dvInvoiced = dsCampaign.Tables[2].DefaultView;
         DataView dvPaid = dsCampaign.Tables[3].DefaultView;

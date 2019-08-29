@@ -18,7 +18,7 @@ public partial class payroll_summary : Root {
         Form.Controls.Add(new LiteralControl(HTML.createModalUpdate("Timesheet", "Timesheet", "95%", 620, "payroll_update.aspx", exitX: true)));
 
         // Only Admin can access these buttons (Export / create PDF)
-        btnComplete.Visible = btnExport.Visible = (G.CurrentUserRoleID == 1); // Admin
+        btnComplete.Visible = btnExport.Visible = (G.User.RoleID == 1); // Admin
     }
 
     private void loadData() {
@@ -42,7 +42,7 @@ public partial class payroll_summary : Root {
         lstCycle.SelectedValue = hdCycleRef.Value;
 
         string szSupervisor = string.Format("AND U.SUPERVISORID = {0}", G.User.UserID);
-        if (G.CurrentUserRoleID == 1) // Admin
+        if (G.User.RoleID == 1) // Admin
             szSupervisor = "";
 
         string szSQL = string.Format(@"
@@ -65,7 +65,7 @@ public partial class payroll_summary : Root {
                     JOIN DB_USER U ON U.ID = TS.USERID
                     JOIN LIST O ON O.ID = U.OFFICEID
                     JOIN TIMESHEETCYCLE TSC ON TSC.ID = TS.TIMESHEETCYCLEID
-                    WHERE TSC.ID = {1}
+                    WHERE TSC.ID = {1} AND U.ISDELETED = 0
                     {0}
                     GROUP BY TIMESHEETCYCLEID, USERID, SUPERVISORID
                     UNION
@@ -77,7 +77,7 @@ public partial class payroll_summary : Root {
                         'User hasn''t entered details' AS DETAILS
                     FROM DB_USER U
                     JOIN LIST O ON O.ID = U.OFFICEID
-                    WHERE U.PAYROLLCYCLEID = 1 {0}
+                    WHERE U.PAYROLLCYCLEID = 1 {0} AND U.ISDELETED = 0
                         AND U.ID NOT IN (SELECT DISTINCT USERID FROM TIMESHEETENTRY WHERE TIMESHEETCYCLEID = {1})
                     ORDER BY 2;
 
@@ -100,7 +100,7 @@ public partial class payroll_summary : Root {
                     JOIN DB_USER U ON U.ID = TS.USERID
                     JOIN LIST O ON O.ID = U.OFFICEID
                     JOIN TIMESHEETCYCLE TSC ON TSC.ID = TS.TIMESHEETCYCLEID
-                    WHERE TSC.ID = {2}
+                    WHERE TSC.ID = {2} AND U.ISDELETED = 0
                     {0}
                     GROUP BY TIMESHEETCYCLEID, USERID, SUPERVISORID
                     UNION
@@ -112,7 +112,7 @@ public partial class payroll_summary : Root {
                         'User hasn''t entered details' AS DETAILS
                     FROM DB_USER U
                     JOIN LIST O ON O.ID = U.OFFICEID
-                    WHERE U.PAYROLLCYCLEID = 2 {0}
+                    WHERE U.PAYROLLCYCLEID = 2 {0} AND U.ISDELETED = 0
                         AND U.ID NOT IN (SELECT DISTINCT USERID FROM TIMESHEETENTRY WHERE TIMESHEETCYCLEID = {2})
                     ORDER BY 2;
 ", 
@@ -171,7 +171,7 @@ public partial class payroll_summary : Root {
             e.Row.CssClass += " trEdit";
             if (e.Row.Cells[8].Text == "SignOff") {
                 // Only supervisor can sign off on staff timesheet
-                if (G.UserInfo.getUser(Convert.ToInt32(szID)).SupervisorID == G.CurrentUserID)
+                if (G.UserInfo.getUser(Convert.ToInt32(szID)).SupervisorID == G.User.ID)
                     e.Row.Cells[8].Text = String.Format(@"<input name='btnSubmit{0}' class='ApproveButton' value='Approve' id='btnSubmit{0}' type='submit' data-id='{0}' data-tsid='{1}'>", szID, szTSCID);
                 else
                     e.Row.Cells[8].Text = "Awaiting Supervisor signoff";

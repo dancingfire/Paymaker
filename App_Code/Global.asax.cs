@@ -12,6 +12,7 @@ namespace Paymaker {
         }
 
         protected void Application_Start(Object sender, EventArgs e) {
+
         }
 
         protected void Session_Start(Object sender, EventArgs e) {

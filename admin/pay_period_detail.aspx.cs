@@ -12,7 +12,7 @@ public partial class pay_period_detail : Root {
             loadFilters();
             loadCurrent();
         }
-        if (G.CurrentUserID == 0) {
+        if (G.User.ID == 0) {
             oSetPayPeriod.Visible = true;
         }
     }

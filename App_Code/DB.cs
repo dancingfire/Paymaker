@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Text;
 using System.Web;
 
+
 /// <summary>
 /// Summary description for DB.
 /// </summary>
@@ -41,7 +42,7 @@ public class DB {
     /// </summary>
     public static string DBConn {
         get {
-            string szCnn = ConfigurationSettings.AppSettings["DB"];
+            string szCnn = ConfigurationManager.AppSettings["DB"];
             return szCnn.Replace("DBNAME", Client.DBName);
         }
     }
@@ -51,7 +52,7 @@ public class DB {
     /// </summary>
     public static string BoxDiceDBConn {
         get {
-            string szCnn = ConfigurationSettings.AppSettings["DB"];
+            string szCnn = ConfigurationManager.AppSettings["DB"];
             return szCnn.Replace("DBNAME", "Fletchers_BoxDiceAPI").Replace("Paymaker", "Fletchers_BoxDiceAPI");
         }
     }
@@ -76,8 +77,13 @@ public class DB {
     public static double readDouble(object Value, double NullValue = Double.MinValue) {
         if (Value == System.DBNull.Value)
             return NullValue;
-        else
-            return Convert.ToDouble(Value);
+        else {
+            double dValue = Convert.ToDouble(Value);
+            if (dValue < 0.0001)
+                dValue = 0;
+            return dValue;
+        }
+
     }
 
     /// Returns either a valid string of DateVale
@@ -368,7 +374,7 @@ public class DB {
     #region ExecuteNonQuery
 
     public static void runNonQuery(string SQL, string connectionString = null) {
-        if (connectionString == null)
+        if (String.IsNullOrEmpty(connectionString ))
             connectionString = DBConn;
 
         int intDBAttempt = 1;
@@ -565,7 +571,7 @@ public class DB {
         public static SqlDataReader loadList(string RoleList, bool IncludeAll, int CurrentValue = -1, bool CommissionOnly = false) {
             string szSQL = "SELECT ID, INITIALSCODE + ' ' + FIRSTNAME + ' ' + LASTNAME AS NAME, 1 AS SORTORDER FROM DB_USER  ";
 
-            string szFilter = " WHERE (ISACTIVE = 1 AND ID > 0 AND ISDELETED = 0 ";
+            string szFilter = " WHERE (ISACTIVE = 1 AND ISDELETED = 0  AND ID > 0 ";
             if (RoleList != "")
                 szFilter += " AND  ROLEID IN (" + RoleList + ")";
             if (CommissionOnly)
@@ -579,6 +585,25 @@ public class DB {
                 szSQL += "UNION SELECT -1, 'Select...' AS NAME, 0 AS SORTORDER ";
             szSQL += "ORDER BY SORTORDER, INITIALSCODE + ' ' + FIRSTNAME + ' ' + LASTNAME";
             return SqlHelper.ExecuteReader(DBConn, CommandType.Text, szSQL);
+        }
+    }
+
+
+    public class MYOBAccount {
+        /// <summary>
+        /// Returns the list of subaccount codes 
+        /// </summary>
+        /// <returns></returns>
+        public static DataSet getSubAccountList() {
+            return DB.runDataSet(@"
+                SELECT REPLACE(REPLACE(REPLACE(L_OFF.OFFICEMYOBCODE, 'BA', 'FL'), 'CA', 'FL'), 'DO', 'FL') + '-' + U.INITIALSCODE  AS NAME 
+                FROM DB_USER U 
+                JOIN LIST L_OFF ON L_OFF.ID = U.OFFICEID
+                WHERE U.ISACTIVE = 1 AND U.INITIALSCODE != ''  AND U.ISDELETED = 0 AND U.ID > 0
+                    AND L_OFF.OFFICEMYOBCODE + '-' + U.INITIALSCODE IS NOT NULL
+                UNION SELECT 'AD-SAL'
+                UNION SELECT 'AD-FLE'
+                ORDER BY 1 ");
         }
     }
 

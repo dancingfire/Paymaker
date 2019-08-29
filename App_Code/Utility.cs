@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using BootstrapWrapper;
 
 /// <summary>
 /// What is the payment structure for the current agent
@@ -60,6 +61,8 @@ public enum ListType {
     MYOBExport = 8,
     CampaignGL = 9,
     TXCategory = 10,
+    LeaveType = 11,
+    LeaveStatus = 12
 }
 
 public enum AmountType {
@@ -155,6 +158,33 @@ public class Utility {
         File.WriteAllText(FileName, sb.ToString());
     }
 
+    public static string formatMYOBAccount(string Account) {
+
+        if (Account.Trim().Length == 6)
+            return Account;
+       
+        return Account;
+    }
+        
+    /// <summary>
+    /// Head office GL code must start with 'FL' so we replace this for BALWYN, CANTERBURY AND DONCASTER
+    /// </summary>
+    /// <param name="OfficeGLCode"></param>
+    /// <returns></returns>
+    public static string fixGLOfficeCode(string OfficeGLCode) {
+        if(OfficeGLCode.StartsWith("BA") || OfficeGLCode.StartsWith("CA") || OfficeGLCode.StartsWith("DO")) {
+            return OfficeGLCode.Replace("BA", "FL").Replace("CA", "FL").Replace("DO", "FL");
+        }
+        return OfficeGLCode;
+    }
+
+    public static void bindGV(ref GridView gv, DataSet oData, bool FormatForDataGrid = true, bool TableHover = true) {
+        gv.DataSource = oData;
+        gv.DataBind();
+        if (FormatForDataGrid) {
+            HTML.formatGridView(ref gv, true, TableHover);
+        }
+    }
     /// <summary>
     /// Return the start of the financial year given a date
     /// </summary>
@@ -324,6 +354,17 @@ public class Utility {
         }
     }
 
+    public static void setListBoxItems(BootstrapWrapper.bwDropDownList oList, string szListOfIDs) {
+        if (szListOfIDs == "")
+            return;
+        Utility.RemoveWhitespace(szListOfIDs);
+        szListOfIDs = "," + szListOfIDs + ",";
+
+        foreach (ListItem oLI in oList.Items) {
+            oLI.Selected = szListOfIDs.IndexOf("," + oLI.Value + ",") > -1;
+        }
+    }
+  
     public static void setListBoxItemsError(ref DropDownList oList, string ListValue) {
         Utility.RemoveWhitespace(ListValue);
         if (ListValue == "" || ListValue == "null" || ListValue == "NULL")
@@ -345,7 +386,7 @@ public class Utility {
     }
 
     public static void setListBoxItems(ref DropDownList oList, string ListValue) {
-        //if (G.CurrentUserID == 0)
+        //if (G.User.ID == 0)
         //    setListBoxItemsError(ref oList, ListValue);
         //else
         Utility.RemoveWhitespace(ListValue);
@@ -396,7 +437,7 @@ public class Utility {
         oList.Items.Insert(0, new ListItem("All..", ""));
     }
 
-    public static void BindList(ref ListBox oList, ref SqlDataReader oData, string szIDCol, string szValueCol) {
+    public static void BindList(ref ListBox oList, ref SqlDataReader oData, string szIDCol = "ID", string szValueCol = "NAME") {
         oList.DataSource = oData;
         oList.DataValueField = szIDCol;
         oList.DataTextField = szValueCol;
@@ -405,14 +446,21 @@ public class Utility {
         oData = null;
     }
 
-    public static void BindList(ref ListBox oList, DataSet oData, string szIDCol, string szValueCol) {
+    public static void bindListBW(bwDropDownList oList, DataSet oData, string szIDCol = "ID", string szValueCol = "NAME") {
         oList.DataSource = oData;
         oList.DataValueField = szIDCol;
         oList.DataTextField = szValueCol;
         oList.DataBind();
     }
 
-    public static void BindList(ref DropDownList oList, DataSet oData, string szIDCol, string szValueCol) {
+    public static void BindList(ref ListBox oList, DataSet oData, string szIDCol = "ID", string szValueCol = "NAME") {
+        oList.DataSource = oData;
+        oList.DataValueField = szIDCol;
+        oList.DataTextField = szValueCol;
+        oList.DataBind();
+    }
+
+    public static void BindList(ref DropDownList oList, DataSet oData, string szIDCol = "ID", string szValueCol = "NAME") {
         oList.DataSource = oData;
         oList.DataValueField = szIDCol;
         oList.DataTextField = szValueCol;
@@ -554,14 +602,14 @@ public class Utility {
 
     public static string formatDateForMYOBExport(string szDate) {
         if (!string.IsNullOrEmpty(szDate.Trim())) {
-            return Convert.ToDateTime(szDate).ToString("dd'-'MM'-'yyyy");
+            return Convert.ToDateTime(szDate).ToString("dd'/'MM'/'yyyy");
         }
         return "";
     }
 
     public static string formatDateForMYOBExport(DateTime Date) {
         if (Date != null && Date != DateTime.MinValue) {
-            return Date.ToString("dd'-'MM'-'yyyy");
+            return Date.ToString("dd'/'MM'/'yyyy");
         }
         return "";
     }
@@ -603,7 +651,7 @@ public class Utility {
         if (szHTTPs.ToLower() == "on")
             szReturn = "https://";
         szReturn += szServer;
-        string szVirtualDir = ConfigurationSettings.AppSettings["VirtualDirectory"];
+        string szVirtualDir = ConfigurationManager.AppSettings["VirtualDirectory"];
         szReturn += szVirtualDir;
         return szReturn;
     }
@@ -994,14 +1042,18 @@ public class ExtendedHashTable : Hashtable {
 
 public class CsvWriter {
 
-    public static string WriteToString(DataTable table, bool header, bool quoteall) {
+    public static string WriteToString(DataTable table, bool header, bool quoteall, bool IncludeParenthesis = true) {
         StringWriter writer = new StringWriter();
-        WriteToStream(writer, table, header, quoteall);
+        WriteToStream(writer, table, header, quoteall, IncludeParenthesis);
         return writer.ToString();
     }
 
-    public static void WriteToStream(TextWriter stream, DataTable table, bool header, bool quoteall) {
+    public static void WriteToStream(TextWriter stream, DataTable table, bool header, bool quoteall, bool IncludeParenthesis) {
         if (header) {
+            if (IncludeParenthesis) {
+                stream.Write("{}");
+                stream.Write(Environment.NewLine);
+            }
             for (int i = 0; i < table.Columns.Count; i++) {
                 WriteItem(stream, table.Columns[i].Caption, quoteall);
                 if (i < table.Columns.Count - 1)
@@ -1010,7 +1062,9 @@ public class CsvWriter {
                     stream.Write(Environment.NewLine);
             }
         }
+        int RowCount = 0;
         foreach (DataRow row in table.Rows) {
+            RowCount++;
             for (int i = 0; i < table.Columns.Count; i++) {
                 WriteItem(stream, row[i], quoteall);
                 if (i < table.Columns.Count - 1)
@@ -1018,6 +1072,8 @@ public class CsvWriter {
                 else
                     stream.Write(Environment.NewLine);
             }
+            //if(RowCount % 2 == 0)
+            //    stream.Write(Environment.NewLine); //MYOB needs transactions split with a newline
         }
     }
 

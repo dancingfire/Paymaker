@@ -74,7 +74,7 @@
                             </tr>
                             <tr>
                                 <td style="width: 82px"></td>
-                                <td align="center">© 2015 Funk eConsulting&nbsp;
+                                <td align="center">© 2019 Funk eConsulting&nbsp;
                                 </td>
                                 <td></td>
                             </tr>

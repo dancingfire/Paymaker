@@ -17,7 +17,7 @@ public partial class user_settings_detail : Root {
     }
 
     private void loadSettings() {
-        string szSQL = "SELECT * from CONFIG WHERE USERID =" + G.CurrentUserID.ToString();
+        string szSQL = "SELECT * from CONFIG WHERE USERID =" + G.User.ID.ToString();
         SqlDataReader drSettings = DB.runReader(szSQL);
         while (drSettings.Read()) {
             if (drSettings["NAME"].ToString() == "CANCELSAMPLEENTRYPRINTING")
@@ -34,12 +34,12 @@ public partial class user_settings_detail : Root {
     }
 
     private void doUpdateConfig(string szName, string szValue) {
-        string szSQL = "SELECT * FROM CONFIG WHERE NAME = '" + szName + "' and USERID = " + G.CurrentUserID.ToString();
+        string szSQL = "SELECT * FROM CONFIG WHERE NAME = '" + szName + "' and USERID = " + G.User.ID.ToString();
         SqlDataReader drSettings = DB.runReader(szSQL);
         if (drSettings.HasRows)
-            szSQL = "update config set value = '" + szValue + "' WHERE NAME = '" + szName + "' and USERID = " + G.CurrentUserID.ToString();
+            szSQL = "update config set value = '" + szValue + "' WHERE NAME = '" + szName + "' and USERID = " + G.User.ID.ToString();
         else
-            szSQL = "INSERT INTO CONFIG(NAME, VALUE, USERID) VALUES('" + szName + "', '" + szValue + "', " + G.CurrentUserID.ToString() + ")";
+            szSQL = "INSERT INTO CONFIG(NAME, VALUE, USERID) VALUES('" + szName + "', '" + szValue + "', " + G.User.ID.ToString() + ")";
         DB.runNonQuery(szSQL);
         Session[szName] = szValue;
     }

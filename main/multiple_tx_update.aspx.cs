@@ -1,4 +1,5 @@
 using System;
+using System.Data;
 using System.Web;
 using System.Web.UI.WebControls;
 
@@ -34,10 +35,17 @@ public partial class multiple_tx_update : Root {
         Utility.BindList(ref lstUserID_ROWNUM, DB.runReader(@"
             SELECT U.id, U.INITIALSCODE + ' ' + FIRSTNAME + ' ' + LASTNAME AS NAME
             FROM [DB_USER] U
-            WHERE U.ISACTIVE = 1
+            WHERE U.ISACTIVE = 1 AND U.ISDELETED = 0
             ORDER BY U.INITIALSCODE + ' ' + FIRSTNAME + ' ' + LASTNAME"), "ID", "NAME");
         lstUserID_ROWNUM.Items.Insert(0, new ListItem("Select a user...", "-1"));
         chkIncludeGST_ROWNUM.Attributes["onclick"] = "getExGSTAmount()";
+
+        using (DataSet ds = DB.MYOBAccount.getSubAccountList()) {
+            Utility.BindList(ref txtJobCredit_ROWNUM, ds, "NAME", "NAME");
+            txtJobCredit_ROWNUM.Items.Insert(0, new ListItem(""));
+            Utility.BindList(ref txtJobDebit_ROWNUM, ds, "NAME", "NAME");
+            txtJobDebit_ROWNUM.Items.Insert(0, new ListItem(""));
+        }
     }
 
     private void loadDefaults() {

@@ -5,6 +5,8 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Web;
+using System.Web.UI.WebControls;
+using BootstrapWrapper;
 
 /// <summary>
 /// The global object that we can access throughout the app...
@@ -92,14 +94,6 @@ public class G {
         }
     }
 
-    public static int CurrentUserID {
-        get {
-            checkSessionValue("USERID");
-            return Convert.ToInt32(HttpContext.Current.Session["USERID"]);
-        }
-        set { HttpContext.Current.Session["USERID"] = value; }
-    }
-
     /// <summary>
     /// The currently active pay period
     /// </summary>
@@ -113,8 +107,8 @@ public class G {
 
     public static Payroll.TimeSheetCycleReferenceList TimeSheetCycleReferences {
         get {
-            // 
-            if (HttpContext.Current.Application["TIMESHEETCR"] == null) 
+            //
+            if (HttpContext.Current.Application["TIMESHEETCR"] == null)
                 HttpContext.Current.Application["TIMESHEETCR"] = Payroll.getTimeSheetCycleReferences();
 
             return (Payroll.TimeSheetCycleReferenceList)HttpContext.Current.Application["TIMESHEETCR"];
@@ -157,33 +151,6 @@ public class G {
         }
     }
 
-    public static string CurrentUserName {
-        get {
-            checkSessionValue("USERNAME");
-            return HttpContext.Current.Session["USERNAME"].ToString();
-        }
-        set {
-            HttpContext.Current.Session["USERNAME"] = value;
-        }
-    }
-
-    public static string CurrentUserEmail {
-        get {
-            checkSessionValue("USEREMAIL");
-
-            return HttpContext.Current.Session["USEREMAIL"].ToString();
-        }
-        set {
-            //Check for emails that are multiple and strip out the second one
-
-            string szEmail = value;
-            if (szEmail.Contains(";")) {
-                szEmail = szEmail.Substring(0, szEmail.IndexOf(';'));
-            }
-            HttpContext.Current.Session["USEREMAIL"] = szEmail;
-        }
-    }
-
     public static string CurrentUserPermissions {
         get {
             if (HttpContext.Current.Session["SESSIONROLEPERMISSIONS"] != null)
@@ -211,29 +178,46 @@ public class G {
         }
     }
 
-    public static int CurrentUserRoleID {
-        get {
-            checkSessionValue("ROLEID");
-            return Convert.ToInt32(HttpContext.Current.Session["ROLEID"]);
-        }
-        set { HttpContext.Current.Session["ROLEID"] = value; }
-    }
-
-    /// <summary>
-    /// Payroll type 0 - none, 1 - Normal, 2 - Paid in advance
-    /// </summary>
-    public static int CurrentUserPayrollTypeID {
-        get {
-            checkSessionValue("PAYROLLTYPEID");
-            return Convert.ToInt32(HttpContext.Current.Session["PAYROLLTYPEID"]);
-        }
-        set { HttpContext.Current.Session["PAYROLLTYPEID"] = value; }
-    }
-
     /// <summary>
     /// Utility classes
     /// </summary>
     public static class User {
+
+        public static int ID {
+            get {
+                checkSessionValue("USERID");
+                return Convert.ToInt32(HttpContext.Current.Session["USERID"]);
+            }
+            set { HttpContext.Current.Session["USERID"] = value; }
+        }
+
+        public static string Email {
+            get {
+                checkSessionValue("USEREMAIL");
+
+                return HttpContext.Current.Session["USEREMAIL"].ToString();
+            }
+            set {
+                //Check for emails that are multiple and strip out the second one
+
+                string szEmail = value;
+                if (szEmail.Contains(";")) {
+                    szEmail = szEmail.Substring(0, szEmail.IndexOf(';'));
+                }
+                HttpContext.Current.Session["USEREMAIL"] = szEmail;
+            }
+        }
+
+        /// <summary>
+        /// Payroll type 0 - none, 1 - Normal, 2 - Paid in advance
+        /// </summary>
+        public static int PayrollTypeID {
+            get {
+                checkSessionValue("PAYROLLTYPEID");
+                return Convert.ToInt32(HttpContext.Current.Session["PAYROLLTYPEID"]);
+            }
+            set { HttpContext.Current.Session["PAYROLLTYPEID"] = value; }
+        }
 
         /// <summary>
         /// Returns whether the current user can perform this action
@@ -248,7 +232,7 @@ public class G {
         // Implemented in user because multiple pages need to check this
         public static bool hasCampaignAccess {
             get {
-                return G.User.hasPermission(RolePermissionType.ViewCampaignModule) || G.CurrentUserRoleID == 6;
+                return G.User.hasPermission(RolePermissionType.ViewCampaignModule) || G.User.RoleID == 6;
             }
         }
 
@@ -324,6 +308,14 @@ public class G {
             set { HttpContext.Current.Session["USERID"] = value; }
         }
 
+        public static int RoleID {
+            get {
+                checkSessionValue("ROLEID");
+                return Convert.ToInt32(HttpContext.Current.Session["ROLEID"]);
+            }
+            set { HttpContext.Current.Session["ROLEID"] = value; }
+        }
+
         /// <summary>
         /// A generated GUID that is used to link an emails that is sent out
         /// </summary>
@@ -359,9 +351,35 @@ public class G {
                 HttpContext.Current.Application["IMPORTCOUNTCURRENT"] = value;
             }
         }
+
+        public static string UserName {
+            get {
+                checkSessionValue("USERNAME");
+                return HttpContext.Current.Session["USERNAME"].ToString();
+            }
+            set {
+                HttpContext.Current.Session["USERNAME"] = value;
+            }
+        }
+
+        public static int AdminPAForThisUser {
+            get {
+                checkSessionValue("ADMINPAFORTHISUSER");
+                return Convert.ToInt32(HttpContext.Current.Session["ADMINPAFORTHISUSER"]);
+            }
+            set {
+                HttpContext.Current.Session["ADMINPAFORTHISUSER"] = value;
+            }
+        }
     }
 
     public static class Settings {
+
+        public static string DataDir {
+            get {
+                return System.Configuration.ConfigurationManager.AppSettings["AppDataPath"];
+            }
+        }
 
         public static string MYOBDir {
             get {
@@ -373,10 +391,15 @@ public class G {
             get { return HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) + HttpContext.Current.Request.ApplicationPath; }
         }
 
-
         public static string FileDir {
             get {
                 return System.Configuration.ConfigurationManager.AppSettings["AppFilePath"];
+            }
+        }
+
+        public static int SalesLetterTemplateID {
+            get {
+                return Convert.ToSByte(System.Configuration.ConfigurationManager.AppSettings["SalesTemplateID"]);
             }
         }
 
@@ -427,6 +450,15 @@ public class G {
         }
 
         /// <summary>
+        /// The email address for people who don't have a supervisor email set
+        /// </summary>
+        public static string CatchAllEmail {
+            get {
+                return checkSessionVar("LEAVECATCHALLEMAIL", "jacqui.litvik@fletchers.net.au");
+            }
+        }
+
+        /// <summary>
         /// The amount that will be paid out if there is not enough income on the month
         /// </summary>
         public static double RetainerThreshhold {
@@ -450,6 +482,24 @@ public class G {
         public static double SuperannuationMaxContribution {
             get {
                 return checkSessionVar("SUPERANNUATIONMAX", 9.25);
+            }
+        }
+
+        /// <summary>
+        /// TheSuper GL account code
+        /// </summary>
+        public static string SuperGLCode {
+            get {
+                return checkSessionVar("SUPERGLCODE", "SUPER");
+            }
+        }
+
+        /// <summary>
+        /// People permitted to test the leave system
+        /// </summary>
+        public static string LeaveTestingUsers {
+            get {
+                return checkSessionVar("PERMITTEDLEAVETESTERS", "0,178,497");
             }
         }
 
@@ -510,15 +560,22 @@ public class UserDetail {
 
     public int ID { get; set; }
     public int MentorID { get; set; }
+    public bool IsActive{ get; set; }
     public int RoleID { get; set; }
     public int Salary { get; set; }
     public int OfficeID { get; set; }
     public int PayrollCycleID { get; set; }
     public int SupervisorID { get; set; }
     public string FirstName { get; set; }
+    public string OfficeGLCode { get; set; }
     public string LastName { get; set; }
     public string Email { get; set; }
     public string Initials { get; set; }
+    public string GLSubAccount {
+        get {
+            return Utility.fixGLOfficeCode(OfficeGLCode) + "-" + Initials;
+        }
+    }
 
     public PayBand PaymentStructure {
         get;
@@ -551,8 +608,11 @@ public class UserDetail {
 
     public string Name { get { return LastName + ", " + FirstName + "(" + Initials + ")"; } }
 
-    public UserDetail(int ID, string Initials, string First, string Last, string Email, int RoleID, int OfficeID, int MentorID, int Salary, int PayrollCycleID, int SupervisorID, string CreditGLCode, string DebitGLCode, string JobCode) {
+    public string NameFLI { get { return FirstName + " " + LastName + "(" + Initials + ")"; } }
+
+    public UserDetail(int ID, bool IsActive, string Initials, string First, string Last, string Email, int RoleID, int OfficeID, string OfficeGLCode, int MentorID, int Salary, int PayrollCycleID, int SupervisorID, string CreditGLCode, string DebitGLCode, string JobCode) {
         this.ID = ID;
+        this.IsActive = IsActive;
         this.Initials = Initials;
         this.FirstName = First;
         this.LastName = Last;
@@ -561,6 +621,7 @@ public class UserDetail {
         this.MentorID = MentorID;
         this.OfficeID = OfficeID;
         this.Salary = Salary;
+        this.OfficeGLCode = OfficeGLCode;
         this.CreditGL = CreditGLCode;
         this.DebitGL = DebitGLCode;
         this.OfficeJobCode = JobCode;
@@ -1036,21 +1097,53 @@ public class UserInformation {
     }
 
     private void loadItems() {
-        string szSQL = String.Format(@"
+        string szSQL = @"
             --User info
-            SELECT U.ID, INITIALSCODE, FIRSTNAME, LASTNAME, EMAIL, ROLEID, ISNULL(TEAMID, -1) AS TEAM, SALARY, U.CREDITGLCODE, U.DEBITGLCODE, L_OFF.JOBCODE, U.OFFICEID, U.PAYROLLCYCLEID, U.SUPERVISORID
-            FROM DB_USER U  JOIN LIST L_OFF ON L_OFF.ID = U.OFFICEID;
-
-           ", G.CurrentPayPeriod);
+            SELECT U.ID, U.ISACTIVE, INITIALSCODE, FIRSTNAME, LASTNAME, EMAIL, ROLEID, ISNULL(TEAMID, -1) AS TEAM, SALARY, 
+             U.CREDITGLCODE, U.DEBITGLCODE, L_OFF.JOBCODE, U.OFFICEID, U.PAYROLLCYCLEID, U.SUPERVISORID, L_OFF.OFFICEMYOBCODE
+            FROM DB_USER U  JOIN LIST L_OFF ON L_OFF.ID = U.OFFICEID ORDER BY LASTNAME, FIRSTNAME";
 
         using (DataSet ds = DB.runDataSet(szSQL)) {
             foreach (DataRow dr in ds.Tables[0].Rows) {
                 int intID = Convert.ToInt32(dr["ID"]);
-                lUsers.Add(new UserDetail(intID, DB.readString(dr["INITIALSCODE"]), DB.readString(dr["FIRSTNAME"]), DB.readString(dr["LASTNAME"]), DB.readString(dr["EMAIL"]),
-                    DB.readInt(dr["ROLEID"]), DB.readInt(dr["OFFICEID"]), DB.readInt(dr["TEAM"]), DB.readInt(dr["SALARY"]), DB.readInt(dr["PAYROLLCYCLEID"]),
+                lUsers.Add(new UserDetail(intID, DB.readBool(dr["ISACTIVE"]), DB.readString(dr["INITIALSCODE"]), DB.readString(dr["FIRSTNAME"]), DB.readString(dr["LASTNAME"]), DB.readString(dr["EMAIL"]),
+                    DB.readInt(dr["ROLEID"]), DB.readInt(dr["OFFICEID"]), DB.readString(dr["OFFICEMYOBCODE"]), DB.readInt(dr["TEAM"]), DB.readInt(dr["SALARY"]), DB.readInt(dr["PAYROLLCYCLEID"]),
                     DB.readInt(dr["SUPERVISORID"]), DB.readString(dr["CREDITGLCODE"]), DB.readString(dr["DEBITGLCODE"]), DB.readString(dr["JOBCODE"])));
             }
             blnIsLoaded = true;
+        }
+    }
+
+    /// <summary>
+    /// Loads the list from the object
+    /// </summary>
+    /// <param name="l"></param>
+    /// <param name="IncludeSelect"></param>
+    public void loadList(ref bwDropDownList l, bool IncludeSelect = true, bool IncludeInactive = false) {
+        if (blnIsLoaded == false || lUsers == null)
+            loadItems();
+        if (IncludeSelect) {
+            l.Items.Add(new ListItem("Select a user...", "-1"));
+        }
+        foreach (UserDetail b in lUsers) {
+            if (!IncludeInactive && !b.IsActive)
+                continue;
+
+            l.Items.Add(new ListItem(b.Name, b.ID.ToString()));
+        }
+    }
+
+    /// <summary>
+    /// Loads the list from the object
+    /// </summary>
+    /// <param name="l"></param>
+    /// <param name="IncludeSelect"></param>
+    public void loadList(ref ListBox l, bool IncludeSelect = true) {
+        if (blnIsLoaded == false || lUsers == null)
+            loadItems();
+
+        foreach (UserDetail b in lUsers) {
+            l.Items.Add(new ListItem(b.NameFLI, b.ID.ToString()));
         }
     }
 }

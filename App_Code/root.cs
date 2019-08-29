@@ -62,7 +62,7 @@ public class Root : System.Web.UI.Page, IDisposable {
             blnIsPageDirty = Request.Form["HDIsPageDirty"].ToString() == "true";
         }
         if (blnOuputUserID) {
-            sbEndJS.Append(string.Format(@"intUserID= {0};", G.CurrentUserID));
+            sbEndJS.Append(string.Format(@"intUserID= {0};", G.User.ID));
         }
 
         // This sets authentication cookie to be secure (always encrypted)
@@ -77,7 +77,7 @@ public class Root : System.Web.UI.Page, IDisposable {
     protected override void Render(HtmlTextWriter writer) {
         HTML.addJSLinks(this, blnIsRoot);
 
-        if (blnRestrictPageToAdmin && G.CurrentUserRoleID != 2) {
+        if (blnRestrictPageToAdmin && G.User.RoleID != 2) {
             Response.Redirect("../welcome.aspx");
         }
 

@@ -18,7 +18,6 @@
 
         <asp:TextBox ID="txtSQL" runat="server" TextMode="MultiLine" Width="90%" Height="200" Style="float: left"></asp:TextBox>
         <asp:Button ID="btnRun" runat="server" Text="Run" OnClick="btnRun_Click" CssClass="Button btn" Style="float: right" Width="100" />
-        <asp:Button ID="btnRunREOffice" runat="server" Text="Run REOffice" OnClick="btnRunREOffice_Click" CssClass="Button btn" Style="float: right" Width="100" />
         <asp:GridView ID="gvResults" runat="server"></asp:GridView>
     </form>
 </body>

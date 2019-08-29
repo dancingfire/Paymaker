@@ -2,6 +2,14 @@
     background: #B7C6AA;
 }
 
+.tooltipLink {
+    font-size: larger;
+    color: #2F3437;
+}
+.btn-primary {
+    background-color: #be9d52 !important;
+    border-color: #be9d52;
+}
 body.report {
     background: white;
 }
@@ -17,11 +25,6 @@ body{
 	margin: 0;
 	padding: 0;
 }
-
-table.dataTable {
-  border: none;
-}
-
 .Filter {
     width: 100%;
     margin-top: 5px;
@@ -230,9 +233,10 @@ A:hover {
 A.Listheader {
     color: white;
     text-decoration: none;
-    cursor: hand;
+    cursor: pointer;
     border-bottom: 0;
     width: 100%;
+    padding: 3px;
 }
 
 A.Normal {
@@ -364,13 +368,23 @@ A {
     font-weight: 400;
 }
 
+table.dataTable.table-condensed > thead > tr > th {
+    vertical-align: top;
+}
 .DataTables_sort_icon {
     float: right;
 }
 
+tr.bold {
+    font-weight: 800;
+}
 .DataTables_sort_wrapper {
     float: left;
     width: 100%
+}
+
+.EmptyData td {
+    border-width: 0px !important;
 }
 
 .Normal {
@@ -388,6 +402,10 @@ A {
     font-size: 8pt;
     color: black;
     font-family: Verdana;
+    height: 25px
+}
+.large {
+     padding: 4px;
 }
 .SetEntry {
     font-weight: normal;
@@ -431,6 +449,7 @@ A {
      color: #fff !important;
      text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.33);
      -webkit-font-smoothing: antialiased;
+     font-size: 12px;
 }
 
 .TopSpace {
@@ -447,33 +466,11 @@ A {
 }
 
 .odd {
-    background: #FFFFCC;
-}
-table.dataTable {
-    cursor: pointer;
-}
-table.dataTable tr.odd { background-color: #FFFFCC; }
-
-table.dataTable tr.selectedRow, .selectedRow  {
-    background-color: #DDC691;
-    cursor: pointer;
+    background: #FFFFE8;
 }
 
-.dataTable tr:hover  {
-    background-color: #DDC691 !important;
-    cursor: pointer;
-}
 
-.ListHeader, .header {
-    background-color: #FF8940;
-    text-align: center;
-    vertical-align: middle;
-    font-size: 8pt;
-    font-weight: bold;
-    color: white;
-    padding-top: 2px;
-    padding-bottom: 2px;
-}
+
 tr {
     font-family: Verdana, Tahoma;
     font-size: 8pt;
@@ -503,18 +500,6 @@ td a:hover {
     font-weight: bold;
     color: #858378;
     text-decoration: underline;
-}
-
-.ListHeader, .header {
-    background-color: #BE9D52 !important;
-    text-align: center;
-    vertical-align: middle;
-    font-size: 8pt;
-    font-weight: bold;
-    color: white;
-    padding-top: 2px;
-    padding-bottom: 2px;
-    height: 16px;
 }
 
 .Row {
@@ -627,8 +612,18 @@ Body.Update {
 table.dataTable th
 {
     background-color: #BE9D52;
+    padding: 2px;
+    color: white;
+    border-collapse:  collapse  !important;
 }
 
+table.dataTable{
+    padding: 2px;
+    border-collapse: collapse !important;
+}
+.table-hover {
+    cursor: pointer;
+}
 div.transON {
     opacity: .50;
     filter: alpha(opacity=50);
@@ -948,4 +943,15 @@ img.RWLeft {
     background-repeat: no-repeat;
     background-position: center center;
     text-indent: -9999px;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+input[type=number] {
+    -moz-appearance: textfield; /* Firefox */
 }
