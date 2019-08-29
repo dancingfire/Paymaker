@@ -11,6 +11,9 @@ namespace Paymaker {
 
         private string szCompanyIDList = "";
         private GridViewHelper helper = null;
+        protected void Page_Init(object sender, System.EventArgs e) {
+          
+        }
 
         protected void Page_Load(object sender, System.EventArgs e) {
             blnShowMenu = false;
@@ -32,7 +35,7 @@ namespace Paymaker {
             string szSQL = string.Format(@"
 
                 SELECT MAX(S.SALEDATE) as SALEDATE, S.ENTITLEMENTDATE as ENTITLEMENTDATE,
-                S.CODE, SUM(GRAPHCOMMISSION)AS CALCULATEDAMOUNT
+                S.CODE, SUM(GRAPHCOMMISSION)AS CALCULATEDAMOUNT, S.SETTLEMENTDATE
                 FROM SALE S
                 JOIN SALESPLIT SS ON SS.SALEID = S.ID AND S.STATUSID = 1 AND SS.RECORDSTATUS = 0
                 JOIN USERSALESPLIT USS ON USS.SALESPLITID = SS.ID  AND USS.RECORDSTATUS < 1
@@ -41,7 +44,7 @@ namespace Paymaker {
                 JOIN LIST L_COMPANY ON L_COMPANY.ID = L_OFFICE.COMPANYID
                 JOIN LIST L_SALESPLIT ON L_SALESPLIT.ID = SS.COMMISSIONTYPEID AND L_SALESPLIT.EXCLUDEONREPORT = 0
                 WHERE SS.CALCULATEDAMOUNT > 0 AND S.ENTITLEMENTDATE BETWEEN '{0}' AND '{1} 23:59' {2}
-                GROUP BY S.CODE, S.ID, S.ENTITLEMENTDATE
+                GROUP BY S.CODE, S.ID, S.ENTITLEMENTDATE, S.SETTLEMENTDATE
                 ORDER BY S.ENTITLEMENTDATE
                 ", Utility.formatDate(dtStartDate), Utility.formatDate(dtEndDate), szCompanyFilter);
             DataSet ds = DB.runDataSet(szSQL);
@@ -53,7 +56,7 @@ namespace Paymaker {
             helper.GeneralSummary += new FooterEvent(helper_GeneralSummary);
             gvTable.DataSource = ds;
             gvTable.DataBind();
-            HTML.formatGridView(ref gvTable);
+            HTML.formatGridView(ref gvTable, true);
         }
 
         private void helper_GeneralSummary(GridViewRow row) {

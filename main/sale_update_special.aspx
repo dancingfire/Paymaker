@@ -43,12 +43,16 @@
                     <br class='Align' />
                     <asp:Label ID="lblCommission" CssClass="Label LabelPos" runat="server" Text="Gross commission"></asp:Label>
                     <asp:TextBox ID="txtGrossCommission" runat="server" CssClass="Normal EntryPos" Style="text-align: right"></asp:TextBox>
-
-                    <br class='Align' />
+                      <br class='Align' />
                     <asp:Label ID="lblConjCommission" CssClass="Label LabelPos" runat="server" Text="Conj commission"></asp:Label>
                     <asp:TextBox ID="txtConjCommission" runat="server" CssClass="Normal EntryPos" Style="text-align: right"></asp:TextBox>
 
                     <br class='Align' />
+                    <asp:Label ID="Label5" CssClass="Label LabelPos" runat="server" Text="Sale price"></asp:Label>
+                    <asp:TextBox ID="txtSalePrice" runat="server" CssClass="Normal EntryPos" Style="text-align: right"></asp:TextBox>
+                    <br class='Align' />
+                    
+              
                     <asp:Label ID="lblSalesDate" CssClass="Label LabelPos" runat="server" Text="Sale date"></asp:Label>
                     <asp:TextBox ID="txtSalesDate" runat="server" CssClass="Normal EntryPos" Style="text-align: right"></asp:TextBox>
                     <br class='Align' />
@@ -82,7 +86,7 @@
                     <br class='Align' />
 
                     <asp:Label ID="Label7" CssClass="Label LabelPos" runat="server" Text="Comments"></asp:Label>
-                    <asp:TextBox ID="txtComments" runat="server" CssClass="Normal EntryPos" TextMode="MultiLine" Height="300" Width="60%"></asp:TextBox>
+                    <asp:TextBox ID="txtComments" runat="server" CssClass="Normal EntryPos" TextMode="MultiLine" Height="200" Width="60%"></asp:TextBox>
                 </div>
             </div>
             <br class='Align' />

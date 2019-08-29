@@ -30,24 +30,43 @@ namespace Paymaker {
             }
             Utility.BindList(ref lstPayPeriod, ds, "ID", "NAME");
             lstPayPeriod.SelectedIndex = 0;
+            dtMax = Utility.getFinYearEnd(dtMax);
+            DateTime dtCurr = dtMax;
 
-            DateTime dtCurr = dtMin;
-            //Quarterly
-            while (dtCurr < dtMax) {
+            //Quarter
+            while (dtCurr > dtMin) {
                 int intCurrQuarter = ((dtCurr.Month - 1) / 3) + 1;
                 DateTime dtFirstDay = new DateTime(dtCurr.Year, (intCurrQuarter - 1) * 3 + 1, 1);
                 DateTime dtLastDay = dtFirstDay.AddMonths(3).AddDays(-1);
                 lstQuarter.Items.Add(new ListItem(Utility.formatDate(dtFirstDay) + " - " + Utility.formatDate(dtLastDay), "Between  '" + Utility.formatDate(dtFirstDay) + "' AND '" + Utility.formatDate(dtLastDay) + "' "));
-                dtCurr = dtLastDay.AddDays(1);
+                dtCurr = dtFirstDay.AddDays(-1);
             }
             lstQuarter.Items.Insert(0, new ListItem("Select a quarter...", ""));
-            //User
 
+            dtCurr = dtMax;
+
+            //Month
+            while (dtCurr > dtMin) {
+                DateTime dtFirstDay = new DateTime(dtCurr.Year,dtCurr.Month, 1);
+                DateTime dtLastDay = dtFirstDay.AddMonths(1).AddDays(-1);
+                lstMonth.Items.Add(new ListItem(dtFirstDay.ToString("MMM yyyy"), "Between  '" + Utility.formatDate(dtFirstDay) + "' AND '" + Utility.formatDate(dtLastDay) + "' "));
+                dtCurr = dtFirstDay.AddDays(-1);
+            }
+            lstMonth.Items.Insert(0, new ListItem("Select a month...", ""));
+
+
+
+            //User
             Utility.BindList(ref lstUser, DB.runDataSet(@"
                 SELECT ID, LASTNAME + ', ' + FIRSTNAME AS NAME FROM DB_USER WHERE ISACTIVE = 1 AND ISDELETED = 0 AND ISPAID = 1 ORDER BY LASTNAME, FIRSTNAME"), "ID", "NAME");
 
+            Utility.BindList(ref lstNonAdminUser, DB.runDataSet(String.Format(@"
+                SELECT ID, LASTNAME + ', ' + FIRSTNAME AS NAME 
+                FROM DB_USER 
+                WHERE ISACTIVE = 1 AND ISDELETED = 0 AND ID IN ({0}, {1})
+                ORDER BY LASTNAME, FIRSTNAME", G.User.ID, G.User.AdminPAForThisUser)));
+          
             //Suburb
-
             szSQL = string.Format("select DISTINCT SUBURB AS ID, SUBURB AS NAME FROM SALE ORDER BY SUBURB ");
             Utility.BindList(ref lstSuburb, DB.runDataSet(szSQL), "ID", "NAME");
 
@@ -119,14 +138,15 @@ namespace Paymaker {
         }
 
         private void formatPage() {
-            if (G.CurrentUserRoleID != 1) {
+            if (G.User.RoleID != 1) {
                 sbEndJS.Append("$('#lstReport').hide();");
                 lstUserReport.Visible = true;
 
                 //Show the commission report
                 spUser.Visible = false;
+                spNonAdminUserFilter.Visible = true;
                 spCompany.Visible = false;
-                hfUserID.Value = G.CurrentUserID.ToString();
+                hfUserID.Value = G.User.ID.ToString();
             }
         }
 

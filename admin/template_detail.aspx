@@ -20,7 +20,7 @@
             }
 
             blnPageDirty = false; //Turn off our page leaving check
-            return document.frmMain.btnUpdate.className == 'Button';
+            return true;
         }
 
         function insertTag(szValue) {
@@ -48,7 +48,10 @@
         $(document).ready(function () {
 
             CKEDITOR.replace("txtContent");
-
+            $('form').submit(function (event) {
+                $('#txtSubmit').val(btoa(CKEDITOR.instances['txtContent'].getData()));
+                CKEDITOR.instances['txtContent'].setData('');
+            });
         });
     </script>
     <style type="text/css">
@@ -74,7 +77,7 @@
 </head>
 <body id="oBody" runat="server" style="margin-top: 10px">
     <form id="frmMain" runat="server">
-
+        <input type="hidden" name="txtSubmit" id="txtSubmit" />
         <div id="Page" style='width: 850px'>
             <asp:Panel ID="pMaster" runat="server" Height="50px">
                 <asp:Label ID="lblTemplate" runat="server" Text="Templates" CssClass="Label LabelPos"></asp:Label>
@@ -113,7 +116,7 @@
                 <br class="Align" />
 
                 <div id="divTemplate" runat="server" style="width: 70%; float: left" enableviewstate="false">
-                    <asp:TextBox ID="txtContent" runat="server" Width="100%" Height="300" TextMode="MultiLine"></asp:TextBox>
+                    <asp:TextBox ID="txtContent" runat="server" Width="100%" Height="500" TextMode="MultiLine"></asp:TextBox>
                 </div>
                 <div id="divTemplateTerms" enableviewstate="false" runat="server" style="margin-left: 5px; float: left; padding-left: 0px; clear: right; width: 28%">
                     <div style='background: silver; text-align: center; font-family: Arial; padding: 3px;'>Replaceable terms</div>

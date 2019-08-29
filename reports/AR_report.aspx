@@ -8,6 +8,22 @@
         function printReport() {
             window.print();
         }
+
+        $(document).ready(function () {
+            $('#gvTable').DataTable({
+                "bSort": false,
+                "bFilter": false,
+                "order": [[0, "asc"]],
+                "stateSave": true,
+                "paging": false,
+                "info": false,
+
+                dom: 'Bfrtip',
+                buttons: [
+                    'excelHtml5'
+                ]
+            });
+        });
     </script>
 </head>
 <body>
@@ -27,6 +43,7 @@
                     <asp:BoundField HeaderText="Sale date" DataField="SALEDATE" DataFormatString="{0:MMM dd, yyyy}" />
                     <asp:BoundField HeaderText="Code" DataField="CODE" />
                     <asp:BoundField HeaderText="Entitlement date" DataField="ENTITLEMENTDATE" DataFormatString="{0:MMM dd, yyyy}" ItemStyle-HorizontalAlign="Center" />
+                    <asp:BoundField HeaderText="Settlement date" DataField="SETTLEMENTDATE" DataFormatString="{0:MMM dd, yyyy}" ItemStyle-HorizontalAlign="Center" />
                     <asp:BoundField HeaderText="Commission" DataField="CALCULATEDAMOUNT" ItemStyle-HorizontalAlign="Right" DataFormatString="{0:N2}" />
                 </Columns>
             </asp:GridView>

@@ -66,6 +66,19 @@ public class ReportFilters {
         }
     }
 
+    /// <summary>
+    /// The number of months in the date range (only valid for monthly and quarterly reports)
+    /// </summary>
+    public int MonthsinPeriod{ get; set; }
+    
+    //REturns a single financial year
+    public int getSingleFinancialYear() {
+        if (szFY == "")
+            return -1;
+        else
+            return Convert.ToInt32(szFY);
+    }
+
     public string RoleID {
         get { return szRoleID; }
         set {
@@ -126,8 +139,28 @@ public class ReportFilters {
         if (CompanyNames == "null")
             CompanyNames = "";
 
+        OfficeIDList = Valid.getText("szOfficeID", "", VT.TextNormal);
+      
         string szStartDate = Valid.getText("szStartDate", "", VT.TextNormal);
         string szEndDate = Valid.getText("szEndDate", "", VT.TextNormal);
+
+        //Check if this is a monthly or quarterly report - override normal filter processing
+        string szMonth = Valid.getText("szMonth", "", VT.TextNormal);
+        string szQuarter = Valid.getText("szQuarter", "", VT.TextNormal);
+
+        if (szQuarter != "") {
+            string[] arDate = Utility.SplitByString(szQuarter.Replace("Between  '", ""), "' AND '");
+            szStartDate = arDate[0];
+            szEndDate = arDate[1].Replace("'", "");
+            MonthsinPeriod = 3;
+        }
+
+        if (szMonth != "") {
+            string[] arDate = Utility.SplitByString(szMonth.Replace("Between  '", ""), "' AND '");
+            szStartDate = arDate[0];
+            szEndDate = arDate[1].Replace("'", "");
+            MonthsinPeriod = 1;
+        }
 
         if (!String.IsNullOrEmpty(szStartDate)) {
             dtStart = DateTime.Parse(szStartDate);
@@ -142,6 +175,10 @@ public class ReportFilters {
         szPayPeriodID = Valid.getText("szPayPeriod", "", VT.List);
         if (szPayPeriodID == "null")
             szPayPeriodID = "";
+
+        szFY = Valid.getText("szFinYear", "", VT.List);
+        if (szFY == "null")
+            szFY = "";
     }
 }
 
@@ -717,263 +754,7 @@ public class KPI_Suburb : Report {
     }
 }
 
-public class KPI_Office_agents : Report {
-    private static string RFileName = "KPI Office agents";
-
-    /// <summary>
-    /// Constructor Method that receives the Viewer and the Filter and creates the report.
-    /// </summary>
-    /// <param name="Viewer"></param>
-    /// <param name="oFilter"></param>
-    public KPI_Office_agents(ReportViewer Viewer, ReportFilters oFilter) {
-        oViewer = Viewer;
-        this.oFilter = oFilter;
-        ReportTitle = "KPI by Agent";
-        initReport();
-    }
-
-    /// <summary>
-    /// The name within the get, corresponds with the report to return.
-    /// </summary>
-    public override string ReportFileName {
-        get {
-            return RFileName;
-        }
-    }
-
-    /// <summary>
-    /// If dtStart / dtFinish is a single period gets the start date of the 'previous' equivalent lenth period.
-    /// </summary>
-    /// <param name="dtStart"></param>
-    /// <param name="dtFinish"></param>
-    /// <returns></returns>
-    private DateTime getPreviousPeriodStart(DateTime dtStart, DateTime dtFinish) {
-        // Start to End dates represent whole months eg. 15 Jun to 14 Jul or 1 Jun to 30 Jun
-        Boolean blWholeMonths = dtStart.Day == dtFinish.AddDays(1).Day;
-
-        // calculate by number of days
-        if (!blWholeMonths)
-            return (dtStart.Date - (dtFinish.Date - dtStart.Date)).AddDays(-1);
-
-        // calculate number of months timespan
-        int MonthCount = (dtFinish.Year - dtStart.Year) * 12 + dtFinish.Month - dtStart.Month + 1;
-
-        return dtStart.AddMonths(-MonthCount);
-    }
-
-    private String szCurrentPeriodFilter;
-    private String szPreviousAndCurrentPeriodFilter;
-
-    public override DataSet getData() {
-        szCurrentPeriodFilter = String.Format("BETWEEN '{0}' AND '{1}'", oFilter.getDBSafeStartDate(), oFilter.getDBSafeEndDate());
-
-        // Report takes in previous period - StartDate Changed to take in two equal periods of time (previous period & current period)
-        oFilter.StartDate = getPreviousPeriodStart(oFilter.StartDate, oFilter.EndDate);
-
-        szPreviousAndCurrentPeriodFilter = String.Format("BETWEEN '{0}' AND '{1}'", oFilter.getDBSafeStartDate(), oFilter.getDBSafeEndDate());
-
-        string szFilter = String.Format(" ((S.SALEDATE BETWEEN '{0}' AND '{1}') OR (S.SALEDATE IS NULL AND S.FALLENTHROUGHDATE BETWEEN '{0}' AND '{1}'))", oFilter.getDBSafeStartDate(), oFilter.getDBSafeEndDate());
-        string szUserFilter = "";
-        if (!String.IsNullOrWhiteSpace(oFilter.OfficeIDList)) {
-            szUserFilter += (" AND USR.OFFICEID IN (" + oFilter.OfficeIDList + ")");
-        }
-        string szCompanyIDList = Valid.getText("szCompanyID", "", VT.TextNormal);
-        if (!String.IsNullOrWhiteSpace(szCompanyIDList)) {
-            szUserFilter += String.Format(" AND L_OFFICE.COMPANYID IN ({0})", szCompanyIDList);
-        }
-
-        if (!String.IsNullOrWhiteSpace(oFilter.UserIDList)) {
-            szUserFilter += String.Format(" AND USR.ID IN ({0})", oFilter.UserIDList);
-        }
-        bool blnIncludeInactive = Valid.getBoolean("blnIncludeInactive", false);
-        if (!blnIncludeInactive)
-            szUserFilter += " AND USR.ISACTIVE = 1 ";
-
-        string szSQL = string.Format(@"
-                SELECT DISTINCT
-				    CONVERT(VARCHAR(7), ISNULL(S.SALEDATE, S.FALLENTHROUGHDATE), 120) AS MONTHSORT,
-					USS.USERID AS AGENTID,
-                    ISNULL(USR.FIRSTNAME,'') + ', ' +  ISNULL(USR.LASTNAME,'') as AGENTNAME,
-                    SUBSTRING (CONVERT(VARCHAR, ISNULL(S.SALEDATE, S.FALLENTHROUGHDATE), 100),1,3) +'-'+ SUBSTRING (CONVERT(VARCHAR, ISNULL(S.SALEDATE, S.FALLENTHROUGHDATE), 100),8,4 ) AS MONTHGROUP,
-                 	USR.OFFICEID, '' AS SUBURB,
-                    CASE
-			            WHEN S.FALLENTHROUGHDATE IS NOT NULL OR S.ISAUCTION = 1 OR S.AUCTIONDATE IS NOT NULL OR S.LISTEDDATE IS NULL OR S.SALEDATE IS NULL THEN 0
-			            ELSE 1
-		            END AS PRIVATESALE,
-                    CASE
-			            WHEN S.FALLENTHROUGHDATE IS NOT NULL OR S.ISAUCTION = 1 OR S.AUCTIONDATE IS NOT NULL OR S.LISTEDDATE IS NULL OR S.SALEDATE IS NULL THEN 0
-			            ELSE  DATEDIFF(DAY, S.LISTEDDATE, S.SALEDATE)
-		            END AS DAYS_TO_PRIVATE_SELL,
-                    CASE
-                        WHEN S.FALLENTHROUGHDATE IS NOT NULL OR ISAUCTION = 0 OR S.LISTEDDATE IS NULL OR S.SALEDATE IS NULL THEN 0
-			            ELSE 1
-		            END AS SOLDATAUCTION,
-					CASE
-						WHEN S.FALLENTHROUGHDATE IS NOT NULL OR ISAUCTION = 0 OR S.LISTEDDATE IS NULL OR S.SALEDATE IS NULL THEN 0
-			            ELSE DATEDIFF(DAY, S.LISTEDDATE, S.SALEDATE)
-		            END AS DAYS_TO_AUCTION_SELL,
-                    CAST(ISAUCTION as INT) AS ISAUCTION,
-		            CAST(ISAUCTION AS INT) AS AUCTIONSALE,
-                    0 AS DAYS_PASSED_IN_AUCTION,
-                    0 AS PASSEDINAUCTION,
-					ISNULL(L_OFFICE.NAME,'') as OFFICENAME,
-                    S.ID,
-		            CASE
-			            WHEN S.SALEPRICE > 0 THEN S.GROSSCOMMISSION/S.SALEPRICE
-			            ELSE 0
-		            END as COMMISSION_PERCENTAGE,
-		            ISNULL(S.GROSSCOMMISSION,0) AS COMMISSIONEARNED,
-		            CASE
-			            WHEN S.SALEPRICE > 0 THEN S.ADVERTISINGSPEND/S.SALEPRICE
-			            ELSE 0
-		            END AS ADVERTISING_PERCENTAGE,
-		            ISNULL(S.ADVERTISINGSPEND,0) AS ADVERTISING_DOLLARS,
-		            ISNULL(S.SALEPRICE,0) AS SALEPRICE,
-		            ISNULL(S.SALEPRICE,0) AS COMPANYSALEPRICE,
-		            S.SALEDATE,
-                    SUBSTRING(CONVERT(VARCHAR(11), LISTEDDATE, 113), 4, 8) AS LISTINGMONTHGROUP,
-		            S.LISTEDDATE,
-		            S.FALLENTHROUGHDATE as WITHDRAWNDATE,
-                    CASE WHEN S.FALLENTHROUGHDATE IS NULL THEN 0 ELSE 1 END AS ISWITHDRAWN,
-                    CASE WHEN S.SALEDATE IS NULL THEN 0 ELSE 1 END AS ISSOLD,
-				    CASE WHEN S.SALEDATE IS NULL THEN 0 ELSE 1 END AS ISSOLDCOMPANY,
-		            S.AUCTIONDATE,
-                    CASE WHEN S.AUCTIONDATE > S.SALEDATE THEN 1 ELSE 0 END AS SOLDBEFORE,
-                    0 AS LISTINGCOUNT, 0 AS AUCTIONCOUNT, 0 AS TOTALAUCTIONSOLD, 1 AS FINYEAR,
-                    0 AS PRIVATESALEWITHOUTAUCTION,
-    				CASE WHEN ISNULL(S.SALEDATE, S.FALLENTHROUGHDATE) {4}
-						THEN 'Current' ELSE 'Previous' END AS PERIOD,
-    				0 AS ISSOLD_current,
-    				0.0 AS COMMISSIONEARNED_current,
-    				0.0 AS COMMISSION_PERCENTAGE_current,
-                    0 AS PRIVATESALE_current,
-                    0 AS AUCTIONCOUNT_current,
-                    0.0 AS SALEPRICE_current,
-                    0 AS TOTALAUCTIONSOLD_current,
-                    0 AS PRIVATESALEWITHOUTAUCTION_current,
-                    0 AS DAYS_TO_PRIVATE_SELL_current,
-                    0 AS SOLDATAUCTION_current,
-                    0 AS DAYS_TO_AUCTION_SELL_current,
-                    0 AS ISWITHDRAWN_current,
-                    CAST('1800-01-01' AS date) AS LISTEDDATE_current
-                FROM
-                    SALE S JOIN SALESPLIT SS ON SS.SALEID = S.ID AND SS.RECORDSTATUS = 0
-                            JOIN USERSALESPLIT USS ON USS.SALESPLITID = SS.ID AND USS.RECORDSTATUS < 1
-                            JOIN DB_USER USR ON USR.ID = USS.USERID AND USR.ID > 0
-                            JOIN LIST L_OFFICE ON L_OFFICE.ID = USR.OFFICEID
-                            JOIN LIST L_COMPANY ON L_COMPANY.ID = L_OFFICE.COMPANYID
-                            JOIN LIST L_SALESPLIT ON L_SALESPLIT.ID = SS.COMMISSIONTYPEID AND L_SALESPLIT.EXCLUDEONREPORT = 0
-                WHERE {0} {1}
-                    AND USS.INCLUDEINKPI = 1
-                ORDER BY OFFICENAME, MONTHSORT, AGENTNAME;
-
-                SELECT DISTINCT  S.ID,
-					USS.USERID AS AGENTID,  ISNULL(USR.FIRSTNAME,'') + ', ' +  ISNULL(USR.LASTNAME,'') as AGENTNAME, '' AS SUBURB,
-                    USR.OFFICEID, L_OFFICE.NAME AS OFFICENAME,
-					SUBSTRING (CONVERT(VARCHAR, ISNULL(S.LISTEDDATE, S.FALLENTHROUGHDATE), 100),1,3) +'-'+
-                        SUBSTRING (CONVERT(VARCHAR, ISNULL(S.LISTEDDATE, S.FALLENTHROUGHDATE), 100),8,4 ) AS MONTHGROUP,
-                    CONVERT(VARCHAR(7), ISNULL(S.LISTEDDATE, S.FALLENTHROUGHDATE), 120) AS MONTHSORT,
-                    0 AS DAYS_PASSED_IN_AUCTION, 0 AS PASSEDINAUCTION,
-    				CASE WHEN ISNULL(S.SALEDATE, S.FALLENTHROUGHDATE) {4}
-						THEN 'Current' ELSE 'Previous' END AS PERIOD
-                FROM
-                    SALE S JOIN SALESPLIT SS ON SS.SALEID = S.ID AND SS.RECORDSTATUS = 0
-                        JOIN USERSALESPLIT USS ON USS.SALESPLITID = SS.ID AND USS.RECORDSTATUS < 1
-                        JOIN DB_USER USR ON USR.ID = USS.USERID AND USR.ID > 0
-                        JOIN LIST L_OFFICE ON L_OFFICE.ID = USR.OFFICEID AND L_OFFICE.ISACTIVE = 1
-                        JOIN LIST L_COMPANY ON L_COMPANY.ID = L_OFFICE.COMPANYID
-                        JOIN LIST L_SALESPLIT ON L_SALESPLIT.ID = SS.COMMISSIONTYPEID AND L_SALESPLIT.EXCLUDEONREPORT = 0
-                WHERE {2} {1}
-                    AND USS.INCLUDEINKPI = 1;
-
-                -- 2 Auction count data
-                SELECT DISTINCT   S.ID, S.Address, AUCTIONDATE, SALEDATE,  USS.USERID AS AGENTID, USR.OFFICEID, L_OFFICE.NAME AS OFFICENAME,
-                SUBSTRING (CONVERT(VARCHAR, S.AUCTIONDATE, 100),1,3) +'-'+ SUBSTRING (CONVERT(VARCHAR, S.AUCTIONDATE, 100),8,4 ) AS MONTHGROUP,
-                CONVERT(VARCHAR(7), S.AUCTIONDATE, 120) AS MONTHSORT, ISNULL(USR.FIRSTNAME,'') + ', ' +  ISNULL(USR.LASTNAME,'') as AGENTNAME,
-                CASE WHEN SALEDATE <= AUCTIONDATE THEN 1 ELSE 0 END AS SOLDAUCTION, '' AS SUBURB,
-                CASE
-                        WHEN DATEDIFF(DAY, S.AUCTIONDATE, S.SALEDATE) > 1
-                        THEN
-	                       DATEDIFF(DAY, S.AUCTIONDATE, S.SALEDATE)
-	                    ELSE 0
-                    END AS DAYS_PASSED_IN_AUCTION,
-                CASE WHEN DATEDIFF(DAY, S.AUCTIONDATE, S.SALEDATE) <= 1 THEN 0 ELSE 1 END AS PASSEDINAUCTION,
-    			CASE WHEN ISNULL(S.SALEDATE, S.FALLENTHROUGHDATE) {4}
-					THEN 'Current' ELSE 'Previous' END AS PERIOD
-                FROM
-                SALE S JOIN SALESPLIT SS ON SS.SALEID = S.ID AND SS.RECORDSTATUS = 0
-                    JOIN USERSALESPLIT USS ON USS.SALESPLITID = SS.ID AND USS.RECORDSTATUS < 1
-                    JOIN DB_USER USR ON USR.ID = USS.USERID AND USR.ID > 0
-                    JOIN LIST L_OFFICE ON L_OFFICE.ID = USR.OFFICEID AND L_OFFICE.ISACTIVE = 1
-                    JOIN LIST L_COMPANY ON L_COMPANY.ID = L_OFFICE.COMPANYID
-                    JOIN LIST L_SALESPLIT ON L_SALESPLIT.ID = SS.COMMISSIONTYPEID AND L_SALESPLIT.EXCLUDEONREPORT = 0
-                WHERE {3} {1} AND S.FALLENTHROUGHDATE IS  NULL AND AUCTIONDATE IS NOT NULL
-                AND USS.INCLUDEINKPI = 1
-                ", szFilter, szUserFilter, szFilter.Replace("S.SALEDATE", "S.LISTEDDATE"), szFilter.Replace("S.SALEDATE", "S.AUCTIONDATE"),
-                    szCurrentPeriodFilter);
-        DataSet ds = DB.runDataSet(szSQL);
-        ReportHelper.processExtraData(ref ds, false);
-        integrateCampaignData(ref ds);
-
-        return ds;
-    }
-
-    // List of Campaign values requiring a VALUE_current
-    private string[] CampaignCreateCurrentValue = new string[] { "TOTALPREPAID", "TOTALSPENT" };
-
-    // inserts data from CampaignDB object into DataSet table[0]
-    private void integrateCampaignData(ref DataSet ds) {
-        string szCampaignFilterSQL = String.Format(@" WHERE ADDRESS1 NOT LIKE '%PROMO,%' AND C.STARTDATE {0}", szPreviousAndCurrentPeriodFilter);
-        string szCompanyIDList = Valid.getText("szCompanyID", "", VT.TextNormal);
-
-        DataTable dtOfficeAgents = ds.Tables[0];
-
-        DataTable dtCampaign = CampaignDB.loadPrePaymentCampaignData(szCampaignFilterSQL, szCompanyIDList, false, szCurrentPeriodFilter: szCurrentPeriodFilter);
-        List<String> szCampaignColumns = new List<String>();
-
-        // creates new columns where required insert campaign values
-        foreach (DataColumn dc in dtCampaign.Columns) {
-            szCampaignColumns.Add(dc.ColumnName);
-
-            if (!dtOfficeAgents.Columns.Contains(dc.ColumnName))
-                dtOfficeAgents.Columns.Add(dc.ColumnName, dc.DataType);
-
-            if (CampaignCreateCurrentValue.Contains(dc.ColumnName))
-                dtOfficeAgents.Columns.Add(dc.ColumnName + "_current", dc.DataType);
-        }
-
-        // Field to count the number of current campaign records
-        dtOfficeAgents.Columns.Add("CAMPAIGN_COUNT_current", typeof(int));
-        dtOfficeAgents.Columns.Add("CAMPAIGN_COUNT_previous", typeof(int));
-
-        // Iterates through Campaign table and copies values to Office Agents table.
-        foreach (DataRow dr in dtCampaign.Rows) {
-            // does not copy 'totals' rows - indicated by lack of ID value in row
-            // also exculdes rows that do not relate to an agent (have no agent ID)
-            if (dr["ID"] == System.DBNull.Value || dr["AGENTID"] == System.DBNull.Value)
-                continue;
-
-            DataRow drNew = dtOfficeAgents.NewRow();
-
-            // copy all columns
-            foreach (String ColName in szCampaignColumns) {
-                drNew[ColName] = dr[ColName];
-                if (CampaignCreateCurrentValue.Contains(ColName) && Convert.ToString(dr["PERIOD"]) == "Current")
-                    drNew[ColName + "_current"] = dr[ColName];
-            }
-
-            if (Convert.ToString(dr["PERIOD"]) == "Current") {
-                drNew["CAMPAIGN_COUNT_current"] = 1;
-                drNew["LISTEDDATE_current"] = drNew["LISTEDDATE"];
-            } else
-                drNew["CAMPAIGN_COUNT_previous"] = 1;
-
-            dtOfficeAgents.Rows.Add(drNew);
-        }
-    }
-}
-
-public class KPI_Office_agents_auction_detail : KPI_Office_agents_NEW {
+public class KPI_Office_agents_auction_detail : KPI_Office_agents {
     private static string RFileName = "KPI Office agents - Auction details";
 
     /// <summary>
@@ -981,7 +762,7 @@ public class KPI_Office_agents_auction_detail : KPI_Office_agents_NEW {
     /// </summary>
     /// <param name="Viewer"></param>
     /// <param name="oFilter"></param>
-    public KPI_Office_agents_auction_detail(ReportViewer Viewer, ReportFilters oFilter) : base(Viewer,oFilter) {
+    public KPI_Office_agents_auction_detail(ReportViewer Viewer, ReportFilters oFilter) : base(Viewer, oFilter) {
         ReportTitle = "KPI by Agent (auction details)";
     }
 
@@ -993,18 +774,17 @@ public class KPI_Office_agents_auction_detail : KPI_Office_agents_NEW {
             return RFileName;
         }
     }
-
 }
 
-public class KPI_Office_agents_NEW : Report {
-    private static string RFileName = "KPI Office agents NEW";
+public class KPI_Office_agents : Report {
+    private static string RFileName = "KPI Office agents";
 
     /// <summary>
     /// Constructor Method that receives the Viewer and the Filter and creates the report.
     /// </summary>
     /// <param name="Viewer"></param>
     /// <param name="oFilter"></param>
-    public KPI_Office_agents_NEW(ReportViewer Viewer, ReportFilters oFilter) {
+    public KPI_Office_agents(ReportViewer Viewer, ReportFilters oFilter) {
         oViewer = Viewer;
         this.oFilter = oFilter;
         ReportTitle = "KPI by Agent";
@@ -1367,53 +1147,6 @@ public class KPI_Office_agents_NEW : Report {
 	                            CP.DESCRIPTION LIKE 'MONASH LEADER%')
 				WHERE ((WITHDRAWNON IS NULL AND SOLDDATE {6}) OR WITHDRAWNON {6}) {1} AND USR.SHOWONKPIREPORT = 1;
 
-                -- 8. Listing Sources (Same temporary view is used for query -- 4)
-				WITH APPRAISALS AS (
-				  SELECT
-						SL.ID AS LISTINGID,
-						ISNULL(MIN(CA_APPR.STARTDATE),SL.LISTEDDATE) AS DATE,
-						MAX(T.ACTIONON) AS FOLLOWUPDATE,
-						CASE
-							WHEN ISNULL(MIN(CA_APPR.STARTDATE), LISTEDDATE) {4} THEN 'Current'
-							WHEN ISNULL(MIN(CA_APPR.STARTDATE), LISTEDDATE) {6} THEN 'Previous'
-							ELSE NULL END AS PERIOD,
-						MIN(USR.ID) AS AGENTID,
-						MIN(LS.NAME) AS LISTING_SOURCE,
-						MIN(SL.PROPERTYID) AS PROPERTYID
-					FROM Fletchers_BoxDiceAPI.dbo.SALESLISTING SL
-						LEFT JOIN Fletchers_BoxDiceAPI.dbo.LISTINGSOURCE LS ON LS.ID = SL.LISTINGSOURCEID
-						JOIN Fletchers_BoxDiceAPI.dbo.PROPERTY P ON P.ID = SL.PROPERTYID
-						LEFT JOIN Fletchers_BoxDiceAPI.dbo.CONTACTACTIVITY CA_APPR ON CA_APPR.SALESLISTINGID = SL.ID AND CA_APPR.CONTACTACTIVITYTYPEID IN (10,11,17) --APPRAISALS
-						JOIN Fletchers_BoxDiceAPI.dbo.DB_USER U ON U.ID = SL.CONSULTANT1ID
-						JOIN DB_USER USR ON USR.INITIALSCODE = U.INITIALS COLLATE Latin1_General_CI_AS AND USR.ISACTIVE = 1  AND USR.ISDELETED = 0
-						LEFT JOIN Fletchers_BoxDiceAPI.dbo.TASK T ON T.PROPERTYID = SL.PROPERTYID
-					WHERE (
-						SL.ID IN (
-							-- NOTE: There is a potential for multiple Appraisal dates in B&D - the earliest is the required date
-							-- Find all Sales Listings where the first appraisal date is in the given range
-							SELECT SL1.ID
-							FROM FLETCHERS_BOXDICEAPI.DBO.SALESLISTING SL1
-								JOIN FLETCHERS_BOXDICEAPI.DBO.CONTACTACTIVITY CA ON CA.SALESLISTINGID = SL1.ID AND CA.CONTACTACTIVITYTYPEID IN (10,11,17) --APPRAISALS
-							GROUP BY SL1.ID
-							HAVING MIN(CA.STARTDATE) {6}
-						) OR
-						LISTEDDATE {6}
-					)
-					GROUP BY SL.ID, SL.LISTEDDATE)
-
-                SELECT
-					USR.ID AS AGENTID,
-                    ISNULL(USR.FIRSTNAME,'') + ', ' +  ISNULL(USR.LASTNAME,'') as AGENTNAME,
-					USR.OFFICEID, A.PERIOD,
-                    CASE WHEN ROW_NUMBER() OVER(PARTITION BY USR.ID ORDER BY COUNT(*) DESC) > 5
-                       THEN 'Other' ELSE LISTING_SOURCE END AS SOURCE_NAME,
-                    COUNT(*) AS SOURCE_COUNT
-				 FROM APPRAISALS A
-					JOIN DB_USER USR ON A.AGENTID = USR.ID
-					JOIN LIST L_OFFICE ON L_OFFICE.ID = USR.OFFICEID
-				WHERE PERIOD = 'Current' {1}
-				GROUP BY PERIOD, USR.ID, USR.OFFICEID, USR.FIRSTNAME, USR.LASTNAME, LISTING_SOURCE
-				ORDER BY USR.ID, COUNT(*) DESC
                 ", szFilter, szUserFilter, szFilter.Replace("S.SALEDATE", "S.LISTEDDATE"), szFilter.Replace("S.SALEDATE", "S.AUCTIONDATE"),
                 szCurrentPeriodFilter, szYTDFilter, szPreviousAndCurrentPeriodFilter);
         DataSet ds = DB.runDataSet(szSQL);
@@ -1426,7 +1159,6 @@ public class KPI_Office_agents_NEW : Report {
         integrateBnDData(ref ds, ds.Tables[4]);
         integrateBnDData(ref ds, ds.Tables[5]);
         integrateBnDData(ref ds, ds.Tables[6]);
-        integrateBnDData(ref ds, ds.Tables[8]);
 
         // Process 7 then integrate ***
         processGlossyAmounts(ref ds, 7);
@@ -1436,6 +1168,7 @@ public class KPI_Office_agents_NEW : Report {
         // Get list of all users found in report
         var lUsers = ds.Tables[0].AsEnumerable().Select(n => DB.readInt(n["AGENTID"])).Distinct();
         string szUserIDs = string.Join(",", lUsers);
+
         szSQL = string.Format(@"
 				-- 0. Financial Year values
                 SELECT
@@ -1496,12 +1229,62 @@ public class KPI_Office_agents_NEW : Report {
                          WHEN USR.PROFILEVIDEODATE < '{4}' THEN 'Yes'
                          ELSE 'No' END AS HASPROFILEVIDEO
 				FROM DB_USER USR
-				WHERE USR.ID IN ({1})", szYTDFilter, szUserIDs, oFilter.getDBSafeEndDate(), szCurrentPeriodFilter, szPreviousPeriodEnd);
+				WHERE USR.ID IN ({1});
+
+            -- 3 Listing Sources (Same temporary view is used for query -- 4)
+				WITH APPRAISALS AS (
+				  SELECT
+						SL.ID AS LISTINGID,
+						ISNULL(MIN(CA_APPR.STARTDATE),SL.LISTEDDATE) AS DATE,
+						MAX(T.ACTIONON) AS FOLLOWUPDATE,
+						CASE
+							WHEN ISNULL(MIN(CA_APPR.STARTDATE), LISTEDDATE) {3} THEN 'Current'
+							WHEN ISNULL(MIN(CA_APPR.STARTDATE), LISTEDDATE) {5} THEN 'Previous'
+							ELSE NULL END AS PERIOD,
+						MIN(USR.ID) AS AGENTID,
+						MIN(LS.NAME) AS LISTING_SOURCE,
+						MIN(SL.PROPERTYID) AS PROPERTYID
+					FROM Fletchers_BoxDiceAPI.dbo.SALESLISTING SL
+						LEFT JOIN Fletchers_BoxDiceAPI.dbo.LISTINGSOURCE LS ON LS.ID = SL.LISTINGSOURCEID
+						JOIN Fletchers_BoxDiceAPI.dbo.PROPERTY P ON P.ID = SL.PROPERTYID
+						LEFT JOIN Fletchers_BoxDiceAPI.dbo.CONTACTACTIVITY CA_APPR ON CA_APPR.SALESLISTINGID = SL.ID AND CA_APPR.CONTACTACTIVITYTYPEID IN (10,11,17) --APPRAISALS
+						JOIN Fletchers_BoxDiceAPI.dbo.DB_USER U ON U.ID = SL.CONSULTANT1ID
+						JOIN DB_USER USR ON USR.INITIALSCODE = U.INITIALS COLLATE Latin1_General_CI_AS AND USR.ISACTIVE = 1  AND USR.ISDELETED = 0
+						LEFT JOIN Fletchers_BoxDiceAPI.dbo.TASK T ON T.PROPERTYID = SL.PROPERTYID
+					WHERE (
+						SL.ID IN (
+							-- NOTE: There is a potential for multiple Appraisal dates in B&D - the earliest is the required date
+							-- Find all Sales Listings where the first appraisal date is in the given range
+							SELECT SL1.ID
+							FROM FLETCHERS_BOXDICEAPI.DBO.SALESLISTING SL1
+								JOIN FLETCHERS_BOXDICEAPI.DBO.CONTACTACTIVITY CA ON CA.SALESLISTINGID = SL1.ID AND CA.CONTACTACTIVITYTYPEID IN (10,11,17) --APPRAISALS
+							GROUP BY SL1.ID
+							HAVING MIN(CA.STARTDATE) {5}
+						) OR
+						LISTEDDATE {5}
+					)
+					GROUP BY SL.ID, SL.LISTEDDATE)
+
+                SELECT
+					USR.ID AS AGENTID,
+                    ISNULL(USR.FIRSTNAME,'') + ', ' +  ISNULL(USR.LASTNAME,'') as AGENTNAME,
+					USR.OFFICEID, A.PERIOD,
+                    CASE WHEN ROW_NUMBER() OVER(PARTITION BY USR.ID ORDER BY COUNT(*) DESC) > 5
+                       THEN 'Other' ELSE ISNULL(LISTING_SOURCE, 'Unknown') END AS SOURCE_NAME,
+                    COUNT(*) AS SOURCE_COUNT
+				  FROM DB_USER USR LEFT JOIN APPRAISALS A ON A.AGENTID = USR.ID AND PERIOD = 'Current'
+					JOIN LIST L_OFFICE ON L_OFFICE.ID = USR.OFFICEID
+				WHERE USR.ID IN ({1})
+				GROUP BY PERIOD, USR.ID, USR.OFFICEID, USR.FIRSTNAME, USR.LASTNAME, LISTING_SOURCE
+				ORDER BY USR.ID, COUNT(*) DESC
+                ", szYTDFilter, szUserIDs, oFilter.getDBSafeEndDate(), szCurrentPeriodFilter, szPreviousPeriodEnd,
+                szPreviousAndCurrentPeriodFilter);
 
         DataSet ds1 = DB.runDataSet(szSQL);
         integrateBnDData(ref ds, ds1.Tables[0]);
         integrateBnDData(ref ds, ds1.Tables[1]);
         integrateBnDData(ref ds, ds1.Tables[2]);
+        integrateBnDData(ref ds, ds1.Tables[3]);
 
         // This is for debugging purposes - all data used in the report can be viewed in it's final state in this saved file.
         Utility.dataTableToCSVFile(ds.Tables[0], string.Format(@"C:\Temp\final.csv"));
@@ -1599,7 +1382,7 @@ public class KPI_Office_agents_NEW : Report {
         }
     }
 
-    private void integrateBnDData(ref DataSet ds, DataTable dtBnDData) {
+    private void integrateBnDData(ref DataSet ds, DataTable dtBnDData, string Type = "") {
         string szCampaignFilterSQL = String.Format(@" WHERE ADDRESS1 NOT LIKE '%PROMO,%' AND C.STARTDATE {0}", szPreviousAndCurrentPeriodFilter);
         string szCompanyIDList = Valid.getText("szCompanyID", "", VT.TextNormal);
 
@@ -1633,7 +1416,8 @@ public class Payroll_Timesheets : Report {
     private static string RFileName = "Payroll Timesheets";
     private int ReportType;
     private int TimesheetCycleID;
-    int UserID = -1;
+    private int UserID = -1;
+
     /// <summary>
     /// Constructor Method that receives the Viewer and the Filter and creates the report.
     /// </summary>
@@ -1641,7 +1425,7 @@ public class Payroll_Timesheets : Report {
     /// <param name="oFilter"></param>
     /// <param name="oFilter">Report Type 1 = Normal pay cycles, 2 = Paid in advance, -1 = Produce only current users timesheet</param>
     public Payroll_Timesheets(ReportViewer Viewer, ReportFilters oFilter, int ReportType, int TimesheetCycleID = Int32.MinValue, int UserID = -1) {
-        if (G.CurrentUserRoleID != 1 && ReportType > -1)
+        if (G.User.RoleID != 1 && ReportType > -1)
             throw new Exception("Non-Admin user attempting to access admin report - (Full) Payroll Summary");
         oViewer = Viewer;
         this.oFilter = oFilter;
@@ -1665,7 +1449,7 @@ public class Payroll_Timesheets : Report {
         string szReportType = string.Format("TIMESHEETCYCLEID = (SELECT MIN(ID) FROM TIMESHEETCYCLE WHERE CYCLETYPEID = {0} AND COMPLETED = 0)", ReportType);
 
         // Report type -1 : Produce current user timesheet
-        if (ReportType == -1) 
+        if (ReportType == -1)
             szReportType = string.Format("TIMESHEETCYCLEID = {1} AND U.ID = {0}", UserID, TimesheetCycleID);
         // Allows for the recreation of old timesheet cycles
         else if (TimesheetCycleID > int.MinValue)
@@ -1676,7 +1460,7 @@ public class Payroll_Timesheets : Report {
             SELECT TC.STARTDATE, TC.ENDDATE, U.FIRSTNAME + ' ' + U.LASTNAME AS STAFFNAME, TS.* FROM TIMESHEETENTRY TS
                 JOIN DB_USER U ON TS.USERID = U.ID
                 JOIN TIMESHEETCYCLE TC ON TC.ID = TS.TIMESHEETCYCLEID
-            WHERE {0}
+            WHERE {0} AND U.ISDELETED = 0
             ORDER BY U.LASTNAME", szReportType));
 
         return ds;
@@ -1685,7 +1469,7 @@ public class Payroll_Timesheets : Report {
 
 public class Payroll_Summary : Report {
     private static string RFileName = "Payroll Summary";
-    int CycleRef = 0;
+    private int CycleRef = 0;
 
     /// <summary>
     /// Constructor Method that receives the Viewer and the Filter and creates the report.
@@ -1694,7 +1478,7 @@ public class Payroll_Summary : Report {
     /// <param name="oFilter"></param>
     public Payroll_Summary(ReportViewer Viewer, ReportFilters oFilter, int CycleRef) {
         this.CycleRef = CycleRef;
-        if (G.CurrentUserRoleID != 1)
+        if (G.User.RoleID != 1)
             throw new Exception("Non-Admin user attempting to access admin report - Payroll Summary");
         oViewer = Viewer;
         this.oFilter = oFilter;
@@ -1719,7 +1503,13 @@ public class Payroll_Summary : Report {
                 MIN(ENTRYDATE) AS STARTDATE, MAX(ENTRYDATE) AS ENDDATE,
 	            SUM(ACTUAL) AS ACTUAL, SUM(ANNUALLEAVE) AS ANNUALLEAVE,
 	            SUM(SICKLEAVE) AS SICKLEAVE, SUM(RDOACRUED) AS RDOACRUED,
-	            SUM(RDOTAKEN) AS RDOTAKEN, '' AS COMMENTS,
+	            SUM(RDOTAKEN) AS RDOTAKEN,
+                STUFF((
+                        SELECT ' ******' + CAST(TSE.ENTRYDATE AS VARCHAR) + ' - ' + TSE.COMMENTS AS [text()]
+                          FROM TIMESHEETENTRY TSE
+                         WHERE TSE.USERID = TS.USERID AND TSE.TIMESHEETCYCLEID = TS.TIMESHEETCYCLEID AND TSE.COMMENTS != '' AND TSE.COMMENTS is not  null
+                         FOR XML PATH('')
+                     ), 1, 1, '' ) AS [Comments],
                 CASE
                     -- User without supervisor signs off on own timesheet
 					WHEN MAX(USERSIGNOFFDATE) IS NULL AND (U.SUPERVISORID IS NULL OR U.SUPERVISORID = 0) THEN 'Awaiting Staff signoff'
@@ -1733,7 +1523,7 @@ public class Payroll_Summary : Report {
             JOIN DB_USER U ON U.ID = TS.USERID
             JOIN LIST O ON O.ID = U.OFFICEID
             JOIN TIMESHEETCYCLE TSC ON TSC.ID = TS.TIMESHEETCYCLEID
-            WHERE TSC.ID in ({0},{1})
+            WHERE TSC.ID in ({0},{1}) AND U.ISDELETED = 0
             GROUP BY TIMESHEETCYCLEID, USERID, TSC.CYCLETYPEID, SUPERVISORID
 			UNION
             SELECT LASTNAME, U.FIRSTNAME, U.PAYROLLCYCLEID, U.ID, U.FIRSTNAME + ' ' + U.LASTNAME AS NAME,
@@ -1744,12 +1534,16 @@ public class Payroll_Summary : Report {
                 'User hasn''t entered details' AS DETAILS
             FROM DB_USER U
             JOIN LIST O ON O.ID = U.OFFICEID
-            WHERE U.PAYROLLCYCLEID > 0
+            WHERE U.PAYROLLCYCLEID > 0 AND U.ISDELETED = 0
                 AND U.ID NOT IN (SELECT DISTINCT USERID FROM TIMESHEETENTRY WHERE TIMESHEETCYCLEID IN ((SELECT MIN(ID) FROM TIMESHEETCYCLE WHERE CYCLETYPEID = 1 AND COMPLETED = 0),(SELECT MIN(ID) FROM TIMESHEETCYCLE WHERE CYCLETYPEID = 2 AND COMPLETED = 0)))
-			ORDER BY TSC.CYCLETYPEID, LASTNAME", 
+			ORDER BY TSC.CYCLETYPEID, LASTNAME",
                         G.TimeSheetCycleReferences[CycleRef].NormalCycle.CycleID,
                         G.TimeSheetCycleReferences[CycleRef].PayAdvanceCycle.CycleID));
-
+        foreach (DataRow dr in ds.Tables[0].Rows) {
+            if(DB.readString(dr["COMMENTS"]) != "") {
+                dr["Comments"] = DB.readString(dr["COMMENTS"]).Replace("******", Environment.NewLine).Replace("12:00AM", "");
+            }
+        }
         return ds;
     }
 }
@@ -2119,7 +1913,7 @@ public abstract class Report {
 
                 i++;
             }
-        } catch (Exception e) {
+        } catch (Exception) {
             throw;
         }
         return true;

@@ -14,6 +14,7 @@
             $("#lstReport, #lstUserReport").change(function () {
                 showFilter();
             });
+            $("#lstReport").select2();
             $("#fReport").height($("#dReportFilter").height())
             $(".DataPanel").corner();
         });
@@ -28,6 +29,11 @@
                     $("#spDate").show();
                     $("#spCompany").show();
                     break;
+                case "CASHFLOW":
+                case "CASHFLOWPREDICTION":
+                    $("#spDate").show();
+                    $("#spOffice").show();
+                    break;
                 case "AGENTOFFTHETOP":
                     $("#spUser").show();
                     $("#spDate").show();
@@ -36,11 +42,11 @@
                     break;
                 case "BUDGETREPORT":
                     $("#lstFinancialYear").attr('size', '1')
-                                            .removeAttr('size')
-                                            .removeAttr('multiple')
-                                            .val('-1');
+                        .removeAttr('size')
+                        .removeAttr('multiple')
+                        .val('-1');
                     $("#spDate").show();
-                    $("#spYTDSales").show();
+                    $("#spFinYear").show();
                     break;
 
                 case "CAMPAIGNOUTSTANDING":
@@ -50,6 +56,7 @@
                     $("#spCompany").show();
                     break;
                 case "COMMISSION":
+                case "COMMISSION_NEW":
                     $("#spUser, #spRecreate").show();
                     $("#spPayPeriod").show();
                     $("#spCompany").show();
@@ -65,11 +72,11 @@
 
                 case "EXPENSESUMMARY":
                     $("#lstFinancialYear").attr('size', '1')
-                                            .removeAttr('size')
-                                            .removeAttr('multiple')
-                                            .val('-1');
+                        .removeAttr('size')
+                        .removeAttr('multiple')
+                        .val('-1');
                     $("#lstFinancialYear option[value='']").remove();
-                    $("#spYTDSales").show();
+                    $("#spFinYear").show();
                     $("#spCompany").show();
                     $("#spExpense").show();
                     $("#spFletcherOrUserAmount").show();
@@ -78,32 +85,38 @@
                 case "INCENTIVECHART":
                     $("#spCompany").show();
                     $("#lstFinancialYear").attr('size', '1')
-                                            .removeAttr('size')
-                                            .removeAttr('multiple')
-                                            .val('-1');
+                        .removeAttr('size')
+                        .removeAttr('multiple')
+                        .val('-1');
                     $("#lstFinancialYear option[value='']").remove();
-                    $("#spYTDSales").show();
+                    $("#spFinYear").show();
                     break;
                 case "MAINKPI":
                     $("#lstFinancialYear option[value='']").remove();
-                    //$("#spUser").show();
-                    //$("#spOffice").show();
                     $("#spCompany").show();
                     $("#spDate").show();
                     $("#spActive").show();
 
                     break;
+
+                case "KPICARD":
+                    $("#spDate").hide();
+                    //  $("#spUser").show();
+                    $("#spMonth").show();
+                    $("#spQuarter").show();
+                    $("#spActive").show();
+                    break;
+
                 case "KPIOFFICE":
                 case "KPIOFFICENEW":
                 case "KPIOFFICEAUCTION":
                     $("#lstFinancialYear option[value='']").remove();
-                    //$("#spUser").show();
-                    //$("#spOffice").show();
                     $("#spCompany").show();
                     $("#spDate").show();
                     $("#spActive").show();
 
                     break;
+                case "COMMISSIONTOTAL":
                 case "MENTORCOMMISSION":
                 case "FARMCOMMISSION":
                     $("#lstFinancialYear option[value='']").remove();
@@ -151,6 +164,8 @@
                         $("#spCompany").show();
                         $("#spUser").show();
                         $("#spActive").show();
+                    } else {
+                        $("#spNonAdminUserFilter").show()
                     }
                     $("#spDate").show();
                     break;
@@ -161,9 +176,22 @@
                         $("#spCompany").show();
                         $("#spUser").show();
                         $("#spActive").show();
+                    }  else {
+                        $("#spNonAdminUserFilter").show()
                     }
                     $("#spDate").show();
                     break;
+                case "SALESLETTER":
+                    $("#lstFinancialYear").attr('size', '1')
+                        .removeAttr('size')
+                        .removeAttr('multiple')
+                        .val('-1');
+                    $("#spOffice").show();
+                    $("#spCompany").show();
+                    $("#spUser").show();
+                    $("#spFinYear").show();
+                    break;
+
                 case "MONTHLYSALESBYAGENT":
                     $("#lstFinancialYear option[value='']").remove();
                     if (!blnSingleUser) {
@@ -172,6 +200,8 @@
                         $("#spUser").show();
                         $("#spActive").show();
                         $("#spKPIFilter").show();
+                    } else {
+                        $("#spNonAdminUserFilter").show()
                     }
                     $("#spDate").show();
                     break;
@@ -217,8 +247,8 @@
                     $("#spCompany").show();
                     break;
                 case "MISSINGSECTION27":
-                        $("#spDate").show();
-                        break;
+                    $("#spDate").show();
+                    break;
                 case "TOPPERFORMER":
                     $("#spRole").show();
                     $("#spCompany").show();
@@ -249,7 +279,7 @@
                     $("#lstFinancialYear").attr('multiple', 'multiple');
                     $("#lstFinancialYear").attr('size', '4');
                     $("#lstFinancialYear option[value='-1']").remove();
-                    $("#spYTDSales").show();
+                    $("#spFinYear").show();
                     $("#spActive").show();
                     $("#spCompany").show();
 
@@ -263,7 +293,7 @@
                     $("#lstFinancialYear").attr('multiple', 'multiple');
                     $("#lstFinancialYear").attr('size', '4');
                     $("#lstFinancialYear option[value='-1']").remove();
-                    $("#spYTDSales").show();
+                    $("#spFinYear").show();
                     $("#spActive").show();
                     $("#spCompany").show();
 
@@ -275,7 +305,7 @@
                     $("#lstFinancialYear").removeAttr('size');
                     $("#lstFinancialYear").attr('size', '1');
                     $("#lstFinancialYear option[value='-1']").remove();
-                    $("#spYTDSales").show();
+                    $("#spFinYear").show();
                     $("#spActive").show();
                     $("#spCompany").show();
 
@@ -291,6 +321,8 @@
             $("#lstOffice option:selected").removeAttr("selected");
             $("#lstCompany option:selected").removeAttr("selected");
             $("#lstUser option:selected").removeAttr("selected");
+            $("#lstNonAdminUser option:selected").removeAttr("selected");
+            
         }
 
         function getFilterValues() {
@@ -301,12 +333,16 @@
                 szParam += "&szCompanyID=" + escape($("#lstCompany").val());
             if ($("#lstSuburb").val() != null)
                 szParam += "&szSuburbID=" + escape($("#lstSuburb").val());
+            if ($("#lstFinancialYear").val() != null)
+                szParam += "&szFinYear=" + escape($("#lstFinancialYear").val());
+        
             szParam += "&szExpenseID=" + $("#lstExpense").val();
             szParam += "&szFletcherOrAgent=" + $("#lstFletcherOrAgent").val();
             szParam += "&szOffTheTopID=" + $("#lstOffTheTop").val();
             szParam += "&szRoleID=" + $("#lstRole").val();
             szParam += "&szFY=" + $("#lstFinancialYear").val();
             szParam += "&szQuarter=" + $("#lstQuarter").val();
+            szParam += "&szMonth=" + $("#lstMonth").val();
             szParam += "&szStartDate=" + $("#txtStartDate").val();
             szParam += "&szEndDate=" + $("#txtEndDate").val();
             if ($("#lstIncludeInactive").val() == "YES")
@@ -341,7 +377,8 @@
         }
 
         function runReport(TargetFrm, blnPrint) {
-            switch (getReport()) {
+            szReport = getReport();
+            switch (szReport) {
                 case "AGENTOFFTHETOP":
                     var szSrc = "agent_off_the_top.aspx";
                     var szParam = getFilterValues();
@@ -353,6 +390,14 @@
                     break;
                 case "AR_REPORT":
                     var szSrc = "AR_report.aspx";
+                    var szParam = getFilterValues();
+                    break;
+                 case "CASHFLOW":
+                    var szSrc = "cash_flow.aspx";
+                    var szParam = getFilterValues();
+                    break;
+                 case "CASHFLOWPREDICTION":
+                    var szSrc = "cash_flow_prediction.aspx";
                     var szParam = getFilterValues();
                     break;
                 case "SECTION27":
@@ -391,6 +436,17 @@
                     var szParam = getFilterValues();
                     break;
                 case "COMMISSION":
+                case "COMMISSION_NEW":
+                    var szSrc = "commission_statement.aspx";
+                    if(szReport == "COMMISSION_NEW")
+                        szSrc = "commission_statement_new.aspx";
+
+                    var szParam = getFilterValues();
+                    szParam += getSelectedUser(false);
+
+                    
+                    szParam += "&RecalcTotals=" + $("#lstRecreateTotals").val();
+                    break;
                     var szSrc = "commission_statement.aspx";
                     var szParam = getFilterValues();
 
@@ -454,8 +510,8 @@
                     var szParam = getFilterValues();
                     szParam += getSelectedUser(false);
                     break;
-                case "KPIOFFICENEW":
-                    var szSrc = "kpi_office_agents_NEW.aspx";
+                case "KPICARD":
+                    var szSrc = "kpi_agent_card.aspx";
                     var szParam = getFilterValues();
                     szParam += getSelectedUser(false);
                     break;
@@ -475,6 +531,11 @@
                     break;
                 case "MENTORCOMMISSION":
                     var szSrc = "mentoring_commission.aspx";
+                    var szParam = getFilterValues();
+                    szParam += getSelectedUser(false);
+                    break;
+            case "\COMMISSIONTOTAL":
+                    var szSrc = "commission_total.aspx";
                     var szParam = getFilterValues();
                     szParam += getSelectedUser(false);
                     break;
@@ -522,6 +583,14 @@
                     var szParam = getFilterValues();
                     szParam += getSelectedUser(false);
                     break;
+                case "SALESLETTER":
+                     if (!enforceFinancialYear())
+                        return false;
+                    
+                    var szSrc = "sales_letters.aspx";
+                    var szParam = getFilterValues();
+                    szParam += getSelectedUser(false);
+                    break;
                 case "AGENTEOMBALANCE":
                     var szSrc = "agent_eom_balance.aspx";
                     var szParam = getFilterValues();
@@ -538,7 +607,7 @@
                         alert("You must select a start date");
                         return false;
                     }
-                szParam += getSelectedUser(true);
+                    szParam += getSelectedUser(true);
                     break;
                 case "SYSTEMQUARTERLY":
                     if ($("#lstQuarter").val() == "") {
@@ -609,10 +678,20 @@
 
         function getSelectedUser(blnSelectAll) {
             if ($("#lstUser").val() == null) {
-                if (blnSelectAll)
+                if (blnSelectAll) {
                     $("#lstUser *").attr("selected", "selected");
-                else
-                    return "";
+                } else {
+                    if ($("#lstNonAdminUser").is(":visible")) { //Check whether the ability to select between the PA and the sales agent is available
+                        return "&szUserID=" + $("#lstNonAdminUser").val();
+                    }
+
+                    if ($("#hfUserID").val() != "")
+                        return "&szUserID=" + $("#hfUserID").val(); //Get the hidden value as this is a single user view
+                    else {
+                        $("#lstUser *").attr("selected", "selected");
+                        return "&szUserID=" + $("#lstUser").val();
+                    }
+                }   
             }
             return "&szUserID=" + $("#lstUser").val();
         }
@@ -635,7 +714,7 @@
         }
 
         function enforceFinancialYear() {
-            if ($("#lstFinancialYear option:selected").length == 0) {
+            if ($("#lstFinancialYear option:selected").length == 0 || $("#lstFinancialYear").val() == -1) {
                 alert('Please select a Financial year.');
                 $("#lstFinancialYear").focus();
                 return false;
@@ -719,9 +798,11 @@
                 <option value="KPIAGENT">KPI agent detail</option>
                 <option value="KPIMUNICIPALITY">KPI municipality detail</option>
                 <option value="KPISUBURB">KPI suburb detail</option>
-                <option value="KPIOFFICE">KPI Office agents BETA</option>
-                <option value="KPIOFFICENEW">KPI Office agents NEW BETA</option>
-                <option value="KPIOFFICEAUCTION">KPI Office agents Auction Details</option>
+                <option value="KPIOFFICE">KPI Office agents</option>
+                <option value="KPICARD">KPI agent card</option>
+                <option value="KPIOFFICEAUCTION">KPI Office agents auction details</option>
+                <optgroup label='EOFY reports' />
+                <option value="SALESLETTER">Sales letter</option>
 
                 <optgroup label='Sales reports' />
                 <option value="AGENTEOMBALANCE">Agents EOM Balances</option>
@@ -729,6 +810,8 @@
                 <option value="PAYROLLESTIMATE">Agents payroll estimate</option>
                 <option value="BUDGETREPORT">Budget report</option>
                 <option value="COMMISSION">Commission statement</option>
+                <option value="COMMISSION_NEW">Commission statement - NEW</option>
+                <option value="COMMISSIONTOTAL">Commission - Totals</option>
                 <option value="MENTORCOMMISSION">Commission - Mentoring</option>
                 <option value="FARMCOMMISSION">Commission - Service Area</option>
                 <option value="EXPENSESUMMARY">Expense summary</option>
@@ -756,6 +839,8 @@
                 <option value="MENTORBONUSSUMMARY">Mentor bonus summary</option>
 
                 <optgroup label='Forecasting reports' />
+                <option value="CASHFLOW">Sales statistics</option>
+                <option value="CASHFLOWPREDICTION">Cash flow prediction</option>
                 <option value="AR_REPORT">Proposed income</option>
                 <option value="SECTION27">Section 27 proposed income</option>
                 <option value="MISSINGSECTION27">Missing section 27</option>
@@ -765,7 +850,7 @@
             </select>
 
             <br class='Align' />
-            <span id="spYTDSales" class="Filter">
+            <span id="spFinYear" class="Filter">
                 <asp:Label ID="Label6" CssClass="FilterLabel" runat="server" Text="Financial year">
                 </asp:Label>
                 <asp:ListBox ID="lstFinancialYear" runat="server" CssClass="Entry"></asp:ListBox>
@@ -776,6 +861,12 @@
                 </asp:Label>
                 <asp:ListBox ID="lstUser" runat="server" CssClass="Entry" SelectionMode="Multiple"
                     Rows="10"></asp:ListBox>
+                <br class='Align' />
+            </span>
+             <span id="spNonAdminUserFilter" runat="server" class="Filter" visible="false">
+                <asp:Label ID="Label16" CssClass="FilterLabel" runat="server" Text="User">
+                </asp:Label>
+                 <asp:DropDownList ID="lstNonAdminUser" runat="server" CssClass="Entry"></asp:DropDownList>
                 <br class='Align' />
             </span>
             <span id="spRecreate" runat="server" class="Filter">
@@ -825,6 +916,12 @@
                 <asp:Label ID="Label1" CssClass="FilterLabel" runat="server" Text="Off the top account">
                 </asp:Label>
                 <asp:ListBox ID="lstOffTheTop" runat="server" CssClass="Entry" SelectionMode="Single" Rows="1"></asp:ListBox>
+                <br class='Align' />
+            </span>
+             <span id="spMonth" class="Filter">
+                <asp:Label ID="Label17" CssClass="FilterLabel" runat="server" Text="Month">
+                </asp:Label>
+                <asp:ListBox ID="lstMonth" runat="server" CssClass="Entry" SelectionMode="Single" Rows="1"></asp:ListBox>
                 <br class='Align' />
             </span>
             <span id="spQuarter" class="Filter">
@@ -883,7 +980,7 @@
             </div>
         </div>
         <iframe id='fReport' name="fReport" style="overflow: auto; border: 0px;" src="../blank.html" frameborder="0"></iframe>
-        <iframe id='fPDF' name="fPDF" style="overflow: auto; border: 0px; height: 100px; width: 1000px; top: 800px" src="about:blank" frameborder="0"></iframe>
+        <iframe id='fPDF' name="fPDF" style="overflow: auto; border: 0px; height: 0px; width: 1000px; top: 800px" src="about:blank" frameborder="0"></iframe>
     </form>
 </body>
 </html>

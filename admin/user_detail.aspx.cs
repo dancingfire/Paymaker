@@ -17,12 +17,12 @@ public partial class user_detail : Root {
         string szSQL = string.Format(@"
             SELECT U.ID, U.INITIALSCODE + ' ' + U.FIRSTNAME + ' ' + U.LASTNAME AS NAME, R.NAME AS ROLE,
                 CASE WHEN U.ISACTIVE = 0 THEN 'Inactive' ELSE 'Active' END AS STATUS, U.ISACTIVE, T.FIRSTNAME + ' ' + T.LASTNAME AS TEAM,
-                LEFT(O.NAME, 2) AS OFFICE, S.FIRSTNAME + ' ' + S.LASTNAME AS SUPERVISOR
+                LEFT(O.NAME, 2) AS OFFICE, CASE WHEN S.ID = 0 THEN '' ELSE S.FIRSTNAME + ' ' + S.LASTNAME END AS SUPERVISOR
             FROM DB_USER U
             JOIN ROLE R ON U.ROLEID = R.ID
             LEFT JOIN DB_USER T ON T.ID = U.TEAMID
             LEFT JOIN LIST O ON U.OFFICEID = O.ID
-            LEFT JOIN DB_USER S ON U.SUPERVISORID = S.ID
+            LEFT JOIN DB_USER S ON U.SUPERVISORID = S.ID 
             
             WHERE U.ISDELETED = 0 {0}
             ORDER BY U.ISACTIVE DESC, U.INITIALSCODE", szInactive);
@@ -30,7 +30,7 @@ public partial class user_detail : Root {
         gvList.DataSource = dsTest;
         gvList.DataBind();
 
-        HTML.formatGridView(ref gvList, true);
+        HTML.formatGridView(ref gvList, true, true);
     }
 
     protected void chkIncludeInactive_CheckedChanged(object sender, EventArgs e) {

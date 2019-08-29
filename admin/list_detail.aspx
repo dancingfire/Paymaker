@@ -17,7 +17,7 @@
                     $(this).next().html(tempText + ' (in-active)');
                 }
             });
-            createDataTable("gvList", true, true, 500);
+            createDataTable("gvList", true, true, 380);
         });
 
         function refreshPage() {
@@ -36,13 +36,7 @@
         </div>
 
         <div style='float: left; width: 30%;'>
-            <table width="100%" border="0">
-                <tr>
-                    <td class="ListHeader" width="100%">Name</td>
-                </tr>
-            </table>
-
-            <div class="ListContainer" style="overflow: auto; width: 100%; height: 457px; float: left">
+            <div class="ListContainer" style="overflow: auto; overflow-x: hidden; width: 100%; height: 457px; float: left">
                 <asp:GridView ID="gvList" runat="server" AutoGenerateColumns="false"
                     OnRowDataBound="gvList_RowDataBound" Width="100%"
                     EmptyDataText="No Data Found" EnableViewState="false">

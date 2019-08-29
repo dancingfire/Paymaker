@@ -210,6 +210,7 @@ public class UserPayPeriod {
     public double GraphCommissionTotal { get; set; }
     public double RetainerAmount { get; set; }
     public double DeductionsAmount { get; set; }
+    public double SuperAmount { get; set; }
 
     /// <summary>
     /// Includes the full value of the deduction
@@ -218,6 +219,23 @@ public class UserPayPeriod {
         get { return DeductionsAmount; }
     }
 
+    /// <summary>
+    /// The current income for the month - includes the retainer as income
+    /// </summary>
+    public double MonthlyIncomeWithRetainer {
+        get {
+            return this.Income + this.OtherIncome - this.DeductionsAmount + (2*this.RetainerAmount); //Need to add the retainer back in
+        }
+    }
+
+    /// <summary>
+    /// The current income for the month - the retainer counts as a deduction in this calculation
+    /// </summary>
+    public double MonthlyIncomeWithoutRetainer {
+        get {
+            return this.Income + this.OtherIncome - this.DeductionsAmount ; 
+        }
+    }
     public int UserID { get; set; }
     public int PayPeriodID { get; set; }
     public int DBID { get; set; }
@@ -226,6 +244,14 @@ public class UserPayPeriod {
     public DataSet dsOtherIncome = null;
     public DataSet dsDeductions = null;
 
+    /// <summary>
+    /// We use the retainer only when the agents' pay will be less than their retainer amount
+    /// </summary>
+    public bool UseRetainer {
+        get {
+            return this.RetainerAmount > 0 && this.RetainerAmount > this.MonthlyIncomeWithoutRetainer;
+        }
+    }
     /// <summary>
     /// This will be true if the commission statement has written values to the DB
     /// </summary>
@@ -266,6 +292,7 @@ public class UserPayPeriod {
                     HeldOver = DB.readDouble(dr["HELDOVERAMOUNT"], 0);
                     Income = DB.readDouble(dr["INCOME"], 0);
                     OtherIncome = DB.readDouble(dr["OTHERINCOME"], 0);
+                    SuperAmount = DB.readDouble(dr["SUPERPAID"], 0);
                     Pending = DB.readDouble(dr["PENDING"], 0);
                     EOFYBonus = DB.readDouble(dr["EOFYBonus"], 0);
                     TotalDistributionOfFunds = DB.readDouble(dr["DistributionOfFunds"], 0);
@@ -314,17 +341,17 @@ public class UserPayPeriod {
             OtherIncome += DB.readDouble(dr["AMOUNT"], 0);
         }
 
-        RetainerAmount = 0;
         DeductionsAmount = 0;
         //Add the deductions
         foreach (DataRow dr in dsDeductions.Tables[0].Rows) {
             DeductionsAmount += DB.readDouble(dr["AMOUNT"], 0);
         }
 
-        if (G.Settings.ClientID == ClientID.HeadOffice)
+        if (G.Settings.ClientID == ClientID.HeadOffice) {
             TotalDistributionOfFunds = CommissionIncome + OtherIncome - DeductionsAmount;
-        else
+        } else {
             TotalDistributionOfFunds = CommissionIncome + OtherIncome + EOFYBonus - DeductionsAmount;
+        }
 
         foreach (DataRow dr in dsFutureData.Tables[0].Rows) {
             Pending += DB.readDouble(dr["ACTUALPAYMENT"], 0);
@@ -367,7 +394,7 @@ public class UserPayPeriod {
 
     private void getRetainerAmount() {
         foreach (DataRow dr in dsDeductions.Tables[0].Rows) {
-            if (DB.readString(dr["NAME"]).Contains("Retainer"))
+            if (DB.readString(dr["NAME"]).Contains("Retainer") )
                 RetainerAmount = DB.readDouble(dr["AMOUNT"], 0);
         }
     }
@@ -454,6 +481,7 @@ public class UserPayPeriod {
         oSQL.add("INCOME", Income);
         oSQL.add("OTHERINCOME", OtherIncome);
         oSQL.add("PENDING", Pending);
+        oSQL.add("SUPERPAID", SuperAmount);
         oSQL.add("EOFYBonus", EOFYBonus);
         oSQL.add("DistributionOfFunds", TotalDistributionOfFunds);
         if (DBID == -1)

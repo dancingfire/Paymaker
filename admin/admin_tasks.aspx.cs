@@ -26,6 +26,24 @@ namespace PAYMAKER {
             G.Notifications.addPageNotification(PageNotificationType.Success, "Graphs totals updated", "The graph totals have been updated.");
             G.Notifications.showPageNotification();
         }
+        
+
+        protected void btnTestTimesheet_Click(object sender, EventArgs e) {
+            string Msg = "Started correctly.";
+            try {
+                DBLog.addRecord(DBLogType.EmailAutomation, "Checking Timesheet emails", -1, -1);
+                G.User.ID = -1;
+                G.User.UserID = -1;
+                G.User.RoleID = 1;
+                TimesheetCycle.checkAutomatedEmails();
+            } catch (Exception e1) {
+                Msg = "ERROR: " + e1.Message;
+            }
+
+            G.Notifications.addPageNotification(PageNotificationType.Success, "Status", Msg);
+            G.Notifications.showPageNotification();
+        }
+
 
         protected void btnUpdateAgentActual_Click(object sender, EventArgs e) {
             string szPPID = G.PayPeriodInfo.getPayPeriodsForYTD(-1, Convert.ToInt32(lstAgentFinYear.SelectedValue));

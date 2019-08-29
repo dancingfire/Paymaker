@@ -25,16 +25,36 @@ public class Payroll {
 
     public static Boolean IsPayrollSupervisor {
         get {
-            // Check if User has any staff that are on the payroll system
-            return DB.getScalar(string.Format(@"
+            if (HttpContext.Current.Session["ISPAYROLLSUPERVISOR"] == null) {
+                // Check if User has any staff that are on the payroll system
+                bool IsSuper = DB.getScalar(string.Format(@"
                     SELECT COUNT(*) FROM DB_USER S JOIN DB_USER U ON U.SUPERVISORID = S.ID
                     WHERE S.ID = {0} AND U.PAYROLLCYCLEID > 0 AND U.ISACTIVE = 1 AND U.ISDELETED = 0", G.User.UserID), 0) > 0;
+                HttpContext.Current.Session["ISPAYROLLSUPERVISOR"] = IsSuper;
+                return IsSuper;
+            } else {
+                return Convert.ToBoolean(HttpContext.Current.Session["ISPAYROLLSUPERVISOR"]);
+            }
+        }
+    }
+    public static Boolean IsLeaveSupervisor {
+        get {
+            if (HttpContext.Current.Session["ISLEAVESUPERVISOR"] == null) {
+                // Check if User has any staff that are on the payroll system
+                bool IsSuper = DB.getScalar(string.Format(@"
+                    SELECT COUNT(*) FROM DB_USER 
+                    WHERE SUPERVISORID = {0} AND ISACTIVE = 1 AND ISDELETED = 0", G.User.UserID), 0) > 0;
+                HttpContext.Current.Session["ISLEAVESUPERVISOR"] = IsSuper;
+                return IsSuper;
+            } else {
+                return Convert.ToBoolean(HttpContext.Current.Session["ISLEAVESUPERVISOR"]);
+            }
         }
     }
 
     public static Boolean IsAdmin {
         get {
-            return G.CurrentUserRoleID == 1 /* Admin */;
+            return G.User.RoleID == 1 /* Admin */;
         }
     }
 
@@ -249,7 +269,7 @@ public class UserTimesheet {
             }
 
             foreach (DataRow dr in ds.Tables[0].Rows) {
-                if (CanEdit && DB.readDate(dr["USERSIGNOFFDATE"]) > DateTime.MinValue && G.CurrentUserID == DB.readInt(dr["USERID"]))
+                if (CanEdit && DB.readDate(dr["USERSIGNOFFDATE"]) > DateTime.MinValue && G.User.ID == DB.readInt(dr["USERID"]))
                     CanEdit = false;
 
                 lEntries.Add(new UserTimesheetEntry(dr, blReadOnlyForm || !CanEdit));
@@ -349,7 +369,7 @@ public class UserTimesheetEntry {
 
     public UserTimesheetEntry() {
         ID = -1;
-        UserID = G.CurrentUserID;
+        UserID = G.User.ID;
         EntryDate = DateTime.MinValue;
         Actual = double.MinValue;
         AnnualLeave = double.MinValue;
@@ -379,10 +399,10 @@ public class UserTimesheetEntry {
 
     private bool CanEdit {
         get {
-            if (G.CurrentUserRoleID == 1 && G.CurrentUserID != UserID) // Admit can always edit other staff forms
+            if (G.User.RoleID == 1 && G.User.ID != UserID) // Admit can always edit other staff forms
                 return true;
 
-            if (G.CurrentUserID == UserID)
+            if (G.User.ID == UserID)
                 return UserSignOff <= DateTime.MinValue && !blReadOnlyForm;
             return true;
         }
@@ -529,19 +549,19 @@ public class TimesheetCycle {
 
         return string.Format(@"
                 -- Check for outstanding staff signoff
-                SELECT U.ID AS OUTSTANDING, U.EMAIL AS USER_EMAIL, SUP.EMAIL AS SUPERVISOR_EMAIL, SUM(ISNULL(TE.ACTUAL, 0)) AS TOTALHOURS, 
+                SELECT U.ID AS OUTSTANDING, U.EMAIL AS USER_EMAIL, ISNULL(SUP.EMAIL, '') AS SUPERVISOR_EMAIL, SUM(ISNULL(TE.ACTUAL, 0)) AS TOTALHOURS, 
                     CASE WHEN MIN(TE.USERSIGNOFFDATE) IS NULL THEN 'EMAIL' ELSE '' END AS EMAILFLAG
                 FROM DB_USER U
-                JOIN DB_USER SUP ON SUP.ID = U.SUPERVISORID
+                LEFT JOIN DB_USER SUP ON SUP.ID = U.SUPERVISORID
                 LEFT JOIN TIMESHEETENTRY TE ON TE.USERID = U.ID AND TE.TIMESHEETCYCLEID = {0}
                 WHERE {1} {2}
 	                 U.PAYROLLCYCLEID = (SELECT CYCLETYPEID FROM TIMESHEETCYCLE WHERE ID = {0})
                 GROUP BY U.ID, U.EMAIL, SUP.EMAIL
 
                 -- Check for outstanding supervisor signoff
-                SELECT U.ID AS OUTSTANDING, U.EMAIL AS USER_EMAIL, SUP.EMAIL AS SUPERVISOR_EMAIL
+                SELECT U.ID AS OUTSTANDING, U.EMAIL AS USER_EMAIL, ISNULL(SUP.EMAIL, '') AS SUPERVISOR_EMAIL
                 FROM DB_USER U
-                JOIN DB_USER SUP ON SUP.ID = U.SUPERVISORID
+                LEFT JOIN DB_USER SUP ON SUP.ID = U.SUPERVISORID
                 LEFT JOIN TIMESHEETENTRY TE ON TE.USERID = U.ID AND TE.TIMESHEETCYCLEID = {0}
                 WHERE {1} TE.USERSIGNOFFDATE IS NOT NULL
 	                AND U.SUPERVISORID IS NOT NULL AND TE.SIGNEDOFFDATE IS NULL
@@ -622,16 +642,16 @@ public class TimesheetCycle {
     }
 
     /// <summary>
-    /// Tests the auto emails by looking 10 days into the future to see whether we would be sending any emails...
+    /// Tests the auto emails by looking 28 days into the future to see whether we would be sending any emails...
     /// </summary>
     public static void testAutomatedEmails() {
-        AppConfigAdmin oConfigAdmin = new AppConfigAdmin();
+        AppConfigAdmin oConfigAdmin = new AppConfigAdmin(G.szCnn);
 
         DateTime oDTLastSent = DateTime.Now.AddDays(-1);
 
         // checks for automated emails starting 1 day after last sent
         // Email 1. Please fill in your
-        for (DateTime dtC = oDTLastSent.AddDays(1); dtC <= DateTime.Now.AddDays(14); dtC = dtC.AddDays(1)) {
+        for (DateTime dtC = oDTLastSent.AddDays(1); dtC <= DateTime.Now.AddDays(28); dtC = dtC.AddDays(1)) {
             HttpContext.Current.Response.Write(Utility.formatDate(dtC) + "<br/>");
             string szSQL = string.Format(@"
                 SELECT ID FROM TIMESHEETCYCLE
@@ -652,7 +672,7 @@ public class TimesheetCycle {
     /// Check for Timesheet Cycles that trigger emails to outstanding staff today
     /// </summary>
     public static void checkAutomatedEmails() {
-        AppConfigAdmin oConfigAdmin = new AppConfigAdmin();
+        AppConfigAdmin oConfigAdmin = new AppConfigAdmin(G.szCnn);
         // Note: Default value is yesterday (if no value is held in config).
         oConfigAdmin.addConfig("AUTOEMAILSLASTSENT", Utility.formatDate(DateTime.Now.AddDays(-1)));
         oConfigAdmin.loadValuesFromDB();

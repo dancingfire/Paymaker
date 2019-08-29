@@ -6,6 +6,47 @@ using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 
+
+/// <summary>
+/// Code to show/hide the modal forms in the system
+/// </summary>
+public static class ModalForms {
+
+    /// <summary>
+    /// The code top open and close the layout update panel
+    /// </summary>
+    /// <returns></returns>
+    public static string createModalUpdate(string Header, string Width = "70%", string Height = "50vh", bool ReturnHTML = false, bool SkipResize = false) {
+        string szResize = " onload='parent.resizeFrameToContent(this)' onresize='parent.resizeFrameToContent(this)' ";
+        if (SkipResize)
+            szResize = "";
+        string szHTML = String.Format(@"
+            <div id='mModalUpdate' tabindex='-1' class='modal fade'>
+                <div class='modal-dialog modal-lg' style='width: {1}; height: {2}'>
+                    <div class='modal-content'>
+                        <div class='modal-header'>
+                            <h4 class='modal-title' id='mModalUpdateTitle'>{0}</h4>
+                        </div>
+                        <div class='modal-body'>
+                            <iframe id='fModalUpdate' src='about:blank' style='width: 100%; height: {2}; border: 0px; overflow: visible'   class='overlay-iframe' scrolling='auto'  {3} ></iframe>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+            <script>
+                //Generated framework
+                 function closeModalUpdate( data) {{
+                    $('#mModalUpdate').modal('hide');
+                }}
+            </script>", Header, Width, Height, szResize); 
+        if (ReturnHTML) {
+            return szHTML;
+        }
+        G.oRoot.Form.Controls.Add(new LiteralControl(szHTML));
+        return "";
+    }
+}
+
 /// <summary>
 /// Functions  that are used throughout the application
 /// </summary>
@@ -23,13 +64,16 @@ public static class HTML {
         string szDir = "../";
         if (IsRoot)
             szDir = "";
-        arFiles.Add(szDir + "include/utility.js?v=12");
-        arFiles.Add(szDir + "include/select2-3.4.3/select2.min.js");
+        arFiles.Add(szDir + "include/utility.js?v=13");
         arFiles.Add(szDir + "include/ckeditor/adapters/jquery.js");
         arFiles.Add(szDir + "include/ckeditor/ckeditor.js");
-        arFiles.Add("https://cdn.datatables.net/v/dt/dt-1.10.16/b-1.5.0/fh-3.1.3/kt-2.3.2/datatables.min.js");
+        arFiles.Add("https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js");
+            //arFiles.Add("https://cdn.datatables.net/v/dt/dt-1.10.16/b-1.5.0/fh-3.1.3/kt-2.3.2/datatables.min.js");
+            arFiles.Add("https://cdn.datatables.net/v/bs/jszip-2.5.0/dt-1.10.18/b-1.5.2/b-html5-1.5.2/fh-3.1.4/datatables.min.js");
         arFiles.Add(szDir + "include/jquery.mods.js?v=13");
+        arFiles.Add(szDir + "include/moment-business-days/index.js?t=1");
         arFiles.Add("https://code.jquery.com/ui/1.12.1/jquery-ui.min.js");
+        arFiles.Add("https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js");
         arFiles.Add(szDir + "include/bootstrap/3.3.6/js/bootstrap.min.js");
         arFiles.Add(szDir + "include/jquery.validVal.min.js");
         arFiles.Add("https://code.jquery.com/jquery-2.2.4.min.js");
@@ -44,9 +88,10 @@ public static class HTML {
 
         List<string> arCssLinks = new List<string>();
         arCssLinks.Add(szDir + "include/JQueryUI1.11.4/smoothness.css?v=1");
-        arCssLinks.Add("https://cdn.datatables.net/v/dt/dt-1.10.16/b-1.5.0/fh-3.1.3/kt-2.3.2/datatables.min.css");
-        arCssLinks.Add(szDir + "include/select2-3.4.3/select2.css");
-        arCssLinks.Add(szDir + "include/bootstrap/3.3.6/css/bootstrap.min.css");
+         arCssLinks.Add("https://cdn.datatables.net/v/bs/jszip-2.5.0/dt-1.10.18/b-1.5.2/b-html5-1.5.2/fh-3.1.4/datatables.min.css");
+        arCssLinks.Add("https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css");
+
+         arCssLinks.Add(szDir + "include/bootstrap/3.3.6/css/bootstrap.min.css");
         arCssLinks.Add(szDir + "include/bootstrap/3.3.6/css/bootstrap-theme.min.css");
 
         foreach (string File in arCssLinks) {
@@ -430,12 +475,22 @@ public static class HTML {
         return oList;
     }
 
-    public static void formatGridView(ref GridView oGV, bool FormatForFiltering = false) {
+    public static void formatGridView(ref GridView oGV, bool FormatForFiltering = false, bool TableHover = false) {
         if (oGV.Rows.Count > 0) {
-            if (FormatForFiltering)
+            if (FormatForFiltering) {
                 oGV.HeaderRow.TableSection = TableRowSection.TableHeader;
+                oGV.BorderStyle = BorderStyle.None;
+                oGV.BorderWidth = 0;
+               
+            }
             oGV.HeaderRow.CssClass = "ListHeader";
+            oGV.CssClass += " table table-condensed";
+            if (TableHover)
+                oGV.CssClass += " table-hover";
+
+            oGV.EmptyDataRowStyle.CssClass = "EmptyData";
         }
+        oGV.GridLines = GridLines.None;
     }
 
     public static DropDownList createAmountTypeListBox(string szID, string szClass, string szStyle) {

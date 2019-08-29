@@ -71,7 +71,6 @@ public partial class user_account_update : Root {
             oSQL.add("USERID", lstUserID.SelectedValue);
             oSQL.add("ACCOUNTID", oRow["ID"].ToString());
             oSQL.add("AMOUNT", Amount);
-            oSQL.add("FINYEAR", "2011");
             if (Convert.ToInt32(oRow["USERACCOUNTID"]) == -1) {
                 DB.runNonQuery(oSQL.createInsertSQL());
             } else {

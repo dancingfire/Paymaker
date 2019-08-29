@@ -1,4 +1,6 @@
+using iTextSharp.xmp.impl;
 using System;
+using System.Text;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -35,10 +37,14 @@ public partial class template_detail : Root {
             txtDescription.Text = oT.Description;
             btnUpdate.Text = "Update";
             txtContent.Text = oT.TemplateHTML;
+            btnDelete.Visible = true;
+            if (intSelID == G.Settings.SalesLetterTemplateID)
+                btnDelete.Enabled = false;
         } else {
             txtName.Text = "";
             txtDescription.Text = "";
             btnUpdate.Text = "Insert";
+            btnDelete.Visible = false;
         }
     }
 
@@ -47,7 +53,8 @@ public partial class template_detail : Root {
             sqlUpdate oSQL = new sqlUpdate("TEMPLATE", "ID", intSelID);
             oSQL.add("NAME", txtName.Text);
             oSQL.add("DESCRIPTION", txtDescription.Text);
-            oSQL.add("CONTENT", Request.Form["txtContent"]);
+            string szVal = Encoding.UTF8.GetString(Convert.FromBase64String(Request.Form["txtSubmit"]));
+            oSQL.add("CONTENT", szVal);
 
             if (intSelID == -1) {
                 DB.runNonQuery(oSQL.createInsertSQL());

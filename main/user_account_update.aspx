@@ -32,6 +32,7 @@
                     tabindex++;
                 }
             });
+            $("#lstUserID").select2();
         });
     </script>
 </head>

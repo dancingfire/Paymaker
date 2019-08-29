@@ -440,7 +440,42 @@ public enum DBLogType {
     CampaignContributionSplit = 8,
     EOFYBonus = 9,
     PayrollModification = 10,
-    Email = 11
+    Email = 11,
+    EmailAutomation = 12,
+    SaleCompleted = 13,
+    SaleFinalized = 14
+}
+
+public enum EmailType {
+    LeaveRequest = 0,
+    Approval = 1,
+    Rejection = 2,
+    Reminder = 3,
+    General = 4,
+    DiscussionRequired = 5,
+    ChangeRequest = 6
+}
+
+public class EmailLog {
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="Type"></param>
+    /// <param name="Entry"></param>
+    /// <param name="ObjectID"></param>
+    /// <param name="ChildObjectID"></param>
+    public static void addLog(EmailType Type, string Subject, string From, string To, string CC, string Body, int ObjectID) {
+        sqlUpdate oSQL = new sqlUpdate("EMAILLOG", "ID", -1);
+        oSQL.add("TYPEID", (int)Type);
+        oSQL.add("SUBJECT", Subject);
+        oSQL.add("SENTFROM", From);
+        oSQL.add("SENTTO", To);
+        oSQL.add("CC", CC);
+        oSQL.add("Body", Body);
+        oSQL.add("OBJECTID", ObjectID);
+        DB.runNonQuery(oSQL.createInsertSQL());
+    }
 }
 
 public class DBLog {
@@ -457,14 +492,14 @@ public class DBLog {
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="Type"></param>
     /// <param name="Entry"></param>
     /// <param name="ObjectID"></param>
     /// <param name="ChildObjectID"></param>
     public static void addGenericRecord(DBLogType Type, string Entry, int ObjectID, int ChildObjectID = -1) {
-        addRecord(Type, Entry, ObjectID, ChildObjectID);
+        addRecord(Type, Entry, ObjectID, ChildObjectID, G.User.UserID);
     }
 
     /// <summary>
@@ -488,29 +523,25 @@ public class DBLog {
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="Type"></param>
     /// <param name="Entry"></param>
     /// <param name="ObjectID"></param>
     /// <param name="ChildObjectID"></param>
-    private static void addRecord(DBLogType Type, string Entry, int ObjectID, int ChildObjectID) {
+    /// <param name="UserID"></param>
+    public static void addRecord(DBLogType Type, string Entry, int ObjectID, int ChildObjectID, int UserID = -1, string DBCnn = null) {
         sqlUpdate oSQL = new sqlUpdate("LOGV2", "ID", -1);
         oSQL.add("TYPEID", (int)Type);
         oSQL.add("VALUE", Entry);
-
-        // Certain records are logged when user is not logged in - for example log of email sent to log user in
-        if (G.User.IsLoggedIn)
-            oSQL.add("USERID", G.User.UserID);
-        else
-            oSQL.add("USERID", -1);
+        oSQL.add("USERID", UserID);
 
         if (ObjectID > -1)
             oSQL.add("OBJECTID", ObjectID);
         if (ChildObjectID > -1)
             oSQL.add("CHILDOBJECTID", ChildObjectID);
 
-        DB.runNonQuery(oSQL.createInsertSQL());
+        DB.runNonQuery(oSQL.createInsertSQL(), DBCnn);
         oSQL = null;
     }
 }

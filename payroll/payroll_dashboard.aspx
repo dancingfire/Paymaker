@@ -75,6 +75,10 @@
                 <div id="dCheck" runat="server" class='Panel'>
                     <a href='../automation/email_notification.aspx?Check=true' target="blank">Check emails</a>
                 </div>
+
+                 <div id="Div1" runat="server" class='Panel'>
+                    <a href='../payroll/staff_list.aspx?' target="blank">View staff list</a>
+                </div>
             </div>
         </div>
     </form>

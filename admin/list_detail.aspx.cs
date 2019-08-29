@@ -50,6 +50,11 @@ public partial class list_detail : Root {
                 lblInsertText.Text = "Add new GL code";
                 break;
 
+            case ListType.LeaveType:
+                lblItemName.Text = "Leave type";
+                lblInsertText.Text = "Add new leave type";
+                break;
+
             case ListType.TXCategory:
                 lblItemName.Text = "TX Categories";
                 lblInsertText.Text = "Add new TX category";

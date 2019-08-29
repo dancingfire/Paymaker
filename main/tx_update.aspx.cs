@@ -1,4 +1,5 @@
 using System;
+using System.Data;
 using System.Web;
 using System.Web.UI.WebControls;
 
@@ -12,7 +13,7 @@ public partial class tx_update : Root {
         intTxID = Valid.getInteger("intItemID");
         hdTXID.Value = intTxID.ToString();
         btnDelete.Attributes.Add("onClick", "return confirm('Are you sure you want to delete this transaction?')");
-        if (!IsPostBack) {
+        if (!Page.IsPostBack) {
             bindData();
             if (intTxID == -1)
                 loadDefaults();
@@ -37,17 +38,27 @@ public partial class tx_update : Root {
         Utility.BindList(ref lstUserID, DB.runReader(@"
             SELECT U.id, U.INITIALSCODE + ' ' + FIRSTNAME + ' ' + LASTNAME AS NAME
             FROM [DB_USER] U
-            WHERE U.ISACTIVE = 1
+            WHERE U.ISACTIVE = 1 AND U.ISDELETED = 0
             ORDER BY U.INITIALSCODE + ' ' + FIRSTNAME + ' ' + LASTNAME"), "ID", "NAME");
         lstUserID.Items.Insert(0, new ListItem("Select a user...", "-1"));
+        using (DataSet ds = DB.MYOBAccount.getSubAccountList()) {
+            txtJobCredit.ClearSelection();
+            txtJobCredit.SelectedValue = null;
+
+            Utility.BindList(ref txtJobCredit, ds, "NAME", "NAME");
+            txtJobCredit.Items.Insert(0, new ListItem(""));
+            txtJobDebit.SelectedValue = null;
+            txtJobDebit.ClearSelection();
+            Utility.BindList(ref txtJobDebit, ds, "NAME", "NAME");
+            txtJobDebit.Items.Insert(0, new ListItem(""));
+        }
+
         rbIncome.Attributes["onclick"] = "showAccountList(true);";
         rbExpense.Attributes["onclick"] = "showAccountList(true);";
         chkIncludeGST.Attributes["onclick"] = "getExGSTAmount()";
 
         txtGLCredit.Attributes["onchange"] = "lockAccounts();";
-        txtGLDebit.Attributes["onchange"] = "lockAccounts();";
-        txtJobCredit.Attributes["onchange"] = "lockAccounts();";
-        txtJobDebit.Attributes["onchange"] = "lockAccounts();";
+        txtGLDebit.Attributes["onchange"] = "lockAccounts();";      
     }
 
     private void loadDefaults() {
@@ -92,9 +103,33 @@ public partial class tx_update : Root {
 
         txtGLCredit.Text = tx.CreditGLCode;
         txtGLDebit.Text = tx.DebitGLCode;
+        if (tx.CreditJobCode != "") {
+            ListItem li = txtJobCredit.Items.FindByValue(tx.CreditJobCode);
+            txtJobCredit.ClearSelection();
+            if (li == null) {
+                //Add the code dynamically
+                ListItem liNew = new ListItem(tx.CreditJobCode, tx.CreditJobCode);
+                liNew.Selected = true;
+                txtJobCredit.Items.Add(liNew);
+            } else {
+                li.Selected = true;
+            }
+        }
+        
+        if (txtJobDebit.SelectedIndex == 0) {
+            txtJobDebit.ClearSelection();
 
-        txtJobCredit.Text = tx.CreditJobCode;
-        txtJobDebit.Text = tx.DebitJobCode;
+            ListItem li = txtJobDebit.Items.FindByValue(tx.DebitJobCode);
+            if (li == null) { 
+                //Add the code dynamically
+                ListItem liNew = new ListItem(tx.DebitJobCode, tx.DebitJobCode);
+                liNew.Selected = true;
+                txtJobDebit.Items.Add(liNew);
+            } else {
+                li.Selected = true;
+            }
+        }
+
         if (tx.MYOBExportID != -1 && !G.User.hasPermission(RolePermissionType.UpdatePreviousPayPeriod))
             hdReadOnly.Value = "true";
     }
@@ -110,8 +145,8 @@ public partial class tx_update : Root {
         oSQL.add("TXDATE", txtTxDate.Text);
         oSQL.add("CREDITGLCODE", txtGLCredit.Text);
         oSQL.add("DEBITGLCODE", txtGLDebit.Text);
-        oSQL.add("CREDITJOBCODE", txtJobCredit.Text);
-        oSQL.add("DEBITJOBCODE", txtJobDebit.Text);
+        oSQL.add("CREDITJOBCODE", Valid.getText("txtJobCredit", ""));
+        oSQL.add("DEBITJOBCODE", Valid.getText("txtJobDebit", ""));
         oSQL.add("SHOWEXGST", chkIncludeGST);
         oSQL.add("OVERRIDEGLCODES", chkOverrideCodes);
         if (lstCategory.SelectedValue == "")

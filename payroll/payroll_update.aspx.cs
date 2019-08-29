@@ -1,4 +1,5 @@
 using System;
+using System.Data;
 using System.IO;
 using System.Net.Mail;
 using System.Web.UI;
@@ -10,10 +11,12 @@ public partial class payroll_update : Root {
     private int intUserPayrollCycleID;
     private int intCycleRef;
     bool blnIsAdminView = false;
+    DateTime dtStart;
+    DateTime dtEnd;
 
     protected void Page_Load(object sender, System.EventArgs e) {
         blPopup = false;
-        intUserID = G.CurrentUserID;
+        intUserID = G.User.ID;
        
         // Popup window can be accessed by admin / supervisor to view further details of the users timesheet
         if (Valid.getText("IsPopup", "").ToLower() == "true") {
@@ -42,8 +45,8 @@ public partial class payroll_update : Root {
     private void loadData() {
         lstCycle.Items.Clear();
         foreach (int c in G.TimeSheetCycleReferences.dValues.Keys) {
-            DateTime dtStart = G.TimeSheetCycleReferences[c].NormalCycle.StartDate;
-            DateTime dtEnd = G.TimeSheetCycleReferences[c].NormalCycle.EndDate;
+            dtStart = G.TimeSheetCycleReferences[c].NormalCycle.StartDate;
+            dtEnd = G.TimeSheetCycleReferences[c].NormalCycle.EndDate;
             if (G.UserInfo.getUser(intUserID).PayrollCycleID == 2) {
                 dtStart = G.TimeSheetCycleReferences[c].PayAdvanceCycle.StartDate;
                 dtEnd = G.TimeSheetCycleReferences[c].PayAdvanceCycle.EndDate;
@@ -65,7 +68,7 @@ public partial class payroll_update : Root {
         if (intCycleRef > -1) {
             UserTimesheet oUT = new UserTimesheet(intUserID, intUserPayrollCycleID, blReadOnlyForm: blPopup);
             oUT.lEntries.Add(new UserTimesheetEntry());
-            if (oUT.lEntries[0].UserID != G.CurrentUserID)
+            if (oUT.lEntries[0].UserID != G.User.ID)
                 blnIsAdminView = true;
             gvList.DataSource = oUT.lEntries;
             gvList.DataBind();
@@ -78,7 +81,7 @@ public partial class payroll_update : Root {
             HTML.formatGridView(ref gvList, true);
 
             // Check if user has a supervisor
-            if (G.UserInfo.getUser(G.CurrentUserID).SupervisorID > 0)
+            if (G.UserInfo.getUser(G.User.ID).SupervisorID > 0)
                 btnSignOff.Text = "Submit";
 
             btnUpdate.Enabled = btnSignOff.Enabled = true;
@@ -105,10 +108,33 @@ public partial class payroll_update : Root {
             dContainer.Visible = false;
             dOldRecords.Visible = true;
 
-            btnDownload.HRef = string.Format("../reports/manual_timesheet.aspx?UserID={0}&CycleID={1}", G.CurrentUserID, intUserPayrollCycleID);
+            btnDownload.HRef = string.Format("../reports/manual_timesheet.aspx?UserID={0}&CycleID={1}", G.User.ID, intUserPayrollCycleID);
         }
+        loadLeave();
     }
 
+    void loadLeave() {
+        if (intCycleRef > -1) {
+            dtStart = G.TimeSheetCycleReferences[intCycleRef].NormalCycle.StartDate;
+            dtEnd = G.TimeSheetCycleReferences[intCycleRef].NormalCycle.EndDate;
+            if (G.UserInfo.getUser(intUserID).PayrollCycleID == 2) {
+                dtStart = G.TimeSheetCycleReferences[intCycleRef].PayAdvanceCycle.StartDate;
+                dtEnd = G.TimeSheetCycleReferences[intCycleRef].PayAdvanceCycle.EndDate;
+            }
+
+            string szSQL = string.Format(@"
+            SELECT  LR.*, L.NAME AS LEAVETYPE, LS.NAME AS LEAVESTATUS
+            FROM LEAVEREQUEST LR JOIN LIST L ON L.ID = LR.LEAVETYPEID
+            JOIN LEAVESTATUS LS ON LS.ID = LR.LEAVESTATUSID
+            WHERE LR.USERID = {0} AND ISDELETED = 0 
+                AND (LR.STARTDATE BETWEEN '{1}' AND '{2}' OR LR.ENDDATE BETWEEN '{1}' AND '{2}')
+            ORDER BY LR.ENTRYDATE DESC", G.User.ID, Utility.formatDate(dtStart), Utility.formatDate(dtEnd));
+            using (DataSet ds = DB.runDataSet(szSQL)) {
+                Utility.bindGV(ref gvLeave, ds, true);
+            }
+        }
+        
+    }
     private double getValue(string Value, int ID) {
         string szValue = Valid.getText(string.Format("txt{0}_{1}", Value, ID), "");
         return szValue == "" ? double.MinValue : Convert.ToDouble(szValue);
@@ -164,11 +190,11 @@ public partial class payroll_update : Root {
         UserTimesheet oUT = new UserTimesheet(intUserID, intUserPayrollCycleID);
         getFormValues(oUT, SignOff);
         oUT.updateDB();
-        DBLog.addGenericRecord(DBLogType.PayrollModification, String.Format("Paysheet updated - sign off: {0} {1}", SignOff, G.CurrentUserName), intUserPayrollCycleID, intUserID);
+        DBLog.addGenericRecord(DBLogType.PayrollModification, String.Format("Paysheet updated - sign off: {0} {1}", SignOff, G.User.UserName), intUserPayrollCycleID, intUserID);
         // When user signs off, a check is run to see if they are the final user of their supervisor.
         // Supervisor is informed when all staff from a given pay cycle have submitted their forms.
         if (SignOff) {
-            int intSupervisorID = G.UserInfo.getUser(G.CurrentUserID).SupervisorID;
+            int intSupervisorID = G.UserInfo.getUser(G.User.ID).SupervisorID;
             if (intSupervisorID > 0) {
                 TimesheetCycle oTC = new TimesheetCycle(intUserPayrollCycleID);
                 oTC.checkSupervisorGroupSignoff(intSupervisorID);
@@ -213,7 +239,7 @@ public partial class payroll_update : Root {
 
         string Msg = "Thank you for submitting your timesheet.  Please find a copy attached.";
         if (blnIsAdminView) {
-            Msg = " Your timesheet has been changed by " + G.CurrentUserName;
+            Msg = " Your timesheet has been changed by " + G.User.UserName;
         }
         Email.sendMail(szEmail, "do-not-reply@fletchers.net.au", "Timesheet submitted",
                 Msg, szBCC: "payroll@fletchers.net.au", IncludeFile: new Attachment(new MemoryStream(bFile), "Timesheet.pdf"));

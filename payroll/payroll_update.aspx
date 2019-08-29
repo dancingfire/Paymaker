@@ -83,6 +83,19 @@
         </div>
 
         <div id="dContainer" runat="server" class="container">
+            <div class="col-sm-10">
+                    <asp:GridView ID="gvLeave" runat="server" AutoGenerateColumns="false"   GridLines="None" EnableViewState="false">
+                        <Columns>
+                            <asp:BoundField DataField="LeaveStatus" HeaderText="Status" ItemStyle-Width="10%" HtmlEncode="false" />
+                            <asp:BoundField DataField="LeaveType" HeaderText="Leave type" ItemStyle-Width="10%" HtmlEncode="false" />
+                            <asp:BoundField DataField="StartDate" HeaderText="Start date" ItemStyle-Width="15%" HtmlEncode="false" DataFormatString="{0: MMM dd, yyyy}" />
+                            <asp:BoundField DataField="EndDate" HeaderText="End date" ItemStyle-Width="15%" HtmlEncode="false" DataFormatString="{0: MMM dd, yyyy}" />
+                            <asp:BoundField DataField="TotalDays" HeaderText="Total days" ItemStyle-Width="10%" HtmlEncode="false" ItemStyle-HorizontalAlign="Center"/>
+                            <asp:BoundField DataField="EntryDate" HeaderText="Requested" ItemStyle-Width="10%" HtmlEncode="false" DataFormatString="{0: MMM dd, yyyy}" />
+                            <asp:BoundField DataField="Comments" HeaderText="Notes" ItemStyle-Width="50%" HtmlEncode="false" />
+                        </Columns>
+                    </asp:GridView>
+                </div>
             <div class="row">
                 <asp:GridView ID="gvList" runat="server" AutoGenerateColumns="false" EmptyDataText="No Data Found" EnableViewState="false" CssClass="table-striped">
                     <Columns>
