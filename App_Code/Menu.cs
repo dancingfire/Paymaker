@@ -29,7 +29,7 @@ public class ClientMenu {
 
         oM.addMenuItem("View dashboard", "../main/accounting_dashboard.aspx");
         oM.addMenuItem("Search tx", "../main/tx_search.aspx");
-        oM.addMenuItem("Finalize Commission", "../reports/commission_statement_finalize.aspx", MenuRole.Admin);
+        oM.addMenuItem("Finalize Commission", "../main/commission_statement_finalize.aspx", MenuRole.Admin);
         oM.addMenuItem("MYOB exceptions", "../reports/myob_modifications.aspx", MenuRole.Admin);
         oM.addSpacer();
         oM.addMenuItem("Export to MYOB", "../main/MYOB_export.aspx");
@@ -37,11 +37,30 @@ public class ClientMenu {
         oM.addMenuItem("Change property details", "../main/sale_modification.aspx");
         oM.addSpacer();
         oM.addMenuItem("Setup user budgets", "../main/user_account_update.aspx");
-        oM.addMenuItem("Settings", "../admin/sales_settings.aspx");
-
+        oM.addMenuItem("Import EOY values", "../admin/import_values.aspx");
         oM.addMenu("Campaign", "../campaign/campaign_dashboard.aspx", MenuRole.Campaign);
-        if (Payroll.CanAccess)
-            oM.addMenu("Payroll", "../payroll/payroll_dashboard.aspx");
+        if (Payroll.CanAccess) {
+            if (G.User.RoleID == 1) { 
+                oM.addMenu("Payroll", "");
+                oM.addMenuItem("Dashboard", "../payroll/payroll_dashboard.aspx");
+                oM.addMenuItem("Payroll settings", "../admin/sales_settings.aspx", MenuRole.Admin);
+            } else {
+                oM.addMenu("Payroll", "../payroll/payroll_dashboard.aspx");
+            }
+
+        }
+        oM.addMenu("Leave");
+        oM.addMenuItem("Dashboard", "../payroll/leave_dashboard.aspx");
+        if (G.User.RoleID == 1 || G.User.UserID == 497 || G.User.UserID == 178) {
+            oM.addSpacer();
+            oM.addMenuItem("Export leave requests", "../reports/leave_request.aspx", MenuRole.Admin);
+            oM.addSpacer();
+            oM.addMenuItem("Leave type", "../admin/list_detail.aspx?intListTypeID=11", MenuRole.Admin);
+            oM.addMenuItem("Public holidays", "../admin/holiday_detail.aspx", MenuRole.Admin);
+            oM.addMenuItem("Settings", "../admin/leave_settings.aspx", MenuRole.Admin);
+            oM.addMenuItem("Staff admin", "../admin/user_detail.aspx", MenuRole.Admin);
+        } 
+
         if (canAccessReports()) {
             oM.addMenu("Reports", "../reports/report_admin.aspx");
 
@@ -64,23 +83,22 @@ public class ClientMenu {
             oM.addSpacer();
             oM.addMenuItem("View logins", "../admin/application_audits.aspx", MenuRole.Admin);
             oM.addMenuItem("View change log", "../admin/log_detail.aspx", MenuRole.Admin);
+            oM.addMenuItem("View log v2", "../admin/logv2_detail.aspx", MenuRole.Admin);
+            oM.addMenuItem("View email log", "../admin/email_log.aspx", MenuRole.Admin);
             oM.addMenuItem("Admin functions", "../admin/admin_tasks.aspx", MenuRole.Admin);
             oM.addSpacer();
             oM.addMenuItem("View commission PDFs", "../main/commission_statement_dashboard.aspx", MenuRole.Admin);
             oM.addSpacer();
             oM.addMenuItem("Import Box Dice", "../boxdice/import.aspx");
         }
-        oM.addMenu("Help", "", MenuRole.Admin);
-        oM.addMenuItem("About", "../main/about.aspx");
-        oM.addMenuItem("Reoffice DB", "../working/reoffice_data.aspx");
-
+     
         oM.addMenu("Logout", "../login.aspx");
 
-        if (G.CurrentUserRoleID == 1) {
+        if (G.User.RoleID == 1) {
             oM.lUserRoles.Add(MenuRole.Admin);
             oM.StartPage = "main/admin_dashboard.aspx";
         } else {
-            if (G.CurrentUserRoleID != 5) {
+            if (G.User.RoleID != 5) {
                 oM.lUserRoles.Add(MenuRole.UserOnly);
             }
         }
@@ -98,7 +116,7 @@ public class ClientMenu {
     }
 
     private bool canAccessReports() {
-        return G.CurrentUserRoleID != 5 && G.CurrentUserRoleID != 6;
+        return G.User.RoleID != 5 && G.User.RoleID != 6;
     }
 
     #region MenuGenerator
@@ -117,7 +135,7 @@ public class ClientMenu {
                     </span>
                 </div>
                 <div class='AppMenu'>
-                    <div style='float: left; width: 70%' >
+                    <div style='float: left; width: 80%' >
                         <nav id='custom-bootstrap-menu' class='navbar navbar-default'>
                             <div class='container-fluid'>
                                 <div class='navbar-header'>
@@ -138,14 +156,14 @@ public class ClientMenu {
                             </div><!-- /.container-fluid -->
                         </nav>
                     </div>
-                    <div style='float: right; width: 30%; text-align: right; '>
-                       <span style='color: white; width: 350px; font-size: 12px'>{1}</span>
+                    <div style='float: right; width: 20%; text-align: right; padding-top: 4px '>
+                       <span style='color: white; width: 350px; font-size: 12px;'>{1}</span>
                         <a href='../help/CAPSAgentViewingInfo.pdf'  target='_blank'>
                            <img src='../sys_images/help.gif' align='right' title='Click here to view help'/>
                         </a>
                     </div>
                 </div>
-            ", oM.createMenu(), G.CurrentUserName + " - " + System.DateTime.Now.ToString("D"));
+            ", oM.createMenu(), G.User.UserName + " - " + System.DateTime.Now.ToString("ddd, dd MMM yyy"));
         return szHTML;
     }
 }
