@@ -194,7 +194,7 @@ public class LeaveRequest {
                 Comments: {3} <br/><br/>", lOld.LeaveType, Utility.formatDate(lOld.StartDate), Utility.formatDate(lOld.EndDate), Utility.nl2br(lOld.Comment));
             typeOfRequest = EmailType.ChangeRequest;
         }
-        Email.sendMail(szTo, "do -not-reply@fletchers.net.au", szSubject, szEmail, LogObjectID: intID, Type: typeOfRequest);
+        Email.sendMail(szTo, "do-not-reply@fletchers.net.au", szSubject, szEmail, LogObjectID: intID, Type: typeOfRequest, DisplayName: "Leave Request for Actioning");
     }
 
     public void sendReminderEmailToManager() {
