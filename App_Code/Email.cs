@@ -49,7 +49,7 @@ public class Email {
     /// <param name="szBCC"></param>
     /// <param name="SendToUserID">In the case that emails are sent while there is no logged in user eg. Password reset, a user Id needs to be provided to log emails against</param>
     ///
-    public static void sendMail(string To, string szFrom, string Subject, string HTMLBody, string szCC = "", string szBCC = "", Attachment IncludeFile = null, int LogObjectID = -1, EmailType Type = EmailType.General) {
+    public static void sendMail(string To, string szFrom, string Subject, string HTMLBody, string szCC = "", string szBCC = "", Attachment IncludeFile = null, int LogObjectID = -1, EmailType Type = EmailType.General, string DisplayName = "") {
         MailMessage msg = new MailMessage();
         string szLog = String.Format(@"
             From: {0}
@@ -73,7 +73,7 @@ public class Email {
         }
         if (szFrom == "")
             szFrom = "do-not-reply@fletchers.net.au";
-        msg.From = new MailAddress(szFrom);
+        msg.From = new MailAddress(szFrom, DisplayName);
         msg.Subject = Subject;
 
         HTMLBody = String.Format(@"<html><head>
