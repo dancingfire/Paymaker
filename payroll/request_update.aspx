@@ -79,7 +79,7 @@
             } else {
                 $("#bwContainer-txtHours").hide();
                 $("#bwContainer-txtTotalDays").show();
-                $("#txtHours").removeAttr("required");
+                $("#txtHours").removeAttr("required").val("");
 
             } 
         }
@@ -122,16 +122,16 @@
             <div class="row">
                 <div class="col-xs-12">
                     <bw:bwDropDownList ID="lstLeaveType" runat="server" Label="Leave type" LabelCols="2" required/>
-                    <bw:bwTextBox ID="txtStartDate" runat="server" Label="start date" required Style="background: white" LabelCols="2"/>
+                    <bw:bwTextBox ID="txtStartDate" runat="server" Label="Start date" required Style="background: white" LabelCols="2"/>
                     <bw:bwTextBox ID="txtEndDate" runat="server" Label="End date" required Style="background: white" LabelCols="2"/>
                     
-                    <bw:bwDropDownList ID="lstPartial" runat="server" Label="Full/part day" HelpText="If this request is for a part day, select part day and enter the number of hours" LabelCols="2">
+                    <bw:bwDropDownList ID="lstPartial" runat="server" Label="Full/part day" HelpText="If the leave request is for less than one full 8 hour day, select Part Day from the drop down list and then enter the number of hours." LabelCols="2">
                         <asp:ListItem Value="" Text="Full days" />
                         <asp:ListItem Value="PARTIAL" Text="Part day" />
                     </bw:bwDropDownList>
                     
                     <bw:bwTextBox ID="txtTotalDays" runat="server" Label="Duration" LabelCols="2"  HelpText="The duration of the leave request, excluding any public holidays"/>
-                    <bw:bwTextBox ID="txtHours" runat="server" Label="Hours:" LabelCols="2" type="number"/>
+                    <bw:bwTextBox ID="txtHours" runat="server" Label="Hours:" LabelCols="2" type="number" min="1" max="8"/>
                     
                     <div class="form-group">
                         <label for="lblComments" class="control-label col-xs-2">Reason</label>

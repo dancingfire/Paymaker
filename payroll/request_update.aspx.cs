@@ -141,7 +141,7 @@ public partial class request_update : Root {
         l.Comment = Valid.getText("txtComments", "");
         l.LeaveTypeID = Valid.getInteger("lstLeaveType");
         l.TotalDays = Valid.getInteger("txtTotalDays");
-        l.TotalHours = Valid.getInteger("txtHours");
+        l.TotalHours = Valid.getInteger("txtHours", 0);
         l.updateDB();
         l.addFile(FileUpload1);
         sbStartJS.Append("parent.closeEditModal(true);");
