@@ -27,9 +27,9 @@
 
                     <asp:BoundField DataField="OFFICENAME" HeaderText="OfficeName" />
                     <asp:BoundField DataField="AGENT" HeaderText="Agent" />
-                    <asp:BoundField DataField="COMMISSION" HeaderText="Highest Commission Earned" ItemStyle-CssClass='AlignRight' DataFormatString="{0:$0.00}" />
-                    <asp:BoundField DataField="SALECOUNT" HeaderText="Highest Number of Pty’s Sold" ItemStyle-CssClass='AlignRight' DataFormatString="{0:0.00}" />
-                    <asp:BoundField DataField="SALETOTAL" HeaderText="Highest Value of Pty’s Sold" ItemStyle-CssClass='AlignRight' DataFormatString="{0:$0.00}" />
+                    <asp:BoundField DataField="COMMISSION" HeaderText="Highest Commission Earned" ItemStyle-CssClass='AlignRight' DataFormatString="{0:$0.00}" HeaderStyle-CssClass="AlignRight" />
+                    <asp:BoundField DataField="SALECOUNT" HeaderText="Highest Number of Pty’s Sold" ItemStyle-CssClass='AlignRight' DataFormatString="{0:0.00}" HeaderStyle-CssClass="AlignRight"/>
+                    <asp:BoundField DataField="SALETOTAL" HeaderText="Highest Value of Pty’s Sold" ItemStyle-CssClass='AlignRight' DataFormatString="{0:$0.00}" HeaderStyle-CssClass="AlignRight"/>
                 </Columns>
             </asp:GridView>
         </div>
