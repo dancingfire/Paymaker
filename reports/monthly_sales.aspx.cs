@@ -68,13 +68,15 @@ namespace Paymaker {
                 szFilter += String.Format(" AND USR.OFFICEID IN ({0})", hdOfficeID.Value);
             if (!String.IsNullOrWhiteSpace(hdCompanyID.Value))
                 szFilter += String.Format(" AND L_COMPANY.ID IN ({0})", hdCompanyID.Value);
+
+            bool blnIncludeInactive = Valid.getBoolean("blnIncludeInactive", false);
             string szUserIDFilter = Valid.getText("szUserID", "", VT.List);
             if (G.User.RoleID != 1 && String.IsNullOrEmpty(szUserIDFilter)) //Filter for single user mode
                 szFilter += " AND USS.USERID IN (" + G.User.UserID + ") ";
-            else if (!String.IsNullOrEmpty(szUserIDFilter)) {
+            else if (!String.IsNullOrEmpty(szUserIDFilter) && !blnIncludeInactive) {
+                //Filter by the selected users unless the Include INactive is selected, in which case we want to include everyone
                 szFilter += " AND USS.USERID IN (" + szUserIDFilter + ")";
             }
-            bool blnIncludeInactive = Valid.getBoolean("blnIncludeInactive", false);
             string szUserActive = " AND USR.ISACTIVE = 1 ";
             if (blnIncludeInactive)
                 szUserActive = "";
