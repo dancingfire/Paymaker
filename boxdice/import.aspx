@@ -10,6 +10,8 @@
 <body>
     <form id="Form1" method="post" runat="server" onsubmit="showWait('Performing your request')">
         <div class="container" style="margin-top: 50px">
+            <asp:Button ID="btnTest" runat="server" Text="Import all" CssClass="btn btn-primary" OnClick="btnTest_Click" />
+          <br /><br />
             <asp:Button ID="btnTestPing" runat="server" Text="Test ping" OnClick="btnTestPing_Click" Visible="false" />
             <asp:Button ID="btnOffice" runat="server" Text="Load offices" OnClick="btnOffice_Click" />
             <asp:Button ID="btnConsultants" runat="server" Text="Load consultants" OnClick="btnConsultants_Click" Visible="true" />
@@ -28,7 +30,6 @@
             <asp:Button ID="btnCommissions" runat="server" Text="Commissions" OnClick="btnCommission_Click" />
             <asp:Button ID="btnContacts" runat="server" Text="Contacts" OnClick="btnContacts_Click" />
             <asp:Button ID="btnTasks" runat="server" Text="Tasks" OnClick="btnTasks_Click" />
-            <asp:Button ID="btnTest" runat="server" Text="Import all" OnClick="btnTest_Click" />
             <asp:Button ID="btnProcess" runat="server" Text="Process sales" OnClick="btnProcess_Click"  />
             <br />
             <br />

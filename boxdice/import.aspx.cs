@@ -95,13 +95,11 @@ namespace Paymaker {
         }
 
         private void importAll() {
-            BlimpsHelper.runFullImport();
+            BlimpsHelper.runFullImport(true);
         }
 
-
-
         protected void btnProcess_Click(object sender, EventArgs e) {
-            Sale.processBDImports();
+            Sale.processBDImports(UserUpdate: true);
         }
     }
 
