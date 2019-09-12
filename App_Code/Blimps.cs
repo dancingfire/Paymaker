@@ -239,7 +239,7 @@ public static class BlimpsHelper {
         DB.runNonQuery(string.Format("DROP TABLE {0}", IDTable), DB.BoxDiceDBConn);
     }
 
-    public static void runFullImport() {
+    public static void runFullImport(bool UserUpdate = false) {
         APILog.addLog(APISource.BoxDice, "Starting import");
         iPropertyType.importLatest();
         iPropertyCategory.importLatest();
@@ -265,7 +265,7 @@ public static class BlimpsHelper {
         oConfigAdmin.loadValuesFromDB();
         oConfigAdmin.updateConfigValueSQL(szConfigName, Utility.formatDateTime(DateTime.Now));
         APILog.addLog(APISource.BoxDice, "Import completed");
-        Sale.processBDImports();
+        Sale.processBDImports(UserUpdate: UserUpdate);
         APILog.addLog(APISource.BoxDice, "Imported records processed");
     }
 }

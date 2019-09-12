@@ -421,15 +421,18 @@ public class Sale {
     /// <summary>
     /// Processes Imports from B&D
     /// </summary>
-    public static void processBDImports(int BnDSalesID = -1) {
+    public static void processBDImports(int BnDSalesID = -1, bool UserUpdate = false) {
         string szFilterRecords = string.Format("WHERE  SV.SOLDDATE >= '{0}'", Utility.formatDate(G.TransitionToBnDDate));
         if (BnDSalesID > -1) {
             szFilterRecords += string.Format("AND SL.ID = {0}", BnDSalesID);
         }
-
+        string szTop = "";
+        if (UserUpdate) {
+            szTop = " TOP 1000 "; //Limit to top records for a faster import
+        }
         String szSQL = String.Format(@"
                     -- 0. BnD records to be imported
-                    SELECT SL.ID AS BnDSALEID, *,
+                    SELECT {2} SL.ID AS BnDSALEID, *,
 						(SELECT SUM(AMOUNT) FROM SALESVOUCHERDEDUCTION WHERE (REASON = 'External Conjunctional' OR REASON = 'Referral/Conjunctional' OR REASON like '%Conjunctional%') AND SALESVOUCHERID = SV.ID) AS CONJUNCTIONAL,
 	                    SUBSTRING ( -- Calculate purchaser suburb(s) in a comma seperated list if required
 		                    (SELECT ', ' + SUBURB FROM PROPERTY PUR_P
@@ -455,7 +458,7 @@ public class Sale {
 	                        JOIN SALESLISTING SL ON SL.PROPERTYID = P.ID
                     	    JOIN SALESVOUCHER SV ON SV.SALESLISTINGID = SL.ID
 					    {1}
-                    )", Client.DBName, szFilterRecords);
+                    )", Client.DBName, szFilterRecords, szTop);
         using (DataSet ds = DB.runDataSet(szSQL, DB.BoxDiceDBConn)) {
             foreach (DataRow dr in ds.Tables[0].Rows) {
                 //Check it the Sale is already imported
