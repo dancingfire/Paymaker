@@ -19,7 +19,7 @@
         });
     </script>
 </head>
-<body class='AdminPage'>
+<body class='AdminPage' style="margin-left: 25px">
     <form id="frmMain" name="frmMain" method="post" runat="server" target="frmUpdate">
         <div class="PageHeader" style="z-index: 107; left: -1px; width: 100%; top: 1px">
             Change log
@@ -27,7 +27,11 @@
         <asp:Label ID="Label1" runat="server" Text="Search text:" CssClass="Label LabelPos"></asp:Label>
         <asp:TextBox ID="txtSearch" runat="server" CssClass="Edit Editpos"></asp:TextBox>
         <asp:Button ID="btnSearch"
-            runat="server" Text="Search" OnClick="btnSearch_Click" CssClass="Button btn"
+            runat="server" Text="Search all" OnClick="btnSearch_Click" CssClass="Button btn"
+            Style="height: 26px" />
+
+          <asp:Button ID="btnSearchSales"
+            runat="server" Text="Search sales" OnClick="btnSearchSales_Click" CssClass="Button btn"
             Style="height: 26px" />
         <br class='Align' />
        

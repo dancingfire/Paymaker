@@ -421,8 +421,8 @@ public class Sale {
     /// <summary>
     /// Processes Imports from B&D
     /// </summary>
-    public static void processBDImports(int MinTimeStamp = 0, int BnDSalesID = -1) {
-        string szFilterRecords = string.Format("WHERE P.TIMESTAMP > {0} AND SV.SOLDDATE >= '{1}'", MinTimeStamp, Utility.formatDate(G.TransitionToBnDDate));
+    public static void processBDImports(int BnDSalesID = -1) {
+        string szFilterRecords = string.Format("WHERE  SV.SOLDDATE >= '{0}'", Utility.formatDate(G.TransitionToBnDDate));
         if (BnDSalesID > -1) {
             szFilterRecords += string.Format("AND SL.ID = {0}", BnDSalesID);
         }
@@ -445,9 +445,11 @@ public class Sale {
 	                    JOIN SALESLISTING SL ON SL.PROPERTYID = P.ID
                     	JOIN SALESVOUCHER SV ON SV.SALESLISTINGID = SL.ID
 					{1}
+                    ORDER BY SL.ID DESC -- Latest first
 
                     -- 1. BnD records already imported
-                    SELECT ID, BnDSALEID, AUCTIONDATE, LOCKCOMMISSION FROM {0}.dbo.SALE
+                    SELECT ID, BnDSALEID, AUCTIONDATE, LOCKCOMMISSION 
+                    FROM {0}.dbo.SALE
                     WHERE BnDSALEID IN (
                         SELECT SL.ID FROM PROPERTY P
 	                        JOIN SALESLISTING SL ON SL.PROPERTYID = P.ID
@@ -536,7 +538,7 @@ public class Sale {
 
                 // LockCommission flag is currently set through manual SQL queries or when commission changed manually on special update page.
                 if (dr_SALES == null || !DB.readBool(dr_SALES["LOCKCOMMISSION"])) {
-                    oSQL.add("CONJUNCTIONALCOMMISSION", dr["CONJUNCTIONAL"] != System.DBNull.Value ? Math.Round(DB.readDouble(dr["CONJUNCTIONAL"]) / 1.1, 2) : 0);
+                    oSQL.add("CONJUNCTIONALCOMMISSION", dr["CONJUNCTIONAL"] != System.DBNull.Value ? DB.readDouble(dr["CONJUNCTIONAL"]) : 0);
                     Double dbGrossCommission = dr["GROSSCOMMISSION"] == System.DBNull.Value ? 0.0 : Convert.ToDouble(dr["GROSSCOMMISSION"]);
                     oSQL.add("GROSSCOMMISSION", dbGrossCommission);
                 }

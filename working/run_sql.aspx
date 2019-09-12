@@ -15,15 +15,28 @@
         <asp:HiddenField ID="hdCompanyID" runat="server" Value="1" />
         <asp:HiddenField ID="hdCompanyTypeID" runat="server" Value="0" />
         
-        <div class='RightActionPanel' style="width: 14%; height: 540px; padding-top: 20px; text-align: center; float: right">
-            <asp:Button ID="btnUpdate" runat="server" Text="Run SQL" CssClass="Button" OnClick="btnUpdate_Click" />
-            <br />
+        <div class='container-fluid' >
+            <div class="row">
+                <div class="col-sm-10">
+                    <asp:TextBox ID="txtSQL" runat="server" CssClass="Entry EntryPos" TextMode="MultiLine" Rows="15" Width="80%" Height="200"></asp:TextBox>
+                   
+                </div>
+                <div class="col-sm-2">
+                    <asp:Button ID="btnUpdate" runat="server" Text="Run SQL" CssClass="btn btn-block" OnClick="btnUpdate_Click" />
+                    <br />    
+                    <asp:Button ID="btnBD" runat="server" Text="Run against B&D" CssClass="btn btn-block" OnClick="btnUpdateBD_Click" />
+                    <br />
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <asp:GridView ID="gvOutput" runat="server" EnableViewState="false"></asp:GridView>
+                </div>
+
+            </div>
         </div>
-        <asp:Label ID="dOut" runat="server" />
-        <br />
-        <asp:TextBox ID="txtSQL" runat="server" CssClass="Entry EntryPos" TextMode="MultiLine" Rows="15" Width="80%"></asp:TextBox>
-        <asp:TextBox ID="txtResult" runat="server" CssClass="Entry EntryPos" TextMode="MultiLine" Rows="15" Width="80%"></asp:TextBox>
-        <asp:GridView ID="gvOutput" runat="server" EnableViewState="false"></asp:GridView>
+        
     </form>
 </body>
 </html>
