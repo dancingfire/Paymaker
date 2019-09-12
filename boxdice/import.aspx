@@ -32,7 +32,7 @@
             <asp:Button ID="btnProcess" runat="server" Text="Process sales" OnClick="btnProcess_Click"  />
             <br />
             <br />
-            <asp:Button ID="btnViewReport" runat="server" Text="View API history" OnClientClick="window.open('../report/apilog_detail.aspx'); return false;" />
+            <asp:Button ID="btnViewReport" runat="server" Text="View API history" OnClientClick="window.open('../reports/apilog_detail.aspx'); return false;" />
             <div id='dOutput' runat="server" />
         </div>
     </form>
