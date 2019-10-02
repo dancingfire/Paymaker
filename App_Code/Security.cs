@@ -1,8 +1,11 @@
 using System;
 using System.Collections;
 using System.Data;
+using System.Data.SqlClient;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
+using System.Web;
+using System.Web.Security;
 
 /// <summary>
 /// Summary description for RolePermissionType
@@ -285,8 +288,81 @@ public class UserLogin {
 
         return false;
     }
+    private static void writeLog(int OriginalUserID = -1) {
+        sqlUpdate oSQL = new sqlUpdate("LOGIN_LOG", "ID", -1);
+        oSQL.add("USER_ID", G.User.UserID);
+        if (OriginalUserID > -1)
+            oSQL.add("ORIGINAL_USER_ID", OriginalUserID);
 
-    
+        oSQL.add("Browser", HttpContext.Current.Request.UserAgent);
+        DB.runNonQuery(oSQL.createInsertSQL());
+        oSQL = null;
+    }
+
+    /// <summary>
+    /// Clears config setup for user.  This is done on delegation to allow correct values to be loaded.
+    /// </summary>
+    private static void clearUserConfig() {
+        HttpContext.Current.Session["DASHBOARDPOSITION"] = null;
+        HttpContext.Current.Session["SHOWRECENT"] = null;
+    }
+
+    public static void performDelegateLogin(int UserID) {
+        UserLogin.loginUserByID(UserID);
+        writeLog(G.User.OriginalUserID);
+
+        clearUserConfig();
+        G.Settings.loadConfigValues();
+    }
+
+    /// <summary>
+    /// Logs in the user by the passed in ID - this can be used as an admin login or the final step on the login page
+    /// </summary>
+    /// <param name="intResult"></param>
+    public static void loginUserByID(int UserID) {
+        G.User.ID = UserID;
+        string szSQL = "SELECT * FROM DB_USER WHERE ID = " + UserID.ToString();
+
+        using (SqlDataReader dr = DB.runReader(szSQL)) {
+            if (dr.HasRows) {
+                dr.Read();
+                UserLogin.writeLog(UserID, Convert.ToString(dr["LOGIN"]), true);
+                HttpContext.Current.Session["LOGIN"] = Convert.ToString(dr["LOGIN"]);
+                G.User.UserName = Convert.ToString(dr["FirstName"] + " " + dr["LastName"]);
+                G.User.AdminPAForThisUser = DB.readInt(dr["ADMINPAFORUSERID"]);
+                G.User.Email = Convert.ToString(dr["EMAIL"]);
+                G.User.RoleID = Convert.ToInt32(dr["ROLEID"]);
+                G.User.OriginalRoleID = (UserRole)Convert.ToInt32(dr["ROLEID"]);
+                G.User.OriginalUserID = Convert.ToInt32(dr["ID"]);
+                G.User.Name = DB.readString(dr["FIRSTNAME"]);
+                G.User.PayrollTypeID = Convert.ToInt32(dr["PAYROLLCYCLEID"]);
+                HttpContext.Current.Session["ISLEAVESUPERVISOR"] = null;
+                HttpContext.Current.Session["USERIDLISTWITHDELEGATES"] = null;
+                if (String.IsNullOrEmpty(dr["PERMISSIONS"].ToString()))
+                    G.CurrentUserPermissions = "";
+                else
+                    G.CurrentUserPermissions = dr["PERMISSIONS"].ToString();
+                FormsAuthentication.SetAuthCookie(HttpContext.Current.Session["LOGIN"].ToString(), false);
+
+                //Clear the supervisor variable - it is set as required
+                HttpContext.Current.Session["ISPAYROLLSUPERVISOR"] = null;
+
+                // Load up the session vars
+                szSQL = "SELECT TOP 1 * FROM PAYPERIOD ORDER BY ID DESC";
+                SqlDataReader drSettings = DB.runReader(szSQL);
+                while (drSettings.Read()) {
+                    G.CurrentPayPeriod = Convert.ToInt32(drSettings["ID"]);
+                    G.CurrentPayPeriodStart = Convert.ToDateTime(drSettings["STARTDATE"]);
+                    G.CurrentPayPeriodEnd = Convert.ToDateTime(drSettings["ENDDATE"]);
+                }
+
+                G.Settings.loadConfigValues();
+                drSettings.Close();
+                drSettings = null;
+            }
+        }
+    }
+
     ///<summary>
     ///Log Attempt to the Log History Table
     ///</summary>

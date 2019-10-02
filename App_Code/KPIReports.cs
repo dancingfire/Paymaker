@@ -7,6 +7,7 @@ using System.Linq;
 public class KPI_Agent_Card : Report {
     private static string RFileName = "KPI Agent Card";
     private List<ReportData> lData = new List<ReportData>();
+    private List<string> lGlossyPublications = new List<string>();
 
     /// <summary>
     /// Constructor Method that receives the Viewer and the Filter and creates the report.
@@ -23,6 +24,7 @@ public class KPI_Agent_Card : Report {
     protected override void initReport() {
         oFilter.loadUserFilters();
         loadParameters();
+        loadGlossyPublications();
         LoadReportDefinition(oViewer, "../reports/templates/" + ReportFileName + ".rdlc");
         oViewer.LocalReport.DataSources.Clear();
         oViewer.LocalReport.DisplayName = ReportTitle;
@@ -42,6 +44,28 @@ public class KPI_Agent_Card : Report {
 
     private String szCurrentPeriodFilter;
     private String szOverallFilter;
+
+    private void loadGlossyPublications() {
+        using (DataSet ds = DB.runDataSet("SELECT NAME FROM LIST WHERE LISTTYPEID = " + (int)ListType.GlossyMagazine)) {
+            foreach (DataRow dr in ds.Tables[0].Rows) {
+                lGlossyPublications.Add(DB.readString(dr["NAME"]));
+            }
+        }
+    }
+
+    /// <summary>
+    /// Returns the where clause that defines the list of glossy publications
+    /// </summary>
+    /// <returns></returns>
+    private string getGlossySQL() {
+        string szReturn = "";
+        foreach (string pub in lGlossyPublications) {
+            Utility.Append(ref szReturn, String.Format("CP.DESCRIPTION LIKE '{0}%'", pub), " OR ");
+        }
+        if (szReturn == "")
+            return " 1=1 ";
+        return szReturn;
+    }
 
     public List<ReportData> loadReportObjects() {
         szCurrentPeriodFilter = String.Format("BETWEEN '{0}' AND '{1}'", oFilter.getDBSafeStartDate(), oFilter.getDBSafeEndDate());
@@ -122,7 +146,7 @@ public class KPI_Agent_Card : Report {
                             JOIN LIST L_COMPANY ON L_COMPANY.ID = L_OFFICE.COMPANYID
                             JOIN LIST L_SALESPLIT ON L_SALESPLIT.ID = SS.COMMISSIONTYPEID AND L_SALESPLIT.EXCLUDEONREPORT = 0
                             LEFT Join CAMPAIGN C on S.BnDSALEID = C.BnDLISTINGID
-                WHERE {0}
+                WHERE {0} {1}
                     AND USS.INCLUDEINKPI = 1 AND USR.SHOWONKPIREPORT = 1
                 ORDER BY USS.USERID
 
@@ -167,7 +191,7 @@ public class KPI_Agent_Card : Report {
 						JOIN Fletchers_BoxDiceAPI.dbo.PROPERTY P ON P.ID = SL.PROPERTYID
 						LEFT JOIN Fletchers_BoxDiceAPI.dbo.CONTACTACTIVITY CA_APPR ON CA_APPR.SALESLISTINGID = SL.ID AND CA_APPR.CONTACTACTIVITYTYPEID IN (10,11,17) --APPRAISALS
 						JOIN Fletchers_BoxDiceAPI.dbo.DB_USER U ON U.ID = SL.CONSULTANT1ID
-						JOIN DB_USER USR ON USR.INITIALSCODE = U.INITIALS COLLATE Latin1_General_CI_AS AND USR.ISACTIVE = 1  AND USR.ISDELETED = 0
+						JOIN DB_USER USR ON USR.INITIALSCODE = U.INITIALS COLLATE Latin1_General_CI_AS AND USR.ISACTIVE = 1  AND USR.ISDELETED = 0 {1}
 						LEFT JOIN Fletchers_BoxDiceAPI.dbo.TASK T ON T.PROPERTYID = SL.PROPERTYID
 					WHERE (
 						SL.ID IN (
@@ -234,33 +258,24 @@ public class KPI_Agent_Card : Report {
 						AND (SELECT COUNT(*) FROM CAMPAIGNPRODUCT C1 WHERE SUPPLIER = 'CT - VISUAL DOMAIN' AND C1.CAMPAIGNID = C.ID) > 0
 						THEN 1 ELSE 0 END AS HASVIDEO_current,
 					CASE WHEN (
-                        SELECT COUNT(*) FROM CAMPAIGNPRODUCT WHERE
-	                            (DESCRIPTION LIKE 'THE WEEKLY REVIEW:%' OR
-	                            DESCRIPTION LIKE 'THE WEEKLY REVIEW EASTERN:%' OR
-	                            DESCRIPTION LIKE 'THE WEEKLY REVIEW HDV:%' OR
-	                            DESCRIPTION LIKE 'THE WEEKLY REVIEW MELBOURNE TIMES:%' OR
-	                            DESCRIPTION LIKE 'MAROONDAH LEADER%' OR
-	                            DESCRIPTION LIKE 'MONASH LEADER%') AND CAMPAIGNID = C.ID) > 0
+                        SELECT COUNT(*) FROM CAMPAIGNPRODUCT CP WHERE
+	                            ({6}) AND CAMPAIGNID = C.ID) > 0
 					THEN 1 ELSE 0 END AS HASGLOSSY,
 					CASE WHEN ISNULL(WITHDRAWNON,SOLDDATE) {4}
 						AND (
-                        SELECT COUNT(*) FROM CAMPAIGNPRODUCT WHERE
-	                            (DESCRIPTION LIKE 'THE WEEKLY REVIEW:%' OR
-	                            DESCRIPTION LIKE 'THE WEEKLY REVIEW EASTERN:%' OR
-	                            DESCRIPTION LIKE 'THE WEEKLY REVIEW HDV:%' OR
-	                            DESCRIPTION LIKE 'THE WEEKLY REVIEW MELBOURNE TIMES:%' OR
-	                            DESCRIPTION LIKE 'MAROONDAH LEADER%' OR
-	                            DESCRIPTION LIKE 'MONASH LEADER%') AND CAMPAIGNID = C.ID) > 0
+                            SELECT COUNT(*) FROM CAMPAIGNPRODUCT CP
+                            WHERE ({6}) AND CAMPAIGNID = C.ID) > 0
 						THEN 1 ELSE 0 END AS HASGLOSSY_current,
-					CASE WHEN (SELECT COUNT(*) FROM CAMPAIGNPRODUCT C0 WHERE DESCRIPTION LIKE 'PLACES MAGAZINE%' AND C0.CAMPAIGNID = C.ID) > 0
-					THEN 1 ELSE 0 END AS HASPLACEMAG,
+					CASE WHEN
+                        (SELECT COUNT(*) FROM CAMPAIGNPRODUCT C0 WHERE DESCRIPTION LIKE 'PLACES MAGAZINE%' AND C0.CAMPAIGNID = C.ID) > 0
+					    THEN 1 ELSE 0 END AS HASPLACEMAG,
 					CASE WHEN ISNULL(WITHDRAWNON,SOLDDATE) {4}
 						AND (SELECT COUNT(*) FROM CAMPAIGNPRODUCT C1 WHERE DESCRIPTION LIKE 'PLACES MAGAZINE%' AND C1.CAMPAIGNID = C.ID) > 0
 						THEN 1 ELSE 0 END AS HASPLACEMAG_current
 				FROM Fletchers_BoxDiceAPI.dbo.SALESLISTING SL
-				  JOIN Fletchers_BoxDiceAPI.dbo.SALESVOUCHER SV ON SV.SALESLISTINGID = SL.ID
-				  LEFT JOIN CAMPAIGN C ON SL.ID = CAMPAIGNNUMBER - 1595100000
-					JOIN Fletchers_BoxDiceAPI.dbo.DB_USER U ON U.ID = SL.CONSULTANT1ID
+				    JOIN Fletchers_BoxDiceAPI.dbo.SALESVOUCHER SV ON SV.SALESLISTINGID = SL.ID
+				    LEFT JOIN CAMPAIGN C ON SL.ID = CAMPAIGNNUMBER - 1595100000
+				    JOIN Fletchers_BoxDiceAPI.dbo.DB_USER U ON U.ID = SL.CONSULTANT1ID
 					JOIN DB_USER USR ON USR.INITIALSCODE = U.INITIALS COLLATE Latin1_General_CI_AS AND USR.ISACTIVE = 1  AND USR.ISDELETED = 0
                     JOIN LIST L_OFFICE ON L_OFFICE.ID = USR.OFFICEID
 				WHERE ((WITHDRAWNON IS NULL AND SOLDDATE {4}) OR WITHDRAWNON {4}) {1} AND USR.SHOWONKPIREPORT = 1
@@ -269,25 +284,20 @@ public class KPI_Agent_Card : Report {
                 -- 5. Glossies values
 				SELECT
 					USR.ID AS AGENTID,
-					CP.DESCRIPTION, 0.0 AS GLOSSY_AMOUNT, 0.0 AS GLOSSY_AMOUNT_current
+					CP.DESCRIPTION, 0.0 AS GLOSSY_AMOUNT, 0.0 AS GLOSSY_AMOUNT_current,
+                    CASE WHEN ISNULL(WITHDRAWNON,SOLDDATE) {4} THEN 1 ELSE 0 END AS ISCURRENT
 				FROM Fletchers_BoxDiceAPI.dbo.SALESLISTING SL
 				JOIN Fletchers_BoxDiceAPI.dbo.SALESVOUCHER SV ON SV.SALESLISTINGID = SL.ID
 				LEFT JOIN CAMPAIGN C ON SL.ID = CAMPAIGNNUMBER - 1595100000
 				JOIN Fletchers_BoxDiceAPI.dbo.DB_USER U ON U.ID = SL.CONSULTANT1ID
 				JOIN DB_USER USR ON USR.INITIALSCODE = U.INITIALS COLLATE Latin1_General_CI_AS AND USR.ISACTIVE = 1  AND USR.ISDELETED = 0
                 JOIN LIST L_OFFICE ON L_OFFICE.ID = USR.OFFICEID
-				JOIN CAMPAIGNPRODUCT CP ON CP.CAMPAIGNID = C.ID AND
-	                        (CP.DESCRIPTION LIKE 'THE WEEKLY REVIEW:%' OR
-	                            CP.DESCRIPTION LIKE 'THE WEEKLY REVIEW EASTERN:%' OR
-	                            CP.DESCRIPTION LIKE 'THE WEEKLY REVIEW HDV:%' OR
-	                            CP.DESCRIPTION LIKE 'THE WEEKLY REVIEW MELBOURNE TIMES:%' OR
-	                            CP.DESCRIPTION LIKE 'MAROONDAH LEADER%' OR
-	                            CP.DESCRIPTION LIKE 'MONASH LEADER%')
+				JOIN CAMPAIGNPRODUCT CP ON CP.CAMPAIGNID = C.ID AND ({6})
 				WHERE ((WITHDRAWNON IS NULL AND SOLDDATE {4}) OR WITHDRAWNON {4}) {1} AND USR.SHOWONKPIREPORT = 1
                 ORDER BY USR.ID;
 
                 ", szFilter, szUserFilter, szFilter.Replace("S.SALEDATE", "S.LISTEDDATE"), szFilter.Replace("S.SALEDATE", "S.AUCTIONDATE"), szOverallFilter,
-                szCurrentPeriodFilter);
+                szCurrentPeriodFilter, getGlossySQL());
         DataSet ds = DB.runDataSet(szSQL);
         lData = new List<ReportData>();
         int CurrAgentID = -1;
@@ -374,7 +384,7 @@ public class KPI_Agent_Card : Report {
             u.WithdrawListingsCountPeriod += DB.readDouble(dr["WITHDRAWNCOUNT_CURRENT"], 0);
         }
 
-        processGlossyAmounts(ref ds, 5);
+        processGlossyAvgAmounts(ref ds, 5);
         CurrAgentID = -1;
         // Add campaign advertising data
         foreach (DataRow dr in ds.Tables[4].Rows) {
@@ -546,10 +556,18 @@ public class KPI_Agent_Card : Report {
     };
 
     // Glossies contain textual descriptions of the size of glossy advertising.
-    // Amounts such as 1/2, 1/4 etc need to be converted to decimal value
-    private void processGlossyAmounts(ref DataSet ds, int TableNumber) {
+    // Amounts such as 1/2, 1/4 etc need to be converted to decimal value and entered into the user data
+    private void processGlossyAvgAmounts(ref DataSet ds, int TableNumber) {
+        int CurrAgentID = -1;
+        ReportData u = null;
+
         foreach (DataRow dr in ds.Tables[TableNumber].Rows) {
             string szDescription = DB.readString(dr["DESCRIPTION"]).ToUpper();
+            int AgentID = DB.readInt(dr["AGENTID"]);
+            if (CurrAgentID == -1 || CurrAgentID != AgentID) {
+                u = findDataRow(AgentID);
+                CurrAgentID = AgentID;
+            }
 
             // Search through all values
             foreach (string szKey in dTextConverstion.Keys) {
@@ -558,11 +576,18 @@ public class KPI_Agent_Card : Report {
 
                     // If the description has upgrade, continue to look for higher values.
                     // EG. Full Page Select Suburb (Winter Deal Upgrade from 1/2 Page)
-                    if (!szDescription.Contains("UPGRADE"))
-                        break;
+                    if (!szDescription.Contains("UPGRADE")) {
+                        u.GlossiesAvgTotal += dTextConverstion[szKey];
+                        u.GlossyAvgCount += 1;
+                        if (DB.readBool(dr["ISCURRENT"])) {
+                            u.GlossiesAvgTotalPeriod += dTextConverstion[szKey];
+                            u.GlossyAvgCountPeriod += 1;
+                        }
+                    }
                 }
             }
         }
+
     }
 
     // inserts data from CampaignDB object into DataSet table[0]
@@ -648,15 +673,29 @@ public class ReportData {
     public int AgentID { get; set; }
 
     //Pre listing
-    public string bAPPRAISALSTOLISTINGS { get; set; }
+    public string bAPPRAISALSCONVERTED_A { get; set; }
 
-    public string APPRAISALSTOLISTINGS {
+    public string APPRAISALSCONVERTED_A {
         get {
             return PersonalCount.ToString() + ":" + ListingCount.ToString();
         }
     }
 
-    public string APPRAISALSTOLISTINGSPERIOD {
+    public string APPRAISALSCONVERTED_APERIOD {
+        get {
+            return PersonalCountPeriod.ToString() + ":" + ListingCountPeriod.ToString();
+        }
+    }
+
+    public string bAPPRAISALSCONVERTED_B { get; set; }
+
+    public string APPRAISALSCONVERTED_B {
+        get {
+            return PersonalCount.ToString() + ":" + ListingCount.ToString();
+        }
+    }
+
+    public string APPRAISALSCONVERTED_BPERIOD {
         get {
             return PersonalCountPeriod.ToString() + ":" + ListingCountPeriod.ToString();
         }
@@ -664,6 +703,10 @@ public class ReportData {
 
     public double AppraisalCount { get; set; }
     public double AppraisalCountPeriod { get; set; }
+    public double AppraisalCountA { get; set; }
+    public double AppraisalCountAPeriod { get; set; }
+    public double AppraisalCountB { get; set; }
+    public double AppraisalCountBPeriod { get; set; }
     public double PersonalCount { get; set; }
     public double PersonalCountPeriod { get; set; }
     public double CompanyCount { get; set; }
@@ -810,8 +853,31 @@ public class ReportData {
     }
 
     public double bGLOSSIESAVG { get; set; }
-    public double GLOSSIESAVG { get; set; }
-    public double GLOSSIESAVGPERIOD { get; set; }
+    public double GLOSSIESAVG {
+        get {
+            if (GlossyAvgCount == 0)
+                return 0;
+            return GlossiesAvgTotal / GlossyAvgCount;
+        }
+    }
+
+    /// <summary>
+    /// Avg number of glossies sold (1/2, 1/4 etc) per campaign
+    /// </summary>
+    public double GLOSSIESAVGPERIOD {
+        get {
+            if (GlossyAvgCountPeriod == 0)
+                return 0;
+            return GlossiesAvgTotalPeriod / GlossyAvgCountPeriod;
+        }
+    }
+
+    public double GlossiesAvgTotal { get; set; }
+    public double GlossiesAvgTotalPeriod { get; set; }
+
+    public double GlossyAvgCountPeriod { get; set; }
+    public double GlossyAvgCount { get; set; }
+
 
     public double GlossyCountPeriod { get; set; }
     public double GlossyCount { get; set; }
@@ -905,21 +971,23 @@ public class ReportData {
     public double TOTALLISTINGS { get; set; }
 
     public double bWITHDRAWNLISTINGS { get; set; }
+
     public double WITHDRAWNLISTINGS {
         get {
-            if (ListingCount  == 0)
+            if (ListingCount == 0)
                 return 0;
             return WithdrawListingsCount / ListingCount;
         }
     }
-    public double WITHDRAWNLISTINGSPERIOD {
 
+    public double WITHDRAWNLISTINGSPERIOD {
         get {
             if (ListingCountPeriod == 0)
                 return 0;
             return WithdrawListingsCountPeriod / ListingCountPeriod;
         }
     }
+
     public double WithdrawListingsCount { get; set; }
     public double WithdrawListingsCountPeriod { get; set; }
 
@@ -929,7 +997,7 @@ public class ReportData {
         get {
             if (ListingCount == 0)
                 return 0;
-            return TotalAdvertising / ListingCount;
+            return TotalAdvertising;
         }
     }
 
@@ -976,8 +1044,10 @@ public class ReportData {
             bAPPRAISALSCATEGORY_A = Convert.ToDouble(Value);
         else if (Category == "APPRAISALSPvsC")
             bAPPRAISALSPvsC = Value;
-        else if (Category == "APPRAISALSTOLISTINGS")
-            bAPPRAISALSTOLISTINGS = Convert.ToString(Value);
+        else if (Category == "APPRAISALSCONVERTEDA")
+            bAPPRAISALSCONVERTED_A = Convert.ToString(Value);
+        else if (Category == "APPRAISALSCONVERTEDB")
+            bAPPRAISALSCONVERTED_B = Convert.ToString(Value);
         else if (Category == "AUCTIONCLEARANCE")
             bAUCTIONCLEARANCE = Convert.ToDouble(Value);
         else if (Category == "AVGCOMMISION")

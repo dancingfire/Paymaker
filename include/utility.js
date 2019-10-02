@@ -18,6 +18,30 @@ function processDataTableHeaderFilters() {
 }
 
 
+function showDelegation() {
+    $('#mDelegation').modal({ 'backdrop': 'static' });
+    $('#mDelegation').one('show.bs.modal', function () {
+        $('#fDelegation').attr("src", "../admin/user_delegation.aspx");
+    });
+    $('#mDelegation').modal('show');
+}
+
+function closeDelegation() {
+    $('#mDelegation').modal('hide');
+}
+
+function showLoginAs() {
+    $('#mLoginAs').modal({ 'backdrop': 'static' });
+    $('#mLoginAs').one('show.bs.modal', function () {
+        $('#fLoginAs').attr("src", "../admin/user_login_as.aspx");
+    });
+    $('#mLoginAs').modal('show');
+}
+
+function closeLoginAs() {
+    $('#mLoginAs').modal('hide');
+}
+
 function closeEditModal(blnRefresh) {
     $("#fModalUpdate").attr('src', 'about:blank');
     $("#mModalUpdate").modal("hide");

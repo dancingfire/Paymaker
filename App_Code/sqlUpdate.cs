@@ -32,6 +32,15 @@ public class sqlUpdate {
         intPrimaryKeyID = intID;
     }
 
+    public void add(String szCol, System.Web.UI.WebControls.CheckBox oCheck) {
+        oCol.Add(szCol);
+        if (oCheck.Checked)
+            oValue.Add("1");
+        else
+            oValue.Add("0");
+        oType.Add("int");
+    }
+
     public void add(String szCol, String szValue) {
         oCol.Add(szCol);
         if (String.IsNullOrWhiteSpace(szValue)) {
@@ -68,13 +77,16 @@ public class sqlUpdate {
         oType.Add("int");
     }
 
-    public void add(String szCol, System.Web.UI.WebControls.CheckBox oCheck) {
+    public void add(String szCol, DateTime dtValue) {
+        if (oCol.Contains(szCol))
+            return;
+
         oCol.Add(szCol);
-        if (oCheck.Checked)
-            oValue.Add("1");
+        if (null == dtValue || dtValue == DateTime.MinValue)
+            oValue.Add(null);
         else
-            oValue.Add("0");
-        oType.Add("int");
+            oValue.Add(Utility.formatDate(dtValue));
+        oType.Add("string");
     }
 
     public void add(String szCol, System.Web.UI.WebControls.RadioButton oCheck) {

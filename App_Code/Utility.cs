@@ -28,6 +28,13 @@ public enum PayBand {
     SpecialCase85kBase = 5
 }
 
+public enum RecordStatus {
+    Inactive = 0,
+    Active = 1,
+    Deleted = 2
+}
+
+
 public enum ExportType {
     UserTx = 1,
     Campaign = 2,
@@ -62,7 +69,8 @@ public enum ListType {
     CampaignGL = 9,
     TXCategory = 10,
     LeaveType = 11,
-    LeaveStatus = 12
+    LeaveStatus = 12,
+    GlossyMagazine = 13
 }
 
 public enum AmountType {

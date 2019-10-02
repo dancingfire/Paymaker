@@ -26,13 +26,17 @@ public partial class user_detail_kpi : Root {
             ", lstUser.SelectedValue);
         using (DataSet ds = DB.runDataSet(szSQL)) {
             foreach (DataRow dr in ds.Tables[0].Rows) {
-                txtVideo.Text = DB.readDateString(dr["PROFILEVIDEODATE"]);
                 txtSalesTarget.Text = DB.readString(dr["SALESTARGET"]);
                 Utility.setListBoxItems(lstShowOnReport, DB.readBool(dr["SHOWONKPIREPORT"])?"1":"0");
             }
             foreach (DataRow dr in ds.Tables[1].Rows) {
                 string Category = DB.readString(dr["CATEGORY"]);
-                ((bwTextBox)Form.FindControl("txt" + Category)).Text = DB.readString(dr["VALUE"]);
+                bwTextBox t = ((bwTextBox)Form.FindControl("txt" + Category));
+                if (t == null) {
+                    Response.Write("Data incorrect for: " + Category);
+                } else {
+                    t.Text = DB.readString(dr["VALUE"]);
+                }
             }
         }
         hdPrevUserID.Value = lstUser.SelectedValue;
@@ -57,7 +61,8 @@ public partial class user_detail_kpi : Root {
                 DELETE FROM USERKPIBUDGET WHERE USERID = {2};
                 ", dtVideo == DateTime.MinValue ? "null" : "'" + Utility.formatDate(dtVideo) + "'", lstShowOnReport.SelectedValue, UserID, SalesTarget);
 
-        szSQLUpdate += getUpdateSQL(UserID, "APPRAISALSTOLISTINGS", txtAPPRAISALSTOLISTINGS.Text);
+        szSQLUpdate += getUpdateSQL(UserID, "APPRAISALSCONVERTEDA", txtAPPRAISALSCONVERTEDA.Text);
+        szSQLUpdate += getUpdateSQL(UserID, "APPRAISALSCONVERTEDB", txtAPPRAISALSCONVERTEDB.Text);
         szSQLUpdate += getUpdateSQL(UserID, "APPRAISALSPvsC", txtAPPRAISALSPvsC.Text);
         szSQLUpdate += getUpdateSQL(UserID, "APPRAISALS_ABC", txtAPPRAISALS_ABC.Text);
         szSQLUpdate += getUpdateSQL(UserID, "APPRAISALSCATEGORY_A", txtAPPRAISALSCATEGORY_A.Text);

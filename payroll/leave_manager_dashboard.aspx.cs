@@ -19,7 +19,7 @@ namespace Paymaker {
         }
 
         private void loadRequests() {
-            string szSupervisor = string.Format("AND U.SUPERVISORID = {0}", G.User.UserID);
+            string szSupervisor = string.Format("AND U.SUPERVISORID IN ({0})", G.User.UserIDListWithDelegates);
             if (G.User.RoleID == 1) // Admin
                 szSupervisor = "";
 

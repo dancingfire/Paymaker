@@ -68,14 +68,14 @@
                 <br class="Align" />
             </asp:Panel>
 
-            <asp:Label ID="Label10" runat="server" CssClass="Label LabelPos">Status</asp:Label>
+            <asp:Label ID="lblStatus" runat="server" CssClass="Label LabelPos">Status</asp:Label>
             <asp:DropDownList ID="lstStatus" runat="server" CssClass="Entry EntryPos"
                 TabIndex="50">
                 <asp:ListItem Text="Active" Value="1"></asp:ListItem>
                 <asp:ListItem style="color: red" Text="In-active" Value="0"></asp:ListItem>
             </asp:DropDownList>
 
-            <asp:Label ID="Label6" runat="server" CssClass="Label LabelPos">Sort order</asp:Label>
+            <asp:Label ID="lblSortOrder" runat="server" CssClass="Label LabelPos">Sort order</asp:Label>
             <asp:TextBox CssClass="Entry EntryPos numbersOnly" ID="txtSortOrder" runat="server" Text=""
                 MaxLength="40" TabIndex="5"></asp:TextBox>
 

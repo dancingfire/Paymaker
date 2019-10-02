@@ -101,8 +101,9 @@
 
                 case "KPICARD":
                     $("#spDate").hide();
-                    //  $("#spUser").show();
-                    $("#spMonth").show();
+                    $("#spOffice").show();
+                    $("#spUser").show();
+                    //$("#spMonth").show();
                     $("#spQuarter").show();
                     $("#spActive").show();
                     break;

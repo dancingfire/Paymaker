@@ -101,16 +101,28 @@
           <DataField>APPRAISALSPvsCPERIOD</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="bAPPRAISALSTOLISTINGS">
-          <DataField>bAPPRAISALSTOLISTINGS</DataField>
+        <Field Name="bAPPRAISALSCONVERTED_A">
+          <DataField>bAPPRAISALSCONVERTED_A</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="APPRAISALSTOLISTINGS">
-          <DataField>APPRAISALSTOLISTINGS</DataField>
+        <Field Name="APPRAISALSCONVERTED_A">
+          <DataField>APPRAISALSCONVERTED_A</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="APPRAISALSTOLISTINGSPERIOD">
-          <DataField>APPRAISALSTOLISTINGSPERIOD</DataField>
+        <Field Name="APPRAISALSCONVERTED_APERIOD">
+          <DataField>APPRAISALSCONVERTED_APERIOD</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="bAPPRAISALSCONVERTED_B">
+          <DataField>bAPPRAISALSCONVERTED_B</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="APPRAISALSCONVERTED_B">
+          <DataField>APPRAISALSCONVERTED_B</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="APPRAISALSCONVERTED_BPERIOD">
+          <DataField>APPRAISALSCONVERTED_BPERIOD</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="bAUCTIONCLEARANCE">
@@ -1059,7 +1071,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Appraisals to Listings</Value>
+                                  <Value>Appraisals converted  A (%)</Value>
                                   <Style>
                                     <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
@@ -1106,14 +1118,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="bAPPRAISALSTOLISTINGS">
+                        <Textbox Name="bAPPRAISALSCONVERTED_A">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!bAPPRAISALSTOLISTINGS.Value</Value>
+                                  <Value>=Fields!bAPPRAISALSCONVERTED_A.Value</Value>
                                   <Style>
                                     <FontSize>8pt</FontSize>
                                   </Style>
@@ -1124,7 +1136,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>bAPPRAISALSTOLISTINGS</rd:DefaultName>
+                          <rd:DefaultName>bAPPRAISALSCONVERTED_A</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -1160,14 +1172,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="APPRAISALSTOLISTINGS">
+                        <Textbox Name="APPRAISALSCONVERTED_A">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!APPRAISALSTOLISTINGS.Value</Value>
+                                  <Value>=Fields!APPRAISALSCONVERTED_A.Value</Value>
                                   <Style>
                                     <FontSize>8pt</FontSize>
                                   </Style>
@@ -1178,7 +1190,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>APPRAISALSTOLISTINGS</rd:DefaultName>
+                          <rd:DefaultName>APPRAISALSCONVERTED_A</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -1194,14 +1206,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="APPRAISALSTOLISTINGSPERIOD">
+                        <Textbox Name="APPRAISALSCONVERTED_APERIOD">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!APPRAISALSTOLISTINGSPERIOD.Value</Value>
+                                  <Value>=Fields!APPRAISALSCONVERTED_APERIOD.Value</Value>
                                   <Style>
                                     <FontSize>8pt</FontSize>
                                   </Style>
@@ -1212,7 +1224,188 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>APPRAISALSTOLISTINGSPERIOD</rd:DefaultName>
+                          <rd:DefaultName>APPRAISALSCONVERTED_APERIOD</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.6cm</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox97">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Appraisals converted  B (%)</Value>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox34</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <TopBorder>
+                              <Color>Silver</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </TopBorder>
+                            <BottomBorder>
+                              <Color>Silver</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </BottomBorder>
+                            <LeftBorder>
+                              <Color>Silver</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </LeftBorder>
+                            <RightBorder>
+                              <Color>Silver</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </RightBorder>
+                            <BackgroundColor>LightGrey</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="bAPPRAISALSCONVERTED_B">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!bAPPRAISALSCONVERTED_B.Value</Value>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>bAPPRAISALSCONVERTED_B</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <TopBorder>
+                              <Color>Silver</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </TopBorder>
+                            <BottomBorder>
+                              <Color>Silver</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </BottomBorder>
+                            <LeftBorder>
+                              <Color>Silver</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </LeftBorder>
+                            <RightBorder>
+                              <Color>Silver</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </RightBorder>
+                            <BackgroundColor>White</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="APPRAISALSCONVERTED_B">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!APPRAISALSCONVERTED_B.Value</Value>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>APPRAISALSCONVERTED_B</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="APPRAISALSCONVERTED_BPERIOD">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!APPRAISALSCONVERTED_BPERIOD.Value</Value>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>APPRAISALSCONVERTED_BPERIOD</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -1464,6 +1657,7 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -1556,14 +1750,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="APPRAISALS_ABCPERIOD">
+                        <Textbox Name="APPRAISALSCATEGORY_A1">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!APPRAISALS_ABCPERIOD.Value</Value>
+                                  <Value>=Fields!APPRAISALSCATEGORY_A.Value</Value>
                                   <Style>
                                     <FontSize>8pt</FontSize>
                                   </Style>
@@ -1574,7 +1768,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>APPRAISALS_ABCPERIOD</rd:DefaultName>
+                          <rd:DefaultName>APPRAISALSCATEGORY_A1</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -5096,6 +5290,7 @@
                     <TablixMember />
                     <TablixMember />
                     <TablixMember />
+                    <TablixMember />
                     <TablixMember>
                       <Visibility>
                         <Hidden>true</Hidden>
@@ -5123,7 +5318,7 @@
             <DataSetName>DataSet1</DataSetName>
             <Top>0.47585cm</Top>
             <Left>0cm</Left>
-            <Height>18cm</Height>
+            <Height>18.6cm</Height>
             <Width>16.05896cm</Width>
             <Style>
               <Border>
@@ -5132,7 +5327,7 @@
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>185.82438mm</Height>
+        <Height>190.7585mm</Height>
         <Style>
           <Border>
             <Style>None</Style>

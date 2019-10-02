@@ -45,6 +45,9 @@ public partial class list_update : Root {
         pOfficeCode.Visible =  oListType == ListType.Company || oListType == ListType.Office;
         if (oListType == ListType.CampaignGL)
             lblDescription.Text = "MYOB text";
+
+        if (oListType == ListType.GlossyMagazine)
+            lblDescription.Visible = txtDescription.Visible = lblSortOrder.Visible = txtSortOrder.Visible = lblStatus.Visible = lstStatus.Visible = false;
     }
 
     private void loadItem() {
@@ -118,13 +121,18 @@ public partial class list_update : Root {
             case ListType.LeaveType:
                 szSQL = String.Format(@"SELECT COUNT(*) FROM LEAVEREQUEST WHERE LEAVETYPEID = {0} ", intItemID);
                 break;
-        }
-        intCount = DB.getScalar(szSQL, 0);
 
-        btnDelete.Enabled = intCount == 0;
-        if (intCount > 0) {
-            btnDelete.ToolTip = "This item is being used in the system and cannot be deleted.";
         }
+        bool blnCanDelete = true;
+        if (szSQL != "") {
+            intCount = DB.getScalar(szSQL, 0);
+            blnCanDelete = intCount == 0; ;
+            if (intCount > 0) {
+                btnDelete.ToolTip = "This item is being used in the system and cannot be deleted.";
+            }
+        }
+
+        btnDelete.Enabled = blnCanDelete;
     }
 
     protected void btnUpdate_Click(object sender, System.EventArgs e) {

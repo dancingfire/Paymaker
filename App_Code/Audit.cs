@@ -443,7 +443,8 @@ public enum DBLogType {
     Email = 11,
     EmailAutomation = 12,
     SaleCompleted = 13,
-    SaleFinalized = 14
+    SaleFinalized = 14,
+    User = 15
 }
 
 public enum EmailType {

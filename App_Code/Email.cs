@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
@@ -50,6 +51,9 @@ public class Email {
     /// <param name="SendToUserID">In the case that emails are sent while there is no logged in user eg. Password reset, a user Id needs to be provided to log emails against</param>
     ///
     public static void sendMail(string To, string szFrom, string Subject, string HTMLBody, string szCC = "", string szBCC = "", Attachment IncludeFile = null, int LogObjectID = -1, EmailType Type = EmailType.General, string DisplayName = "") {
+        List<UserDelegate> lDelegates = G.UserDelegateInfo.DelegateList;
+        string szDelegatedEmailAddresses = "";
+
         MailMessage msg = new MailMessage();
         string szLog = String.Format(@"
             From: {0}
@@ -62,14 +66,24 @@ public class Email {
         EmailLog.addLog(Type, Subject, szFrom, To, szCC, HTMLBody, LogObjectID);
         msg.IsBodyHtml = true;
 
+        //Perform that delegation first as this may clear out the To field
+        To = separateEmailAddresses(To, lDelegates, ref szDelegatedEmailAddresses);
         if (!String.IsNullOrWhiteSpace(To)) {
-            msg.To.Add(separateEmailAddresses(To));
+            msg.To.Add(To);
+        } else {
+            msg.To.Add("do-not-reply@fletchers.net.au"); //We need an address here or the email will fail
         }
-        if (!String.IsNullOrWhiteSpace(szCC)) {
-            msg.CC.Add(separateEmailAddresses(szCC));
-        }
-        if (!String.IsNullOrWhiteSpace(szBCC)) {
-            msg.Bcc.Add(separateEmailAddresses(szBCC));
+
+        szCC = separateEmailAddresses(szCC, lDelegates, ref szDelegatedEmailAddresses);
+        if (!String.IsNullOrWhiteSpace(szCC))
+            msg.CC.Add(szCC);
+
+        //We do not delegate for the BCC recipients
+        if (!String.IsNullOrWhiteSpace(szBCC))
+            msg.Bcc.Add(separateEmailAddresses(szBCC, null, ref szDelegatedEmailAddresses));
+
+        if (!String.IsNullOrWhiteSpace(szDelegatedEmailAddresses)) {
+            msg.CC.Add(szDelegatedEmailAddresses.TrimEnd(','));
         }
         if (szFrom == "")
             szFrom = "do-not-reply@fletchers.net.au";
@@ -101,6 +115,37 @@ public class Email {
     public static string separateEmailAddresses(string Addresses) {
         string szAdd = Addresses.Replace(";", ",").Replace(Environment.NewLine, ",").Trim().Replace(" ", ",").Replace(",,", ",").TrimEnd(',');
         return szAdd;
+    }
+
+
+    public static string separateEmailAddresses(string Addresses, List<UserDelegate> lDelegateList, ref string DelegatedEmailAddresses) {
+        string szAdd = Addresses.Replace(";", ",").Replace(Environment.NewLine, ",").Trim().Replace(" ", ",").Replace(",,", ",").Trim().TrimEnd(',');
+
+        if (lDelegateList.Count == 0)
+            return szAdd;
+
+        //For each email address we have, check to see if there are any current email delegations. If there are, replace the original
+        string[] lAddresses = szAdd.Split(',');
+        szAdd = "";
+        foreach (string szEmail in lAddresses) {
+            UserDetail oD = G.UserInfo.getUserByEmail(szEmail);
+            if (oD == null) {
+                Utility.Append(ref szAdd, szEmail, ",");
+                continue;
+            }
+
+            var lDels = lDelegateList.FindAll(o => (o.Type == DelegationType.EmailAndLogin || o.Type == DelegationType.EmailOnly) && o.UserID == oD.ID);
+            if (lDels.Count == 0)
+                Utility.Append(ref szAdd, szEmail, ",");
+            else {
+                foreach (UserDelegate oUD in lDels) {
+                    Utility.Append(ref szAdd, G.UserInfo.getUser(oUD.DelegationUserID).Email, ",");
+                    if (oUD.SendEmailOrigUser) //Include the original emailer
+                        Utility.Append(ref DelegatedEmailAddresses, szEmail, ",");
+                }
+            }
+        }
+        return szAdd.Trim().TrimEnd(',');
     }
 
     public static SmtpClient getEmailServer() {
