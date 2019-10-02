@@ -67,6 +67,7 @@ public class ClientMenu {
             oM.addMenu("Admin", "../reports/report_admin.aspx", MenuRole.Admin);
             oM.addMenuItem("Staff admin", "../admin/user_detail.aspx", MenuRole.Admin);
             oM.addMenuItem("Staff KPI admin", "../admin/user_detail_kpi.aspx", MenuRole.Admin);
+            oM.addMenuItem("Glossy publications", "../admin/list_detail.aspx?intListTypeID=" + (int)ListType.GlossyMagazine);
 
             oM.addSpacer();
             oM.addMenuItem("Set current pay period", "../admin/pay_period_detail.aspx");
@@ -81,6 +82,7 @@ public class ClientMenu {
             oM.addMenuItem("Branch locations", "../admin/list_detail.aspx?intListTypeID=1");
             oM.addMenuItem("Companies", "../admin/list_detail.aspx?intListTypeID=7");
             oM.addSpacer();
+            oM.addMenuItem("View delegations", "../reports/delegation.aspx", MenuRole.Admin);
             oM.addMenuItem("View logins", "../admin/application_audits.aspx", MenuRole.Admin);
             oM.addMenuItem("View change log", "../admin/log_detail.aspx", MenuRole.Admin);
             oM.addMenuItem("View log v2", "../admin/logv2_detail.aspx", MenuRole.Admin);
@@ -115,6 +117,7 @@ public class ClientMenu {
         }
     }
 
+
     private bool canAccessReports() {
         return G.User.RoleID != 5 && G.User.RoleID != 6;
     }
@@ -123,19 +126,18 @@ public class ClientMenu {
 
     public string createMenu() {
         string szHTML = String.Format(@"
-              <div id='Logo' style='margin-top: 4px; width: 100%; float: left'>
-                    <span style='width: 30%; float: left'>&nbsp;</span>
-                    <img src='../sys_images/logo.png' alt='Fletchers logo' style='float: left; '/>
+                  <div id='Logo' style='margin-top: 4px; width: 100%; float: left'>
+                        <span style='width: 30%; float: left'>&nbsp;</span>
+                        <img src='../sys_images/logo.png' alt='Fletchers logo' style='float: left; '/>
 
-                    <span class='LogoWord' style='float: right; width:200px; text-align: left; '>
-                        <span class='LogoLeadingLetter'>C</span>OLLECTIONS<br />
-                        <span class='LogoLeadingLetter'>A</span>ND<br />
-                        <span class='LogoLeadingLetter'>P</span>AYROLL<br />
-                        <span class='LogoLeadingLetter'>S</span>YSTEM<br />
-                    </span>
-                </div>
-                <div class='AppMenu'>
-                    <div style='float: left; width: 80%' >
+                        <span class='LogoWord' style='float: right; width:200px; text-align: left; '>
+                            <span class='LogoLeadingLetter'>C</span>OLLECTIONS<br />
+                            <span class='LogoLeadingLetter'>A</span>ND<br />
+                            <span class='LogoLeadingLetter'>P</span>AYROLL<br />
+                            <span class='LogoLeadingLetter'>S</span>YSTEM<br />
+                        </span>
+                    </div>
+                    <div class='AppMenu'>
                         <nav id='custom-bootstrap-menu' class='navbar navbar-default'>
                             <div class='container-fluid'>
                                 <div class='navbar-header'>
@@ -152,19 +154,48 @@ public class ClientMenu {
                                     <ul class='nav navbar-nav'>
                                         {0}
                                     </ul>
+                                    <span class=""nav navbar-nav navbar-right"">
+                                        <span style='float: right; font-size: smaller; margin-top: 22px'>
+                                            {1}
+                                        </span>
+                                    </span>    
                                 </div><!-- /.navbar-collapse -->
                             </div><!-- /.container-fluid -->
                         </nav>
-                    </div>
-                    <div style='float: right; width: 20%; text-align: right; padding-top: 4px '>
-                       <span style='color: white; width: 350px; font-size: 12px;'>{1}</span>
-                        <a href='../help/CAPSAgentViewingInfo.pdf'  target='_blank'>
-                           <img src='../sys_images/help.gif' align='right' title='Click here to view help'/>
-                        </a>
+                       
                     </div>
                 </div>
-            ", oM.createMenu(), G.User.UserName + " - " + System.DateTime.Now.ToString("ddd, dd MMM yyy"));
+                {2}
+            ", oM.createMenu(), getLoginDropDown(), HTML.createModalIFrameHTML("Delegation", "Delegate options", "850", 350));
         return szHTML;
+    }
+
+
+    protected string getLoginDropDown() {
+        string szLoggedInAsMsg = "";
+        if (G.User.OriginalUserID != G.User.UserID)
+            szLoggedInAsMsg = " as " + G.User.Name + " (" + G.User.RoleID + ")";
+        string szDelegation = "";
+
+        if (Payroll.IsLeaveSupervisor) {
+            szDelegation = @"
+              <li id='oDelegate' role='presentation'><a role='menuitem' tabindex='-1' href='javascript: showDelegation();'>Manage delegation</a></li>
+            <li role='presentation' class='divider'></li>
+            ";
+        }
+
+        return String.Format(@"
+            <div class='dropdown' style='margin-top: -15px'>
+                <button class='btn btn-default  btn-block dropdown-toggle' type='button' id='mDropDown' data-toggle='dropdown' style='height: 25px; font-size: 11px; padding-left: 20px; padding-right: 20px'>{0}
+                <span class='caret'></span></button>
+                <ul class='dropdown-menu' role='menu' aria-labelledby='menu1'>
+                    {2}
+                    <li id='oHelp' role='presentation'><a role='menuitem' tabindex='-1' href='../help/CAPSAgentViewingInfo.pdf'  target='_blank'>Show help <img src='../sys_images/help.gif' align='right' title='Click here to view help'/></a></li>
+                    <li role='presentation' class='divider'></li>
+                    <li role='presentation'><a role='menuitem' tabindex='-1' href='../login.aspx?Logout=true'>Logout</a></li>
+                </ul>
+            </div>", G.UserInfo.getName(G.User.OriginalUserID), szLoggedInAsMsg, szDelegation);
+        
     }
 }
 

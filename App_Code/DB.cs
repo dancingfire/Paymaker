@@ -58,6 +58,22 @@ public class DB {
     }
 
     /// <summary>
+    /// Returns either a valid string of DateValue
+    /// </summary>
+    /// <param name="DateValue"></param>
+    /// <returns></returns>
+    public static string readDateToString(object DateValue) {
+        if (DateValue == null)
+            return "";
+
+        DateTime dt = DB.readDate(DateValue);
+        if (dt == DateTime.MinValue)
+            return "";
+
+        return Utility.formatDate(DB.readDate(DateValue));
+    }
+
+    /// <summary>
     /// Reads a value from a field protecting us from the null value (returns empty string in that case)
     /// </summary>
     /// <param name="Value"></param>

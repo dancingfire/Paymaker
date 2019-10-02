@@ -43,7 +43,7 @@ public class Payroll {
                 // Check if User has any staff that are on the payroll system
                 bool IsSuper = DB.getScalar(string.Format(@"
                     SELECT COUNT(*) FROM DB_USER 
-                    WHERE SUPERVISORID = {0} AND ISACTIVE = 1 AND ISDELETED = 0", G.User.UserID), 0) > 0;
+                    WHERE SUPERVISORID IN ({0}) AND ISACTIVE = 1 AND ISDELETED = 0", G.User.UserIDListWithDelegates), 0) > 0;
                 HttpContext.Current.Session["ISLEAVESUPERVISOR"] = IsSuper;
                 return IsSuper;
             } else {
@@ -552,10 +552,10 @@ public class TimesheetCycle {
                 SELECT U.ID AS OUTSTANDING, U.EMAIL AS USER_EMAIL, ISNULL(SUP.EMAIL, '') AS SUPERVISOR_EMAIL, SUM(ISNULL(TE.ACTUAL, 0)) AS TOTALHOURS, 
                     CASE WHEN MIN(TE.USERSIGNOFFDATE) IS NULL THEN 'EMAIL' ELSE '' END AS EMAILFLAG
                 FROM DB_USER U
-                LEFT JOIN DB_USER SUP ON SUP.ID = U.SUPERVISORID
+                LEFT JOIN DB_USER SUP ON SUP.ID = U.SUPERVISORID 
                 LEFT JOIN TIMESHEETENTRY TE ON TE.USERID = U.ID AND TE.TIMESHEETCYCLEID = {0}
                 WHERE {1} {2}
-	                 U.PAYROLLCYCLEID = (SELECT CYCLETYPEID FROM TIMESHEETCYCLE WHERE ID = {0})
+	                 U.PAYROLLCYCLEID = (SELECT CYCLETYPEID FROM TIMESHEETCYCLE WHERE ID = {0}) AND U.ISACTIVE = 1
                 GROUP BY U.ID, U.EMAIL, SUP.EMAIL
 
                 -- Check for outstanding supervisor signoff
@@ -565,7 +565,7 @@ public class TimesheetCycle {
                 LEFT JOIN TIMESHEETENTRY TE ON TE.USERID = U.ID AND TE.TIMESHEETCYCLEID = {0}
                 WHERE {1} TE.USERSIGNOFFDATE IS NOT NULL
 	                AND U.SUPERVISORID IS NOT NULL AND TE.SIGNEDOFFDATE IS NULL
-	                AND U.PAYROLLCYCLEID = (SELECT CYCLETYPEID FROM TIMESHEETCYCLE WHERE ID = {0})
+	                AND U.PAYROLLCYCLEID = (SELECT CYCLETYPEID FROM TIMESHEETCYCLE WHERE ID = {0}) AND U.ISACTIVE = 1
                 GROUP BY U.ID, U.EMAIL, SUP.EMAIL", this.ID, szSupervisor, szNullDates);
     }
 

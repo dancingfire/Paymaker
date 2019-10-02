@@ -59,8 +59,8 @@
                     <asp:ListItem Text="No" Value="0" />
                 </bw:bwDropDownList>
                 <div class="Header">Pre-Listing</div>
-                <bw:bwTextBox ID="txtVideo" runat="server" Label="Agent profile video" type="date" />
-                <bw:bwTextBox ID="txtAPPRAISALSTOLISTINGS" runat="server" Label="Appraisals to listings" />
+                <bw:bwTextBox ID="txtAPPRAISALSCONVERTEDA" runat="server" Label="Appraisals converted - A (%)" type="number"  min="1" max="100" step="any"/>
+                <bw:bwTextBox ID="txtAPPRAISALSCONVERTEDB" runat="server" Label="Appraisals converted - B (%)" type="number"  min="1" max="100" step="any"/>
                 <bw:bwTextBox ID="txtAPPRAISALSPvsC" runat="server" Label="Appraisals personal v company" />
                 <bw:bwTextBox ID="txtAPPRAISALS_ABC" runat="server" Label="Appraisals (ABC)" type="number" />
                 <bw:bwTextBox ID="txtAPPRAISALSCATEGORY_A" runat="server" Label="Appraisals Category A (%)" type="number" min="1" max="100" step="any"  />

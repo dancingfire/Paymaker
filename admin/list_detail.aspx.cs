@@ -20,6 +20,10 @@ public partial class list_detail : Root {
                 lblInsertText.Text = "Add new commission item";
                 break;
 
+            case ListType.GlossyMagazine:
+                lblItemName.Text = "Glossy publication";
+                lblInsertText.Text = "Add new publication";
+                break;
             case ListType.Company:
                 lblItemName.Text = "Companies";
                 lblInsertText.Text = "Add new company";

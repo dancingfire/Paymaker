@@ -1,4 +1,4 @@
-<%@ Page Language="c#" Inherits="Paymaker.Paymaker_Form" CodeFile="login.aspx.cs" EnableViewState="false" %>
+<%@ Page Language="c#" Inherits="Paymaker.login" CodeFile="login.aspx.cs" EnableViewState="false" %>
 
 <!DOCTYPE html>
 <html>

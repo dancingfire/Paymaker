@@ -70,6 +70,15 @@ public class G {
     }
 
     /// <summary>
+    /// Delegate information
+    /// </summary>
+    public static UserDelegateInformation UserDelegateInfo {
+        get {
+            return UserDelegateInformation.getInfo();
+        }
+    }
+
+    /// <summary>
     ///Commission split information
     /// </summary>
     public static CommissionTypeInformation CommTypeInfo {
@@ -148,6 +157,79 @@ public class G {
     private static void checkSessionValue(string szValue) {
         if (HttpContext.Current.Session == null || HttpContext.Current.Session[szValue] == null) {
             HttpContext.Current.Response.Redirect("~/login.aspx?Timeout=true&sv=" + szValue);
+        }
+    }
+
+    public static int checkSessionValue(string szValue, bool RedirectToLoginOnNull, int Default = Int32.MinValue) {
+        if (HttpContext.Current.Session[szValue] == null) {
+            if (RedirectToLoginOnNull) {
+                try {
+                    HttpContext.Current.Response.Redirect("~/login.aspx?Timeout=true&sv=" + szValue);
+                } catch { }
+            } else {
+                lock (HttpContext.Current.Session) {
+                    if (HttpContext.Current.Session[szValue] != null)
+                        return Convert.ToInt32(HttpContext.Current.Session[szValue]);
+
+                    HttpContext.Current.Session[szValue] = Default;
+                }
+            }
+            return Default;
+        }
+
+        return Convert.ToInt32(HttpContext.Current.Session[szValue]);
+    }
+
+    public static DateTime checkSessionValue(string szValue, bool RedirectToLoginOnNull, DateTime Default) {
+        if (HttpContext.Current.Session[szValue] == null) {
+            if (RedirectToLoginOnNull)
+                HttpContext.Current.Response.Redirect("~/login.aspx?Timeout=true&sv=" + szValue);
+            else {
+                lock (HttpContext.Current.Session) {
+                    if (HttpContext.Current.Session[szValue] != null)
+                        return Convert.ToDateTime(HttpContext.Current.Session[szValue]);
+
+                    HttpContext.Current.Session[szValue] = Default;
+                }
+            }
+            return Default;
+        } else {
+            return Convert.ToDateTime(HttpContext.Current.Session[szValue]);
+        }
+    }
+
+    public static string checkSessionValue(string szValue, bool RedirectToLoginOnNull, string Default = "") {
+        if (HttpContext.Current.Session[szValue] == null) {
+            if (RedirectToLoginOnNull)
+                HttpContext.Current.Response.Redirect("~/login.aspx?Timeout=true&sv=" + szValue);
+            else {
+                lock (HttpContext.Current.Session) {
+                    if (HttpContext.Current.Session[szValue] != null)
+                        return Convert.ToString(HttpContext.Current.Session[szValue]);
+
+                    HttpContext.Current.Session[szValue] = Default;
+                }
+            }
+            return Default;
+        }
+
+        return Convert.ToString(HttpContext.Current.Session[szValue]);
+    }
+    private static bool checkSessionValue(string szValue, bool RedirectToLoginOnNull, bool Default = false) {
+        if (HttpContext.Current.Session[szValue] == null) {
+            if (RedirectToLoginOnNull)
+                HttpContext.Current.Response.Redirect("~/login.aspx?Timeout=true&sv=" + szValue);
+            else {
+                lock (HttpContext.Current.Session) {
+                    if (HttpContext.Current.Session[szValue] != null)
+                        return Convert.ToBoolean(HttpContext.Current.Session[szValue]);
+
+                    HttpContext.Current.Session[szValue] = Default;
+                }
+            }
+            return Default;
+        } else {
+            return Convert.ToBoolean(HttpContext.Current.Session[szValue]);
         }
     }
 
@@ -248,6 +330,20 @@ public class G {
             }
         }
 
+        /// <summary>
+        /// The list of user IDs that are delegated to this person - includes their own ID
+        /// </summary>
+        public static string UserIDListWithDelegates {
+            get {
+                
+                if (HttpContext.Current.Session["USERIDLISTWITHDELEGATES"] == null) {
+                    HttpContext.Current.Session["USERIDLISTWITHDELEGATES"] = G.UserDelegateInfo.getIDsDelegatedToThisUser(G.User.OriginalUserID, true);
+                    return UserIDListWithDelegates;
+                } else {
+                    return Convert.ToString(HttpContext.Current.Session["USERIDLISTWITHDELEGATES"]);
+                }
+            }
+        }
         /// <summary>
         /// The number of times that this user has tried to log in
         /// </summary>
@@ -352,6 +448,28 @@ public class G {
             }
         }
 
+        /// <summary>
+        /// The original role of the person who is logged in - this will stay the same even if the user delegated to someone else
+        /// </summary>
+        public static UserRole OriginalRoleID {
+            get {
+                checkSessionValue("ORIGINALROLEID", true, Int32.MinValue);
+                return (UserRole)Convert.ToInt32(HttpContext.Current.Session["ORIGINALROLEID"]);
+            }
+            set { HttpContext.Current.Session["ORIGINALROLEID"] = value; }
+        }
+
+
+        public static string Name {
+            get {
+                checkSessionValue("USERNAME", false, "");
+                return HttpContext.Current.Session["USERNAME"].ToString();
+            }
+            set {
+                HttpContext.Current.Session["USERNAME"] = value;
+            }
+        }
+
         public static string UserName {
             get {
                 checkSessionValue("USERNAME");
@@ -361,6 +479,28 @@ public class G {
                 HttpContext.Current.Session["USERNAME"] = value;
             }
         }
+
+        /// <summary>
+        /// The original login of the person who is logged in - this will stay the same even if the user delegated to someone else
+        /// </summary>
+        public static int OriginalUserID {
+            get {
+                checkSessionValue("ORIGINALUSERID");
+                return Convert.ToInt32(HttpContext.Current.Session["ORIGINALUSERID"]);
+            }
+            set { HttpContext.Current.Session["ORIGINALUSERID"] = value; }
+        }
+
+        /// <summary>
+        /// The original login of the person who is logged in - this will stay the same even if the user delegated to someone else
+        /// </summary>
+        public static string OriginalUserName {
+            get {
+                checkSessionValue("ORIGINALUSERID");
+                return G.UserInfo.getName(Convert.ToInt32(HttpContext.Current.Session["ORIGINALUSERID"]));
+            }
+        }
+
 
         public static int AdminPAForThisUser {
             get {
@@ -548,289 +688,6 @@ public class G {
     }
 }
 
-/// <summary>
-/// A user record in the system
-/// </summary>
-public class UserDetail {
-
-    /// <summary>
-    /// This contains the users who are moving from Teams to be proper sales people and require special handling at year end
-    /// </summary>
-    public static List<int> SpecialYearEndUserIDs = new List<int>() { 153, 207, 163 };
-
-    public int ID { get; set; }
-    public int MentorID { get; set; }
-    public bool IsActive{ get; set; }
-    public int RoleID { get; set; }
-    public int Salary { get; set; }
-    public int OfficeID { get; set; }
-    public int PayrollCycleID { get; set; }
-    public int SupervisorID { get; set; }
-    public string FirstName { get; set; }
-    public string OfficeGLCode { get; set; }
-    public string LastName { get; set; }
-    public string Email { get; set; }
-    public string Initials { get; set; }
-    public string GLSubAccount {
-        get {
-            return Utility.fixGLOfficeCode(OfficeGLCode) + "-" + Initials;
-        }
-    }
-
-    public PayBand PaymentStructure {
-        get;
-        set;
-    }
-
-    /// <summary>
-    /// Gets the payment structure based on the date of the property sale
-    /// </summary>
-    /// <param name="SaleDate"></param>
-    /// <returns></returns>
-    public PayBand getPaymentStructure(DateTime SaleDate) {
-        PayBand oP = PaymentStructure;
-
-        if (!UserDetail.SpecialYearEndUserIDs.Contains(ID)) {
-            return oP;
-        }
-
-        //Last year they were in a team with a salary
-        if (SaleDate < new DateTime(2015, 7, 1))
-            return PayBand.JuniorTeamSalary;
-        else
-            return oP;
-    }
-
-    private Hashtable htYTDTotals = new Hashtable();
-    public string CreditGL { get; set; }
-    public string DebitGL { get; set; }
-    public string OfficeJobCode { get; set; }
-
-    public string Name { get { return LastName + ", " + FirstName + "(" + Initials + ")"; } }
-
-    public string NameFLI { get { return FirstName + " " + LastName + "(" + Initials + ")"; } }
-
-    public UserDetail(int ID, bool IsActive, string Initials, string First, string Last, string Email, int RoleID, int OfficeID, string OfficeGLCode, int MentorID, int Salary, int PayrollCycleID, int SupervisorID, string CreditGLCode, string DebitGLCode, string JobCode) {
-        this.ID = ID;
-        this.IsActive = IsActive;
-        this.Initials = Initials;
-        this.FirstName = First;
-        this.LastName = Last;
-        this.Email = Email;
-        this.RoleID = RoleID;
-        this.MentorID = MentorID;
-        this.OfficeID = OfficeID;
-        this.Salary = Salary;
-        this.OfficeGLCode = OfficeGLCode;
-        this.CreditGL = CreditGLCode;
-        this.DebitGL = DebitGLCode;
-        this.OfficeJobCode = JobCode;
-        this.PayrollCycleID = PayrollCycleID;
-        this.SupervisorID = SupervisorID;
-
-        if (MentorID <= 0 && Salary == 0) {
-            PaymentStructure = PayBand.Normal;
-        } else if (MentorID > 0) { //Belong to a team
-            if (Salary == 0)
-                PaymentStructure = PayBand.JuniorTeamRetainer;
-            else
-                PaymentStructure = PayBand.JuniorTeamSalary;
-        } else { // No team
-            if (Salary == 0)
-                PaymentStructure = PayBand.JuniorNoTeamRetainer;
-            else {
-                PaymentStructure = PayBand.JuniorNoTeamSalary;
-                if (Salary == 85000)
-                    PaymentStructure = PayBand.SpecialCase85kBase;
-            }
-        }
-    }
-
-    /// <summary>
-    /// Checks the passed in user ID list to ensure that it contains the special IDs
-    /// </summary>
-    /// <param name="UserIDList"></param>
-    /// <returns></returns>
-    public static string checkUserIDListForSpecialIDs(string UserIDList) {
-        if (String.IsNullOrEmpty(UserIDList))
-            return string.Join(",", UserDetail.SpecialYearEndUserIDs);
-
-        foreach (int ID in UserDetail.SpecialYearEndUserIDs) {
-            if (!Utility.InCommaSeparatedString(ID.ToString(), UserIDList))
-                Utility.Append(ref UserIDList, ID.ToString(), ",");
-        }
-        return UserIDList;
-    }
-
-    /// <summary>
-    /// Returns the YTD total for the selected up to but not including the current pay period month passed in
-    /// </summary>
-    /// <param name="Year"></param>
-    /// <returns></returns>
-    public double getYTDTotal(int PayPeriodID) {
-        if (PayPeriodID == -1)
-            PayPeriodID = G.CurrentPayPeriod;
-        PayPeriod oP = G.PayPeriodInfo.getPayPeriod(PayPeriodID);
-        DateTime dtStart = DateUtil.ThisFinYear(oP.StartDate).Start;
-        return (double)DB.getScalar(String.Format(@"
-                SELECT ISNULL(SUM(USS.GRAPHCOMMISSION), 0) AS GRAPHCOMMISSION
-                FROM USERSALESPLIT USS JOIN SALESPLIT SS ON USS.SALESPLITID = SS.ID JOIN SALE S ON S.ID = SS.SALEID
-                    AND S.STATUSID IN (1, 2)
-                WHERE  SS.CALCULATEDAMOUNT > 0 AND USS.RECORDSTATUS < 1 AND S.SALEDATE BETWEEN '{0} 00:00' AND '{1} 23:59' AND USS.USERID = {2}
-                UNION SELECT 0
-                ORDER BY 1 DESC", Utility.formatDate(dtStart), Utility.formatDate(oP.EndDate), ID), 0);
-    }
-
-    /// <summary>
-    /// Determines, based on the sale date, which YTD totals are meant to be used
-    /// </summary>
-    /// <param name="CurrYTD"></param>
-    /// <param name="PrevYTD"></param>
-    /// <param name="SaleDate"></param>
-    /// <param name="PayPeriodID"></param>
-    /// <returns></returns>
-    public double getEffectiveYTDCommission(double CurrYTD, double PrevYearTotal, DateTime SaleDate, int PayPeriodID) {
-        double dEffectiveCommission = CurrYTD;
-        PayPeriod oP = G.PayPeriodInfo.getPayPeriod(PayPeriodID);
-        //If the sales date is in the previous financial year, we have to use the values from the previous year.
-        if (DateUtil.ThisFinYear(SaleDate).Start.Year != oP.FinYear) {
-            dEffectiveCommission = PrevYearTotal;
-        }
-        return dEffectiveCommission;
-    }
-
-    /// <summary>
-    /// Returns the previous YTD total
-    /// </summary>
-    /// <param name="Year"></param>
-    /// <returns></returns>
-    public double getPrevYTDTotal(int PayPeriodID) {
-        if (PayPeriodID == -1)
-            PayPeriodID = G.CurrentPayPeriod;
-        PayPeriod oP = G.PayPeriodInfo.getPayPeriod(PayPeriodID);
-        DateTime dtStart = DateUtil.ThisFinYear(oP.StartDate).Start.AddYears(-1);
-        return (double)DB.getScalar(String.Format(@"
-                SELECT ISNULL(SUM(USS.GRAPHCOMMISSION), 0) AS GRAPHCOMMISSION
-                FROM USERSALESPLIT USS JOIN SALESPLIT SS ON USS.SALESPLITID = SS.ID JOIN SALE S ON S.ID = SS.SALEID
-                    AND S.STATUSID IN (1, 2)
-                WHERE  SS.CALCULATEDAMOUNT > 0 AND USS.RECORDSTATUS < 1 AND S.SALEDATE BETWEEN '{0} 00:00' AND '{1} 23:59' AND USS.USERID = {2}
-                UNION SELECT 0
-                ORDER BY 1 DESC", Utility.formatDate(dtStart), Utility.formatDate(dtStart.AddYears(1).AddMinutes(-1)), ID), 0);
-    }
-
-    /// <summary>
-    /// Returns the YTD total for the selected up to but not including the month passed in
-    /// </summary>
-    /// <param name="Year"></param>
-    /// <returns></returns>
-    public double getYTDTotal(DateTime SaleDate) {
-        DateTime dtStart = DateUtil.ThisFinYear(SaleDate).Start;
-        return (double)DB.getScalar(String.Format(@"
-                SELECT ISNULL(SUM(USS.GRAPHCOMMISSION), 0) AS GRAPHCOMMISSION
-                FROM USERSALESPLIT USS JOIN SALESPLIT SS ON USS.SALESPLITID = SS.ID JOIN SALE S ON S.ID = SS.SALEID
-                    AND S.STATUSID IN (1, 2)
-                WHERE  SS.CALCULATEDAMOUNT > 0 AND USS.RECORDSTATUS < 1 AND S.SALEDATE BETWEEN '{0} 00:00' AND '{1} 23:59' AND USS.USERID = {2}
-                UNION SELECT 0
-                ORDER BY 1 DESC", Utility.formatDate(dtStart), Utility.formatDate(new DateTime(SaleDate.Year, SaleDate.Month, DateTime.DaysInMonth(SaleDate.Year, SaleDate.Month))), ID), 0);
-    }
-
-    /// <summary>
-    /// Calculate the agent annual bonus based on the actual amounts that have been paid
-    /// </summary>
-    /// <param name="dYTDTotal">The YTD for the period in consideration (generally current date less two months)</param>
-    /// <param name="dNewPeriodTotal">The total for the next pay periond in consideration (generally the previous pay period)</param>
-    /// <returns></returns>
-    public static double calcMentorBonus(double dYTDTotal, double dNewPeriodTotal, int UserID) {
-        if (!G.Settings.CreateBonusRecords)
-            return 0;
-        if (dNewPeriodTotal <= 0)
-            return 0;
-
-        double dCommission = 0;
-        double dTotalAlreadyPaid = dYTDTotal - dNewPeriodTotal;
-        List<CommissionTier> lTiers = new List<CommissionTier>();
-        CommissionTier oCTNew = new CommissionTier(1, 0, 100000, 0.2);
-        dTotalAlreadyPaid = oCTNew.applyAlreadyPaid(dTotalAlreadyPaid);
-        lTiers.Add(oCTNew);
-
-        oCTNew = new CommissionTier(2, 100001, 200000, 0.15);
-        dTotalAlreadyPaid = oCTNew.applyAlreadyPaid(dTotalAlreadyPaid);
-        lTiers.Add(oCTNew);
-
-        oCTNew = new CommissionTier(3, 200001, 300000, 0.1);
-        dTotalAlreadyPaid = oCTNew.applyAlreadyPaid(dTotalAlreadyPaid);
-        lTiers.Add(oCTNew);
-
-        oCTNew = new CommissionTier(4, 3000001, 1000000, 0.5);
-        dTotalAlreadyPaid = oCTNew.applyAlreadyPaid(dTotalAlreadyPaid);
-        lTiers.Add(oCTNew);
-
-        //Find out if we have filled up the lowest commission bonus band
-        foreach (CommissionTier oCT in lTiers) {
-            if (dNewPeriodTotal <= 0)
-                break;
-            if (oCT.dRemaining > 0) {
-                if (oCT.dRemaining >= dNewPeriodTotal) { //We use up all the outstanding amount to be paid within this tier
-                    dCommission += dNewPeriodTotal * oCT.dPercentage;
-                    break;
-                } else {
-                    dCommission += oCT.dRemaining * oCT.dPercentage;
-                    dNewPeriodTotal -= oCT.dRemaining;
-                }
-            }
-        }
-        return dCommission;
-    }
-
-    /// <summary>
-    /// Calculate the agent bonus commission structure
-    /// </summary>
-    /// <param name="dYTDBonusAmountAlreadyPaid">The YTD total NOT including the current period </param>
-    /// <param name="dNextPeriodTotal"></param>
-    /// <returns></returns>
-    public static double calcEOFYBonusScheme(double dYTDBonusAmountAlreadyPaid, DataTable dtSaleCurrentPeriod, int UserID) {
-        if (!G.Settings.CreateBonusRecords)
-            return 0;
-
-        double dBonus = 0;
-
-        List<CommissionTier> lTiers = Client.getCommissionTiers(dYTDBonusAmountAlreadyPaid, UserID);
-        double dCurrSaleCommission = 0;
-        //Loop through each row set the commission tier based on the running total
-        foreach (DataRow dr in dtSaleCurrentPeriod.Rows) {
-            dCurrSaleCommission = DB.readDouble(dr["ELIGIBLE_COMMISSION"]);
-            int intUserID = DB.readInt(dr["USERID"]);
-            int intSaleID = DB.readInt(dr["SALEID"]);
-            int intCommissionTier = -1;
-            double dCurrSaleBonus = 0;
-            //Find out if we have filled up the lowest commission bonus band
-            foreach (CommissionTier oCT in lTiers) {
-                intCommissionTier = oCT.ID;
-                if (dCurrSaleCommission <= 0)
-                    break;
-                if (oCT.dRemaining > 0) {
-                    if (oCT.dRemaining >= dCurrSaleCommission) { //We use up all the outstanding amount to be paid within this tier
-                        dCurrSaleBonus = dCurrSaleCommission * oCT.dPercentage;
-                        dBonus += dCurrSaleBonus;
-                        oCT.dRemaining -= dCurrSaleCommission;
-                        break;
-                    } else {    //We are only using up part of the total amount to be paid
-                        dCurrSaleBonus += oCT.dRemaining * oCT.dPercentage; //Use up the total remaining
-                        dBonus += dCurrSaleBonus;
-                        dCurrSaleCommission = dCurrSaleCommission - oCT.dRemaining; //Remove the part we've now paid commission on
-                        oCT.dRemaining = 0;
-                    }
-                }
-            }
-            DB.runNonQuery(String.Format(@"
-                UPDATE USERSALESPLIT
-                    SET COMMISSIONTIERID = {0}, EOFYBONUSCOMMISSION = {3}
-                WHERE USERID = {1} AND SALESPLITID IN (SELECT ID FROM SALESPLIT WHERE SALEID = {2})
-            ", intCommissionTier, intUserID, intSaleID, dCurrSaleBonus));
-        }
-        return dBonus;
-    }
-}
 
 /// <summary>
 /// A commission level
@@ -998,155 +855,6 @@ public class CommissionTierInformation {
     }
 }
 
-public class UserInformation {
-    private List<UserDetail> lUsers = new List<UserDetail>();
-    private bool blnIsLoaded = false;
-
-    private UserInformation() {
-    }
-
-    /// <summary>
-    /// List of all the users
-    /// </summary>
-    public List<UserDetail> UserList {
-        get {
-            if (!blnIsLoaded)
-                loadItems();
-            return lUsers;
-        }
-    }
-
-    public static UserInformation instance {
-        get {
-            if (HttpContext.Current.Application["UserList"] == null) {
-                HttpContext.Current.Application.Lock();
-                HttpContext.Current.Application["UserList"] = new UserInformation();
-                HttpContext.Current.Application.UnLock();
-            }
-            return (UserInformation)HttpContext.Current.Application["UserList"];
-        }
-    }
-
-    /// <summary>
-    /// Call this function to get a handle to the class. The class will auto-instantiate itself
-    /// </summary>
-    /// <returns></returns>
-    public static UserInformation getInfo() {
-        return instance;
-    }
-
-    /// <summary>
-    /// Returns the users's name
-    /// </summary>
-    /// <param name="UserID"></param>
-    /// <returns></returns>
-    public string getName(int UserID) {
-        if (!blnIsLoaded)
-            loadItems();
-        UserDetail oU = getUser(UserID);
-        if (oU != null)
-            return oU.FirstName + ' ' + oU.LastName;
-        else
-            return "<not found>";
-    }
-
-    /// <summary>
-    /// Returns the users's name
-    /// </summary>
-    /// <param name="UserID"></param>
-    /// <returns></returns>
-    public string getInitials(int UserID) {
-        if (!blnIsLoaded)
-            loadItems();
-        UserDetail oU = getUser(UserID);
-        if (oU != null)
-            return oU.Initials;
-        else
-            return "";
-    }
-
-    /// <summary>
-    /// Return a report type record
-    /// </summary>
-    /// <param name="ReportTypeID"></param>
-    /// <returns></returns>
-    public UserDetail getUser(int UserID) {
-        if (!blnIsLoaded)
-            loadItems();
-        return lUsers.Find(i => i.ID == UserID);
-    }
-
-    /// <summary>
-    /// Return a report type record
-    /// </summary>
-    /// <param name="ReportTypeID"></param>
-    /// <returns></returns>
-    public UserDetail getUser(string Initials) {
-        if (!blnIsLoaded)
-            loadItems();
-        return lUsers.Find(i => i.Initials == Initials);
-    }
-
-    /// <summary>
-    /// To be called if the object is updated
-    /// </summary>
-    public void forceReload(bool WriteToCache = true) {
-        blnIsLoaded = false;
-        lUsers.Clear();
-        loadItems();
-    }
-
-    private void loadItems() {
-        string szSQL = @"
-            --User info
-            SELECT U.ID, U.ISACTIVE, INITIALSCODE, FIRSTNAME, LASTNAME, EMAIL, ROLEID, ISNULL(TEAMID, -1) AS TEAM, SALARY, 
-             U.CREDITGLCODE, U.DEBITGLCODE, L_OFF.JOBCODE, U.OFFICEID, U.PAYROLLCYCLEID, U.SUPERVISORID, L_OFF.OFFICEMYOBCODE
-            FROM DB_USER U  JOIN LIST L_OFF ON L_OFF.ID = U.OFFICEID ORDER BY LASTNAME, FIRSTNAME";
-
-        using (DataSet ds = DB.runDataSet(szSQL)) {
-            foreach (DataRow dr in ds.Tables[0].Rows) {
-                int intID = Convert.ToInt32(dr["ID"]);
-                lUsers.Add(new UserDetail(intID, DB.readBool(dr["ISACTIVE"]), DB.readString(dr["INITIALSCODE"]), DB.readString(dr["FIRSTNAME"]), DB.readString(dr["LASTNAME"]), DB.readString(dr["EMAIL"]),
-                    DB.readInt(dr["ROLEID"]), DB.readInt(dr["OFFICEID"]), DB.readString(dr["OFFICEMYOBCODE"]), DB.readInt(dr["TEAM"]), DB.readInt(dr["SALARY"]), DB.readInt(dr["PAYROLLCYCLEID"]),
-                    DB.readInt(dr["SUPERVISORID"]), DB.readString(dr["CREDITGLCODE"]), DB.readString(dr["DEBITGLCODE"]), DB.readString(dr["JOBCODE"])));
-            }
-            blnIsLoaded = true;
-        }
-    }
-
-    /// <summary>
-    /// Loads the list from the object
-    /// </summary>
-    /// <param name="l"></param>
-    /// <param name="IncludeSelect"></param>
-    public void loadList(ref bwDropDownList l, bool IncludeSelect = true, bool IncludeInactive = false) {
-        if (blnIsLoaded == false || lUsers == null)
-            loadItems();
-        if (IncludeSelect) {
-            l.Items.Add(new ListItem("Select a user...", "-1"));
-        }
-        foreach (UserDetail b in lUsers) {
-            if (!IncludeInactive && !b.IsActive)
-                continue;
-
-            l.Items.Add(new ListItem(b.Name, b.ID.ToString()));
-        }
-    }
-
-    /// <summary>
-    /// Loads the list from the object
-    /// </summary>
-    /// <param name="l"></param>
-    /// <param name="IncludeSelect"></param>
-    public void loadList(ref ListBox l, bool IncludeSelect = true) {
-        if (blnIsLoaded == false || lUsers == null)
-            loadItems();
-
-        foreach (UserDetail b in lUsers) {
-            l.Items.Add(new ListItem(b.NameFLI, b.ID.ToString()));
-        }
-    }
-}
 
 public class PayPeriodCollection : List<PayPeriod> {
 }

@@ -99,6 +99,7 @@ namespace PAYMAKER {
             G.UserInfo.forceReload();
             G.PayPeriodInfo.forceReload();
             G.TimeSheetCycleReferences.forceReload();
+            G.UserDelegateInfo.forceReload();
         }
     }
 }
