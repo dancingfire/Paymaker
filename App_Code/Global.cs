@@ -485,7 +485,7 @@ public class G {
         /// </summary>
         public static int OriginalUserID {
             get {
-                checkSessionValue("ORIGINALUSERID");
+                checkSessionValue("ORIGINALUSERID", false, -1);
                 return Convert.ToInt32(HttpContext.Current.Session["ORIGINALUSERID"]);
             }
             set { HttpContext.Current.Session["ORIGINALUSERID"] = value; }

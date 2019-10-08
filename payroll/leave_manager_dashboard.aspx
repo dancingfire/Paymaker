@@ -8,7 +8,7 @@
     <script type="text/javascript">
 
          $(document).ready(function () {
-            createDataTable("gvList", false, true, 520, false, true);
+            createDataTable("gvList", true, true, 520, false, true);
 
         });
 

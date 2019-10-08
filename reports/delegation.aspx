@@ -42,7 +42,7 @@
             
                 <asp:GridView ID="gvList" runat="server" AutoGenerateColumns="false"
                     OnRowDataBound="gvList_RowDataBound" BorderWidth="0"
-                    EmptyDataText="No Data Found" EnableViewState="false">
+                    EmptyDataText="No delegations have been entered in the last year." EnableViewState="false">
                     <Columns>
                         <asp:BoundField DataField="Name" HeaderText="Name" HeaderStyle-Width="30%" />
                         <asp:BoundField DataField="DelegatedTo" HeaderText="Delagated to" HeaderStyle-Width="30%"  />

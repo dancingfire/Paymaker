@@ -333,6 +333,9 @@ public class UserLogin {
                 G.User.Email = Convert.ToString(dr["EMAIL"]);
                 G.User.RoleID = Convert.ToInt32(dr["ROLEID"]);
                 G.User.OriginalRoleID = (UserRole)Convert.ToInt32(dr["ROLEID"]);
+                if(G.User.OriginalUserID == -1){
+                    G.User.OriginalUserID = Convert.ToInt32(dr["ID"]);
+                }
                 G.User.OriginalUserID = Convert.ToInt32(dr["ID"]);
                 G.User.Name = DB.readString(dr["FIRSTNAME"]);
                 G.User.PayrollTypeID = Convert.ToInt32(dr["PAYROLLCYCLEID"]);
