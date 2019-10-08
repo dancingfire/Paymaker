@@ -14,7 +14,7 @@ namespace Paymaker {
             // Check which pages user should have access to
             if (!Page.IsPostBack) {
                 loadRequests();
-                btnSuperviser.Visible = Payroll.IsLeaveSupervisor;
+                btnSuperviser.Visible = Payroll.IsLeaveSupervisor || G.User.IsAdmin;
             }
             ModalForms.createModalUpdate("Leave request", "60%", "500px", false, true);
         }
@@ -25,7 +25,7 @@ namespace Paymaker {
                     CASE WHEN HOURS = 0 THEN CAST(TOTALDAYS as VARCHAR) + ' Days' ELSE CAST(HOURS AS VARCHAR) + ' Hrs' END as DURATION
                 FROM LEAVEREQUEST LR JOIN LIST L ON L.ID = LR.LEAVETYPEID
                 JOIN LEAVESTATUS LS ON LS.ID = LR.LEAVESTATUSID
-                WHERE LR.USERID = {0} AND ISDELETED = 0
+                WHERE LR.USERID = {0} AND ISDELETED = 0 
                 ORDER BY LR.ENTRYDATE DESC", G.User.ID);
             using (DataSet ds = DB.runDataSet(szSQL)) {
                 Utility.bindGV(ref gvList, ds, true);

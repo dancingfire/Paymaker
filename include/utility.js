@@ -297,6 +297,20 @@ function createDataTable(szGrid, blnUseSorting, blnUseFiltering, intHeight, blnS
             else
                 options["bScrollCollapse"] = true;
         }
+
+        // Special treatment for date sorting plugin
+        // Looking for particular class names of column heading (th)
+        var columnDefs = [];
+        $("#" + szGrid + " th").each(function (index) {
+            if ($(this).attr("class") == null) {
+                columnDefs[index] = null;
+            } else if ($(this).attr("class").toLowerCase().indexOf("dt-date") >= 0) {
+                columnDefs[index] = { "sType": "date" };
+            } else {
+                columnDefs[index] = null;
+            }
+        });
+        options["columns"] = columnDefs;
         var oTable = $('#' + szGrid).dataTable(options);
 
         setTimeout(function () {
