@@ -68,7 +68,7 @@ namespace Paymaker {
                 szFilter += String.Format(" AND L_OFFICE.ID IN ({0})", hdOfficeID.Value);
             if (!String.IsNullOrWhiteSpace(hdCompanyID.Value))
                 szFilter += String.Format(" AND L_COMPANY.ID IN ({0})", hdCompanyID.Value);
-            string szUserIDFilter = Valid.getText("szUserID", G.User.RoleID != 1 ? G.User.UserID.ToString() : "", VT.List);
+            string szUserIDFilter = Valid.getText("szUserID", !G.User.IsAdmin ? G.User.UserID.ToString() : "", VT.List);
             if (!String.IsNullOrEmpty(szUserIDFilter)) {
                 string szKPIFilter = "";
                 if (Valid.getBoolean("blnApplyKPI", false))

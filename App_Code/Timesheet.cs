@@ -10,7 +10,7 @@ public class Payroll {
 
     public static Boolean CanAccess {
         get {
-            return IsAdmin /* Admin */
+            return G.User.IsAdmin /* Admin */
                 || HasTimesheet /* Payroll Cycle set */
                 || IsPayrollSupervisor /* Supervises staff on the payroll system */;
         }
@@ -49,12 +49,6 @@ public class Payroll {
             } else {
                 return Convert.ToBoolean(HttpContext.Current.Session["ISLEAVESUPERVISOR"]);
             }
-        }
-    }
-
-    public static Boolean IsAdmin {
-        get {
-            return G.User.RoleID == 1 /* Admin */;
         }
     }
 

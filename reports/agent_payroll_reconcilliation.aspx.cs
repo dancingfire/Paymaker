@@ -58,7 +58,7 @@ namespace Paymaker {
             double dExpensesTotal = 0;
 
             string szUserFilter = Valid.getText("szUserID", VT.List);
-            if (G.User.RoleID != 1) //Filter for single user mode
+            if (!G.User.IsAdmin) //Filter for single user mode
                 szUserFilter = G.User.UserID.ToString();
 
             string szSQL = String.Format(@"

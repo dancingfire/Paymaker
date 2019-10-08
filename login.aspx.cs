@@ -76,7 +76,7 @@ namespace Paymaker {
             string szStartPage = "main/sales_dashboard.aspx";
             if (blnLeave) {
                 szStartPage = "payroll/leave_manager_dashboard.aspx";
-            } else if (G.User.RoleID == 1) {
+            } else if (G.User.IsAdmin) {
                 szStartPage = "main/admin_dashboard.aspx";
             } else if (G.User.hasPermission(RolePermissionType.ViewCampaignModule)) {
                 szStartPage = "campaign/campaign_dashboard.aspx";

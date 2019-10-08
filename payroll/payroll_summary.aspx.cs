@@ -18,7 +18,7 @@ public partial class payroll_summary : Root {
         Form.Controls.Add(new LiteralControl(HTML.createModalUpdate("Timesheet", "Timesheet", "95%", 620, "payroll_update.aspx", exitX: true)));
 
         // Only Admin can access these buttons (Export / create PDF)
-        btnComplete.Visible = btnExport.Visible = (G.User.RoleID == 1); // Admin
+        btnComplete.Visible = btnExport.Visible = (G.User.IsAdmin); // Admin
     }
 
     private void loadData() {
@@ -42,7 +42,7 @@ public partial class payroll_summary : Root {
         lstCycle.SelectedValue = hdCycleRef.Value;
 
         string szSupervisor = string.Format("AND U.SUPERVISORID IN ({0})", G.User.UserIDListWithDelegates);
-        if (G.User.RoleID == 1) // Admin
+        if (G.User.IsAdmin) // Admin
             szSupervisor = "";
 
         string szSQL = string.Format(@"

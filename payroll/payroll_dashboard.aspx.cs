@@ -9,10 +9,10 @@ namespace Paymaker {
 
         protected void Page_Load(object sender, System.EventArgs e) {
             // Check which pages user should have access to
-            dPayrollAdmin.Visible = Payroll.IsAdmin || Payroll.IsPayrollSupervisor;
-            dPDFFiles.Visible = Payroll.IsAdmin;
+            dPayrollAdmin.Visible = G.User.IsAdmin || Payroll.IsPayrollSupervisor;
+            dPDFFiles.Visible = G.User.IsAdmin;
             dPayrollManagement.Visible = Payroll.HasTimesheet;
-            dCheck.Visible = Payroll.IsAdmin;
+            dCheck.Visible = G.User.IsAdmin;
 
             /*
              * 1) Need to create a scheduled task that runs each day - check to see whether the next payment cycle needs to be created - create the next one 3 days into the pay cycle

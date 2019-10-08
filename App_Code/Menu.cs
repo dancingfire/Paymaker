@@ -40,7 +40,7 @@ public class ClientMenu {
         oM.addMenuItem("Import EOY values", "../admin/import_values.aspx");
         oM.addMenu("Campaign", "../campaign/campaign_dashboard.aspx", MenuRole.Campaign);
         if (Payroll.CanAccess) {
-            if (G.User.RoleID == 1) { 
+            if (G.User.IsAdmin) { 
                 oM.addMenu("Payroll", "");
                 oM.addMenuItem("Dashboard", "../payroll/payroll_dashboard.aspx");
                 oM.addMenuItem("Payroll settings", "../admin/sales_settings.aspx", MenuRole.Admin);
@@ -51,7 +51,7 @@ public class ClientMenu {
         }
         oM.addMenu("Leave");
         oM.addMenuItem("Dashboard", "../payroll/leave_dashboard.aspx");
-        if (G.User.RoleID == 1 || G.User.UserID == 497 || G.User.UserID == 178) {
+        if (G.User.IsAdmin || G.User.UserID == 497 || G.User.UserID == 178) {
             oM.addSpacer();
             oM.addMenuItem("Export leave requests", "../reports/leave_request.aspx", MenuRole.Admin);
             oM.addSpacer();
@@ -96,7 +96,7 @@ public class ClientMenu {
      
         oM.addMenu("Logout", "../login.aspx");
 
-        if (G.User.RoleID == 1) {
+        if (G.User.IsAdmin) {
             oM.lUserRoles.Add(MenuRole.Admin);
             oM.StartPage = "main/admin_dashboard.aspx";
         } else {
@@ -177,11 +177,12 @@ public class ClientMenu {
             szLoggedInAsMsg = " as " + G.User.Name + " (" + G.User.RoleID + ")";
         string szDelegation = "";
 
-        if (Payroll.IsLeaveSupervisor) {
-            szDelegation = @"
-              <li id='oDelegate' role='presentation'><a role='menuitem' tabindex='-1' href='javascript: showDelegation();'>Manage delegation</a></li>
+        if (Payroll.IsLeaveSupervisor || Payroll.IsPayrollSupervisor || G.User.IsAdmin) {
+            string szAdmin = G.User.IsAdmin ? "Admin" : "";
+            szDelegation = String.Format(@"
+              <li id='oDelegate' role='presentation'><a role='menuitem' tabindex='-1' href='javascript: show{0}Delegation();'>Manage delegation</a></li>
             <li role='presentation' class='divider'></li>
-            ";
+            ", szAdmin) ;
         }
 
         return String.Format(@"
