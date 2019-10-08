@@ -49,10 +49,10 @@ namespace Paymaker {
             if (UserLogin.checkLoginLock(txtUserName.Text))
                 return;
 
-            int intResult = (int)SqlHelper.ExecuteScalar(DB.DBConn, CommandType.StoredProcedure,
+            int MatchingUserID = (int)SqlHelper.ExecuteScalar(DB.DBConn, CommandType.StoredProcedure,
                 "getUserByLogin", new SqlParameter("@UserName", txtUserName.Text), new SqlParameter("@Password", txtPassword.Text));
 
-            switch (intResult) {
+            switch (MatchingUserID) {
                 case -1:
                     UserLogin.writeLog(-1, txtUserName.Text, false);
                     Msg.Text = "That login could not be found. Please try again.";
@@ -66,7 +66,7 @@ namespace Paymaker {
 
                 default:
                     G.User.LoginCount = 0;
-                    loginSuccess(intResult);
+                    loginSuccess(MatchingUserID);
                     break;
             }
         }

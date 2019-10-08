@@ -121,7 +121,7 @@ public class Email {
     public static string separateEmailAddresses(string Addresses, List<UserDelegate> lDelegateList, ref string DelegatedEmailAddresses) {
         string szAdd = Addresses.Replace(";", ",").Replace(Environment.NewLine, ",").Trim().Replace(" ", ",").Replace(",,", ",").Trim().TrimEnd(',');
 
-        if (lDelegateList.Count == 0)
+        if (lDelegateList == null || lDelegateList.Count == 0)
             return szAdd;
 
         //For each email address we have, check to see if there are any current email delegations. If there are, replace the original
