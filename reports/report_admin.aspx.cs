@@ -138,7 +138,7 @@ namespace Paymaker {
         }
 
         private void formatPage() {
-            if (G.User.RoleID != 1) {
+            if (!G.User.IsAdmin) {
                 sbEndJS.Append("$('#lstReport').hide();");
                 lstUserReport.Visible = true;
 

@@ -61,7 +61,7 @@ namespace Paymaker {
         /// <param name="oFilter"></param>
         public Payroll_Leave_Summary(ReportViewer Viewer, ReportFilters oFilter, int CycleRef) {
             this.CycleRef = CycleRef;
-            if (G.User.RoleID != 1)
+            if (!G.User.IsAdmin)
                 throw new Exception("Non-Admin user attempting to access admin report - Payroll Summary");
             oViewer = Viewer;
             this.oFilter = oFilter;

@@ -310,6 +310,15 @@ public class G {
             return Utility.InCommaSeparatedString(((int)oPerm).ToString(), G.CurrentUserPermissions);
         }
 
+
+        /// <summary>
+        /// Is this person an admin user
+        /// </summary>
+        public static bool IsAdmin {
+            get {
+                return G.User.OriginalRoleID == UserRole.Admin;
+            }
+        }
         // Checks if user has access to Campaign pages
         // Implemented in user because multiple pages need to check this
         public static bool hasCampaignAccess {

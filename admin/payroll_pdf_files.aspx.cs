@@ -11,7 +11,7 @@ public partial class payroll_pdf_files : Root {
 
     protected void Page_Load(object sender, System.EventArgs e) {
         // Only Admin staff can access this page
-        if (G.User.RoleID != 1) // Admin
+        if (!G.User.IsAdmin) // Admin
             throw new Exception("Page restricted to only Admin staff");
         if (!IsPostBack) {
             getLocalDirectoriesAndFiles(cDIRECTORYPATH, tvDirectoryList.Nodes[0]);

@@ -71,7 +71,7 @@ public class MonthlySalesDetail : Report {
         if (!String.IsNullOrWhiteSpace(oFilter.CompanyID))
             szFilter += String.Format(" AND L_COMPANY.ID IN ({0})", oFilter.CompanyID);
         string szUserIDFilter = Valid.getText("szUserID", "", VT.List);
-        if (G.User.RoleID != 1) //Filter for single user mode
+        if (!G.User.IsAdmin) //Filter for single user mode
             szFilter += " AND U1.ID IN (" + G.User.UserID + ") ";
         else if (!String.IsNullOrEmpty(oFilter.UserIDList)) {
             szFilter += " AND U1.ID IN (" + oFilter.UserIDList + ")";

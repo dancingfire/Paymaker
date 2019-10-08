@@ -71,7 +71,7 @@ namespace Paymaker {
 
             bool blnIncludeInactive = Valid.getBoolean("blnIncludeInactive", false);
             string szUserIDFilter = Valid.getText("szUserID", "", VT.List);
-            if (G.User.RoleID != 1 && String.IsNullOrEmpty(szUserIDFilter)) //Filter for single user mode
+            if (!G.User.IsAdmin && String.IsNullOrEmpty(szUserIDFilter)) //Filter for single user mode
                 szFilter += " AND USS.USERID IN (" + G.User.UserID + ") ";
             else if (!String.IsNullOrEmpty(szUserIDFilter) && !blnIncludeInactive) {
                 //Filter by the selected users unless the Include INactive is selected, in which case we want to include everyone

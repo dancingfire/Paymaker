@@ -26,6 +26,14 @@ function showDelegation() {
     $('#mDelegation').modal('show');
 }
 
+function showAdminDelegation() {
+    $('#mDelegation').modal({ 'backdrop': 'static' });
+    $('#mDelegation').one('show.bs.modal', function () {
+        $('#fDelegation').attr("src", "../admin/admin_user_delegation.aspx");
+    });
+    $('#mDelegation').modal('show');
+}
+
 function closeDelegation() {
     $('#mDelegation').modal('hide');
 }
