@@ -60,7 +60,7 @@ namespace Paymaker {
             //Load the parameters from the page
             ReportFilters oFilter = new ReportFilters();
 
-            Report oR = new LeaveRequest(rViewer, oFilter, dtStart, dtEnd);
+            Report oR = new LeaveRequest(rViewer, oFilter, dtStart, dtEnd, chkViewArchived.Checked);
             return oR;
         }
     }
@@ -70,18 +70,18 @@ public class LeaveRequest : Report {
     private static string RFileName = "Leave requests";
     private DateTime dtStart;
     private DateTime dtEnd;
-
+    private bool IncludeArchived = false;
     /// <summary>
     /// Constructor Method that receives the Viewer and the Filter and creates the report.
     /// </summary>
     /// <param name="Viewer"></param>
     /// <param name="oFilter"></param>
-    public LeaveRequest(ReportViewer Viewer, ReportFilters oFilter, DateTime StartDate, DateTime EndDate) {
+    public LeaveRequest(ReportViewer Viewer, ReportFilters oFilter, DateTime StartDate, DateTime EndDate, bool IncludeArchived = false) {
         this.dtStart = StartDate;
         this.dtEnd = EndDate;
         oFilter.StartDate = StartDate;
         oFilter.EndDate = EndDate;
-
+        this.IncludeArchived = IncludeArchived;
         if (G.User.RoleID != 1)
             throw new Exception("Non-Admin user attempting to access admin report - leave request");
         oViewer = Viewer;
@@ -100,6 +100,9 @@ public class LeaveRequest : Report {
     }
 
     public override DataSet getData() {
+        string szArchive = " AND ISARCHIVED = 0";
+        if (IncludeArchived)
+            szArchive = "";
         string szSQL = string.Format(@"
                 SELECT  LR.*, L.NAME AS LEAVETYPE, LS.NAME AS STATUS, U.FIRSTNAME + ' ' + U.LASTNAME AS STAFF,
                 U.FIRSTNAME + ' ' + U.LASTNAME AS MANAGER,  CASE WHEN HOURS = 0 THEN CAST(TOTALDAYS as VARCHAR) + ' Days' ELSE CAST(HOURS AS VARCHAR) + ' Hrs' END as DURATION
@@ -107,8 +110,8 @@ public class LeaveRequest : Report {
                 JOIN LEAVESTATUS LS ON LS.ID = LR.LEAVESTATUSID
                 JOIN DB_USER U ON LR.USERID = U.ID
                 JOIN DB_USER M ON U.SUPERVISORID = M.ID
-                WHERE LR.ISDELETED = 0   AND LR.STARTDATE BETWEEN '{0}' AND '{1}'
-                ORDER BY LR.ENTRYDATE DESC", Utility.formatDate(dtStart), Utility.formatDate(dtEnd));
+                WHERE LR.ISDELETED = 0   AND LR.STARTDATE BETWEEN '{0}' AND '{1}' {2}
+                ORDER BY LR.ENTRYDATE DESC", Utility.formatDate(dtStart), Utility.formatDate(dtEnd), szArchive);
         return DB.runDataSet(szSQL);
     }
 }

@@ -26,6 +26,9 @@
                     <asp:TextBox ID="txtStartDate" runat="server" CssClass="form-field" Width="100"></asp:TextBox>
                     &nbsp;to &nbsp;<asp:TextBox ID="txtEndDate" runat="server" CssClass="formfied" Width="100"></asp:TextBox>
                 </div>
+                 <div class="col-sm-2">
+                   <label>Include archived requests </label> &nbsp;<asp:CheckBox ID="chkViewArchived" runat="server" Checked="true" />
+                </div>
                 <div class="col-sm-2">
                     <asp:Button ID="btnViewReport" runat="server" Text="View report" CssClass="Button btn btn-block" OnClick="btnViewReport_Click" />
                </div>

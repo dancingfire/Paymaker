@@ -62,6 +62,10 @@ namespace Paymaker {
         public string getArchiveButton(int ID, bool IsArchived, string Status) {
             if (Status != "Approved" && Status != "Rejected")
                 return "";
+
+            if (!G.User.IsAdmin)
+                return "";
+
             if (IsArchived) {
                 return String.Format(@"<button type='submit'class='btn btn-secondary unarchive' data-id='{0}'>Un-archive</button>", ID);
             }            

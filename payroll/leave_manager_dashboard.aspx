@@ -8,6 +8,8 @@
     <script type="text/javascript">
 
         $(document).ready(function () {
+            $.fn.dataTable.moment('ll');
+
             createDataTable("gvList", true, true, 520, false, true);
 
             $(".archive").click(function (e) {
@@ -37,7 +39,7 @@
  <asp:HiddenField ID="hdUnArchiveID" runat="server" Value="" />
 
         <div class="container-fluid">
-            <div class="row" style="position: relative; top: 30px; z-index: 1000">
+            <div class="row" style="position: relative; top: 30px; z-index: 400; height: 35px">
                 <div class="col-sm-2">
                    <label>Include archived requests </label> &nbsp;<asp:CheckBox ID="chkViewArchived" runat="server" />
                 </div>
