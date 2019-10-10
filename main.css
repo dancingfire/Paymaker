@@ -879,6 +879,7 @@ img.RWLeft {
     float: left;
     width: 100%;
     margin-bottom: 10px;
+    z-index: 500;
 }
 #custom-bootstrap-menu.navbar {
     min-height: 0px;

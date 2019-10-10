@@ -5,8 +5,7 @@
 <html>
 <head runat="server" id="Head">
     <title>Report</title>
-    <link href="../clients/Main.css" rel="stylesheet" type="text/css" />
-    <link href="../clients/Positioning.css" rel="stylesheet" type="text/css" />
+    <link href="../main.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
     <form id="Form1" method="post" runat="server">
