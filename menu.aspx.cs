@@ -6,6 +6,7 @@ namespace Paymaker {
     public partial class menu : Root {
 
         protected void Page_Init(object sender, System.EventArgs e) {
+            blnIsRoot = true;
         }
 
         protected void Page_Load(object sender, System.EventArgs e) {
