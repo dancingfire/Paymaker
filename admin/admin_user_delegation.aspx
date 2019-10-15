@@ -42,7 +42,7 @@
             parent.$("#mModalTitleDelegation").html("Delegation preferences");
 
             addFormValidation("frmMain");
-            $("#lstUser").select2();
+            $("#lstAwayUser, #lstDelegatedToUser").select2();
             createCalendar("txtStartDate", true);
             createCalendar("txtEndDate", true);
             createDataTable("gvList", true, false, 234, false);

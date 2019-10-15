@@ -135,14 +135,15 @@ public class UserInformation {
         string szSQL = @"
             --User info
             SELECT U.ID, U.ISACTIVE, INITIALSCODE, FIRSTNAME, LASTNAME, EMAIL, ROLEID, ISNULL(TEAMID, -1) AS TEAM, SALARY,
-             U.CREDITGLCODE, U.DEBITGLCODE, L_OFF.JOBCODE, U.OFFICEID, U.PAYROLLCYCLEID, U.SUPERVISORID, L_OFF.OFFICEMYOBCODE
+             U.CREDITGLCODE, U.DEBITGLCODE, L_OFF.JOBCODE, U.OFFICEID, U.PAYROLLCYCLEID, U.SUPERVISORID, L_OFF.OFFICEMYOBCODE,
+            L_OFF.NAME AS OFFICENAME
             FROM DB_USER U  JOIN LIST L_OFF ON L_OFF.ID = U.OFFICEID ORDER BY LASTNAME, FIRSTNAME";
 
         using (DataSet ds = DB.runDataSet(szSQL)) {
             foreach (DataRow dr in ds.Tables[0].Rows) {
                 int intID = Convert.ToInt32(dr["ID"]);
                 lUsers.Add(new UserDetail(intID, DB.readBool(dr["ISACTIVE"]), DB.readString(dr["INITIALSCODE"]), DB.readString(dr["FIRSTNAME"]), DB.readString(dr["LASTNAME"]), DB.readString(dr["EMAIL"]),
-                    DB.readInt(dr["ROLEID"]), DB.readInt(dr["OFFICEID"]), DB.readString(dr["OFFICEMYOBCODE"]), DB.readInt(dr["TEAM"]), DB.readInt(dr["SALARY"]), DB.readInt(dr["PAYROLLCYCLEID"]),
+                    DB.readInt(dr["ROLEID"]), DB.readInt(dr["OFFICEID"]), DB.readString(dr["OFFICENAME"]), DB.readString(dr["OFFICEMYOBCODE"]), DB.readInt(dr["TEAM"]), DB.readInt(dr["SALARY"]), DB.readInt(dr["PAYROLLCYCLEID"]),
                     DB.readInt(dr["SUPERVISORID"]), DB.readString(dr["CREDITGLCODE"]), DB.readString(dr["DEBITGLCODE"]), DB.readString(dr["JOBCODE"])));
             }
             blnIsLoaded = true;
@@ -164,7 +165,7 @@ public class UserInformation {
             if (!IncludeInactive && !b.IsActive)
                 continue;
 
-            l.Items.Add(new ListItem(b.Name, b.ID.ToString()));
+            l.Items.Add(new ListItem(b.NameIFLO, b.ID.ToString()));
         }
     }
 
@@ -409,13 +410,15 @@ public class UserDetail {
     private Hashtable htYTDTotals = new Hashtable();
     public string CreditGL { get; set; }
     public string DebitGL { get; set; }
+    public string OfficeName { get; set; }
     public string OfficeJobCode { get; set; }
 
     public string Name { get { return LastName + ", " + FirstName + "(" + Initials + ")"; } }
 
     public string NameFLI { get { return FirstName + " " + LastName + "(" + Initials + ")"; } }
+    public string NameIFLO { get { return Initials + " " + FirstName + " " + LastName + " (" + OfficeName.Substring(0, 2) + ")"; } }
 
-    public UserDetail(int ID, bool IsActive, string Initials, string First, string Last, string Email, int RoleID, int OfficeID, string OfficeGLCode, int MentorID, int Salary, int PayrollCycleID, int SupervisorID, string CreditGLCode, string DebitGLCode, string JobCode) {
+    public UserDetail(int ID, bool IsActive, string Initials, string First, string Last, string Email, int RoleID, int OfficeID, string OfficeName, string OfficeGLCode, int MentorID, int Salary, int PayrollCycleID, int SupervisorID, string CreditGLCode, string DebitGLCode, string JobCode) {
         this.ID = ID;
         this.IsActive = IsActive;
         this.Initials = Initials;
@@ -425,11 +428,12 @@ public class UserDetail {
         this.RoleID = RoleID;
         this.MentorID = MentorID;
         this.OfficeID = OfficeID;
-        this.Salary = Salary;
+        this.OfficeName = OfficeName;
         this.OfficeGLCode = OfficeGLCode;
+        this.OfficeJobCode = JobCode;
+        this.Salary = Salary;
         this.CreditGL = CreditGLCode;
         this.DebitGL = DebitGLCode;
-        this.OfficeJobCode = JobCode;
         this.PayrollCycleID = PayrollCycleID;
         this.SupervisorID = SupervisorID;
 

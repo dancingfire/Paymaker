@@ -585,21 +585,21 @@ public class DB {
     public class Paymaker_User {
 
         public static SqlDataReader loadList(string RoleList, bool IncludeAll, int CurrentValue = -1, bool CommissionOnly = false) {
-            string szSQL = "SELECT ID, INITIALSCODE + ' ' + FIRSTNAME + ' ' + LASTNAME AS NAME, 1 AS SORTORDER FROM DB_USER  ";
+            string szSQL = "SELECT U.ID, U.INITIALSCODE + ' ' + U.FIRSTNAME + ' ' + U.LASTNAME  + ' (' + LEFT(O.NAME, 2) + ')' AS NAME, 1 AS SORTORDER FROM DB_USER U JOIN LIST O ON U.OFFICEID = O.ID ";
 
-            string szFilter = " WHERE (ISACTIVE = 1 AND ISDELETED = 0  AND ID > 0 ";
+            string szFilter = " WHERE (U.ISACTIVE = 1 AND U.ISDELETED = 0  AND U.ID > 0 ";
             if (RoleList != "")
-                szFilter += " AND  ROLEID IN (" + RoleList + ")";
+                szFilter += " AND  U.ROLEID IN (" + RoleList + ")";
             if (CommissionOnly)
-                szFilter += " AND ISPAID = 1";
+                szFilter += " AND U.ISPAID = 1";
             szFilter += ")";
             if (CurrentValue != -1)
-                szFilter += " OR ID = " + CurrentValue;
+                szFilter += " OR U.ID = " + CurrentValue;
             szSQL += szFilter;
            
             if (IncludeAll)
                 szSQL += "UNION SELECT -1, 'Select...' AS NAME, 0 AS SORTORDER ";
-            szSQL += "ORDER BY SORTORDER, INITIALSCODE + ' ' + FIRSTNAME + ' ' + LASTNAME";
+            szSQL += "ORDER BY SORTORDER, 1";
             return SqlHelper.ExecuteReader(DBConn, CommandType.Text, szSQL);
         }
     }
