@@ -111,7 +111,7 @@ public class LeaveRequest : Report {
                 JOIN DB_USER U ON LR.USERID = U.ID
                 JOIN DB_USER M ON U.SUPERVISORID = M.ID
                 WHERE LR.ISDELETED = 0   AND LR.STARTDATE BETWEEN '{0}' AND '{1}' {2}
-                ORDER BY LR.ENTRYDATE DESC", Utility.formatDate(dtStart), Utility.formatDate(dtEnd), szArchive);
+                ORDER BY LR.STARTDATE ", Utility.formatDate(dtStart), Utility.formatDate(dtEnd), szArchive);
         return DB.runDataSet(szSQL);
     }
 }
