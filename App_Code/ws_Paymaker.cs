@@ -15,6 +15,11 @@ public class ws_Paymaker : System.Web.Services.WebService {
         int a = G.User.UserID;
     }
 
+    [WebMethod(EnableSession = false)]
+    public void runFullBDImport() {
+        BlimpsHelper.runFullImport();
+    }
+
     [WebMethod(EnableSession = true)]
     public void updateActionReminderDate(string ReminderDate, int CampaignNoteID) {
         ReminderDate = Microsoft.JScript.GlobalObject.unescape(ReminderDate);

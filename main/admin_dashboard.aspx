@@ -16,6 +16,21 @@
         createButtons();
     });
 
+    function runImport() {
+        $.ajax({
+            async: true,
+            type: "POST",
+            url: "../web_services/ws_BoxDice.asmx/runFullBDImport",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+            }
+        });
+        
+        alert("We are running the import process. You can check on the status of the import process from the import log page. ");
+        return false;
+     }
+
     function refreshPage() {
         closeSale();
         document.frmMain.submit();
@@ -35,7 +50,8 @@
         <div class='ActionPanel'>
             <asp:Panel ID="pPageHeader" class='PageHeader' runat="server" Width="300px">Admin dashboard</asp:Panel>
             <span style='float: right; width: 140px'>
-                <asp:Button ID="btnImport" runat="server" Text="Import latest data" CssClass="Button btn" OnClick="btnImport_Click" OnClientClick="showWait('Loading the latest data...');" />
+                <asp:Button ID="btnImport" runat="server" Text="Import latest data" CssClass="Button btn" OnClientClick="return runImport()" /><br />
+                <a href="../boxdice/api_log.aspx">View log</a>
             </span>
         </div>
         <br />

@@ -1,5 +1,6 @@
 using System;
 using System.Data;
+using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -90,9 +91,7 @@ public partial class admin_dashboard : Root {
         return DB.runDataSet(szSQL);
     }
 
-    protected void btnImport_Click(object sender, EventArgs e) {
-        BlimpsHelper.runFullImport();
-    }
+ 
 
     protected void gvCurrent_RowDataBound(object sender, GridViewRowEventArgs e) {
         if (e.Row.RowType == DataControlRowType.DataRow) {
