@@ -32,7 +32,10 @@ public class DB {
     /// <param name="blnFailed"></param>
     private static void checkForDBFailure(bool blnFailed) {
         if (blnFailed) {
-            HttpContext.Current.Response.Redirect("../db_timeout.aspx");
+            if(G.oRoot != null && G.oRoot.blnIsRoot)
+                HttpContext.Current.Response.Redirect("../db_timeout.aspx");
+            else
+                HttpContext.Current.Response.Redirect("db_timeout.aspx");
             HttpContext.Current.Response.End();
         }
     }
@@ -228,11 +231,11 @@ public class DB {
         SqlDataReader oDr = null;
         try {
             oDr = myCommand.ExecuteReader(CommandBehavior.CloseConnection);
-            HttpContext.Current.Session["DEBUGSQL"] = "";
+            setSessionSQL("");
             blnFail = false;
         } catch (Exception ex) {
             blnFail = true;
-            HttpContext.Current.Session["DEBUGSQL"] = SQL + ex.ToString();
+            setSessionSQL(SQL + ex.ToString());
             oSqlCnn.Close();
             if (ex.Message.IndexOf("Timeout expired.") == -1) {
                 throw;
@@ -291,17 +294,17 @@ public class DB {
         DataSet oDs = new DataSet();
         try {
             myDA.Fill(oDs);
-            HttpContext.Current.Session["DEBUGSQL"] = "";
+            setSessionSQL("");
             myTrans.Commit();
             blnFail = false;
         } catch (Exception ex) {
             if (ex.Message.ToString().Substring(0, 16) == "Timeout expired.") {
                 blnFail = false;
-                HttpContext.Current.Session["DEBUGSQL"] = SQL + ex.ToString();
+                setSessionSQL(SQL + ex.ToString());;
                 myTrans.Rollback();
             } else {
                 blnFail = true;
-                HttpContext.Current.Session["DEBUGSQL"] = SQL + ex.ToString();
+                setSessionSQL(SQL + ex.ToString());
                 myTrans.Rollback();
                 if (ex.Message.IndexOf("Timeout expired.") == -1) {
                     throw;
@@ -313,6 +316,12 @@ public class DB {
             oSqlCnn.Dispose();
         }
         return oDs;
+    }
+
+    private static void setSessionSQL(string SQL) {
+        if (HttpContext.Current.Session != null) {
+            HttpContext.Current.Session["DEBUGSQL"] = SQL;
+        }
     }
 
     public static DataSet runLongDataSet(string SQL) {
@@ -351,12 +360,12 @@ public class DB {
         DataSet oDs = new DataSet();
         try {
             myDA.Fill(oDs);
-            HttpContext.Current.Session["DEBUGSQL"] = "";
+            setSessionSQL("");
             myTrans.Commit();
             blnFail = false;
         } catch (Exception ex) {
             blnFail = true;
-            HttpContext.Current.Session["DEBUGSQL"] = SQL + ex.ToString();
+            setSessionSQL(SQL + ex.ToString());
             myTrans.Rollback();
             if (ex.Message.IndexOf("Timeout expired.") == -1) {
                 throw;
@@ -413,7 +422,7 @@ public class DB {
         try {
             myCommand.ExecuteNonQuery();
             blnDBFailed = false;
-            HttpContext.Current.Session["DEBUGSQL"] = "";
+            setSessionSQL("");
         } catch (Exception ex) {
         } finally {
             myCommand.Dispose();
@@ -446,12 +455,12 @@ public class DB {
         myCommand.CommandTimeout = 3000;
         try {
             myCommand.ExecuteNonQuery();
-            HttpContext.Current.Session["DEBUGSQL"] = "";
+            setSessionSQL("");
             myTrans.Commit();
             blnFail = false;
         } catch (Exception ex) {
             blnFail = true;
-            HttpContext.Current.Session["DEBUGSQL"] = SQL + ex.ToString();
+            setSessionSQL(SQL + ex.ToString());
             myTrans.Rollback();
             if (ex.Message.IndexOf("Timeout expired.") == -1) {
                 throw;
@@ -477,14 +486,12 @@ public class DB {
         myCommand.CommandTimeout = 300;
         try {
             myCommand.ExecuteNonQuery();
-            if (HttpContext.Current.Session != null)
-                HttpContext.Current.Session["DEBUGSQL"] = "";
+            setSessionSQL("");
             myTrans.Commit();
             blnFail = false;
         } catch (Exception ex) {
             blnFail = true;
-            if (HttpContext.Current.Session != null)
-                HttpContext.Current.Session["DEBUGSQL"] = SQL + ex.ToString();
+            setSessionSQL(SQL + ex.ToString());
             myTrans.Rollback();
             if (ex.Message.IndexOf("Timeout expired.") == -1) {
                 throw;
@@ -508,14 +515,14 @@ public class DB {
     /// </summary>
     /// <param name="SQL"></param>
     public static void setDebugSQL(string SQL) {
-        HttpContext.Current.Session["DEBUGSQL"] = SQL;
+        setSessionSQL(SQL);
     }
 
     /// <summary>
     /// Clears the session debug variable.
     /// </summary>
     public static void clearDebugSQL() {
-        HttpContext.Current.Session["DEBUGSQL"] = "";
+        setSessionSQL("");
     }
 
     public static int getScalar(string szSQL, int intDefault, String connectionString = null) {

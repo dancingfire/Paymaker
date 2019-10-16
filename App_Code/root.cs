@@ -51,8 +51,13 @@ public class Root : System.Web.UI.Page, IDisposable {
         string szCurrScript = Request.ServerVariables["SCRIPT_NAME"];
 
         if (blnUseSession) {
-            string szRemotePage = "";
-            string szTimeout = "var oSessionTimeout = window.setTimeout(\"self.window.top.location='../login.aspx?Timeout=true" + szRemotePage + "'\", " + 240 * 60 * 1000 + "); \r\n";
+            string  szPath = "..";
+
+            if (blnIsRoot)
+                szPath = "";
+            string szTimeout = String.Format(@"
+                var oSessionTimeout = window.setTimeout(""self.window.top.location='{0}/login.aspx?Timeout=true'"", {1});
+                ", szPath, 240 * 60 * 1000 );
             ClientScript.RegisterStartupScript(this.GetType(), "Timeout", szTimeout, true);
         }
 
