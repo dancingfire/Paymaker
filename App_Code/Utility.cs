@@ -1256,7 +1256,9 @@ public class AppConfigAdmin {
                 ", ConfigName, Utility.formatForDB(Value));
         }
         setValue(ConfigName, Value);
-        HttpContext.Current.Session[ConfigName] = Value;
+        if (HttpContext.Current.Session != null) {
+            HttpContext.Current.Session[ConfigName] = Value;
+        }
         DB.runNonQuery(szSQL, ConnectionString);
     }
 }
