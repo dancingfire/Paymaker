@@ -65,9 +65,9 @@ public static class HTML {
         string szDir = "../";
         if (IsRoot)
             szDir = "";
-        arFiles.Add("https://code.jquery.com/jquery-2.2.4.min.js");
+        arFiles.Add("https://code.jquery.com/jquery-3.4.1.min.js");
         arFiles.Add(szDir + "include/jquery.validVal.min.js");
-        arFiles.Add(szDir + "include/bootstrap/3.3.6/js/bootstrap.min.js");
+        arFiles.Add("https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js");
         arFiles.Add("https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js");
         arFiles.Add("https://code.jquery.com/ui/1.12.1/jquery-ui.min.js");
         arFiles.Add(szDir + "include/moment-business-days/index.js?t=1");
@@ -80,12 +80,13 @@ public static class HTML {
         arFiles.Add(szDir + "include/ckeditor/adapters/jquery.js");
 
         List<string> arCssLinks = new List<string>();
-        arCssLinks.Add(szDir + "include/bootstrap/3.3.6/css/bootstrap-theme.min.css");
-        arCssLinks.Add(szDir + "include/bootstrap/3.3.6/css/bootstrap.min.css");
+    
+        arCssLinks.Add("https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css");
+        arCssLinks.Add("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css");
         arCssLinks.Add("https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css");
         arCssLinks.Add("https://cdn.datatables.net/v/bs/jszip-2.5.0/dt-1.10.18/b-1.5.2/b-html5-1.5.2/fh-3.1.4/datatables.min.css");
         arCssLinks.Add(szDir + "include/JQueryUI1.11.4/smoothness.css?v=1");
-        arCssLinks.Add(szDir + "main.css?v=1");
+        arCssLinks.Add(szDir + "main.css?v=2");
 
         foreach (string File in arCssLinks) {
             if (File == "")

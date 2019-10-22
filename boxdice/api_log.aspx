@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head runat="server">
-    <title>Email history</title>
+    <title>API Log</title>
 
     <script>
         $(document).ready(function () {

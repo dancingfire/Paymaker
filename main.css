@@ -257,59 +257,6 @@ A {
     font-family: Verdana;
 }
 
-.TabPage {
-    border: solid 2 #F9CD35;
-    background: #FCF8EF;
-    font-family: Verdana;
-    padding: 2px;
-    width: 880px;
-    position: absolute;
-    top: 55px;
-    height: 430px;
-}
-
-.Tab {
-    padding-left: 5px;
-    padding-top: 3px;
-    font-weight: 800;
-    font-size: 12px;
-    background: #8BAB89;
-    color: #FFEAA8;
-    height: 22;
-    width: 100%;
-    border: 1 solid #8BAB89;
-    cursor: hand;
-    text-align: center;
-}
-
-.TabOver {
-    padding-left: 5px;
-    padding-top: 3px;
-    font-weight: 800;
-    font-size: 12px;
-    background: #6C956A;
-    color: #FFE79B;
-    height: 22;
-    width: 100%;
-    border: 1 solid #6C956A;
-    cursor: hand;
-    text-align: center;
-}
-
-.TabSelected {
-    padding-left: 5px;
-    padding-top: 3px;
-    font-weight: 800;
-    font-size: 12px;
-    background: #F9CD35;
-    color: #FFFFFF;
-    height: 22;
-    width: 100%;
-    border: 1 solid #F9CD35;
-    cursor: hand;
-    text-align: center;
-}
-
 .Error {
     color: Red;
     font-size: 8pt;

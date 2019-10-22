@@ -23,6 +23,7 @@ public partial class payroll_update : Root {
             blnShowMenu = false;
             blPopup = true;
             dPageHeader.Visible = btnSignOff.Visible = btnUpdate.Visible = false;
+            dModalHeader.Visible = true;
             dContainer.Style.Add("width", "100%");
             intUserID = Valid.getInteger("UserID");
         }
@@ -43,6 +44,8 @@ public partial class payroll_update : Root {
     }
 
     private void loadData() {
+        dModalHeader.InnerHtml = G.UserInfo.getName(intUserID);
+        
         lstCycle.Items.Clear();
         foreach (int c in G.TimeSheetCycleReferences.dValues.Keys) {
             dtStart = G.TimeSheetCycleReferences[c].NormalCycle.StartDate;
@@ -123,12 +126,12 @@ public partial class payroll_update : Root {
             }
 
             string szSQL = string.Format(@"
-            SELECT  LR.*, L.NAME AS LEAVETYPE, LS.NAME AS LEAVESTATUS
-            FROM LEAVEREQUEST LR JOIN LIST L ON L.ID = LR.LEAVETYPEID
-            JOIN LEAVESTATUS LS ON LS.ID = LR.LEAVESTATUSID
-            WHERE LR.USERID = {0} AND ISDELETED = 0 
-                AND (LR.STARTDATE BETWEEN '{1}' AND '{2}' OR LR.ENDDATE BETWEEN '{1}' AND '{2}')
-            ORDER BY LR.ENTRYDATE DESC", G.User.ID, Utility.formatDate(dtStart), Utility.formatDate(dtEnd));
+                SELECT  LR.*, L.NAME AS LEAVETYPE, LS.NAME AS LEAVESTATUS
+                FROM LEAVEREQUEST LR JOIN LIST L ON L.ID = LR.LEAVETYPEID
+                JOIN LEAVESTATUS LS ON LS.ID = LR.LEAVESTATUSID
+                WHERE LR.USERID = {0} AND ISDELETED = 0 
+                    AND (LR.STARTDATE BETWEEN '{1}' AND '{2}' OR LR.ENDDATE BETWEEN '{1}' AND '{2}')
+                ORDER BY LR.ENTRYDATE DESC", intUserID, Utility.formatDate(dtStart), Utility.formatDate(dtEnd));
             using (DataSet ds = DB.runDataSet(szSQL)) {
                 Utility.bindGV(ref gvLeave, ds, true);
             }

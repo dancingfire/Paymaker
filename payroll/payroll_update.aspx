@@ -81,7 +81,10 @@
             <div style="float: left;">Enter payroll details</div>
             <asp:DropDownList ID="lstCycle" runat="server" CssClass="form-control" Style="float: left; width: 180px; height: 23px; margin-left: 15px; padding: 2px 10px;"></asp:DropDownList>
         </div>
-
+        
+        <div id="dModalHeader" runat="server" class="PageHeader" style="z-index: 107; left: -1px; width: 100%; top: 1px"  visible="false">
+            
+        </div>
         <div id="dContainer" runat="server" class="container">
             <div class="col-sm-10">
                     <asp:GridView ID="gvLeave" runat="server" AutoGenerateColumns="false"   GridLines="None" EnableViewState="false">
