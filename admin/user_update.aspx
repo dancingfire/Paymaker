@@ -75,18 +75,22 @@
     </script>
     <style>
         .LabelPos {
-            width: 200px;
+            width: 35%;
+        }
+
+        .EntryPos {
+            width: 64% !important;
         }
     </style>
 </head>
-<body onload='loadPage()' style="margin-top: 15px">
+<body onload='loadPage()' style="margin-top: 15px; margin-left: 15px">
     <form id="frmMain" method="post" runat="server">
 
         <asp:HiddenField ID="HDUserID" runat="server" Value=""></asp:HiddenField>
         <asp:HiddenField ID="HDOrigOfficeID" runat="server" Value=""></asp:HiddenField>
         <asp:ValidationSummary ID="ValidationSummary1" runat="server" />
 
-        <div style="width: 460px; float: left;">
+        <div style="width: 520px; float: left;">
             <asp:Label ID="Label4" runat="server" CssClass="Label LabelPos">Role</asp:Label>
             <asp:DropDownList ID="lstRole" runat="server" CssClass="Entry EntryPos">
             </asp:DropDownList>
@@ -159,7 +163,7 @@
                     <asp:Label ID="lblTeamMembers" runat="server" CssClass="Entry EntryPos"></asp:Label>
                     <br class="Align" />
                 </asp:Panel>
-                <div class="panel panel-default" style="margin-top: 10px; width: 98%">
+                <div class="panel panel-default" style="margin-top: 10px; width: 90%">
                     <div class="panel-heading">Employment details</div>
                     <div class="panel-body">
                         <asp:Button ID="btnChangeSalary" Style="width: 95px; float: right" runat="server" Text="Change" CssClass="Button btn" OnClientClick="return showSalary();"></asp:Button>
@@ -198,7 +202,7 @@
                 <asp:TextBox CssClass="Entry EntryPos" ID="txtDebitGLCode" runat="server" Text=""></asp:TextBox>
                 <br class="Align" />
 
-                <div class="panel panel-default" style="margin-top: 10px; width: 98%">
+                <div class="panel panel-default" style="margin-top: 10px; width: 90%">
                     <div class="panel-heading">Report settings</div>
                     <div class="panel-body">
                         You can select whether you want agents to show on the reports, and whether you want their totals to acrue to another agent.
