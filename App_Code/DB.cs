@@ -606,7 +606,7 @@ public class DB {
            
             if (IncludeAll)
                 szSQL += "UNION SELECT -1, 'Select...' AS NAME, 0 AS SORTORDER ";
-            szSQL += "ORDER BY SORTORDER, 1";
+            szSQL += "ORDER BY SORTORDER, 2";
             return SqlHelper.ExecuteReader(DBConn, CommandType.Text, szSQL);
         }
     }
