@@ -85,7 +85,7 @@
             if (parseFloat($("#" + elemValueID).val()) > 100) {
                 $("#" + elemListID + " option[value='1']").remove();
             } else {
-                if ($("#" + elemListID + " option").size() == 1)
+                if ($("#" + elemListID + " option").length == 1)
                     $("#" + elemListID).append('<option value="1">%</option>');
             }
         }
