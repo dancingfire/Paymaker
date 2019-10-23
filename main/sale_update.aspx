@@ -393,7 +393,7 @@
         }
 
         function addSaleExpense() {
-            callWebMethod("../web_services/ws_Paymaker.asmx", "getExpenseHTML", ["SaleExpenseCount", $("#ulExpenses li").size()], getExpenseHTMLSuccess);
+            callWebMethod("../web_services/ws_Paymaker.asmx", "getExpenseHTML", ["SaleExpenseCount", $("#ulExpenses li").length], getExpenseHTMLSuccess);
         }
         function checkExpenseCategory(obj) {
             setDefaultAmountTypeForExpense(obj);
@@ -493,7 +493,7 @@
             if (parseFloat($("#" + elemValueID).val()) > 100) {
                 $("#" + elemListID + " option[value='1']").remove();
             } else {
-                if ($("#" + elemListID + " option").size() == 1)
+                if ($("#" + elemListID + " option").length == 1)
                     $("#" + elemListID).append('<option value="1">%</option>');
             }
         }
