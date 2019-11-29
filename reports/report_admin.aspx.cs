@@ -141,12 +141,20 @@ namespace Paymaker {
             if (!G.User.IsAdmin) {
                 sbEndJS.Append("$('#lstReport').hide();");
                 lstUserReport.Visible = true;
-
+                //lstReport.Visible = false;
                 //Show the commission report
                 spUser.Visible = false;
                 spNonAdminUserFilter.Visible = true;
+
+                // FOr now we are clearing out the other reports...
+                if(G.User.hasPermission(RolePermissionType.ReportExpenseSummary)){
+                    lstUserReport.Items.Clear();
+                    lstUserReport.Items.Add(new ListItem("Expense summary", "EXPENSESUMMARY"));
+                }
                 spCompany.Visible = false;
                 hfUserID.Value = G.User.ID.ToString();
+            } else {
+                sbEndJS.Append("$('#lstReport').select2();");
             }
         }
 

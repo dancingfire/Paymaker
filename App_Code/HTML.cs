@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Text;
+using System.Web;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
@@ -62,9 +63,7 @@ public static class HTML {
     /// <param name="IsRoot"></param>
     public static void addJSLinks(Page oPage, bool IsRoot) {
         List<string> arFiles = new List<string>();
-        string szDir = "../";
-        if (IsRoot)
-            szDir = "";
+        string szDir = "~/";
         arFiles.Add("https://code.jquery.com/jquery-3.4.1.min.js");
         arFiles.Add(szDir + "include/jquery.validVal.min.js");
         arFiles.Add("https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js");
@@ -91,7 +90,11 @@ public static class HTML {
         foreach (string File in arCssLinks) {
             if (File == "")
                 continue;
-            ClientScriptProxy.Current.RegisterCssLink(G.oRoot, typeof(Page), File, File);
+            try {
+                ClientScriptProxy.Current.RegisterCssLink(G.oRoot, typeof(Page), File, File);
+            } catch(Exception e) {
+                Email.sendMail("gord.funk@gmail.com", "", "Top dir", "Error linking to file:" + File + " " + HttpContext.Current.Request.RawUrl);
+            }
         }
 
         foreach (string File in arFiles) {

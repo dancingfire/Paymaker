@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Data;
 using System.Data.SqlClient;
-using System.Net.Mail;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Security;
@@ -17,15 +16,19 @@ public enum RolePermissionType {
     // 1. Users
     ViewPermissionButton = 0,
 
-    UpdatePreviousPayPeriod = 75, //user can update details like Date Started and Completed
-    ViewCampaignModule = 80, //View the campaign module and related functionality
-    ViewCommissionModule = 90 // View the commission module and related functionality
+    UpdatePreviousPayPeriod = 75,   //user can update details like Date Started and Completed
+    ViewCampaignModule = 80,        //View the campaign module and related functionality
+    ViewCommissionModule = 90,      // View the commission module and related functionality
+    DeleteLeaveRequests = 95,
+    ReportExpenseSummary = 100
 }
 
 public enum RolePermissionGroupType {
     SalePermissions = 1,
     UserPermissions = 2,
-    ApplicationPermissions = 3
+    ApplicationPermissions = 3,
+    Reports = 4,
+    Leave = 5
 }
 
 public class RolePermissions {
@@ -67,6 +70,8 @@ public class RolePermissions {
         slRolePermissions.Add(slRolePermissions.Count, new RolePermission(RolePermissionType.ViewPermissionButton, "Update user permissions", "Permits a person to update other users' permissions", true, RolePermissionGroupType.UserPermissions));
         slRolePermissions.Add(slRolePermissions.Count, new RolePermission(RolePermissionType.ViewCampaignModule, "View campaigns", "Show the campaign functionality", true, RolePermissionGroupType.ApplicationPermissions));
         slRolePermissions.Add(slRolePermissions.Count, new RolePermission(RolePermissionType.ViewCommissionModule, "View commissions", "Show the commission functionality", true, RolePermissionGroupType.ApplicationPermissions));
+        slRolePermissions.Add(slRolePermissions.Count, new RolePermission(RolePermissionType.DeleteLeaveRequests, "Delete leave requests", "Delete leave requests", true, RolePermissionGroupType.Leave));
+        slRolePermissions.Add(slRolePermissions.Count, new RolePermission(RolePermissionType.ReportExpenseSummary, "Expense summary for promotion expenses", "View this report", true, RolePermissionGroupType.Reports));
         arRolePermissions = new RolePermission[slRolePermissions.Count];
         foreach (DictionaryEntry oItem in slRolePermissions) {
             arRolePermissions[Convert.ToInt32(oItem.Key)] = (RolePermission)oItem.Value;
@@ -79,12 +84,14 @@ public class RolePermissions {
         switch (oGroupType) {
             case RolePermissionGroupType.SalePermissions:
                 return "Sale permissions";
-
             case RolePermissionGroupType.ApplicationPermissions:
                 return "Application modules";
-
             case RolePermissionGroupType.UserPermissions:
                 return "User permissions";
+            case RolePermissionGroupType.Reports:
+                return "Report visibility";
+            case RolePermissionGroupType.Leave:
+                return "Leave module";
         }
         return "group name not found";
     }
@@ -134,19 +141,19 @@ public class UserLogin {
     public static string resetPasswordEmailFrom = "do-not-reply@fletchers.net.au";
 
     /// <summary>
-    /// Validates the password passed in based on the rules. If the password is valid, the function will return an empty string, else the errors that 
-    /// are the cause of the issue. 
-    /// 
+    /// Validates the password passed in based on the rules. If the password is valid, the function will return an empty string, else the errors that
+    /// are the cause of the issue.
+    ///
     /// </summary>
     /// <param name="Pwd"></param>
     /// <returns></returns>
     public static string validatePassword(int UserID, string Pwd) {
         string szError = "";
 
-        if (Pwd.Length < 8) { 
+        if (Pwd.Length < 8) {
             szError += "Error";
         }
-       
+
         int PatternMatch = 0;
         if (Regex.IsMatch(Pwd, "[A-Z]"))
             PatternMatch++;
@@ -158,7 +165,7 @@ public class UserLogin {
         if (PatternMatch < 3) {
             szError += @"Error";
         }
- 
+
         return szError;
     }
 
@@ -202,7 +209,7 @@ public class UserLogin {
             return szErrors;
 
         string szUpdateTokenValue = "";
-      
+
         string szSQL = String.Format(@"
                 UPDATE DB_USER
                 SET PASSWORD = convert(varbinary(255), PWDENCRYPT('{1}')),
@@ -212,13 +219,11 @@ public class UserLogin {
         return "";
     }
 
-  
     /// <summary>
     /// Resets the login for MGT users
     /// </summary>
     /// <param name="UserName"></param>
     public static bool resetPassword(string UserName) {
-       
         if (!String.IsNullOrEmpty(UserName)) {
             if (!String.IsNullOrEmpty(UserName)) {
                 string szSQL = string.Format(@"
@@ -238,7 +243,6 @@ public class UserLogin {
                     return true;
                 }
             }
-
         }
         return false;
     }
@@ -247,8 +251,8 @@ public class UserLogin {
         // Check number of times user has failed attempt to login in given timeframe
         // Note successful login resets count to 0.
         int CountUser = DB.getScalar(String.Format(@"
-            SELECT COUNT(*) 
-            FROM LOGINLOG WHERE 
+            SELECT COUNT(*)
+            FROM LOGINLOG WHERE
                 USERNAME = '{0}'
                 AND ID > (SELECT MAX(ID) FROM LOGINLOG WHERE USERNAME = '{0}' AND ISSUCCESS = 1)
                 AND LOGINDATE > DATEADD(MINUTE, -{1}, GETDATE())
@@ -257,8 +261,8 @@ public class UserLogin {
         // Check number of times IP has failed attempt to login in given timeframe
         // Note successful login resets count to 0.
         int CountIP = DB.getScalar(String.Format(@"
-            SELECT COUNT(*) 
-            FROM LOGINLOG WHERE 
+            SELECT COUNT(*)
+            FROM LOGINLOG WHERE
                 IPADDRESS = '{0}'
                 AND ID > (SELECT MAX(ID) FROM LOGINLOG WHERE IPADDRESS = '{0}' AND ISSUCCESS = 1)
                 AND LOGINDATE > DATEADD(MINUTE, -{1}, GETDATE())
@@ -281,13 +285,14 @@ public class UserLogin {
         if (checkLoginCount(IP, LoginName, 1) == 0)
             return false;
 
-        // Count of failed attempts in last 10 minutes, if more than 
+        // Count of failed attempts in last 10 minutes, if more than
         // 4 then user is locked out for 1 minute after a failed attempt.
         if (checkLoginCount(IP, LoginName, 60) > 4)
             return true;
 
         return false;
     }
+
     private static void writeLog(int OriginalUserID = -1) {
         sqlUpdate oSQL = new sqlUpdate("LOGIN_LOG", "ID", -1);
         oSQL.add("USER_ID", G.User.UserID);
@@ -333,7 +338,7 @@ public class UserLogin {
                 G.User.Email = Convert.ToString(dr["EMAIL"]);
                 G.User.RoleID = Convert.ToInt32(dr["ROLEID"]);
                 G.User.OriginalRoleID = (UserRole)Convert.ToInt32(dr["ROLEID"]);
-                if(G.User.OriginalUserID == -1){
+                if (G.User.OriginalUserID == -1) {
                     G.User.OriginalUserID = Convert.ToInt32(dr["ID"]);
                 }
                 G.User.OriginalUserID = Convert.ToInt32(dr["ID"]);
@@ -371,8 +376,7 @@ public class UserLogin {
     ///</summary>
     ///<param name = ""></param>
     public static void writeLog(int UserID, string LoginName, bool IsSuccess) {
-
-        string szSQLInsert = string.Format(@"INSERT INTO LOGINLOG(USERID,USERNAME,ISSUCCESS,IPADDRESS) 
+        string szSQLInsert = string.Format(@"INSERT INTO LOGINLOG(USERID,USERNAME,ISSUCCESS,IPADDRESS)
                                                  VALUES({0},'{1}',{2},'{3}')", UserID, DB.escape(LoginName), IsSuccess ? 1 : 0, DB.escape(getIPAddress()));
         DB.runNonQuery(szSQLInsert);
     }
@@ -392,7 +396,7 @@ public class UserLogin {
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="Token"></param>
     /// <param name="ForPsswdUserEmail"></param>
@@ -417,4 +421,3 @@ public class UserLogin {
         }
     }
 }
-
