@@ -9,7 +9,14 @@
 .btn-primary {
     background-color: #be9d52 !important;
     border-color: #be9d52;
+    background-image: -webkit-linear-gradient(top,#be9d52 0,#AB8B41 100%);
 }
+
+    .btn-primary:focus, .btn-primary:hover {
+        background-color: #be9d52;
+        background-position: 0 -1px;
+    }
+
 body.report {
     background: white;
 }

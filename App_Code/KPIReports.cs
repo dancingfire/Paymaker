@@ -304,11 +304,12 @@ public class KPI_Agent_Card : Report {
         ReportData u = null;
         foreach (DataRow dr in ds.Tables[0].Rows) {
             if (CurrAgentID == -1 || CurrAgentID != DB.readInt(dr["AGENTID"])) {
-                u = new ReportData();
+                u = new ReportData(oFilter.EndDate);
                 u.AgentName = DB.readString(dr["AGENTNAME"]);
                 u.OfficeName = DB.readString(dr["OFFICENAME"]);
                 u.OfficeID = DB.readInt(dr["OFFICEID"]);
                 u.AgentID = DB.readInt(dr["AGENTID"]);
+                
                 lData.Add(u);
                 CurrAgentID = DB.readInt(dr["AGENTID"]);
             }
@@ -540,7 +541,6 @@ public class KPI_Agent_Card : Report {
 
         // This is for debugging purposes - all data used in the report can be viewed in it's final state in this saved file.
         //Utility.dataTableToCSVFile(ds.Tables[0], string.Format(@"C:\Temp\final.csv"));
-
         return lData;
     }
 
@@ -652,7 +652,7 @@ public class KPI_Agent_Card : Report {
         ReportData d = lData.Find(u => u.AgentID == AgentID);
         if (d == null) {
             UserDetail ud = G.UserInfo.getUser(AgentID);
-            d = new ReportData();
+            d = new ReportData(oFilter.EndDate);
             d.AgentName = ud.Name;
             lData.Add(d);
         }
@@ -665,6 +665,13 @@ public class KPI_Agent_Card : Report {
 }
 
 public class ReportData {
+
+    public ReportData(DateTime EndDate){
+        this.EndDate = EndDate;
+    }
+
+    private DateTime EndDate { get; set; }
+
     public string AgentName { get; set; }
     public string OfficeName { get; set; }
     public double BudgetAmount { get; set; }
@@ -681,6 +688,7 @@ public class ReportData {
         }
     }
 
+    public string APPRAISALSCONVERTED_A_COLOR { get { return ""; } }
     public string APPRAISALSCONVERTED_APERIOD {
         get {
             return PersonalCountPeriod.ToString() + ":" + ListingCountPeriod.ToString();
@@ -688,6 +696,7 @@ public class ReportData {
     }
 
     public string bAPPRAISALSCONVERTED_B { get; set; }
+    public string APPRAISALSCONVERTED_B_COLOR { get { return ""; } }
 
     public string APPRAISALSCONVERTED_B {
         get {
@@ -713,6 +722,7 @@ public class ReportData {
     public double CompanyCountPeriod { get; set; }
 
     public string bAPPRAISALSPvsC { get; set; }
+    public string APPRAISALSPvsC_COLOR { get { return ""; } }
 
     public string APPRAISALSPvsC {
         get {
@@ -728,26 +738,34 @@ public class ReportData {
 
     public double bAPPRAISALS_ABC { get; set; }
     public double APPRAISALS_ABC { get { return AppraisalCount; } }
+    public string APPRAISALS_ABC_COLOR { get { return getTargetColor(bAPPRAISALS_ABC, APPRAISALS_ABC); } }
+
     public double APPRAISALS_ABCPERIOD { get { return AppraisalCountPeriod; } }
 
     public double bAPPRAISALSCATEGORY_A { get; set; }
 
     public double APPRAISALSCATEGORY_A { get; set; }
+    public string APPRAISALSCATEGORY_A_COLOR { get { return getTargetPercentColor(bAPPRAISALSCATEGORY_A, APPRAISALSCATEGORY_APERIOD);  } }
 
     public double APPRAISALSCATEGORY_APERIOD { get; set; }
 
     public double bAPPRAISALS_FOLLOWUP { get; set; }
     public double APPRAISALS_FOLLOWUP { get; set; }
+    public string APPRAISALS_FOLLOWUP_COLOR { get { return ""; } }
+
     public double APPRAISALS_FOLLOWUPPERIOD { get; set; }
 
     public double bNUMBEROFCONTACTS { get; set; }
     public double NUMBEROFCONTACTS { get; set; }
+    public string NUMBEROFCONTACTS_COLOR { get { return getTargetColor(bNUMBEROFCONTACTS, NUMBEROFCONTACTS); } }
+
     public double NUMBEROFCONTACTSPERIOD { get; set; }
 
     //Auction data
     public double AuctionCountTotal { get; set; }
 
     public double AuctionCountPeriod { get; set; }
+   
     public double AuctionSoldTotal { get; set; }
     public double AuctionSoldPeriod { get; set; }
 
@@ -782,6 +800,8 @@ public class ReportData {
 
     public double bAUCTIONCLEARANCE { get; set; }
 
+    public string AUCTIONCLEARANCE_COLOR { get { return getTargetPercentColor(bAUCTIONCLEARANCE, AUCTIONCLEARANCEPERIOD); } }
+
     public double AUCTIONCLEARANCE {
         get {
             if (AuctionCountTotal == 0)
@@ -799,6 +819,8 @@ public class ReportData {
     }
 
     public double bAVGCOMMISION { get; set; }
+
+    public string AVGCOMMISION_COLOR { get { return getTargetPercentColor(bAVGCOMMISION, AVGCOMMISIONPERIOD); } }
 
     public double AVGCOMMISION {
         get {
@@ -818,6 +840,8 @@ public class ReportData {
 
     public double bAVGCOMMISIONPERCENT { get; set; }
 
+    public string AVGCOMMISIONPERCENT_COLOR { get { return getTargetPercentColor(bAVGCOMMISIONPERCENT, AVGCOMMISIONPERCENTPERIOD * 100); } }
+
     public double AVGCOMMISIONPERCENT {
         get {
             if (TotalSalePrice == 0)
@@ -835,6 +859,7 @@ public class ReportData {
     }
 
     public double bAVGSALEPRICE { get; set; }
+    public string AVGSALEPRICE_COLOR { get { return getTargetColor(bAVGSALEPRICE, AVGSALEPRICEPERIOD); } }
 
     public double AVGSALEPRICE {
         get {
@@ -853,6 +878,8 @@ public class ReportData {
     }
 
     public double bGLOSSIESAVG { get; set; }
+    public string GLOSSIESAVG_COLOR { get { return getTargetColor(bGLOSSIESAVG, GLOSSIESAVG); } }
+
     public double GLOSSIESAVG {
         get {
             if (GlossyAvgCount == 0)
@@ -885,10 +912,14 @@ public class ReportData {
     public double GlossyTotalValue { get; set; }
 
     public double bGLOSSIESPERLISTING { get; set; }
+    public string GLOSSIESPERLISTING_COLOR { get { return getTargetColor(bGLOSSIESPERLISTING, GLOSSIESPERLISTING); } }
+
+
     public double GLOSSIESPERLISTING { get; set; }
     public double GLOSSIESPERLISTINGPERIOD { get; set; }
 
     public double bNUMBEROFDAYSAUCTION { get; set; }
+    public string NUMBEROFDAYSAUCTION_COLOR { get { return getTargetPercentColor(bNUMBEROFDAYSAUCTION, NUMBEROFDAYSAUCTIONPERIOD); } }
 
     public double NUMBEROFDAYSAUCTION {
         get {
@@ -907,6 +938,7 @@ public class ReportData {
     }
 
     public double bNUMBEROFDAYSPRIVATE { get; set; }
+    public string NUMBEROFDAYSPRIVATE_COLOR { get { return getTargetPercentColor(bNUMBEROFDAYSPRIVATE, NUMBEROFDAYSPRIVATEPERIOD); } }
 
     public double NUMBEROFDAYSPRIVATE {
         get {
@@ -925,6 +957,7 @@ public class ReportData {
     }
 
     public double bPLACES { get; set; }
+    public string PLACES_COLOR { get { return getTargetPercentColor(bPLACES, PLACESPERIOD); } }
 
     public double PLACES {
         get {
@@ -946,6 +979,7 @@ public class ReportData {
     public double PlacesCount { get; set; }
 
     public double bPROPERTYVIDEO { get; set; }
+    public string PROPERTYVIDEO_COLOR { get { return getTargetPercentColor(bPROPERTYVIDEO, PROPERTYVIDEOPERIOD); } }
 
     public double PROPERTYVIDEO {
         get {
@@ -967,10 +1001,13 @@ public class ReportData {
     public double VideoCount { get; set; }
 
     public double bTOTALLISTINGS { get; set; }
+    public string TOTALLISTINGS_COLOR { get { return getTargetColor(bTOTALLISTINGS, TOTALLISTINGS); } }
+
     public double TOTALLISTINGSPERIOD { get; set; }
     public double TOTALLISTINGS { get; set; }
 
     public double bWITHDRAWNLISTINGS { get; set; }
+    public string WITHDRAWNLISTINGS_COLOR { get { return getTargetPercentColor(bWITHDRAWNLISTINGS, WITHDRAWNLISTINGSPERIOD); } }
 
     public double WITHDRAWNLISTINGS {
         get {
@@ -992,6 +1029,7 @@ public class ReportData {
     public double WithdrawListingsCountPeriod { get; set; }
 
     public double bADVERTISINGPERPROPERTY { get; set; }
+    public string ADVERTISINGPERPROPERTY_COLOR { get { return getTargetColor(bADVERTISINGPERPROPERTY, ADVERTISINGPERPROPERTY); } }
 
     public double ADVERTISINGPERPROPERTY {
         get {
@@ -1033,6 +1071,41 @@ public class ReportData {
     public double ListingCountPeriod { get; set; }
     public double ListingCount { get; set; }
 
+    string getTargetPercentColor(double Budget, double Period) {
+        if (Budget == 0)
+            return "";
+
+        double ratio = Period / Budget;
+        if (ratio > 1)
+            return "YellowGreen";
+        else if (ratio > 0.9)
+            return "Yellow";
+        else 
+            return "Red";
+    }
+
+    /// <summary>
+    /// Calculates the current target amount based on how far into the year we are
+    /// </summary>
+    /// <param name="Budget"></param>
+    /// <param name="CurrTotal"></param>
+    /// <returns></returns>
+    string getTargetColor(double Budget, double CurrTotal) {
+        
+        if (Budget == 0)
+            return "";
+
+        TimeSpan t = EndDate - Utility.getFinYearStart(EndDate);
+        double YearOffset = t.TotalDays / 365;
+        
+        double ratio = CurrTotal / (Budget * YearOffset);
+        if (ratio > 1)
+            return "YellowGreen";
+        else if (ratio > 0.9)
+            return "Yellow";
+        else
+            return "Red";
+    }
     public void setBudgetValue(string Category, string Value) {
         if (Category == "ADVERTISINGPERPROPERTY")
             bADVERTISINGPERPROPERTY = Convert.ToDouble(Value);

@@ -119,7 +119,7 @@ public class ClientMenu {
 
 
     private bool canAccessReports() {
-        return G.User.RoleID != 5 && G.User.RoleID != 6;
+        return (G.User.RoleID != 5 && G.User.RoleID != 6) || G.User.hasPermission(RolePermissionType.ReportExpenseSummary);
     }
 
     #region MenuGenerator
@@ -164,7 +164,7 @@ public class ClientMenu {
                         </nav>
                        
                     </div>
-                </div>
+                
                 {2}
             ", oM.createMenu(), getLoginDropDown(), HTML.createModalIFrameHTML("Delegation", "Delegate options", "850", 350));
         return szHTML;

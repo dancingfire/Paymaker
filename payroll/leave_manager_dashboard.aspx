@@ -72,7 +72,7 @@
                                  </asp:TemplateField>
                         </Columns>
                         <EmptyDataTemplate>
-                            There are no outstanding requests.
+                            <div style='margin-top: 35px'>There are no outstanding requests.</div>
                         </EmptyDataTemplate>
                     </asp:GridView>
                 </div>

@@ -41,6 +41,10 @@
           <DataField>ActualAmount</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="ADVERTISINGPERPROPERTY_COLOR">
+          <DataField>ADVERTISINGPERPROPERTY_COLOR</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="bADVERTISINGPERPROPERTY">
           <DataField>bADVERTISINGPERPROPERTY</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -57,6 +61,10 @@
           <DataField>bAPPRAISALS_ABC</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="APPRAISALS_ABC_COLOR">
+          <DataField>APPRAISALS_ABC_COLOR</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="APPRAISALS_ABC">
           <DataField>APPRAISALS_ABC</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -67,6 +75,10 @@
         </Field>
         <Field Name="bAPPRAISALS_FOLLOWUP">
           <DataField>bAPPRAISALS_FOLLOWUP</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="APPRAISALS_FOLLOWUP_COLOR">
+          <DataField>APPRAISALS_FOLLOWUP_COLOR</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="APPRAISALS_FOLLOWUP">
@@ -81,6 +93,10 @@
           <DataField>bAPPRAISALSCATEGORY_A</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="APPRAISALSCATEGORY_A_COLOR">
+          <DataField>APPRAISALSCATEGORY_A_COLOR</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="APPRAISALSCATEGORY_A">
           <DataField>APPRAISALSCATEGORY_A</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -91,6 +107,10 @@
         </Field>
         <Field Name="bAPPRAISALSPvsC">
           <DataField>bAPPRAISALSPvsC</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="APPRAISALSPvsC_COLOR">
+          <DataField>APPRAISALSPvsC_COLOR</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="APPRAISALSPvsC">
@@ -105,6 +125,10 @@
           <DataField>bAPPRAISALSCONVERTED_A</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="APPRAISALSCONVERTED_A_COLOR">
+          <DataField>APPRAISALSCONVERTED_A_COLOR</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="APPRAISALSCONVERTED_A">
           <DataField>APPRAISALSCONVERTED_A</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -115,6 +139,10 @@
         </Field>
         <Field Name="bAPPRAISALSCONVERTED_B">
           <DataField>bAPPRAISALSCONVERTED_B</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="APPRAISALSCONVERTED_B_COLOR">
+          <DataField>APPRAISALSCONVERTED_B_COLOR</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="APPRAISALSCONVERTED_B">
@@ -129,6 +157,10 @@
           <DataField>bAUCTIONCLEARANCE</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="AUCTIONCLEARANCE_COLOR">
+          <DataField>AUCTIONCLEARANCE_COLOR</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="AUCTIONCLEARANCE">
           <DataField>AUCTIONCLEARANCE</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -139,6 +171,10 @@
         </Field>
         <Field Name="bAVGCOMMISION">
           <DataField>bAVGCOMMISION</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="AVGCOMMISION_COLOR">
+          <DataField>AVGCOMMISION_COLOR</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="AVGCOMMISION">
@@ -153,6 +189,10 @@
           <DataField>bAVGCOMMISIONPERCENT</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="AVGCOMMISIONPERCENT_COLOR">
+          <DataField>AVGCOMMISIONPERCENT_COLOR</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="AVGCOMMISIONPERCENT">
           <DataField>AVGCOMMISIONPERCENT</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -163,6 +203,10 @@
         </Field>
         <Field Name="bAVGSALEPRICE">
           <DataField>bAVGSALEPRICE</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="AVGSALEPRICE_COLOR">
+          <DataField>AVGSALEPRICE_COLOR</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="AVGSALEPRICE">
@@ -177,6 +221,10 @@
           <DataField>bGLOSSIESAVG</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="GLOSSIESAVG_COLOR">
+          <DataField>GLOSSIESAVG_COLOR</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="GLOSSIESAVG">
           <DataField>GLOSSIESAVG</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -187,6 +235,10 @@
         </Field>
         <Field Name="bGLOSSIESPERLISTING">
           <DataField>bGLOSSIESPERLISTING</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="GLOSSIESPERLISTING_COLOR">
+          <DataField>GLOSSIESPERLISTING_COLOR</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="GLOSSIESPERLISTING">
@@ -201,6 +253,10 @@
           <DataField>bNUMBEROFCONTACTS</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="NUMBEROFCONTACTS_COLOR">
+          <DataField>NUMBEROFCONTACTS_COLOR</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="NUMBEROFCONTACTS">
           <DataField>NUMBEROFCONTACTS</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -211,6 +267,10 @@
         </Field>
         <Field Name="bNUMBEROFDAYSAUCTION">
           <DataField>bNUMBEROFDAYSAUCTION</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NUMBEROFDAYSAUCTION_COLOR">
+          <DataField>NUMBEROFDAYSAUCTION_COLOR</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="NUMBEROFDAYSAUCTION">
@@ -225,6 +285,10 @@
           <DataField>bNUMBEROFDAYSPRIVATE</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="NUMBEROFDAYSPRIVATE_COLOR">
+          <DataField>NUMBEROFDAYSPRIVATE_COLOR</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="NUMBEROFDAYSPRIVATE">
           <DataField>NUMBEROFDAYSPRIVATE</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -235,6 +299,10 @@
         </Field>
         <Field Name="bPLACES">
           <DataField>bPLACES</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PLACES_COLOR">
+          <DataField>PLACES_COLOR</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="PLACES">
@@ -249,6 +317,10 @@
           <DataField>bPROPERTYVIDEO</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="PROPERTYVIDEO_COLOR">
+          <DataField>PROPERTYVIDEO_COLOR</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="PROPERTYVIDEO">
           <DataField>PROPERTYVIDEO</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -261,6 +333,10 @@
           <DataField>bTOTALLISTINGS</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="TOTALLISTINGS_COLOR">
+          <DataField>TOTALLISTINGS_COLOR</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="TOTALLISTINGS">
           <DataField>TOTALLISTINGS</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -271,6 +347,10 @@
         </Field>
         <Field Name="bWITHDRAWNLISTINGS">
           <DataField>bWITHDRAWNLISTINGS</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="WITHDRAWNLISTINGS_COLOR">
+          <DataField>WITHDRAWNLISTINGS_COLOR</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="WITHDRAWNLISTINGS">
@@ -289,6 +369,10 @@
           <DataField>TotalSaleCount</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="SALECOUNT_COLOR">
+          <DataField>SALECOUNT_COLOR</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="SALECOUNTPERIOD">
           <DataField>TotalSaleCountPeriod</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -297,12 +381,20 @@
           <DataField>PrivateTotalDays</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="PRIVATEDAYS_COLOR">
+          <DataField>PRIVATEDAYS_COLOR</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="PRIVATEDAYSPERIOD">
           <DataField>PrivateTotalDaysPeriod</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="AUCTIONDAYSTOTAL">
           <DataField>AuctionTotalDays</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="AUCTIONDAYS_COLOR">
+          <DataField>AUCTIONDAYS_COLOR</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="AUCTIONDAYSPERIOD">
@@ -1230,6 +1322,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
+                            <BackgroundColor>=Fields!APPRAISALSCONVERTED_A_COLOR.Value</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -1411,6 +1504,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
+                            <BackgroundColor>=Fields!APPRAISALSCONVERTED_A_COLOR.Value</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -1592,6 +1686,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
+                            <BackgroundColor>=Fields!APPRAISALSPvsC_COLOR.Value</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -1657,7 +1752,6 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -1774,6 +1868,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
+                            <BackgroundColor>=Fields!APPRAISALS_ABC_COLOR.Value</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -1958,6 +2053,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
+                            <BackgroundColor>=Fields!APPRAISALSCATEGORY_A_COLOR.Value</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -2139,6 +2235,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
+                            <BackgroundColor>=Fields!APPRAISALS_FOLLOWUP_COLOR.Value</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -2320,6 +2417,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
+                            <BackgroundColor>=Fields!NUMBEROFCONTACTS_COLOR.Value</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -2633,6 +2731,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
+                            <BackgroundColor>=Fields!TOTALLISTINGS_COLOR.Value</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -2802,6 +2901,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
+                            <BackgroundColor>=Fields!WITHDRAWNLISTINGS_COLOR.Value</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -2873,6 +2973,8 @@
                                   <Value>=Fields!bADVERTISINGPERPROPERTY.Value</Value>
                                   <Style>
                                     <FontSize>8pt</FontSize>
+                                    <Format>'$'0;('$'0)</Format>
+                                    <rd:FormatSymbolCulture>en-US</rd:FormatSymbolCulture>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -2972,6 +3074,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
+                            <BackgroundColor>=Fields!ADVERTISINGPERPROPERTY_COLOR.Value</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -3141,12 +3244,14 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
+                            <BackgroundColor>=Fields!PLACES_COLOR.Value</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -3310,6 +3415,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
+                            <BackgroundColor>=Fields!GLOSSIESPERLISTING_COLOR.Value</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -3467,6 +3573,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
+                            <BackgroundColor>=Fields!GLOSSIESAVG_COLOR.Value</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -3636,6 +3743,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
+                            <BackgroundColor>=Fields!PROPERTYVIDEO_COLOR.Value</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -3931,6 +4039,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
+                            <BackgroundColor>=Fields!AVGCOMMISION_COLOR.Value</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -4076,6 +4185,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
+                            <BackgroundColor>=Fields!AVGCOMMISIONPERCENT_COLOR.Value</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -4224,6 +4334,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
+                            <BackgroundColor>=Fields!AVGSALEPRICE_COLOR.Value</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -4369,6 +4480,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
+                            <BackgroundColor>=Fields!AUCTIONCLEARANCE_COLOR.Value</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -4514,6 +4626,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
+                            <BackgroundColor>=Fields!NUMBEROFDAYSAUCTION_COLOR.Value</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -4659,6 +4772,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
+                            <BackgroundColor>=Fields!NUMBEROFDAYSPRIVATE_COLOR.Value</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -4948,6 +5062,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
+                            <BackgroundColor>=Fields!SALECOUNT_COLOR.Value</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -5090,6 +5205,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
+                            <BackgroundColor>=Fields!AUCTIONDAYS_COLOR.Value</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -5232,6 +5348,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
+                            <BackgroundColor>=Fields!PRIVATEDAYS_COLOR.Value</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>

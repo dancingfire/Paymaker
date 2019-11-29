@@ -14,7 +14,7 @@
             $("#lstReport, #lstUserReport").change(function () {
                 showFilter();
             });
-            $("#lstReport").select2();
+         
             $("#fReport").height($("#dReportFilter").height())
             $(".DataPanel").corner();
         });
@@ -779,13 +779,15 @@
         <asp:HiddenField ID="hfUserID" runat="server" />
         <div id="dReportFilter" class="DataPanel NoPrint" style="overflow: auto">
             <asp:Label ID="Label4" CssClass="FilterLabel" runat="server" Text="Report"></asp:Label>
-            <select id="lstUserReport" class="Entry" runat="server" visible="false">
-                <option value="-1">Select a report...</option>
-                <option value="COMMISSION">Commission statement</option>
-                <option value="MONTHLYSALES">Monthly sales</option>
-                <option value="MONTHLYSALESBYAGENT">Monthly sales by agent</option>
-                <option value="PAYROLL">Sales payroll reconcilliation</option>
-            </select>
+            
+            <asp:DropDownList ID="lstUserReport" runat="server" CssClass="Entry" Visible="false">
+                <asp:ListItem Text="Select a report..." Value="-1"></asp:ListItem>
+                <asp:ListItem Text="Commission statement" Value="COMMISSION"></asp:ListItem>
+                <asp:ListItem Text="Monthly sales" Value="MONTHLYSALES"></asp:ListItem>
+                <asp:ListItem Text="Monthly sales by agent" Value="MONTHLYSALESBYAGENT"></asp:ListItem>
+                <asp:ListItem Text="Sales payroll reconcilliation" Value="PAYROLL"></asp:ListItem>
+            </asp:DropDownList>
+              
             <select id="lstReport" class="Entry">
                 <option value="-1">Select a report...</option>
                 <optgroup label='Campaign reports' />
