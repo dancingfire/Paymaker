@@ -14,12 +14,12 @@
                 "bSort": true,
                 "bInfo": false,
                 "bAutoWidth": false,
-                "sScrollY": "320px",
+                "sScrollY": "65vh",
                 "sScrollX": "99%",
                 "aaSorting": []
             });
         }
-
+        $("#lstAgent").select2();
         $(".DataPanel").corner();
     });
     </script>
@@ -49,7 +49,7 @@
 </head>
 <body style='margin-top: 5px'>
     <form id="frmMain" method="post" runat="server" target="_self">
-        <div class='DataPanel' style='width: 40%; height: 540px'>
+        <div class='DataPanel' style='width: 40%; height: 80vh'>
             <div class='DataPanelHeader'>
                 View commission PDFs
             </div>

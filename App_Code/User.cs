@@ -155,6 +155,25 @@ public class UserInformation {
     /// </summary>
     /// <param name="l"></param>
     /// <param name="IncludeSelect"></param>
+    public void loadList(ref DropDownList l, bool IncludeSelect = true, bool IncludeInactive = false) {
+        if (blnIsLoaded == false || lUsers == null)
+            loadItems();
+        if (IncludeSelect) {
+            l.Items.Add(new ListItem("Select a user...", "-1"));
+        }
+        foreach (UserDetail b in lUsers) {
+            if (!IncludeInactive && !b.IsActive)
+                continue;
+
+            l.Items.Add(new ListItem(b.NameIFLO, b.ID.ToString()));
+        }
+    }
+
+    /// <summary>
+    /// Loads the list from the object
+    /// </summary>
+    /// <param name="l"></param>
+    /// <param name="IncludeSelect"></param>
     public void loadList(ref bwDropDownList l, bool IncludeSelect = true, bool IncludeInactive = false) {
         if (blnIsLoaded == false || lUsers == null)
             loadItems();

@@ -664,7 +664,7 @@ public class Sale {
     /// </summary>
     /// <param name="UserID"></param>
     /// <returns></returns>
-    public static DataSet loadYTDSalesForSalesPerson(int UserID, DateTime StartDate) {
+    public static DataSet loadYTDSalesForSalesPerson(int UserID, DateTime StartDate, string Order = " ASC") {
         string szSQL = String.Format(@"
             -- YTD
             SELECT P.ID AS PAYPERIODID, DATENAME(mm, P.STARTDATE) AS MONTH, DATEPART(yyyy,P.STARTDATE) as YEAR, SUM(ISNULL(USS.CALCULATEDAMOUNT, 0)) AS COMMISSIONTOTAL,  SUM(ISNULL(USS.GRAPHCOMMISSION, 0)) AS GRAPHCOMMISSION
@@ -674,7 +674,7 @@ public class Sale {
             LEFT JOIN USERSALESPLIT USS ON USS.SALESPLITID = SS.ID AND USS.USERID = {0} AND USS.RECORDSTATUS < 1
             WHERE P.STARTDATE >= '{1}' AND S.STATUSID = 2
             GROUP BY  DATEPART(mm, P.STARTDATE), DATEPART(yyyy,P.STARTDATE), DATENAME(mm, P.STARTDATE), P.ID
-            ORDER BY DATEPART(yyyy,P.STARTDATE), DATEPART(mm, P.STARTDATE)", UserID, Utility.formatDate(StartDate));
+            ORDER BY DATEPART(yyyy,P.STARTDATE) {2}, DATEPART(mm, P.STARTDATE) {2}", UserID, Utility.formatDate(StartDate), Order);
         return DB.runDataSet(szSQL);
     }
 
