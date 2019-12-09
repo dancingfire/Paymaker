@@ -35,7 +35,7 @@ namespace ExceptionHandler {
 
             if (WebConfigurationManager.AppSettings["LogErrors"] == "false")
                 return;
-            string[] arMessage = { "Path '/Version3/actions/dashboard.aspx.cs/jsdebug' is forbidden.", "Path '/Version3/actions/email.aspx.cs/js' is forbidden.", "Path '/Version3/reports/report_template_detail.aspx.cs/js' is forbidden.", "The remote host closed the connection. The error code is 0x80072746." };
+            string[] arMessage = { "Path '/Version3/actions/dashboard.aspx.cs/jsdebug' is forbidden.", "Path '/Version3/actions/email.aspx.cs/js' is forbidden.", "Path '/Version3/reports/report_template_detail.aspx.cs/js' is forbidden.", "The remote host closed the connection. The error code is 0x80072746.", "Invalid viewstate."};
             foreach (string szMessage in arMessage) {
                 if (ex.Message == szMessage || ex.Message == szMessage.Replace("Version3", "Version4"))
                     return; // An error that doesn't affect the app. Do want to solve it sometime... 0x80072746 is a user closing their browser while viewing a file
