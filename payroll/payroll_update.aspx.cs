@@ -208,7 +208,6 @@ public partial class payroll_update : Root {
     protected void btnUpdate_Click(object sender, System.EventArgs e) {
         updateRecord();
         Response.Redirect("payroll_dashboard.aspx");
-        // When the changes are saved, check to see if all users that belong to this user's supervisor (if they have one) are completed - if so, send an email to the supervisor letting them know that all changes are complete
     }
 
     protected void btnChange_Click(object sender, System.EventArgs e) {
@@ -253,5 +252,30 @@ public partial class payroll_update : Root {
         sendEmail();
         Response.Redirect("payroll_dashboard.aspx");
         // When the changes are saved, check to see if all users that belong to this user's supervisor (if they have one) are completed - if so, send an email to the supervisor letting them know that all changes are complete
+    }
+
+    protected void btnReopen_Click(object sender, EventArgs e) {
+        updateRecord(SignOff: false);
+        DB.runNonQuery(String.Format(@"
+            UPDATE TIMESHEETENTRY SET USERSIGNOFFDATE = null, SIGNEDOFFDATE = null
+            WHERE TIMESHEETCYCLEID = {0}
+            AND USERID = {1} ", intUserPayrollCycleID, intUserID));
+
+        DBLog.addGenericRecord(DBLogType.PayrollModification, String.Format("Paysheet reopened by {0}", G.User.UserName), intUserPayrollCycleID, intUserID);
+
+        Report oReport = getReport();
+
+        rViewer.ProcessingMode = Microsoft.Reporting.WebForms.ProcessingMode.Local;
+        rViewer.ShowParameterPrompts = false;
+        rViewer.ShowPageNavigationControls = true;
+
+        byte[] bFile = rViewer.LocalReport.Render("PDF");
+        string szEmail = G.UserInfo.getUser(intUserID).Email;
+
+        string Msg = "Your timesheet has been unlocked - you can now make further changes. Please remember to resubmit it when you are done.";
+           
+        Email.sendMail(szEmail, "do-not-reply@fletchers.net.au", "Timesheet opened",
+                Msg, szBCC: "payroll@fletchers.net.au", IncludeFile: new Attachment(new MemoryStream(bFile), "Timesheet.pdf"));
+        Response.Redirect("payroll_dashboard.aspx");
     }
 }
