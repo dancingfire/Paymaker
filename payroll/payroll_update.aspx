@@ -150,6 +150,7 @@
                 <asp:Button ID="btnChange" runat="server" OnClick="btnChange_Click" Text="Override timesheet"></asp:Button>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <asp:Button ID="btnApprove" runat="server" OnClick="btnApprove_Click" Text="Approve"></asp:Button>
+                <asp:Button ID="btnReopen" runat="server"  Text="Re-open to user" OnClick="btnReopen_Click" OnClientClick="return confirm('Are you sure you want to reopen this timesheet?')"></asp:Button>
             </div>
         </asp:Panel>
     </form>
