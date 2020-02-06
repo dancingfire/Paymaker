@@ -8,6 +8,7 @@
     <script type="text/javascript">
 
         function updateCalculations() {
+            console.log('updating');
             calcOffTheTopExpenses();
             updateSplitAmount();
             runSplitUpdate();
@@ -17,6 +18,7 @@
         }
         //blnPassedAsID is true when we have passed thisID as an ID for the obj and not the obj itself
         function saleSplitAmountChange(thisID, blnPassedAsID) {
+            console.log(thisID);
             //get the id of the Amount text field
             var $thisID = thisID.id;
             if (blnPassedAsID) {
@@ -541,6 +543,12 @@
             $(".RoundPanel").corner();
             $("#hdUserSaleSplit").val("");
             $("#dGrossCommission").text(parseFloat($("#hdGrossCommission").val()).toFixed(2));
+
+            //Update the 6% expense calculation
+            $(".JQSaleExpenseCategory").each(function () {
+                checkExpenseCategory(this);
+            });
+
             updateCalculations();
             addValidation();
             showHideUserSplitTotalRow();
@@ -552,6 +560,8 @@
                 $(".JQFletchersUserSaleSplit").text($(".JQFletchersSaleSplit").text());
             });
             createCalendar("txtAuctionDate");
+
+            
             blUpdatePressed = false;
         });
     </script>
