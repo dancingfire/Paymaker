@@ -267,13 +267,22 @@ namespace Paymaker {
             double dTotal = 0.0;
             foreach (DataRow dr in UserTotals.dsDeductions.Tables[0].Rows) {
                 string szCategory = dr["category"].ToString();
+                
+                //We need to read the amount here, cause if its negative we need to show it as a positive number
+                double dAmount = DB.readDouble(dr["AMOUNT"]);
+                string szAmount = DB.readMoneyString(dAmount, true);
+                if(dAmount > 0) {
+                    szAmount = "-" + szAmount;
+                } else {
+                    szAmount = Utility.formatReportMoney(-1 * dAmount);
+                }
                 sbHTML.AppendFormat(@"
                     <tr>
                         <td colspan='2'>&nbsp;</td>
                         <td colspan='4'>{0}</td>
                         <td class='AlignLeft' colspan='5'>{3}{1}</td>
-                        <td class='AlignRight'>-{2}</td>
-                    </tr>", dr["NAME"].ToString(), dr["Comment"].ToString(), DB.readMoneyString(dr["AMOUNT"], true),
+                        <td class='AlignRight'>{2}</td>
+                    </tr>", dr["NAME"].ToString(), dr["Comment"].ToString(), szAmount,
                     string.IsNullOrWhiteSpace(szCategory) ? "" : string.Format("{0} - ", szCategory));
                 dTotal += Convert.ToDouble(dr["AMOUNT"]);
             }

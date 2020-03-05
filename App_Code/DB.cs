@@ -98,7 +98,7 @@ public class DB {
             return NullValue;
         else {
             double dValue = Convert.ToDouble(Value);
-            if (dValue < 0.0001)
+            if (dValue < 0.0001 && dValue > -0.0001)
                 dValue = 0;
             return dValue;
         }
