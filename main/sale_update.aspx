@@ -8,7 +8,6 @@
     <script type="text/javascript">
 
         function updateCalculations() {
-            console.log('updating');
             calcOffTheTopExpenses();
             updateSplitAmount();
             runSplitUpdate();
@@ -546,9 +545,11 @@
 
             //Update the 6% expense calculation
             $(".JQSaleExpenseCategory").each(function () {
-                checkExpenseCategory(this);
+                if($(this).val() == 20){
+                    checkExpenseCategory(this);
+                 }
             });
-
+            
             updateCalculations();
             addValidation();
             showHideUserSplitTotalRow();
