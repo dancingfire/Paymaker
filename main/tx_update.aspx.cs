@@ -69,6 +69,7 @@ public partial class tx_update : Root {
         rbExpense.Checked = true;
         txtFletcherContribution.Text = "50";
         btnUpdate.Text = "Insert";
+        pReversal.Visible = false;
     }
 
     private void loadTx() {
@@ -186,4 +187,14 @@ public partial class tx_update : Root {
         DB.runNonQuery(szSQL);
         sbStartJS.Append("parent.closeTx(true);");
     }
+
+    protected void btnReverse_Click(object sender, EventArgs e) {
+        DB.runNonQuery(String.Format(@"
+            INSERT INTO USERTX(ACCOUNTID, USERID, AMOUNT, FLETCHERAMOUNT, TXDATE, COMMENT, AMOUNTTYPEID, ISDELETED, FLETCHERCONTRIBTOTAL, SHOWEXGST, TOTALAMOUNT, CREDITGLCODE, DEBITGLCODE, CREDITJOBCODE, DEBITJOBCODE, OVERRIDEGLCODES, TXCATEGORYID)
+            SELECT ACCOUNTID, USERID, -1 * AMOUNT, -1* FLETCHERAMOUNT, '{0}', COMMENT, AMOUNTTYPEID, ISDELETED, -1 * FLETCHERCONTRIBTOTAL, SHOWEXGST, -1* TOTALAMOUNT, DEBITGLCODE, CREDITGLCODE, DEBITJOBCODE, CREDITJOBCODE, OVERRIDEGLCODES, TXCATEGORYID
+            FROM USERTX where ID = {1};", txtReversalDate.Text, intTxID));
+        sbStartJS.Append("parent.closeTx(true);");
+
+    }
+
 }

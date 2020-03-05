@@ -1,4 +1,4 @@
-<%@ Page Language="c#" Inherits="tx_update" EnableViewState="True" AutoEventWireup="true" CodeFile="tx_update.aspx.cs"  EnableEventValidation="false"%>
+<%@ Page Language="c#" Inherits="tx_update" EnableViewState="True" AutoEventWireup="true" CodeFile="tx_update.aspx.cs" EnableEventValidation="false" %>
 
 <!DOCTYPE html>
 <html>
@@ -112,8 +112,19 @@
             $("#txtJobCredit").val(val).select2().trigger('change');
             $("#txtJobDebit").val(val).select2().trigger('change');
         }
+
+        function checkDate() {
+            if ($("#txtReversalDate").val() == "") {
+                alert("Please enter the reversal date");
+                return false;
+            }
+            return true;
+        }
+
         $(document).ready(function () {
             createCalendar("txtTxDate");
+            createCalendar("txtReversalDate", false);
+
             checkValidation();
             addValidation();
             $("#lstAmountType").unbind('change').bind('change', function () { recalFletcherContribution(); });
@@ -254,8 +265,8 @@
                         <asp:TextBox CssClass="Entry" ID="txtGLDebit" runat="server" Text="" Style='width: 100%'></asp:TextBox>
                     </td>
                     <td>
-                        <asp:DropDownList ID="txtJobDebit" CssClass="Entry" runat="server" Style='width: 90%'  EnableViewState="false"></asp:DropDownList>
-                   </td>
+                        <asp:DropDownList ID="txtJobDebit" CssClass="Entry" runat="server" Style='width: 90%' EnableViewState="false"></asp:DropDownList>
+                    </td>
                 </tr>
             </table>
             <asp:Label ID="Label10" runat="server" CssClass="Label LabelPos">Override codes</asp:Label>
@@ -267,6 +278,15 @@
             <asp:TextBox CssClass="Entry EntryPos" ID="txtComment" runat="server" Text="" TextMode="MultiLine"
                 Rows="10"></asp:TextBox>
             <br class="Align" />
+            <asp:Panel ID="pReversal" runat="server" CssClass="panel TableHeader" style="margin-top: 15px; width: 400px">
+                
+                <asp:Label ID="Label12" runat="server" CssClass="Label LabelPos">Reversal date</asp:Label>
+              
+                <asp:TextBox CssClass="Entry EntryPos" ID="txtReversalDate" runat="server" Text="" Width="100"></asp:TextBox>
+                
+                <asp:Button ID="btnReverse" runat="server" Text="Reverse" CommandName="cancel" CssClass="Button btn" Width="80"
+                    CausesValidation="False" TabIndex="200" OnClick="btnReverse_Click" OnClientClick="return checkDate()"></asp:Button>
+            </asp:Panel>
         </div>
         <div class='LeftPanel' style="width: 90px">
             <asp:Button ID="btnUpdate" runat="server" Text="Update" CssClass="Button btn" Width="80"
