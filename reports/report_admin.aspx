@@ -158,6 +158,7 @@
                     $("#spCompany").show();
                     break;
                 case "MONTHLYSALES":
+                case "NATIONALSALESAWARD":
                 case "MONTHLYSALESDETAIL":
                     $("#lstFinancialYear option[value='']").remove();
                     if (!blnSingleUser) {
@@ -584,6 +585,11 @@
                     var szParam = getFilterValues();
                     szParam += getSelectedUser(false);
                     break;
+                case "NATIONALSALESAWARD":
+                    var szSrc = "national_sales_award.aspx";
+                    var szParam = getFilterValues();
+                    szParam += getSelectedUser(false);
+                    break;
                 case "SALESLETTER":
                      if (!enforceFinancialYear())
                         return false;
@@ -826,6 +832,7 @@
                 <option value="MONTHLYSALESBYAGENT">Monthly sales by agent</option>
                 <option value="MONTHLYSALESBYPAYPERIOD">Monthly sales by pay period</option>
                 <option value="MISSINGSALES">Missing sales</option>
+                <option value="NATIONALSALESAWARD">National sales award</option>
                 <option value="NOOFSALES">No of sales per office</option>
                 <option value="OFFTHETOP">Off the top monthly expenses</option>
                 <option value="SYSTEMQUARTERLY">Quarterly top performer</option>
