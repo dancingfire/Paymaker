@@ -36,19 +36,16 @@ namespace Paymaker {
             } else {
                 lblTimeout.Visible = false;
             }
-
-            if (UserLogin.checkLoginLock(txtUserName.Text)) {
-                G.Notifications.addPageNotification(PageNotificationType.Warning, "Too many login attempts", "This account has been locked for 1 minute. ", true);
-                G.Notifications.showPageNotification(true);
-                sbEndJS.Append("$('#pPage').hide();");
-            }
         }
 
         private void performLogin() {
             // If there is a login lock before the Login is performed, then Login not performed
-            if (UserLogin.checkLoginLock(txtUserName.Text))
+            if (UserLogin.checkLoginLock(txtUserName.Text)) {
+                G.Notifications.addPageNotification(PageNotificationType.Warning, "Too many login attempts", "This account has been locked for 1 minute. ", true);
+                G.Notifications.showPageNotification(true);
                 return;
-
+            }
+        
             int MatchingUserID = (int)SqlHelper.ExecuteScalar(DB.DBConn, CommandType.StoredProcedure,
                 "getUserByLogin", new SqlParameter("@UserName", txtUserName.Text), new SqlParameter("@Password", txtPassword.Text));
 
@@ -56,12 +53,6 @@ namespace Paymaker {
                 case -1:
                     UserLogin.writeLog(-1, txtUserName.Text, false);
                     Msg.Text = "That login could not be found. Please try again.";
-
-                    if (UserLogin.checkLoginLock(txtUserName.Text)) {
-                        G.Notifications.addPageNotification(PageNotificationType.Warning, "Too many login attempts", "This account has been locked for 1 minute. ", true);
-                        G.Notifications.showPageNotification(true);
-                        sbEndJS.Append("$('#pPage').hide();");
-                    }
                     break;
 
                 default:

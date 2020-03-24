@@ -95,7 +95,7 @@ public class UserInformation {
     /// <param name="ReportTypeID"></param>
     /// <returns></returns>
     public UserDetail getUser(int UserID) {
-        if (!blnIsLoaded)
+        if (!blnIsLoaded || lUsers == null)
             loadItems();
         return lUsers.Find(i => i.ID == UserID);
     }
