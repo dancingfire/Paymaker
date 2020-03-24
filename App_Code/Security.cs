@@ -285,9 +285,9 @@ public class UserLogin {
         if (checkLoginCount(IP, LoginName, 1) == 0)
             return false;
 
-        // Count of failed attempts in last 10 minutes, if more than
+        // Count of failed attempts in last 1 minutes, if more than
         // 4 then user is locked out for 1 minute after a failed attempt.
-        if (checkLoginCount(IP, LoginName, 60) > 4)
+        if (checkLoginCount(IP, LoginName, 1) > 4)
             return true;
 
         return false;

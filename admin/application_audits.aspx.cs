@@ -32,7 +32,6 @@ namespace Paymaker {
                      WHERE  LOGINDATE BETWEEN '{0}' AND '{1}'", szLoginTrackerStartDate, szLoginTrackerEndDate);
                 }
 
-                string szOrderByClauseForLoginAttempts = string.Format(@"ORDER BY LL.ID DESC");
                 string szSQL = string.Format(@"
                    SELECT LL.ID,CONVERT(VARCHAR(10),LL.LOGINDATE,103) AS [DATE], LL.IPADDRESS,
 				   CONVERT(VARCHAR(8),LL.LOGINDATE,108) AS [TIME],LL.USERNAME AS USERNAME,
@@ -41,7 +40,8 @@ namespace Paymaker {
 				   THEN 'Failed'
 				   ELSE 'Success' END AS RESULT
 				   FROM LOGINLOG LL
-                    {0} {1} ", szWhereClauseForLoginAttempts, szOrderByClauseForLoginAttempts);
+                    {0} 
+                    ORDER BY LL.ID DESC", szWhereClauseForLoginAttempts);
 
                 gvList.DataSource = DB.runDataSet(szSQL); ;
                 gvList.DataBind();
