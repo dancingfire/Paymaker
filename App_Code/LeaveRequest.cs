@@ -180,8 +180,9 @@ public class LeaveRequest {
                 End: {3}<br/>
                 Comments: {4} <br/><br/>
 
-               Please <a href='https://commission.fletchers.net.au/login.aspx?LEAVE=true'>login to CAPS </a> to respond to this request.
-            ", u.Name, this.LeaveType, Utility.formatDate(StartDate), Utility.formatDate(EndDate), Utility.nl2br(Comment));
+               Please <a href='https://{5}/login.aspx?LEAVE=true'>login to CAPS </a> to respond to this request.
+            ", u.Name, this.LeaveType, Utility.formatDate(StartDate), Utility.formatDate(EndDate), Utility.nl2br(Comment),
+                G.BaseURL);
 
         string szSubject = "Leave request";
         EmailType typeOfRequest = EmailType.LeaveRequest;
@@ -216,8 +217,9 @@ public class LeaveRequest {
                 End: {3}</br/>
                 Comments: {4} <br/><br/>
 
-               Please <a href='https://commission.fletchers.net.au?LEAVE=true'>login to CAPS </a> to respond to this request.
-            ", u.Name, this.LeaveType, Utility.formatDate(StartDate), Utility.formatDate(EndDate), Utility.nl2br(Comment));
+               Please <a href='https://{0}?LEAVE=true'>login to CAPS </a> to respond to this request.
+            ", u.Name, this.LeaveType, Utility.formatDate(StartDate), Utility.formatDate(EndDate), Utility.nl2br(Comment),
+            G.BaseURL);
 
         Email.sendMail(szTo, u.Email, "Leave request reminder", szEmail, LogObjectID: intID, Type: EmailType.Reminder);
     }

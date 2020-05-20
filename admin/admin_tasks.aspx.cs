@@ -101,5 +101,9 @@ namespace PAYMAKER {
             G.TimeSheetCycleReferences.forceReload();
             G.UserDelegateInfo.forceReload();
         }
+
+        protected void btnImportSales_Click(object sender, EventArgs e) {
+            Sale.processBDImports(Convert.ToInt32(txtBnDID.Text));
+        }
     }
 }
