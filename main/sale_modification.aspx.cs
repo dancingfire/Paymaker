@@ -15,7 +15,7 @@ public partial class sale_modification : Root {
         string szSQL = String.Format(@"
             SELECT DATENAME(m, P.STARTDATE) AS PAYPERIOD, S.*, ISNULL(S.PAYPERIODID, -1) AS SAFEPAYPERIODID
             FROM SALE S LEFT JOIN PAYPERIOD P ON S.PAYPERIODID = P.ID
-            WHERE CODE LIKE '%{0}%'", DB.escape(txtPropertyFilter.Text));
+            WHERE CODE LIKE '%{0}%' or address like '%{0}%'", DB.escape(txtPropertyFilter.Text));
         DataSet ds = DB.runDataSet(szSQL);
         gvSales.DataSource = ds;
         gvSales.DataBind();

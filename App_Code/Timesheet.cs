@@ -590,6 +590,7 @@ public class TimesheetCycle {
     /// Emails staff who have not yet submitted
     /// </summary>
     public void emailTimesheetStaff(bool TestOnly = false) {
+
         using (DataSet ds = DB.runDataSet(outstandingTimesheetSQL(TestMode: true))) {
             foreach (DataRow dr in ds.Tables[0].Rows) {
                 string szEmail = DB.readString(dr["USER_EMAIL"]);
@@ -598,9 +599,9 @@ public class TimesheetCycle {
                     continue;
                 string szMsg = string.Format(@"
                     <p>Good morning</p>
-                    <p>Your fortnightly timesheet is ready, please click <a href='https://commission.fletchers.net.au/'>here</a> and submit your hours.  Timesheets must be completed by Wednesday 12pm.</p>
+                    <p>Your fortnightly timesheet is ready, please click <a href='https://{0}/'>here</a> and submit your hours.  Timesheets must be completed by Wednesday 12pm.</p>
                     <p>Please remember if you are going on annual leave to prefill out your timesheet so you don’t miss out on your pay.</p>
-                    <p>Thanks</p>");
+                    <p>Thanks</p>", G.BaseURL);
                 if (!TestOnly) {
                     Email.sendMail(szEmail, "do-not-reply@fletchers.net.au", "Fortnightly timesheet", szMsg, "", LogObjectID: DB.readInt(dr["OUTSTANDING"]));
                 } else {
@@ -625,10 +626,10 @@ public class TimesheetCycle {
                     continue;
                 string szMsg = string.Format(@"
                     <p>Good morning</p>
-                    <p>This is your final reminder to fill out your timesheet, please click <a href='https://commission.fletchers.net.au/'>here</a>.</p>
+                    <p>This is your final reminder to fill out your timesheet, please click <a href='https://{0}/'>here</a>.</p>
                     <p>Your timesheet needs to be completed by midday today.</p>
                     <p>Remember - policy is, NO timesheet NO Pay.</p>
-                    <p>Thanks</p>");
+                    <p>Thanks</p>", G.BaseURL);
 
                 Email.sendMail(szEmail, "do-not-reply@fletchers.net.au", "Timesheet outstanding", szMsg, "", LogObjectID: DB.readInt(dr["OUTSTANDING"]));
             }

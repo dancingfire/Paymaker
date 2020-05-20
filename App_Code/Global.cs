@@ -60,6 +60,9 @@ public class G {
         }
     }
 
+    public static string BaseURL {
+        get { return  HttpContext.Current.Request.Url.Host; }
+    }
     /// <summary>
     /// Pay period indo
     /// </summary>

@@ -41,6 +41,11 @@
             <asp:Label ID="Label6" runat="server" Width="250px" Text="Test the timesheet email" CssClass="LabelPos"></asp:Label>
             <asp:Button ID="Button3" CssClass="Button" runat="server" Width="150px" Text="Test email"  OnClick="btnTestTimesheet_Click" />
         </asp:Panel>
+        <asp:Panel ID="Panel5" runat="server" CssClass="DBAction">
+            <asp:Label ID="Label5" runat="server" Width="250px" Text="Import B&D Sales Listing" CssClass="LabelPos"></asp:Label>
+            <asp:TextBox ID="txtBnDID" runat="server" />
+            <asp:Button ID="btnImportSales" CssClass="Button" runat="server" Width="150px" Text="Import sales listing"  OnClick="btnImportSales_Click"  />
+        </asp:Panel>
 
         <asp:Panel ID="Panel1" runat="server" CssClass="DBAction">
             <asp:Label ID="Label1" runat="server" Width="250px" Text="Recalculate single agent pays" CssClass="LabelPos"></asp:Label>
