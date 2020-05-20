@@ -13,7 +13,10 @@ public partial class logv2_detail : Root {
     protected void loadData() {
         string szSQL = "";
         string szWhere = "";
-        if(txtSearch.Text != "") {
+        if (Utility.IsNumeric(txtSearch.Text)) {
+            szWhere = " WHERE L.OBJECTID = " + DB.escape(txtSearch.Text) + " ";
+        }
+        else if(txtSearch.Text != "") {
             szWhere = " WHERE L.VALUE LIKE '%" + DB.escape(txtSearch.Text) + "%' ";
         }
         szSQL = String.Format(@"
