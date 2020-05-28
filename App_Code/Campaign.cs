@@ -404,7 +404,7 @@ public class Campaign {
     }
 
     protected string getCampaignNumberFromPropertyName(string Name) {
-        if (String.IsNullOrEmpty(Name))
+        if (String.IsNullOrEmpty(Name) || !Name.Contains("["))
             return "";
         Name = Name.Substring(Name.LastIndexOf('[') + 1, 7);
         return Name;
@@ -672,13 +672,12 @@ public class CampaignImport {
     public static void performFullImport(bool OnlyLoadNew = false, bool OnlyUpdatePropertyDetails = false) {
         String CampaignTrackKeys = System.Configuration.ConfigurationManager.AppSettings["CampaignTrackKeys"];
         string[] arKeys = CampaignTrackKeys.Split('|');
-
-        CampaignImport oI = new CampaignImport(arKeys[1], arKeys[0]);
-        oI.performImport(OnlyLoadNew, OnlyUpdatePropertyDetails);
-        oI = null;
+        for (int i = 0; i < arKeys.Length; i += 2) {
+            CampaignImport oI = new CampaignImport(arKeys[i+1], arKeys[i]);
+            oI.performImport(OnlyLoadNew, OnlyUpdatePropertyDetails);
+            oI = null;
+        }
         HttpContext.Current.Response.Flush();
-
-        oI = null;
     }
 
     public static bool refreshProperty(Campaign oC) {
@@ -1940,8 +1939,8 @@ public class InvoiceProductList : List<InvoiceProduct> {
 public class CampaignDB {
 
     public static DataSet loadCampaignActions(int CurrUserID = -1) {
-        string szCampaignFilterSQL = @"
-            WHERE C.ISDELETED = 0  AND C.STATUSID != 100 AND C.OFFICEID = " + G.Settings.CampaignTrackOffice;
+        string szCampaignFilterSQL = String.Format(@"
+            WHERE C.ISDELETED = 0  AND C.STATUSID != 100 AND C.OFFICEID IN ({0}) ", G.Settings.CampaignTrackOffice);
         if (CurrUserID == -1) {
             //Make sure that there is a campaign note
             szCampaignFilterSQL += @" AND C.ID IN
@@ -2000,7 +1999,7 @@ public class CampaignDB {
     /// <param name="SearchText"></param>
     /// <returns></returns>
     public static DataView loadCampaignData(CampaignPageView PageMode, string CampaignFilter = "", string SearchText = "") {
-        string szCampaignFilterSQL = " WHERE C.ISDELETED = 0 AND C.OFFICEID = " + G.Settings.CampaignTrackOffice;
+        string szCampaignFilterSQL = String.Format(" WHERE C.ISDELETED = 0 AND C.OFFICEID IN({0}) ", G.Settings.CampaignTrackOffice);
         if (CampaignFilter != "")
             szCampaignFilterSQL += CampaignFilter;
         string szContributionFilterSQL = "";
@@ -2236,7 +2235,7 @@ public class CampaignDB {
     /// <param name="szCampaignFilterSQL"></param>
     /// <returns></returns>
     public static DataTable loadPrePaymentCampaignData(string szCampaignFilterSQL, string CompanyIDList, bool ShowMonthTotals, String szCurrentPeriodFilter = null) {
-        szCampaignFilterSQL += " AND C.OFFICEID = " + G.Settings.CampaignTrackOffice;
+        szCampaignFilterSQL += String.Format(" AND C.OFFICEID IN ({0}) ",  G.Settings.CampaignTrackOffice);
         string szCompanyFilter = "";
 
         // Creates the extra field [PERIOD] if szCurrentPeriodFilter has been given
@@ -2476,7 +2475,7 @@ public class CampaignDB {
     /// <param name="szCampaignFilterSQL"></param>
     /// <returns></returns>
     public static DataTable loadPrePaymentCampaignData(string szCampaignFilterSQL, string CompanyIDList, String szCurrentPeriodFilter = null, string szUserFilter = null) {
-        szCampaignFilterSQL += " AND C.OFFICEID = " + G.Settings.CampaignTrackOffice;
+        szCampaignFilterSQL += String.Format(" AND C.OFFICEID IN ({0})  ", G.Settings.CampaignTrackOffice);
         string szCompanyFilter = "";
 
         // Creates the extra field [PERIOD] if szCurrentPeriodFilter has been given
