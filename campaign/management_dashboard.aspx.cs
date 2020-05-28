@@ -113,7 +113,7 @@ public partial class management_dashboard : Root {
 
     private DataSet loadData() {
         string szCampaignFilterSQL = String.Format(@"
-                WHERE C.ISDELETED = 0 AND C.OFFICEID = {0}  AND C.STATUSID != {1}", G.Settings.CampaignTrackOffice, (int)CampaignStatus.Completed);
+                WHERE C.ISDELETED = 0 AND C.OFFICEID IN ({0})  AND C.STATUSID != {1}", G.Settings.CampaignTrackOffice, (int)CampaignStatus.Completed);
         string szContributionFilterSQL = "";
 
         string szSQL = String.Format(@"
