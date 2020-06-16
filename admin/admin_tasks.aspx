@@ -33,7 +33,7 @@
         <asp:Panel ID="pPageNotification" runat="server" Width="60%" Visible="false" CssClass="PageNotificationPanel"></asp:Panel>
 
         <asp:Panel ID="Panel2" runat="server" CssClass="DBAction">
-            <asp:Label ID="Label2" runat="server" Width="250px" Text="Update graph totals from Jul 2014 onwards" CssClass="LabelPos"></asp:Label>
+            <asp:Label ID="Label2" runat="server" Width="250px" Text="Update graph totals from Jan 2020 onwards" CssClass="LabelPos"></asp:Label>
             <asp:Button ID="btnUpdateGraphTotals" CssClass="Button" runat="server" Width="150px" Text="Update totals" OnClientClick="showWait('Updating totals...');" OnClick="btnUpdateGraphTotals_Click" />
         </asp:Panel>
        
