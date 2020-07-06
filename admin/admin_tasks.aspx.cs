@@ -16,7 +16,7 @@ namespace PAYMAKER {
             string szSQL = @"
                 SELECT ID
                 FROM SALE S
-                WHERE S.SALEDATE >= 'JUL 1, 2014'";
+                WHERE S.SALEDATE >= 'Jan 1, 2020'";
             using (DataSet ds = DB.runDataSet(szSQL)) {
                 foreach (DataRow dr in ds.Tables[0].Rows) {
                     Sale oS = new Sale(DB.readInt(dr["ID"]));
