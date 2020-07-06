@@ -29,13 +29,13 @@ namespace Paymaker {
                 rViewer.ShowPageNavigationControls = true;
                 //rViewer.LocalReport.Refresh();
 
-                byte[] bFile = rViewer.LocalReport.Render("EXCEL");
+                byte[] bFile = rViewer.LocalReport.Render("EXCELOPENXML");
 
                 Response.ClearHeaders();
                 //Changed from text/html to /xml
                 Response.ContentType = "text/xls";
                 Response.OutputStream.Write(bFile, 0, bFile.Length);
-                Response.AddHeader("Content-Disposition", string.Format("attachment;filename=payroll_summary.xls"));
+                Response.AddHeader("Content-Disposition", string.Format("attachment;filename=payroll_summary.xlsx"));
                 Response.End();
             }
         }
