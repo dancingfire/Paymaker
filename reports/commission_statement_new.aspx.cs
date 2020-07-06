@@ -127,9 +127,11 @@ namespace Paymaker {
             if (UserTotals.UseRetainer)
                 TotalAfterSuper = UserTotals.RetainerAmount;
             if (TotalAfterSuper >= 0) {
-                double Super = TotalAfterSuper * 0.095;
-                if (Super > 1750.2)
-                    Super = 1750.2;
+                //Note: Caclulation changed after specific request from JL on Jul 6
+                double Super = TotalAfterSuper - (TotalAfterSuper / (1 +  (G.Settings.SuperannuationPercentage/100)));
+                double MaxSuperPerMonth = G.Settings.SuperannuationMaxContribution;            
+                if (Super > MaxSuperPerMonth)
+                    Super = MaxSuperPerMonth;
                 UserTotals.SuperAmount = Super;
                 if (Valid.getText("RecalcTotals", "No").ToUpper() == "YES") {
                     DB.runNonQuery(String.Format("UPDATE USERPAYPERIOD SET SUPERPAID = {0} WHERE ID = {1}", Super, UserTotals.DBID));

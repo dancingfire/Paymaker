@@ -26,11 +26,11 @@
             <asp:TextBox ID="txtRetainerAmount" runat="server" CssClass="Entry EntryPos number required"></asp:TextBox>
             <br class='Align' />
 
-            <asp:Label ID="Label1" runat="server" CssClass="Label LabelPos" Text="Super annuation percentage" Style="width: 200px" ToolTip="The percentage that comes off the agent's pay for superannuation"></asp:Label>
+            <asp:Label ID="Label1" runat="server" CssClass="Label LabelPos" Text="Superannuation percentage" Style="width: 200px" ToolTip="The percentage that comes off the agent's pay for superannuation"></asp:Label>
             <asp:TextBox ID="txtSuperPercentage" runat="server" CssClass="Entry EntryPos number required"></asp:TextBox>
             <br class='Align' />
 
-            <asp:Label ID="Label2" runat="server" CssClass="Label LabelPos" Text="Super maximum" Style="width: 200px" ToolTip="The maximum annual amount that can be contributed to super "></asp:Label>
+            <asp:Label ID="Label2" runat="server" CssClass="Label LabelPos" Text="Super maximum (monthly)" Style="width: 200px" ToolTip="The maximum annual amount that can be contributed to super in a month"></asp:Label>
             <asp:TextBox ID="txtSuperMax" runat="server" CssClass="Entry EntryPos number required"></asp:TextBox>
             <br class='Align' />
 

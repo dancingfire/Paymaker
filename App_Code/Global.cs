@@ -633,7 +633,7 @@ public class G {
         /// </summary>
         public static double SuperannuationMaxContribution {
             get {
-                return checkSessionVar("SUPERANNUATIONMAX", 9.25);
+                return checkSessionVar("SUPERANNUATIONMAX", 1807.85);
             }
         }
 
