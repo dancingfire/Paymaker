@@ -41,6 +41,7 @@
           <s:element minOccurs="0" maxOccurs="1" name="VendorName" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="VendorFirstName" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="VendorLastName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="VendorCompany" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="VendorTitle" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="VendorEmail" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="VendorPhone" type="s:string" />
@@ -54,6 +55,7 @@
           <s:element minOccurs="0" maxOccurs="1" name="VendorState" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="VendorPostcode" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="PropertyType" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="PropertyStatus" nillable="true" type="s:int" />
           <s:element minOccurs="0" maxOccurs="1" name="CampaignType" type="s:string" />
           <s:element minOccurs="1" maxOccurs="1" name="AuctionDate" type="s:dateTime" />
           <s:element minOccurs="0" maxOccurs="1" name="AuctionVenue" type="s:string" />
@@ -87,6 +89,8 @@
           <s:element minOccurs="0" maxOccurs="1" name="InternetCopy" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="OtherHeading" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="OtherCopy" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="SocMediaHeading" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="SocMediaCopy" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="ExtraHeading" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="ExtraLifestyle" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="ExtraAccommodation" type="s:string" />
@@ -143,6 +147,56 @@
           <s:element minOccurs="0" maxOccurs="1" name="LocationType" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="EER" type="s:string" />
           <s:element minOccurs="1" maxOccurs="1" name="OpenSpaces" nillable="true" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Zone" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="RentBond" nillable="true" type="s:decimal" />
+          <s:element minOccurs="1" maxOccurs="1" name="RentAvailability" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="StatementOfInformation" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="UnderOffer" nillable="true" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="Harcourts" nillable="true" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="LandmarkHarcourts" nillable="true" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="NAIHarcourts" nillable="true" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="LotNo" nillable="true" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="ExtraInternalSize" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ExtraAgeOfProperty" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ExtraRenovationHistory" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ExtraLastSold" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ExtraRentalPotential" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ExtraNoOfHomeInStreet" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ExtraNumOfApartments" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ExtraNearbyTransport" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ExtraNearbySchool" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ExtraBuildingFacilities" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ExtraStrataCompany" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ExtraAdditionalInformation" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="InternalPropertyRef" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="GrossRentPerWeek" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="InternalSize" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Cooling" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Vendors" type="tns:ArrayOfVendor" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfVendor">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Vendor" nillable="true" type="tns:Vendor" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Vendor">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="VendorFirstName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="VendorLastName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="VendorCompany" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="VendorTitle" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="VendorEmail" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="VendorPhone" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="VendorHomePhone" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="VendorFax" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="VendorMobile" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="VendorAddress" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="VendorStreetAddress" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="VendorStreet" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="VendorSuburb" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="VendorState" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="VendorPostcode" type="s:string" />
         </s:sequence>
       </s:complexType>
       <s:element name="CheckPropertyDetailByPropertyNo">
@@ -204,57 +258,6 @@
           <s:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="s:string" />
         </s:sequence>
       </s:complexType>
-      <s:element name="PropertyDetails">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="WebServiceKey" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="PropertyRef" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="OfficeRef" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="PropertyName" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="StreetAddress" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="Street" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="Suburb" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="AgentUserRef" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="CoAgentUserRef" type="s:string" />
-            <s:element minOccurs="1" maxOccurs="1" name="SoleAgencyExpires" type="s:dateTime" />
-            <s:element minOccurs="0" maxOccurs="1" name="VendorName" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="VendorEmail" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="VendorPhone" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="VendorFax" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="VendorMobile" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="VendorAddress" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="PropertyType" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="CampaignType" type="s:string" />
-            <s:element minOccurs="1" maxOccurs="1" name="AuctionDate" type="s:dateTime" />
-            <s:element minOccurs="0" maxOccurs="1" name="AuctionVenue" type="s:string" />
-            <s:element minOccurs="1" maxOccurs="1" name="Bedrooms" type="s:decimal" />
-            <s:element minOccurs="1" maxOccurs="1" name="Bathrooms" type="s:decimal" />
-            <s:element minOccurs="1" maxOccurs="1" name="Lounge" type="s:decimal" />
-            <s:element minOccurs="1" maxOccurs="1" name="Diningroom" type="s:decimal" />
-            <s:element minOccurs="1" maxOccurs="1" name="Study" type="s:decimal" />
-            <s:element minOccurs="1" maxOccurs="1" name="Carpark" type="s:decimal" />
-            <s:element minOccurs="1" maxOccurs="1" name="Carport" type="s:decimal" />
-            <s:element minOccurs="1" maxOccurs="1" name="Garage" type="s:decimal" />
-            <s:element minOccurs="1" maxOccurs="1" name="Tenniscourt" type="s:decimal" />
-            <s:element minOccurs="1" maxOccurs="1" name="SwimmingPool" type="s:decimal" />
-            <s:element minOccurs="0" maxOccurs="1" name="StrataRate" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="CouncilRate" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="AdHeadline" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="AdBody" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="BuildingType" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="BuildingArea" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="Features" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="Price" type="s:string" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="PropertyDetailsResponse">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="1" maxOccurs="1" name="PropertyDetailsResult" type="s:int" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
       <s:element name="PropertyDetailsByObject">
         <s:complexType>
           <s:sequence>
@@ -270,18 +273,23 @@
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:element name="AllDetails">
+      <s:element name="AllDetailsMultiAgent">
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="0" maxOccurs="1" name="WebServiceKey" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="agentDetails" type="tns:CampaignTrackUser" />
+            <s:element minOccurs="0" maxOccurs="1" name="agentDetails" type="tns:ArrayOfCampaignTrackUser" />
             <s:element minOccurs="0" maxOccurs="1" name="propertyDetails" type="tns:CampaignTrackProperty" />
             <s:element minOccurs="0" maxOccurs="1" name="propertyOFIs" type="tns:ArrayOfCampaignTrackOFI" />
-            <s:element minOccurs="0" maxOccurs="1" name="agentImage" type="tns:CampaignTrackAgentImageDownload" />
+            <s:element minOccurs="0" maxOccurs="1" name="agentImages" type="tns:ArrayOfCampaignTrackAgentImageDownload" />
             <s:element minOccurs="0" maxOccurs="1" name="propertyImages" type="tns:ArrayOfCampaignTrackPropertyImageDownload" />
           </s:sequence>
         </s:complexType>
       </s:element>
+      <s:complexType name="ArrayOfCampaignTrackUser">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="CampaignTrackUser" nillable="true" type="tns:CampaignTrackUser" />
+        </s:sequence>
+      </s:complexType>
       <s:complexType name="CampaignTrackUser">
         <s:sequence>
           <s:element minOccurs="0" maxOccurs="1" name="Username" type="s:string" />
@@ -301,6 +309,8 @@
           <s:element minOccurs="0" maxOccurs="1" name="Facebook" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="Twitter" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="AgentSite" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="AccountingCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="SpecialtySuburbs" type="s:string" />
         </s:sequence>
       </s:complexType>
       <s:complexType name="ArrayOfCampaignTrackOFI">
@@ -315,6 +325,11 @@
           <s:element minOccurs="0" maxOccurs="1" name="PropertyRef" type="s:string" />
           <s:element minOccurs="1" maxOccurs="1" name="StartTime" type="s:dateTime" />
           <s:element minOccurs="1" maxOccurs="1" name="EndTime" type="s:dateTime" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfCampaignTrackAgentImageDownload">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="CampaignTrackAgentImageDownload" nillable="true" type="tns:CampaignTrackAgentImageDownload" />
         </s:sequence>
       </s:complexType>
       <s:complexType name="CampaignTrackAgentImageDownload">
@@ -339,35 +354,7 @@
           <s:element minOccurs="1" maxOccurs="1" name="ImageOrder" type="s:int" />
           <s:element minOccurs="1" maxOccurs="1" name="ModDate" type="s:dateTime" />
           <s:element minOccurs="0" maxOccurs="1" name="ImageType" type="s:string" />
-        </s:sequence>
-      </s:complexType>
-      <s:element name="AllDetailsResponse">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="1" maxOccurs="1" name="AllDetailsResult" type="s:int" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="AllDetailsMultiAgent">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="WebServiceKey" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="agentDetails" type="tns:ArrayOfCampaignTrackUser" />
-            <s:element minOccurs="0" maxOccurs="1" name="propertyDetails" type="tns:CampaignTrackProperty" />
-            <s:element minOccurs="0" maxOccurs="1" name="propertyOFIs" type="tns:ArrayOfCampaignTrackOFI" />
-            <s:element minOccurs="0" maxOccurs="1" name="agentImages" type="tns:ArrayOfCampaignTrackAgentImageDownload" />
-            <s:element minOccurs="0" maxOccurs="1" name="propertyImages" type="tns:ArrayOfCampaignTrackPropertyImageDownload" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:complexType name="ArrayOfCampaignTrackUser">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="unbounded" name="CampaignTrackUser" nillable="true" type="tns:CampaignTrackUser" />
-        </s:sequence>
-      </s:complexType>
-      <s:complexType name="ArrayOfCampaignTrackAgentImageDownload">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="unbounded" name="CampaignTrackAgentImageDownload" nillable="true" type="tns:CampaignTrackAgentImageDownload" />
+          <s:element minOccurs="0" maxOccurs="1" name="ImageCaption" type="s:string" />
         </s:sequence>
       </s:complexType>
       <s:element name="AllDetailsMultiAgentResponse">
@@ -404,25 +391,6 @@
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="1" maxOccurs="1" name="DownloadPropertyImagesResult" type="s:int" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="AdvAllDetailsMultiAgent">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="WebServiceKey" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="agentDetails" type="tns:ArrayOfCampaignTrackUser" />
-            <s:element minOccurs="0" maxOccurs="1" name="propertyDetails" type="tns:CampaignTrackProperty" />
-            <s:element minOccurs="0" maxOccurs="1" name="propertyOFIs" type="tns:ArrayOfCampaignTrackOFI" />
-            <s:element minOccurs="0" maxOccurs="1" name="agentImages" type="tns:ArrayOfCampaignTrackAgentImageDownload" />
-            <s:element minOccurs="0" maxOccurs="1" name="propertyImages" type="tns:ArrayOfCampaignTrackPropertyImageDownload" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="AdvAllDetailsMultiAgentResponse">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="1" maxOccurs="1" name="AdvAllDetailsMultiAgentResult" type="s:int" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -577,6 +545,23 @@
           </s:sequence>
         </s:complexType>
       </s:element>
+      <s:element name="PropertyQRCodeListonce">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="WebServiceKey" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ListOnceID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ImageRef" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ImageUrl" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="PropertyQRCodeListonceResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="PropertyQRCodeListonceResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
       <s:element name="SetPropertyWebsiteURL">
         <s:complexType>
           <s:sequence>
@@ -590,6 +575,23 @@
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="1" maxOccurs="1" name="SetPropertyWebsiteURLResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetIndividualPropertyField">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="WebServiceKey" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="PropertyRef" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="FieldName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="FieldValue" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetIndividualPropertyFieldResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="SetIndividualPropertyFieldResult" type="s:int" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -800,6 +802,9 @@
           <s:element minOccurs="0" maxOccurs="1" name="RLACode" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="WebServiceKey" type="s:string" />
           <s:element minOccurs="1" maxOccurs="1" name="LuxuryPropertySubscription" nillable="true" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="Harcourts" nillable="true" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="LandmarkHarcourts" nillable="true" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="NAIHarcourts" nillable="true" type="s:boolean" />
         </s:sequence>
       </s:complexType>
       <s:element name="CheckPropertyAdvertisingOfficeDetails">
@@ -1346,6 +1351,24 @@
           </s:sequence>
         </s:complexType>
       </s:element>
+      <s:element name="UploadArtwork">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="WebServiceKey" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="OfficeRef" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="OrderNo" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="ItemNo" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="ArtworkURL" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UploadArtworkResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="UploadArtworkResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
       <s:element name="GetQuotes">
         <s:complexType>
           <s:sequence>
@@ -1412,6 +1435,11 @@
           <s:element minOccurs="1" maxOccurs="1" name="ActualPrice" type="s:decimal" />
           <s:element minOccurs="0" maxOccurs="1" name="InvoiceNo" type="s:string" />
           <s:element minOccurs="1" maxOccurs="1" name="Deleted" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="Notes" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Billable" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="DateConfirmed" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DiscountFunder" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="DiscountFunderID" type="s:int" />
         </s:sequence>
       </s:complexType>
       <s:element name="GetCampaignItems">
@@ -1687,6 +1715,148 @@
           </s:sequence>
         </s:complexType>
       </s:element>
+      <s:element name="GetSuppliersByOfficeRef">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="WebServiceKey" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="OfficeRef" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="ErrorCode" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetSuppliersByOfficeRefResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetSuppliersByOfficeRefResult" type="tns:ArrayOfCampaignTrackSuppliers" />
+            <s:element minOccurs="1" maxOccurs="1" name="ErrorCode" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfCampaignTrackSuppliers">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="CampaignTrackSuppliers" nillable="true" type="tns:CampaignTrackSuppliers" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="CampaignTrackSuppliers">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="SupplierNo" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="SupplierName" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetProductsBySupplierNo">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="WebServiceKey" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="SupplierNo" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="ErrorCode" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetProductsBySupplierNoResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetProductsBySupplierNoResult" type="tns:ArrayOfCampaignTrackProducts" />
+            <s:element minOccurs="1" maxOccurs="1" name="ErrorCode" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfCampaignTrackProducts">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="CampaignTrackProducts" nillable="true" type="tns:CampaignTrackProducts" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="CampaignTrackProducts">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="ProductNo" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="ProductName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="CategoryType" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="SubCategoryType" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetPartsByProductNo">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="WebServiceKey" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="ProductNo" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="ErrorCode" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetPartsByProductNoResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetPartsByProductNoResult" type="tns:ArrayOfCampaignTrackProductParts" />
+            <s:element minOccurs="1" maxOccurs="1" name="ErrorCode" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfCampaignTrackProductParts">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="CampaignTrackProductParts" nillable="true" type="tns:CampaignTrackProductParts" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="CampaignTrackProductParts">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="PartNo" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="PartGroup" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PartName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="SupplierRef" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetPropertyCopyByPropertyRef">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="WebServiceKey" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="PropertyRef" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="ErrorCode" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetPropertyCopyByPropertyRefResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetPropertyCopyByPropertyRefResult" type="tns:CampaignTrackPropertyCopy" />
+            <s:element minOccurs="1" maxOccurs="1" name="ErrorCode" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="CampaignTrackPropertyCopy">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="CopyHeadline" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="CopyMain" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="CopyItems" type="tns:ArrayOfCampaignTrackPropertyCopyItem" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfCampaignTrackPropertyCopyItem">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="CampaignTrackPropertyCopyItem" nillable="true" type="tns:CampaignTrackPropertyCopyItem" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="CampaignTrackPropertyCopyItem">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="SortOrder" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="WebCopy" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="PropertyImageByOrderItem">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="WebServiceKey" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="OrderNo" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="ItemNo" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="ImageRef" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ImageUrl" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="ImageOrder" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="PropertyImageByOrderItemResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="PropertyImageByOrderItemResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
       <s:element name="int" type="s:int" />
       <s:element name="ArrayOfPropertyTask" nillable="true" type="tns:ArrayOfPropertyTask" />
       <s:element name="getCampaignCostingReturn" nillable="true" type="tns:getCampaignCostingReturn" />
@@ -1716,23 +1886,11 @@
   <wsdl:message name="GetModifiedPropertiesSoapOut">
     <wsdl:part name="parameters" element="tns:GetModifiedPropertiesResponse" />
   </wsdl:message>
-  <wsdl:message name="PropertyDetailsSoapIn">
-    <wsdl:part name="parameters" element="tns:PropertyDetails" />
-  </wsdl:message>
-  <wsdl:message name="PropertyDetailsSoapOut">
-    <wsdl:part name="parameters" element="tns:PropertyDetailsResponse" />
-  </wsdl:message>
   <wsdl:message name="PropertyDetailsByObjectSoapIn">
     <wsdl:part name="parameters" element="tns:PropertyDetailsByObject" />
   </wsdl:message>
   <wsdl:message name="PropertyDetailsByObjectSoapOut">
     <wsdl:part name="parameters" element="tns:PropertyDetailsByObjectResponse" />
-  </wsdl:message>
-  <wsdl:message name="AllDetailsSoapIn">
-    <wsdl:part name="parameters" element="tns:AllDetails" />
-  </wsdl:message>
-  <wsdl:message name="AllDetailsSoapOut">
-    <wsdl:part name="parameters" element="tns:AllDetailsResponse" />
   </wsdl:message>
   <wsdl:message name="AllDetailsMultiAgentSoapIn">
     <wsdl:part name="parameters" element="tns:AllDetailsMultiAgent" />
@@ -1751,12 +1909,6 @@
   </wsdl:message>
   <wsdl:message name="DownloadPropertyImagesSoapOut">
     <wsdl:part name="parameters" element="tns:DownloadPropertyImagesResponse" />
-  </wsdl:message>
-  <wsdl:message name="AdvAllDetailsMultiAgentSoapIn">
-    <wsdl:part name="parameters" element="tns:AdvAllDetailsMultiAgent" />
-  </wsdl:message>
-  <wsdl:message name="AdvAllDetailsMultiAgentSoapOut">
-    <wsdl:part name="parameters" element="tns:AdvAllDetailsMultiAgentResponse" />
   </wsdl:message>
   <wsdl:message name="OrderItemImageDownloadSoapIn">
     <wsdl:part name="parameters" element="tns:OrderItemImageDownload" />
@@ -1806,11 +1958,23 @@
   <wsdl:message name="PropertyQRCodeSoapOut">
     <wsdl:part name="parameters" element="tns:PropertyQRCodeResponse" />
   </wsdl:message>
+  <wsdl:message name="PropertyQRCodeListonceSoapIn">
+    <wsdl:part name="parameters" element="tns:PropertyQRCodeListonce" />
+  </wsdl:message>
+  <wsdl:message name="PropertyQRCodeListonceSoapOut">
+    <wsdl:part name="parameters" element="tns:PropertyQRCodeListonceResponse" />
+  </wsdl:message>
   <wsdl:message name="SetPropertyWebsiteURLSoapIn">
     <wsdl:part name="parameters" element="tns:SetPropertyWebsiteURL" />
   </wsdl:message>
   <wsdl:message name="SetPropertyWebsiteURLSoapOut">
     <wsdl:part name="parameters" element="tns:SetPropertyWebsiteURLResponse" />
+  </wsdl:message>
+  <wsdl:message name="SetIndividualPropertyFieldSoapIn">
+    <wsdl:part name="parameters" element="tns:SetIndividualPropertyField" />
+  </wsdl:message>
+  <wsdl:message name="SetIndividualPropertyFieldSoapOut">
+    <wsdl:part name="parameters" element="tns:SetIndividualPropertyFieldResponse" />
   </wsdl:message>
   <wsdl:message name="DeleteImageSoapIn">
     <wsdl:part name="parameters" element="tns:DeleteImage" />
@@ -1986,6 +2150,12 @@
   <wsdl:message name="CheckPropertyImageDetailsByUserSoapOut">
     <wsdl:part name="parameters" element="tns:CheckPropertyImageDetailsByUserResponse" />
   </wsdl:message>
+  <wsdl:message name="UploadArtworkSoapIn">
+    <wsdl:part name="parameters" element="tns:UploadArtwork" />
+  </wsdl:message>
+  <wsdl:message name="UploadArtworkSoapOut">
+    <wsdl:part name="parameters" element="tns:UploadArtworkResponse" />
+  </wsdl:message>
   <wsdl:message name="GetQuotesSoapIn">
     <wsdl:part name="parameters" element="tns:GetQuotes" />
   </wsdl:message>
@@ -2070,48 +2240,35 @@
   <wsdl:message name="RemoveAssistantSoapOut">
     <wsdl:part name="parameters" element="tns:RemoveAssistantResponse" />
   </wsdl:message>
-  <wsdl:message name="PropertyDetailsHttpGetIn">
-    <wsdl:part name="WebServiceKey" type="s:string" />
-    <wsdl:part name="PropertyRef" type="s:string" />
-    <wsdl:part name="OfficeRef" type="s:string" />
-    <wsdl:part name="PropertyName" type="s:string" />
-    <wsdl:part name="StreetAddress" type="s:string" />
-    <wsdl:part name="Street" type="s:string" />
-    <wsdl:part name="Suburb" type="s:string" />
-    <wsdl:part name="AgentUserRef" type="s:string" />
-    <wsdl:part name="CoAgentUserRef" type="s:string" />
-    <wsdl:part name="SoleAgencyExpires" type="s:string" />
-    <wsdl:part name="VendorName" type="s:string" />
-    <wsdl:part name="VendorEmail" type="s:string" />
-    <wsdl:part name="VendorPhone" type="s:string" />
-    <wsdl:part name="VendorFax" type="s:string" />
-    <wsdl:part name="VendorMobile" type="s:string" />
-    <wsdl:part name="VendorAddress" type="s:string" />
-    <wsdl:part name="PropertyType" type="s:string" />
-    <wsdl:part name="CampaignType" type="s:string" />
-    <wsdl:part name="AuctionDate" type="s:string" />
-    <wsdl:part name="AuctionVenue" type="s:string" />
-    <wsdl:part name="Bedrooms" type="s:string" />
-    <wsdl:part name="Bathrooms" type="s:string" />
-    <wsdl:part name="Lounge" type="s:string" />
-    <wsdl:part name="Diningroom" type="s:string" />
-    <wsdl:part name="Study" type="s:string" />
-    <wsdl:part name="Carpark" type="s:string" />
-    <wsdl:part name="Carport" type="s:string" />
-    <wsdl:part name="Garage" type="s:string" />
-    <wsdl:part name="Tenniscourt" type="s:string" />
-    <wsdl:part name="SwimmingPool" type="s:string" />
-    <wsdl:part name="StrataRate" type="s:string" />
-    <wsdl:part name="CouncilRate" type="s:string" />
-    <wsdl:part name="AdHeadline" type="s:string" />
-    <wsdl:part name="AdBody" type="s:string" />
-    <wsdl:part name="BuildingType" type="s:string" />
-    <wsdl:part name="BuildingArea" type="s:string" />
-    <wsdl:part name="Features" type="s:string" />
-    <wsdl:part name="Price" type="s:string" />
+  <wsdl:message name="GetSuppliersByOfficeRefSoapIn">
+    <wsdl:part name="parameters" element="tns:GetSuppliersByOfficeRef" />
   </wsdl:message>
-  <wsdl:message name="PropertyDetailsHttpGetOut">
-    <wsdl:part name="Body" element="tns:int" />
+  <wsdl:message name="GetSuppliersByOfficeRefSoapOut">
+    <wsdl:part name="parameters" element="tns:GetSuppliersByOfficeRefResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetProductsBySupplierNoSoapIn">
+    <wsdl:part name="parameters" element="tns:GetProductsBySupplierNo" />
+  </wsdl:message>
+  <wsdl:message name="GetProductsBySupplierNoSoapOut">
+    <wsdl:part name="parameters" element="tns:GetProductsBySupplierNoResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetPartsByProductNoSoapIn">
+    <wsdl:part name="parameters" element="tns:GetPartsByProductNo" />
+  </wsdl:message>
+  <wsdl:message name="GetPartsByProductNoSoapOut">
+    <wsdl:part name="parameters" element="tns:GetPartsByProductNoResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetPropertyCopyByPropertyRefSoapIn">
+    <wsdl:part name="parameters" element="tns:GetPropertyCopyByPropertyRef" />
+  </wsdl:message>
+  <wsdl:message name="GetPropertyCopyByPropertyRefSoapOut">
+    <wsdl:part name="parameters" element="tns:GetPropertyCopyByPropertyRefResponse" />
+  </wsdl:message>
+  <wsdl:message name="PropertyImageByOrderItemSoapIn">
+    <wsdl:part name="parameters" element="tns:PropertyImageByOrderItem" />
+  </wsdl:message>
+  <wsdl:message name="PropertyImageByOrderItemSoapOut">
+    <wsdl:part name="parameters" element="tns:PropertyImageByOrderItemResponse" />
   </wsdl:message>
   <wsdl:message name="RemovePropertyHttpGetIn">
     <wsdl:part name="WebServiceKey" type="s:string" />
@@ -2160,12 +2317,30 @@
   <wsdl:message name="PropertyQRCodeHttpGetOut">
     <wsdl:part name="Body" element="tns:int" />
   </wsdl:message>
+  <wsdl:message name="PropertyQRCodeListonceHttpGetIn">
+    <wsdl:part name="WebServiceKey" type="s:string" />
+    <wsdl:part name="ListOnceID" type="s:string" />
+    <wsdl:part name="ImageRef" type="s:string" />
+    <wsdl:part name="ImageUrl" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="PropertyQRCodeListonceHttpGetOut">
+    <wsdl:part name="Body" element="tns:int" />
+  </wsdl:message>
   <wsdl:message name="SetPropertyWebsiteURLHttpGetIn">
     <wsdl:part name="WebServiceKey" type="s:string" />
     <wsdl:part name="PropertyRef" type="s:string" />
     <wsdl:part name="WebsiteURL" type="s:string" />
   </wsdl:message>
   <wsdl:message name="SetPropertyWebsiteURLHttpGetOut">
+    <wsdl:part name="Body" element="tns:int" />
+  </wsdl:message>
+  <wsdl:message name="SetIndividualPropertyFieldHttpGetIn">
+    <wsdl:part name="WebServiceKey" type="s:string" />
+    <wsdl:part name="PropertyRef" type="s:string" />
+    <wsdl:part name="FieldName" type="s:string" />
+    <wsdl:part name="FieldValue" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="SetIndividualPropertyFieldHttpGetOut">
     <wsdl:part name="Body" element="tns:int" />
   </wsdl:message>
   <wsdl:message name="DeleteImageHttpGetIn">
@@ -2283,6 +2458,16 @@
   <wsdl:message name="ChangePasswordHttpGetOut">
     <wsdl:part name="Body" element="tns:int" />
   </wsdl:message>
+  <wsdl:message name="UploadArtworkHttpGetIn">
+    <wsdl:part name="WebServiceKey" type="s:string" />
+    <wsdl:part name="OfficeRef" type="s:string" />
+    <wsdl:part name="OrderNo" type="s:string" />
+    <wsdl:part name="ItemNo" type="s:string" />
+    <wsdl:part name="ArtworkURL" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="UploadArtworkHttpGetOut">
+    <wsdl:part name="Body" element="tns:int" />
+  </wsdl:message>
   <wsdl:message name="OverwriteVendorPriceHttpGetIn">
     <wsdl:part name="webServiceKey" type="s:string" />
     <wsdl:part name="itemId" type="s:string" />
@@ -2349,47 +2534,15 @@
   <wsdl:message name="RemoveAssistantHttpGetOut">
     <wsdl:part name="Body" element="tns:int" />
   </wsdl:message>
-  <wsdl:message name="PropertyDetailsHttpPostIn">
+  <wsdl:message name="PropertyImageByOrderItemHttpGetIn">
     <wsdl:part name="WebServiceKey" type="s:string" />
-    <wsdl:part name="PropertyRef" type="s:string" />
-    <wsdl:part name="OfficeRef" type="s:string" />
-    <wsdl:part name="PropertyName" type="s:string" />
-    <wsdl:part name="StreetAddress" type="s:string" />
-    <wsdl:part name="Street" type="s:string" />
-    <wsdl:part name="Suburb" type="s:string" />
-    <wsdl:part name="AgentUserRef" type="s:string" />
-    <wsdl:part name="CoAgentUserRef" type="s:string" />
-    <wsdl:part name="SoleAgencyExpires" type="s:string" />
-    <wsdl:part name="VendorName" type="s:string" />
-    <wsdl:part name="VendorEmail" type="s:string" />
-    <wsdl:part name="VendorPhone" type="s:string" />
-    <wsdl:part name="VendorFax" type="s:string" />
-    <wsdl:part name="VendorMobile" type="s:string" />
-    <wsdl:part name="VendorAddress" type="s:string" />
-    <wsdl:part name="PropertyType" type="s:string" />
-    <wsdl:part name="CampaignType" type="s:string" />
-    <wsdl:part name="AuctionDate" type="s:string" />
-    <wsdl:part name="AuctionVenue" type="s:string" />
-    <wsdl:part name="Bedrooms" type="s:string" />
-    <wsdl:part name="Bathrooms" type="s:string" />
-    <wsdl:part name="Lounge" type="s:string" />
-    <wsdl:part name="Diningroom" type="s:string" />
-    <wsdl:part name="Study" type="s:string" />
-    <wsdl:part name="Carpark" type="s:string" />
-    <wsdl:part name="Carport" type="s:string" />
-    <wsdl:part name="Garage" type="s:string" />
-    <wsdl:part name="Tenniscourt" type="s:string" />
-    <wsdl:part name="SwimmingPool" type="s:string" />
-    <wsdl:part name="StrataRate" type="s:string" />
-    <wsdl:part name="CouncilRate" type="s:string" />
-    <wsdl:part name="AdHeadline" type="s:string" />
-    <wsdl:part name="AdBody" type="s:string" />
-    <wsdl:part name="BuildingType" type="s:string" />
-    <wsdl:part name="BuildingArea" type="s:string" />
-    <wsdl:part name="Features" type="s:string" />
-    <wsdl:part name="Price" type="s:string" />
+    <wsdl:part name="OrderNo" type="s:string" />
+    <wsdl:part name="ItemNo" type="s:string" />
+    <wsdl:part name="ImageRef" type="s:string" />
+    <wsdl:part name="ImageUrl" type="s:string" />
+    <wsdl:part name="ImageOrder" type="s:string" />
   </wsdl:message>
-  <wsdl:message name="PropertyDetailsHttpPostOut">
+  <wsdl:message name="PropertyImageByOrderItemHttpGetOut">
     <wsdl:part name="Body" element="tns:int" />
   </wsdl:message>
   <wsdl:message name="RemovePropertyHttpPostIn">
@@ -2439,12 +2592,30 @@
   <wsdl:message name="PropertyQRCodeHttpPostOut">
     <wsdl:part name="Body" element="tns:int" />
   </wsdl:message>
+  <wsdl:message name="PropertyQRCodeListonceHttpPostIn">
+    <wsdl:part name="WebServiceKey" type="s:string" />
+    <wsdl:part name="ListOnceID" type="s:string" />
+    <wsdl:part name="ImageRef" type="s:string" />
+    <wsdl:part name="ImageUrl" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="PropertyQRCodeListonceHttpPostOut">
+    <wsdl:part name="Body" element="tns:int" />
+  </wsdl:message>
   <wsdl:message name="SetPropertyWebsiteURLHttpPostIn">
     <wsdl:part name="WebServiceKey" type="s:string" />
     <wsdl:part name="PropertyRef" type="s:string" />
     <wsdl:part name="WebsiteURL" type="s:string" />
   </wsdl:message>
   <wsdl:message name="SetPropertyWebsiteURLHttpPostOut">
+    <wsdl:part name="Body" element="tns:int" />
+  </wsdl:message>
+  <wsdl:message name="SetIndividualPropertyFieldHttpPostIn">
+    <wsdl:part name="WebServiceKey" type="s:string" />
+    <wsdl:part name="PropertyRef" type="s:string" />
+    <wsdl:part name="FieldName" type="s:string" />
+    <wsdl:part name="FieldValue" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="SetIndividualPropertyFieldHttpPostOut">
     <wsdl:part name="Body" element="tns:int" />
   </wsdl:message>
   <wsdl:message name="DeleteImageHttpPostIn">
@@ -2562,6 +2733,16 @@
   <wsdl:message name="ChangePasswordHttpPostOut">
     <wsdl:part name="Body" element="tns:int" />
   </wsdl:message>
+  <wsdl:message name="UploadArtworkHttpPostIn">
+    <wsdl:part name="WebServiceKey" type="s:string" />
+    <wsdl:part name="OfficeRef" type="s:string" />
+    <wsdl:part name="OrderNo" type="s:string" />
+    <wsdl:part name="ItemNo" type="s:string" />
+    <wsdl:part name="ArtworkURL" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="UploadArtworkHttpPostOut">
+    <wsdl:part name="Body" element="tns:int" />
+  </wsdl:message>
   <wsdl:message name="OverwriteVendorPriceHttpPostIn">
     <wsdl:part name="webServiceKey" type="s:string" />
     <wsdl:part name="itemId" type="s:string" />
@@ -2628,6 +2809,17 @@
   <wsdl:message name="RemoveAssistantHttpPostOut">
     <wsdl:part name="Body" element="tns:int" />
   </wsdl:message>
+  <wsdl:message name="PropertyImageByOrderItemHttpPostIn">
+    <wsdl:part name="WebServiceKey" type="s:string" />
+    <wsdl:part name="OrderNo" type="s:string" />
+    <wsdl:part name="ItemNo" type="s:string" />
+    <wsdl:part name="ImageRef" type="s:string" />
+    <wsdl:part name="ImageUrl" type="s:string" />
+    <wsdl:part name="ImageOrder" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="PropertyImageByOrderItemHttpPostOut">
+    <wsdl:part name="Body" element="tns:int" />
+  </wsdl:message>
   <wsdl:portType name="IntegrationSoap">
     <wsdl:operation name="CheckPropertyDetails">
       <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get a list of Properties assigned to OfficeRef&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;&amp;gt; 0&lt;/b&gt;: &lt;i&gt;Result&lt;/i&gt; Properties found&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Success, but no properties&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Unable to execute command&lt;br&gt;&lt;b&gt;-10&lt;/b&gt;: OfficeRef does not exist&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: WebServiceKey can not view this OfficeRef&lt;br&gt;</wsdl:documentation>
@@ -2649,23 +2841,13 @@
       <wsdl:input message="tns:GetModifiedPropertiesSoapIn" />
       <wsdl:output message="tns:GetModifiedPropertiesSoapOut" />
     </wsdl:operation>
-    <wsdl:operation name="PropertyDetails">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Update, or create, a property assigned to AgentUserRef who is a member of OfficeRef&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;1&lt;/b&gt;: Property created&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Property updated&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Unable to execute command&lt;br&gt;&lt;b&gt;-10&lt;/b&gt;: OfficeRef does not exist&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: AgentUserRef does not exist or does not belong to OfficeRef&lt;br&gt;&lt;b&gt;-12&lt;/b&gt;: Unable to match PropertyType&lt;br&gt;&lt;b&gt;-13&lt;/b&gt;: Unable to match CampaignType&lt;br&gt;&lt;b&gt;-14&lt;/b&gt;: Unable to create Property&lt;br&gt;&lt;b&gt;-15&lt;/b&gt;: WebServiceKey can't modify properties in this OfficeRef&lt;br&gt;</wsdl:documentation>
-      <wsdl:input message="tns:PropertyDetailsSoapIn" />
-      <wsdl:output message="tns:PropertyDetailsSoapOut" />
-    </wsdl:operation>
     <wsdl:operation name="PropertyDetailsByObject">
       <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Update, or create, a property using a CampaignTrackProperty object&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;1&lt;/b&gt;: Property created&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Property updated&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Unable to execute command&lt;br&gt;&lt;b&gt;-10&lt;/b&gt;: OfficeRef does not exist&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: AgentUserRef does not exist or does not belong to OfficeRef&lt;br&gt;&lt;b&gt;-12&lt;/b&gt;: Unable to match PropertyType&lt;br&gt;&lt;b&gt;-13&lt;/b&gt;: Unable to match CampaignType&lt;br&gt;&lt;b&gt;-14&lt;/b&gt;: Unable to create Property&lt;br&gt;&lt;b&gt;-15&lt;/b&gt;: WebServiceKey can't modify properties in this OfficeRef&lt;br&gt;</wsdl:documentation>
       <wsdl:input message="tns:PropertyDetailsByObjectSoapIn" />
       <wsdl:output message="tns:PropertyDetailsByObjectSoapOut" />
     </wsdl:operation>
-    <wsdl:operation name="AllDetails">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Add/Update a property, corresponding agent user, OFIs and retrieve the agent and property images, belonging to WebServiceKey&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;3&lt;/b&gt;: User created, property created&lt;br&gt;&lt;b&gt;2&lt;/b&gt;: User updated, property created&lt;br&gt;&lt;b&gt;1&lt;/b&gt;: User created, property updated&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: User updated, property updated&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Unable to execute command - user details&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: Unable to execute command - property details&lt;br&gt;&lt;b&gt;-3&lt;/b&gt;: Unable to execute command - OFI details&lt;br&gt;&lt;b&gt;-4&lt;/b&gt;: Unable to execute command - Agent images&lt;br&gt;&lt;b&gt;-5&lt;/b&gt;: Unable to execute command - Property images&lt;br&gt;&lt;b&gt;-10&lt;/b&gt;: OfficeRef does not exists&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: Unable to add User&lt;br&gt;&lt;b&gt;-12&lt;/b&gt;: WebServiceKey can't modify this UserRef in this OfficeRef&lt;br&gt;&lt;b&gt;-13&lt;/b&gt;: AgentUserRef does not exists or does not belong to OfficeRef&lt;br&gt;&lt;b&gt;-14&lt;/b&gt;: Unable to match PropertyType&lt;br&gt;&lt;b&gt;-15&lt;/b&gt;: Unable to match CampaignType&lt;br&gt;&lt;b&gt;-16&lt;/b&gt;: Unable to create Property&lt;br&gt;&lt;b&gt;-17&lt;/b&gt;: WebServiceKey can't modify properties in this OfficeRef&lt;br&gt;&lt;b&gt;-18&lt;/b&gt;: PropertyRef does not exist, unable to modify OFIs&lt;br&gt;&lt;b&gt;-19&lt;/b&gt;: Unable to create OFI&lt;br&gt;&lt;b&gt;-20&lt;/b&gt;: WebServiceKey can't modify this PropertyRef, unable to modify OFIs&lt;br&gt;&lt;b&gt;-21&lt;/b&gt;: WebServiceKey can't modify this UserRef, unable to download image&lt;br&gt;&lt;b&gt;-22&lt;/b&gt;: WebServiceKey can't modify this PropertyRef, unable to download image&lt;br&gt;</wsdl:documentation>
-      <wsdl:input message="tns:AllDetailsSoapIn" />
-      <wsdl:output message="tns:AllDetailsSoapOut" />
-    </wsdl:operation>
     <wsdl:operation name="AllDetailsMultiAgent">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Add/Update a property, corresponding agent user, OFIs and retrieve the agent and property images, belonging to WebServiceKey&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;3&lt;/b&gt;: User created, property created&lt;br&gt;&lt;b&gt;2&lt;/b&gt;: User updated, property created&lt;br&gt;&lt;b&gt;1&lt;/b&gt;: User created, property updated&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: User updated, property updated&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Unable to execute command - user details&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: Unable to execute command - property details&lt;br&gt;&lt;b&gt;-3&lt;/b&gt;: Unable to execute command - OFI details&lt;br&gt;&lt;b&gt;-4&lt;/b&gt;: Unable to execute command - Agent images&lt;br&gt;&lt;b&gt;-5&lt;/b&gt;: Unable to execute command - Property images&lt;br&gt;&lt;b&gt;-10&lt;/b&gt;: OfficeRef does not exists&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: Unable to add User&lt;br&gt;&lt;b&gt;-12&lt;/b&gt;: WebServiceKey can't modify this UserRef in this OfficeRef&lt;br&gt;&lt;b&gt;-13&lt;/b&gt;: AgentUserRef does not exists or does not belong to OfficeRef&lt;br&gt;&lt;b&gt;-14&lt;/b&gt;: Unable to match PropertyType&lt;br&gt;&lt;b&gt;-15&lt;/b&gt;: Unable to match CampaignType&lt;br&gt;&lt;b&gt;-16&lt;/b&gt;: Unable to create Property&lt;br&gt;&lt;b&gt;-17&lt;/b&gt;: WebServiceKey can't modify properties in this OfficeRef&lt;br&gt;&lt;b&gt;-18&lt;/b&gt;: PropertyRef does not exist, unable to modify OFIs&lt;br&gt;&lt;b&gt;-19&lt;/b&gt;: Unable to create OFI&lt;br&gt;&lt;b&gt;-20&lt;/b&gt;: WebServiceKey can't modify this PropertyRef, unable to modify OFIs&lt;br&gt;&lt;b&gt;-21&lt;/b&gt;: WebServiceKey can't modify this UserRef, unable to download image&lt;br&gt;&lt;b&gt;-22&lt;/b&gt;: WebServiceKey can't modify this PropertyRef, unable to download image&lt;br&gt;</wsdl:documentation>
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Add/Update a property, corresponding agent user, OFIs and retrieve the agent and property images, belonging to WebServiceKey&lt;br&gt;&lt;br&gt;LocalAuthority tag must contain values from following:-&lt;br&gt;&lt;b&gt;For Residential Properties-&lt;b&gt;&lt;br&gt;&lt;b&gt;1&lt;/b&gt;: Auction&lt;br&gt;&lt;b&gt;2&lt;/b&gt;: Exclusive&lt;br&gt;&lt;b&gt;3&lt;/b&gt;: Multilist&lt;br&gt;&lt;b&gt;4&lt;/b&gt;: Conjunctional&lt;br&gt;&lt;b&gt;5&lt;/b&gt;: Open&lt;br&gt;&lt;b&gt;6&lt;/b&gt;: Sale&lt;br&gt;&lt;b&gt;For Commercial Properties-&lt;b&gt;&lt;br&gt;&lt;b&gt;1&lt;/b&gt;: Auction&lt;br&gt;&lt;b&gt;2&lt;/b&gt;: Expression of Interest&lt;br&gt;&lt;b&gt;3&lt;/b&gt;: For Sale&lt;br&gt;&lt;b&gt;4&lt;/b&gt;: Offers&lt;br&gt;&lt;b&gt;5&lt;/b&gt;: Sale&lt;br&gt;&lt;b&gt;6&lt;/b&gt;: Tender&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;3&lt;/b&gt;: User created, property created&lt;br&gt;&lt;b&gt;2&lt;/b&gt;: User updated, property created&lt;br&gt;&lt;b&gt;1&lt;/b&gt;: User created, property updated&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: User updated, property updated&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Unable to execute command - user details&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: Unable to execute command - property details&lt;br&gt;&lt;b&gt;-3&lt;/b&gt;: Unable to execute command - OFI details&lt;br&gt;&lt;b&gt;-4&lt;/b&gt;: Unable to execute command - Agent images&lt;br&gt;&lt;b&gt;-5&lt;/b&gt;: Unable to execute command - Property images&lt;br&gt;&lt;b&gt;-10&lt;/b&gt;: OfficeRef does not exists&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: Unable to add User&lt;br&gt;&lt;b&gt;-12&lt;/b&gt;: WebServiceKey can't modify this UserRef in this OfficeRef&lt;br&gt;&lt;b&gt;-13&lt;/b&gt;: AgentUserRef does not exists or does not belong to OfficeRef&lt;br&gt;&lt;b&gt;-14&lt;/b&gt;: Unable to match PropertyType&lt;br&gt;&lt;b&gt;-15&lt;/b&gt;: Unable to match CampaignType&lt;br&gt;&lt;b&gt;-16&lt;/b&gt;: Unable to create Property&lt;br&gt;&lt;b&gt;-17&lt;/b&gt;: WebServiceKey can't modify properties in this OfficeRef&lt;br&gt;&lt;b&gt;-18&lt;/b&gt;: PropertyRef does not exist, unable to modify OFIs&lt;br&gt;&lt;b&gt;-19&lt;/b&gt;: Unable to create OFI&lt;br&gt;&lt;b&gt;-20&lt;/b&gt;: WebServiceKey can't modify this PropertyRef, unable to modify OFIs&lt;br&gt;&lt;b&gt;-21&lt;/b&gt;: WebServiceKey can't modify this UserRef, unable to download image&lt;br&gt;&lt;b&gt;-22&lt;/b&gt;: WebServiceKey can't modify this PropertyRef, unable to download image&lt;br&gt;</wsdl:documentation>
       <wsdl:input message="tns:AllDetailsMultiAgentSoapIn" />
       <wsdl:output message="tns:AllDetailsMultiAgentSoapOut" />
     </wsdl:operation>
@@ -2678,11 +2860,6 @@
       <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Download Property Images Asynchronously.&lt;br /&gt;&lt;br /&gt;Possible results are;&lt;br /&gt;&lt;b&gt;0&lt;/b&gt;: All images queued for download&lt;br /&gt;&lt;b&gt;-5&lt;/b&gt;: Unable to execute command&lt;br /&gt;&lt;b&gt;-22&lt;/b&gt;: WebServiceKey can't modify this PropertyRef, unable to queue image for download&lt;br /&gt;</wsdl:documentation>
       <wsdl:input message="tns:DownloadPropertyImagesSoapIn" />
       <wsdl:output message="tns:DownloadPropertyImagesSoapOut" />
-    </wsdl:operation>
-    <wsdl:operation name="AdvAllDetailsMultiAgent">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Add/Update a property, corresponding agent user, OFIs and retrieve the agent and property images, belonging to WebServiceKey&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;3&lt;/b&gt;: User created, property created&lt;br&gt;&lt;b&gt;2&lt;/b&gt;: User updated, property created&lt;br&gt;&lt;b&gt;1&lt;/b&gt;: User created, property updated&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: User updated, property updated&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Unable to execute command - user details&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: Unable to execute command - property details&lt;br&gt;&lt;b&gt;-3&lt;/b&gt;: Unable to execute command - OFI details&lt;br&gt;&lt;b&gt;-4&lt;/b&gt;: Unable to execute command - Agent images&lt;br&gt;&lt;b&gt;-5&lt;/b&gt;: Unable to execute command - Property images&lt;br&gt;&lt;b&gt;-10&lt;/b&gt;: OfficeRef does not exists&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: Unable to add User&lt;br&gt;&lt;b&gt;-12&lt;/b&gt;: WebServiceKey can't modify this UserRef in this OfficeRef&lt;br&gt;&lt;b&gt;-13&lt;/b&gt;: AgentUserRef does not exists or does not belong to OfficeRef&lt;br&gt;&lt;b&gt;-14&lt;/b&gt;: Unable to match PropertyType&lt;br&gt;&lt;b&gt;-15&lt;/b&gt;: Unable to match CampaignType&lt;br&gt;&lt;b&gt;-16&lt;/b&gt;: Unable to create Property&lt;br&gt;&lt;b&gt;-17&lt;/b&gt;: WebServiceKey can't modify properties in this OfficeRef&lt;br&gt;&lt;b&gt;-18&lt;/b&gt;: PropertyRef does not exist, unable to modify OFIs&lt;br&gt;&lt;b&gt;-19&lt;/b&gt;: Unable to create OFI&lt;br&gt;&lt;b&gt;-20&lt;/b&gt;: WebServiceKey can't modify this PropertyRef, unable to modify OFIs&lt;br&gt;&lt;b&gt;-21&lt;/b&gt;: WebServiceKey can't modify this UserRef, unable to download image&lt;br&gt;&lt;b&gt;-22&lt;/b&gt;: WebServiceKey can't modify this PropertyRef, unable to download image&lt;br&gt;</wsdl:documentation>
-      <wsdl:input message="tns:AdvAllDetailsMultiAgentSoapIn" />
-      <wsdl:output message="tns:AdvAllDetailsMultiAgentSoapOut" />
     </wsdl:operation>
     <wsdl:operation name="OrderItemImageDownload">
       <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Supply images for an OrderItem&lt;br&gt;&lt;br&gt;Possible Results are:&lt;br&gt;&lt;b&gt;1&lt;/b&gt;: Success&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Unable to execute command&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: Login failed&lt;br&gt;&lt;b&gt;-3&lt;/b&gt;: Item not found for given username/password&lt;br&gt;</wsdl:documentation>
@@ -2715,19 +2892,29 @@
       <wsdl:output message="tns:DeleteOFISoapOut" />
     </wsdl:operation>
     <wsdl:operation name="PropertyImage">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Add or update a property image&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Success&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Could not execute command&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: Image URL could not be retrieved&lt;br&gt;&lt;b&gt;-3&lt;/b&gt;: Only PDFs and JPGs can be uploaded&lt;br&gt;&lt;b&gt;-4&lt;/b&gt;: PropertyRef does not exist&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: Only JPGs / PDFs can be uploaded&lt;br&gt;&lt;b&gt;-12&lt;/b&gt;: Image is too large. Maxiumum size is 15 megapixels (~4500 x 3300)&lt;br&gt;&lt;b&gt;-13&lt;/b&gt;: Image could not be processed - it is not a valid JPG&lt;br&gt;&lt;b&gt;-14&lt;/b&gt;: Image could not be resampled - it is not a valid JPG&lt;br&gt;&lt;b&gt;-15&lt;/b&gt;: Image could not be saved&lt;br&gt;&lt;b&gt;-16&lt;/b&gt;: PDF could not be processed / rotated - possibly corrupt&lt;br&gt;&lt;b&gt;-17&lt;/b&gt;: PDF could not be opened - possibly corrupt&lt;br&gt;&lt;b&gt;-18&lt;/b&gt;: PDF too large&lt;br&gt;&lt;b&gt;-19&lt;/b&gt;: PDF could not be processed - possibly corrupt&lt;br&gt;&lt;b&gt;-20&lt;/b&gt;: Could not save PDF&lt;br&gt;&lt;b&gt;-21&lt;/b&gt;: Could not resized PDF&lt;br&gt;&lt;b&gt;-22&lt;/b&gt;: PDF could not be rasterised - check it has been distilled&lt;br&gt;&lt;b&gt;-23&lt;/b&gt;: WebServiceKey can't modify PropertyRef&lt;br&gt;</wsdl:documentation>
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Add or update a property image&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Success&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Could not execute command&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: Image URL could not be retrieved&lt;br&gt;&lt;b&gt;-3&lt;/b&gt;: Only PDFs and JPGs can be uploaded&lt;br&gt;&lt;b&gt;-4&lt;/b&gt;: PropertyRef does not exist&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: Only JPGs / PDFs can be uploaded&lt;br&gt;&lt;b&gt;-12&lt;/b&gt;: Images over 45 megapixels are not accepted. (Approx. 7264 x 5440 pixels max)&lt;br&gt;&lt;b&gt;-13&lt;/b&gt;: Image could not be processed - it is not a valid JPG&lt;br&gt;&lt;b&gt;-14&lt;/b&gt;: Image could not be resampled - it is not a valid JPG&lt;br&gt;&lt;b&gt;-15&lt;/b&gt;: Image could not be saved&lt;br&gt;&lt;b&gt;-16&lt;/b&gt;: PDF could not be processed / rotated - possibly corrupt&lt;br&gt;&lt;b&gt;-17&lt;/b&gt;: PDF could not be opened - possibly corrupt&lt;br&gt;&lt;b&gt;-18&lt;/b&gt;: PDF too large&lt;br&gt;&lt;b&gt;-19&lt;/b&gt;: PDF could not be processed - possibly corrupt&lt;br&gt;&lt;b&gt;-20&lt;/b&gt;: Could not save PDF&lt;br&gt;&lt;b&gt;-21&lt;/b&gt;: Could not resized PDF&lt;br&gt;&lt;b&gt;-22&lt;/b&gt;: PDF could not be rasterised - check it has been distilled&lt;br&gt;&lt;b&gt;-23&lt;/b&gt;: WebServiceKey can't modify PropertyRef&lt;br&gt;</wsdl:documentation>
       <wsdl:input message="tns:PropertyImageSoapIn" />
       <wsdl:output message="tns:PropertyImageSoapOut" />
     </wsdl:operation>
     <wsdl:operation name="PropertyQRCode">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Add or update a property QR Code Image&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Success&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Could not execute command&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: Image URL could not be retrieved&lt;br&gt;&lt;b&gt;-3&lt;/b&gt;: Only PDFs and JPGs can be uploaded&lt;br&gt;&lt;b&gt;-4&lt;/b&gt;: PropertyRef does not exist&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: Only JPGs / PDFs can be uploaded&lt;br&gt;&lt;b&gt;-12&lt;/b&gt;: Image is too large. Maxiumum size is 15 megapixels (~4500 x 3300)&lt;br&gt;&lt;b&gt;-13&lt;/b&gt;: Image could not be processed - it is not a valid JPG&lt;br&gt;&lt;b&gt;-14&lt;/b&gt;: Image could not be resampled - it is not a valid JPG&lt;br&gt;&lt;b&gt;-15&lt;/b&gt;: Image could not be saved&lt;br&gt;&lt;b&gt;-16&lt;/b&gt;: PDF could not be processed / rotated - possibly corrupt&lt;br&gt;&lt;b&gt;-17&lt;/b&gt;: PDF could not be opened - possibly corrupt&lt;br&gt;&lt;b&gt;-18&lt;/b&gt;: PDF too large&lt;br&gt;&lt;b&gt;-19&lt;/b&gt;: PDF could not be processed - possibly corrupt&lt;br&gt;&lt;b&gt;-20&lt;/b&gt;: Could not save PDF&lt;br&gt;&lt;b&gt;-21&lt;/b&gt;: Could not resized PDF&lt;br&gt;&lt;b&gt;-22&lt;/b&gt;: PDF could not be rasterised - check it has been distilled&lt;br&gt;&lt;b&gt;-23&lt;/b&gt;: WebServiceKey can't modify PropertyRef&lt;br&gt;</wsdl:documentation>
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Add or update a property QR Code Image&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Success&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Could not execute command&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: Image URL could not be retrieved&lt;br&gt;&lt;b&gt;-3&lt;/b&gt;: Only PDFs and JPGs can be uploaded&lt;br&gt;&lt;b&gt;-4&lt;/b&gt;: PropertyRef does not exist&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: Only JPGs / PDFs can be uploaded&lt;br&gt;&lt;b&gt;-12&lt;/b&gt;: Images over 45 megapixels are not accepted. (Approx. 7264 x 5440 pixels max)&lt;br&gt;&lt;b&gt;-13&lt;/b&gt;: Image could not be processed - it is not a valid JPG&lt;br&gt;&lt;b&gt;-14&lt;/b&gt;: Image could not be resampled - it is not a valid JPG&lt;br&gt;&lt;b&gt;-15&lt;/b&gt;: Image could not be saved&lt;br&gt;&lt;b&gt;-16&lt;/b&gt;: PDF could not be processed / rotated - possibly corrupt&lt;br&gt;&lt;b&gt;-17&lt;/b&gt;: PDF could not be opened - possibly corrupt&lt;br&gt;&lt;b&gt;-18&lt;/b&gt;: PDF too large&lt;br&gt;&lt;b&gt;-19&lt;/b&gt;: PDF could not be processed - possibly corrupt&lt;br&gt;&lt;b&gt;-20&lt;/b&gt;: Could not save PDF&lt;br&gt;&lt;b&gt;-21&lt;/b&gt;: Could not resized PDF&lt;br&gt;&lt;b&gt;-22&lt;/b&gt;: PDF could not be rasterised - check it has been distilled&lt;br&gt;&lt;b&gt;-23&lt;/b&gt;: WebServiceKey can't modify PropertyRef&lt;br&gt;</wsdl:documentation>
       <wsdl:input message="tns:PropertyQRCodeSoapIn" />
       <wsdl:output message="tns:PropertyQRCodeSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="PropertyQRCodeListonce">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Add or update a property QR Code Image&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Success&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Could not execute command&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: Image URL could not be retrieved&lt;br&gt;&lt;b&gt;-3&lt;/b&gt;: Only PDFs and JPGs can be uploaded&lt;br&gt;&lt;b&gt;-4&lt;/b&gt;: PropertyRef does not exist&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: Only JPGs / PDFs can be uploaded&lt;br&gt;&lt;b&gt;-12&lt;/b&gt;: Images over 45 megapixels are not accepted. (Approx. 7264 x 5440 pixels max)&lt;br&gt;&lt;b&gt;-13&lt;/b&gt;: Image could not be processed - it is not a valid JPG&lt;br&gt;&lt;b&gt;-14&lt;/b&gt;: Image could not be resampled - it is not a valid JPG&lt;br&gt;&lt;b&gt;-15&lt;/b&gt;: Image could not be saved&lt;br&gt;&lt;b&gt;-16&lt;/b&gt;: PDF could not be processed / rotated - possibly corrupt&lt;br&gt;&lt;b&gt;-17&lt;/b&gt;: PDF could not be opened - possibly corrupt&lt;br&gt;&lt;b&gt;-18&lt;/b&gt;: PDF too large&lt;br&gt;&lt;b&gt;-19&lt;/b&gt;: PDF could not be processed - possibly corrupt&lt;br&gt;&lt;b&gt;-20&lt;/b&gt;: Could not save PDF&lt;br&gt;&lt;b&gt;-21&lt;/b&gt;: Could not resized PDF&lt;br&gt;&lt;b&gt;-22&lt;/b&gt;: PDF could not be rasterised - check it has been distilled&lt;br&gt;&lt;b&gt;-23&lt;/b&gt;: WebServiceKey can't modify PropertyRef&lt;br&gt;</wsdl:documentation>
+      <wsdl:input message="tns:PropertyQRCodeListonceSoapIn" />
+      <wsdl:output message="tns:PropertyQRCodeListonceSoapOut" />
     </wsdl:operation>
     <wsdl:operation name="SetPropertyWebsiteURL">
       <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get a the details of the advertising office for a PropertyID&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Success&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Could not execute command&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: PropertyRef not found&lt;br&gt;</wsdl:documentation>
       <wsdl:input message="tns:SetPropertyWebsiteURLSoapIn" />
       <wsdl:output message="tns:SetPropertyWebsiteURLSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SetIndividualPropertyField">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get a the details of the advertising office for a PropertyID&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Success&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Could not execute command&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: PropertyRef not found&lt;br&gt;&lt;b&gt;-3&lt;/b&gt;: Field Name not valid&lt;br&gt;&lt;b&gt;-4&lt;/b&gt;: Field Value not valid&lt;br&gt;</wsdl:documentation>
+      <wsdl:input message="tns:SetIndividualPropertyFieldSoapIn" />
+      <wsdl:output message="tns:SetIndividualPropertyFieldSoapOut" />
     </wsdl:operation>
     <wsdl:operation name="DeleteImage">
       <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Mark an image as deleted&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;&amp;ge; 0&lt;/b&gt;: &lt;i&gt;Result&lt;/i&gt; images were deleted&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Could not execute command&lt;br&gt;&lt;b&gt;-10&lt;/b&gt;: ImageRef does not exist&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: WebServiceKey can't modify this ImageRef&lt;br&gt;</wsdl:documentation>
@@ -2755,7 +2942,7 @@
       <wsdl:output message="tns:DeleteUserSoapOut" />
     </wsdl:operation>
     <wsdl:operation name="AgentImage">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Add an image for an agent&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Success&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Could not execute command&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: Image URL could not be retrieved&lt;br&gt;&lt;b&gt;-3&lt;/b&gt;: Only PDFs and JPGs can be uploaded&lt;br&gt;&lt;b&gt;-4&lt;/b&gt;: PropertyRef does not exist&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: Only JPGs / PDFs can be uploaded&lt;br&gt;&lt;b&gt;-12&lt;/b&gt;: Image is too large. Maxiumum size is 15 megapixels (~4500 x 3300)&lt;br&gt;&lt;b&gt;-13&lt;/b&gt;: Image could not be processed - it is not a valid JPG&lt;br&gt;&lt;b&gt;-14&lt;/b&gt;: Image could not be resampled - it is not a valid JPG&lt;br&gt;&lt;b&gt;-15&lt;/b&gt;: Image could not be saved&lt;br&gt;&lt;b&gt;-16&lt;/b&gt;: PDF could not be processed / rotated - possibly corrupt&lt;br&gt;&lt;b&gt;-17&lt;/b&gt;: PDF could not be opened - possibly corrupt&lt;br&gt;&lt;b&gt;-18&lt;/b&gt;: PDF too large&lt;br&gt;&lt;b&gt;-19&lt;/b&gt;: PDF could not be processed - possibly corrupt&lt;br&gt;&lt;b&gt;-20&lt;/b&gt;: Could not save PDF&lt;br&gt;&lt;b&gt;-21&lt;/b&gt;: Could not resized PDF&lt;br&gt;&lt;b&gt;-22&lt;/b&gt;: PDF could not be rasterised - check it has been distilled&lt;br&gt;&lt;b&gt;-23&lt;/b&gt;: WebServiceKey can't modify this UserRef&lt;br&gt;</wsdl:documentation>
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Add an image for an agent&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Success&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Could not execute command&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: Image URL could not be retrieved&lt;br&gt;&lt;b&gt;-3&lt;/b&gt;: Only PDFs and JPGs can be uploaded&lt;br&gt;&lt;b&gt;-4&lt;/b&gt;: PropertyRef does not exist&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: Only JPGs / PDFs can be uploaded&lt;br&gt;&lt;b&gt;-12&lt;/b&gt;: Images over 45 megapixels are not accepted. (Approx. 7264 x 5440 pixels max)&lt;br&gt;&lt;b&gt;-13&lt;/b&gt;: Image could not be processed - it is not a valid JPG&lt;br&gt;&lt;b&gt;-14&lt;/b&gt;: Image could not be resampled - it is not a valid JPG&lt;br&gt;&lt;b&gt;-15&lt;/b&gt;: Image could not be saved&lt;br&gt;&lt;b&gt;-16&lt;/b&gt;: PDF could not be processed / rotated - possibly corrupt&lt;br&gt;&lt;b&gt;-17&lt;/b&gt;: PDF could not be opened - possibly corrupt&lt;br&gt;&lt;b&gt;-18&lt;/b&gt;: PDF too large&lt;br&gt;&lt;b&gt;-19&lt;/b&gt;: PDF could not be processed - possibly corrupt&lt;br&gt;&lt;b&gt;-20&lt;/b&gt;: Could not save PDF&lt;br&gt;&lt;b&gt;-21&lt;/b&gt;: Could not resized PDF&lt;br&gt;&lt;b&gt;-22&lt;/b&gt;: PDF could not be rasterised - check it has been distilled&lt;br&gt;&lt;b&gt;-23&lt;/b&gt;: WebServiceKey can't modify this UserRef&lt;br&gt;</wsdl:documentation>
       <wsdl:input message="tns:AgentImageSoapIn" />
       <wsdl:output message="tns:AgentImageSoapOut" />
     </wsdl:operation>
@@ -2874,6 +3061,11 @@
       <wsdl:input message="tns:CheckPropertyImageDetailsByUserSoapIn" />
       <wsdl:output message="tns:CheckPropertyImageDetailsByUserSoapOut" />
     </wsdl:operation>
+    <wsdl:operation name="UploadArtwork">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Upload final artwork for an order item&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b0&lt;/b&gt;: Success&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Unable to execute command&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: WebServiceKey can not view this Order/OfficeRef&lt;b&gt;-3&lt;/b&gt;: Permission denied foer this OrderItem&lt;br&gt;&lt;b&gt;-4&lt;/b&gt;: Invalid URL&lt;br&gt;&lt;b&gt;-5&lt;/b&gt;: Invalid Filetype&lt;br&gt;</wsdl:documentation>
+      <wsdl:input message="tns:UploadArtworkSoapIn" />
+      <wsdl:output message="tns:UploadArtworkSoapOut" />
+    </wsdl:operation>
     <wsdl:operation name="GetQuotes">
       <wsdl:input message="tns:GetQuotesSoapIn" />
       <wsdl:output message="tns:GetQuotesSoapOut" />
@@ -2936,13 +3128,33 @@
       <wsdl:input message="tns:RemoveAssistantSoapIn" />
       <wsdl:output message="tns:RemoveAssistantSoapOut" />
     </wsdl:operation>
+    <wsdl:operation name="GetSuppliersByOfficeRef">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get the suppliers associated with a Office&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;&amp;gt; 0&lt;/b&gt;: &lt;i&gt;Result&lt;/i&gt; Suppliers associated with the Office&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Office found, but no suppliers are associated with it&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: OfficeRef doesn't exist&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: Company does not exists for that WSK&lt;br&gt;&lt;b&gt;-3&lt;/b&gt;: WSk and OfficeRef doesn't match&lt;br&gt;</wsdl:documentation>
+      <wsdl:input message="tns:GetSuppliersByOfficeRefSoapIn" />
+      <wsdl:output message="tns:GetSuppliersByOfficeRefSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetProductsBySupplierNo">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get the products associated with a Supplier&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;&amp;gt; 0&lt;/b&gt;: &lt;i&gt;Result&lt;/i&gt; Products associated with the Supplier&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Supplier found, but no products are associated with it&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: SupplierNo doesn't exist&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: Company does not exists for that WSK&lt;br&gt;&lt;b&gt;-3&lt;/b&gt;: Supplier does not exists for that WSk's company&lt;br&gt;</wsdl:documentation>
+      <wsdl:input message="tns:GetProductsBySupplierNoSoapIn" />
+      <wsdl:output message="tns:GetProductsBySupplierNoSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPartsByProductNo">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get the parts associated with a Product&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;&amp;gt; 0&lt;/b&gt;: &lt;i&gt;Result&lt;/i&gt; Parts associated with the Product&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Product found, but no parts are associated with it&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Product doesn't exist&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: Company does not exists for that WSK&lt;br&gt;&lt;b&gt;-3&lt;/b&gt;: Product does not exists for that Supplier&lt;br&gt;</wsdl:documentation>
+      <wsdl:input message="tns:GetPartsByProductNoSoapIn" />
+      <wsdl:output message="tns:GetPartsByProductNoSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPropertyCopyByPropertyRef">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get Copy from PropertyRef &lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Success&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Unable to execute command&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: Property does not exist&lt;br&gt;</wsdl:documentation>
+      <wsdl:input message="tns:GetPropertyCopyByPropertyRefSoapIn" />
+      <wsdl:output message="tns:GetPropertyCopyByPropertyRefSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="PropertyImageByOrderItem">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Add or update a property image&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Success&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Could not execute command&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: Image URL could not be retrieved&lt;br&gt;&lt;b&gt;-3&lt;/b&gt;: Only PDFs and JPGs can be uploaded&lt;br&gt;&lt;b&gt;-4&lt;/b&gt;: PropertyRef does not exist&lt;br&gt;&lt;b&gt;-5&lt;/b&gt;: WebServiceKey does not exist&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: Only JPGs / PDFs can be uploaded&lt;br&gt;&lt;b&gt;-12&lt;/b&gt;: Images over 45 megapixels are not accepted. (Approx. 7264 x 5440 pixels max)&lt;br&gt;&lt;b&gt;-13&lt;/b&gt;: Image could not be processed - it is not a valid JPG&lt;br&gt;&lt;b&gt;-14&lt;/b&gt;: Image could not be resampled - it is not a valid JPG&lt;br&gt;&lt;b&gt;-15&lt;/b&gt;: Image could not be saved&lt;br&gt;&lt;b&gt;-16&lt;/b&gt;: PDF could not be processed / rotated - possibly corrupt&lt;br&gt;&lt;b&gt;-17&lt;/b&gt;: PDF could not be opened - possibly corrupt&lt;br&gt;&lt;b&gt;-18&lt;/b&gt;: PDF too large&lt;br&gt;&lt;b&gt;-19&lt;/b&gt;: PDF could not be processed - possibly corrupt&lt;br&gt;&lt;b&gt;-20&lt;/b&gt;: Could not save PDF&lt;br&gt;&lt;b&gt;-21&lt;/b&gt;: Could not resized PDF&lt;br&gt;&lt;b&gt;-22&lt;/b&gt;: PDF could not be rasterised - check it has been distilled&lt;br&gt;&lt;b&gt;-23&lt;/b&gt;: WebServiceKey can't modify PropertyRef&lt;br&gt;</wsdl:documentation>
+      <wsdl:input message="tns:PropertyImageByOrderItemSoapIn" />
+      <wsdl:output message="tns:PropertyImageByOrderItemSoapOut" />
+    </wsdl:operation>
   </wsdl:portType>
   <wsdl:portType name="IntegrationHttpGet">
-    <wsdl:operation name="PropertyDetails">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Update, or create, a property assigned to AgentUserRef who is a member of OfficeRef&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;1&lt;/b&gt;: Property created&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Property updated&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Unable to execute command&lt;br&gt;&lt;b&gt;-10&lt;/b&gt;: OfficeRef does not exist&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: AgentUserRef does not exist or does not belong to OfficeRef&lt;br&gt;&lt;b&gt;-12&lt;/b&gt;: Unable to match PropertyType&lt;br&gt;&lt;b&gt;-13&lt;/b&gt;: Unable to match CampaignType&lt;br&gt;&lt;b&gt;-14&lt;/b&gt;: Unable to create Property&lt;br&gt;&lt;b&gt;-15&lt;/b&gt;: WebServiceKey can't modify properties in this OfficeRef&lt;br&gt;</wsdl:documentation>
-      <wsdl:input message="tns:PropertyDetailsHttpGetIn" />
-      <wsdl:output message="tns:PropertyDetailsHttpGetOut" />
-    </wsdl:operation>
     <wsdl:operation name="RemoveProperty">
       <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Remove a property, indicated by PropertyRef, belonging to WebServiceKey&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Property removed&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Unable to execute command&lt;br&gt;&lt;b&gt;-10&lt;/b&gt;: PropertyRef does not exist&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: WebServiceKey can't view this PropertyRef&lt;br&gt;&lt;b&gt;-12&lt;/b&gt;: No Orders exist on this PropertyRef&lt;br&gt;</wsdl:documentation>
       <wsdl:input message="tns:RemovePropertyHttpGetIn" />
@@ -2959,19 +3171,29 @@
       <wsdl:output message="tns:DeleteOFIHttpGetOut" />
     </wsdl:operation>
     <wsdl:operation name="PropertyImage">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Add or update a property image&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Success&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Could not execute command&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: Image URL could not be retrieved&lt;br&gt;&lt;b&gt;-3&lt;/b&gt;: Only PDFs and JPGs can be uploaded&lt;br&gt;&lt;b&gt;-4&lt;/b&gt;: PropertyRef does not exist&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: Only JPGs / PDFs can be uploaded&lt;br&gt;&lt;b&gt;-12&lt;/b&gt;: Image is too large. Maxiumum size is 15 megapixels (~4500 x 3300)&lt;br&gt;&lt;b&gt;-13&lt;/b&gt;: Image could not be processed - it is not a valid JPG&lt;br&gt;&lt;b&gt;-14&lt;/b&gt;: Image could not be resampled - it is not a valid JPG&lt;br&gt;&lt;b&gt;-15&lt;/b&gt;: Image could not be saved&lt;br&gt;&lt;b&gt;-16&lt;/b&gt;: PDF could not be processed / rotated - possibly corrupt&lt;br&gt;&lt;b&gt;-17&lt;/b&gt;: PDF could not be opened - possibly corrupt&lt;br&gt;&lt;b&gt;-18&lt;/b&gt;: PDF too large&lt;br&gt;&lt;b&gt;-19&lt;/b&gt;: PDF could not be processed - possibly corrupt&lt;br&gt;&lt;b&gt;-20&lt;/b&gt;: Could not save PDF&lt;br&gt;&lt;b&gt;-21&lt;/b&gt;: Could not resized PDF&lt;br&gt;&lt;b&gt;-22&lt;/b&gt;: PDF could not be rasterised - check it has been distilled&lt;br&gt;&lt;b&gt;-23&lt;/b&gt;: WebServiceKey can't modify PropertyRef&lt;br&gt;</wsdl:documentation>
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Add or update a property image&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Success&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Could not execute command&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: Image URL could not be retrieved&lt;br&gt;&lt;b&gt;-3&lt;/b&gt;: Only PDFs and JPGs can be uploaded&lt;br&gt;&lt;b&gt;-4&lt;/b&gt;: PropertyRef does not exist&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: Only JPGs / PDFs can be uploaded&lt;br&gt;&lt;b&gt;-12&lt;/b&gt;: Images over 45 megapixels are not accepted. (Approx. 7264 x 5440 pixels max)&lt;br&gt;&lt;b&gt;-13&lt;/b&gt;: Image could not be processed - it is not a valid JPG&lt;br&gt;&lt;b&gt;-14&lt;/b&gt;: Image could not be resampled - it is not a valid JPG&lt;br&gt;&lt;b&gt;-15&lt;/b&gt;: Image could not be saved&lt;br&gt;&lt;b&gt;-16&lt;/b&gt;: PDF could not be processed / rotated - possibly corrupt&lt;br&gt;&lt;b&gt;-17&lt;/b&gt;: PDF could not be opened - possibly corrupt&lt;br&gt;&lt;b&gt;-18&lt;/b&gt;: PDF too large&lt;br&gt;&lt;b&gt;-19&lt;/b&gt;: PDF could not be processed - possibly corrupt&lt;br&gt;&lt;b&gt;-20&lt;/b&gt;: Could not save PDF&lt;br&gt;&lt;b&gt;-21&lt;/b&gt;: Could not resized PDF&lt;br&gt;&lt;b&gt;-22&lt;/b&gt;: PDF could not be rasterised - check it has been distilled&lt;br&gt;&lt;b&gt;-23&lt;/b&gt;: WebServiceKey can't modify PropertyRef&lt;br&gt;</wsdl:documentation>
       <wsdl:input message="tns:PropertyImageHttpGetIn" />
       <wsdl:output message="tns:PropertyImageHttpGetOut" />
     </wsdl:operation>
     <wsdl:operation name="PropertyQRCode">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Add or update a property QR Code Image&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Success&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Could not execute command&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: Image URL could not be retrieved&lt;br&gt;&lt;b&gt;-3&lt;/b&gt;: Only PDFs and JPGs can be uploaded&lt;br&gt;&lt;b&gt;-4&lt;/b&gt;: PropertyRef does not exist&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: Only JPGs / PDFs can be uploaded&lt;br&gt;&lt;b&gt;-12&lt;/b&gt;: Image is too large. Maxiumum size is 15 megapixels (~4500 x 3300)&lt;br&gt;&lt;b&gt;-13&lt;/b&gt;: Image could not be processed - it is not a valid JPG&lt;br&gt;&lt;b&gt;-14&lt;/b&gt;: Image could not be resampled - it is not a valid JPG&lt;br&gt;&lt;b&gt;-15&lt;/b&gt;: Image could not be saved&lt;br&gt;&lt;b&gt;-16&lt;/b&gt;: PDF could not be processed / rotated - possibly corrupt&lt;br&gt;&lt;b&gt;-17&lt;/b&gt;: PDF could not be opened - possibly corrupt&lt;br&gt;&lt;b&gt;-18&lt;/b&gt;: PDF too large&lt;br&gt;&lt;b&gt;-19&lt;/b&gt;: PDF could not be processed - possibly corrupt&lt;br&gt;&lt;b&gt;-20&lt;/b&gt;: Could not save PDF&lt;br&gt;&lt;b&gt;-21&lt;/b&gt;: Could not resized PDF&lt;br&gt;&lt;b&gt;-22&lt;/b&gt;: PDF could not be rasterised - check it has been distilled&lt;br&gt;&lt;b&gt;-23&lt;/b&gt;: WebServiceKey can't modify PropertyRef&lt;br&gt;</wsdl:documentation>
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Add or update a property QR Code Image&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Success&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Could not execute command&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: Image URL could not be retrieved&lt;br&gt;&lt;b&gt;-3&lt;/b&gt;: Only PDFs and JPGs can be uploaded&lt;br&gt;&lt;b&gt;-4&lt;/b&gt;: PropertyRef does not exist&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: Only JPGs / PDFs can be uploaded&lt;br&gt;&lt;b&gt;-12&lt;/b&gt;: Images over 45 megapixels are not accepted. (Approx. 7264 x 5440 pixels max)&lt;br&gt;&lt;b&gt;-13&lt;/b&gt;: Image could not be processed - it is not a valid JPG&lt;br&gt;&lt;b&gt;-14&lt;/b&gt;: Image could not be resampled - it is not a valid JPG&lt;br&gt;&lt;b&gt;-15&lt;/b&gt;: Image could not be saved&lt;br&gt;&lt;b&gt;-16&lt;/b&gt;: PDF could not be processed / rotated - possibly corrupt&lt;br&gt;&lt;b&gt;-17&lt;/b&gt;: PDF could not be opened - possibly corrupt&lt;br&gt;&lt;b&gt;-18&lt;/b&gt;: PDF too large&lt;br&gt;&lt;b&gt;-19&lt;/b&gt;: PDF could not be processed - possibly corrupt&lt;br&gt;&lt;b&gt;-20&lt;/b&gt;: Could not save PDF&lt;br&gt;&lt;b&gt;-21&lt;/b&gt;: Could not resized PDF&lt;br&gt;&lt;b&gt;-22&lt;/b&gt;: PDF could not be rasterised - check it has been distilled&lt;br&gt;&lt;b&gt;-23&lt;/b&gt;: WebServiceKey can't modify PropertyRef&lt;br&gt;</wsdl:documentation>
       <wsdl:input message="tns:PropertyQRCodeHttpGetIn" />
       <wsdl:output message="tns:PropertyQRCodeHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="PropertyQRCodeListonce">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Add or update a property QR Code Image&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Success&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Could not execute command&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: Image URL could not be retrieved&lt;br&gt;&lt;b&gt;-3&lt;/b&gt;: Only PDFs and JPGs can be uploaded&lt;br&gt;&lt;b&gt;-4&lt;/b&gt;: PropertyRef does not exist&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: Only JPGs / PDFs can be uploaded&lt;br&gt;&lt;b&gt;-12&lt;/b&gt;: Images over 45 megapixels are not accepted. (Approx. 7264 x 5440 pixels max)&lt;br&gt;&lt;b&gt;-13&lt;/b&gt;: Image could not be processed - it is not a valid JPG&lt;br&gt;&lt;b&gt;-14&lt;/b&gt;: Image could not be resampled - it is not a valid JPG&lt;br&gt;&lt;b&gt;-15&lt;/b&gt;: Image could not be saved&lt;br&gt;&lt;b&gt;-16&lt;/b&gt;: PDF could not be processed / rotated - possibly corrupt&lt;br&gt;&lt;b&gt;-17&lt;/b&gt;: PDF could not be opened - possibly corrupt&lt;br&gt;&lt;b&gt;-18&lt;/b&gt;: PDF too large&lt;br&gt;&lt;b&gt;-19&lt;/b&gt;: PDF could not be processed - possibly corrupt&lt;br&gt;&lt;b&gt;-20&lt;/b&gt;: Could not save PDF&lt;br&gt;&lt;b&gt;-21&lt;/b&gt;: Could not resized PDF&lt;br&gt;&lt;b&gt;-22&lt;/b&gt;: PDF could not be rasterised - check it has been distilled&lt;br&gt;&lt;b&gt;-23&lt;/b&gt;: WebServiceKey can't modify PropertyRef&lt;br&gt;</wsdl:documentation>
+      <wsdl:input message="tns:PropertyQRCodeListonceHttpGetIn" />
+      <wsdl:output message="tns:PropertyQRCodeListonceHttpGetOut" />
     </wsdl:operation>
     <wsdl:operation name="SetPropertyWebsiteURL">
       <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get a the details of the advertising office for a PropertyID&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Success&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Could not execute command&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: PropertyRef not found&lt;br&gt;</wsdl:documentation>
       <wsdl:input message="tns:SetPropertyWebsiteURLHttpGetIn" />
       <wsdl:output message="tns:SetPropertyWebsiteURLHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SetIndividualPropertyField">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get a the details of the advertising office for a PropertyID&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Success&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Could not execute command&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: PropertyRef not found&lt;br&gt;&lt;b&gt;-3&lt;/b&gt;: Field Name not valid&lt;br&gt;&lt;b&gt;-4&lt;/b&gt;: Field Value not valid&lt;br&gt;</wsdl:documentation>
+      <wsdl:input message="tns:SetIndividualPropertyFieldHttpGetIn" />
+      <wsdl:output message="tns:SetIndividualPropertyFieldHttpGetOut" />
     </wsdl:operation>
     <wsdl:operation name="DeleteImage">
       <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Mark an image as deleted&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;&amp;ge; 0&lt;/b&gt;: &lt;i&gt;Result&lt;/i&gt; images were deleted&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Could not execute command&lt;br&gt;&lt;b&gt;-10&lt;/b&gt;: ImageRef does not exist&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: WebServiceKey can't modify this ImageRef&lt;br&gt;</wsdl:documentation>
@@ -2994,7 +3216,7 @@
       <wsdl:output message="tns:DeleteUserHttpGetOut" />
     </wsdl:operation>
     <wsdl:operation name="AgentImage">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Add an image for an agent&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Success&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Could not execute command&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: Image URL could not be retrieved&lt;br&gt;&lt;b&gt;-3&lt;/b&gt;: Only PDFs and JPGs can be uploaded&lt;br&gt;&lt;b&gt;-4&lt;/b&gt;: PropertyRef does not exist&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: Only JPGs / PDFs can be uploaded&lt;br&gt;&lt;b&gt;-12&lt;/b&gt;: Image is too large. Maxiumum size is 15 megapixels (~4500 x 3300)&lt;br&gt;&lt;b&gt;-13&lt;/b&gt;: Image could not be processed - it is not a valid JPG&lt;br&gt;&lt;b&gt;-14&lt;/b&gt;: Image could not be resampled - it is not a valid JPG&lt;br&gt;&lt;b&gt;-15&lt;/b&gt;: Image could not be saved&lt;br&gt;&lt;b&gt;-16&lt;/b&gt;: PDF could not be processed / rotated - possibly corrupt&lt;br&gt;&lt;b&gt;-17&lt;/b&gt;: PDF could not be opened - possibly corrupt&lt;br&gt;&lt;b&gt;-18&lt;/b&gt;: PDF too large&lt;br&gt;&lt;b&gt;-19&lt;/b&gt;: PDF could not be processed - possibly corrupt&lt;br&gt;&lt;b&gt;-20&lt;/b&gt;: Could not save PDF&lt;br&gt;&lt;b&gt;-21&lt;/b&gt;: Could not resized PDF&lt;br&gt;&lt;b&gt;-22&lt;/b&gt;: PDF could not be rasterised - check it has been distilled&lt;br&gt;&lt;b&gt;-23&lt;/b&gt;: WebServiceKey can't modify this UserRef&lt;br&gt;</wsdl:documentation>
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Add an image for an agent&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Success&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Could not execute command&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: Image URL could not be retrieved&lt;br&gt;&lt;b&gt;-3&lt;/b&gt;: Only PDFs and JPGs can be uploaded&lt;br&gt;&lt;b&gt;-4&lt;/b&gt;: PropertyRef does not exist&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: Only JPGs / PDFs can be uploaded&lt;br&gt;&lt;b&gt;-12&lt;/b&gt;: Images over 45 megapixels are not accepted. (Approx. 7264 x 5440 pixels max)&lt;br&gt;&lt;b&gt;-13&lt;/b&gt;: Image could not be processed - it is not a valid JPG&lt;br&gt;&lt;b&gt;-14&lt;/b&gt;: Image could not be resampled - it is not a valid JPG&lt;br&gt;&lt;b&gt;-15&lt;/b&gt;: Image could not be saved&lt;br&gt;&lt;b&gt;-16&lt;/b&gt;: PDF could not be processed / rotated - possibly corrupt&lt;br&gt;&lt;b&gt;-17&lt;/b&gt;: PDF could not be opened - possibly corrupt&lt;br&gt;&lt;b&gt;-18&lt;/b&gt;: PDF too large&lt;br&gt;&lt;b&gt;-19&lt;/b&gt;: PDF could not be processed - possibly corrupt&lt;br&gt;&lt;b&gt;-20&lt;/b&gt;: Could not save PDF&lt;br&gt;&lt;b&gt;-21&lt;/b&gt;: Could not resized PDF&lt;br&gt;&lt;b&gt;-22&lt;/b&gt;: PDF could not be rasterised - check it has been distilled&lt;br&gt;&lt;b&gt;-23&lt;/b&gt;: WebServiceKey can't modify this UserRef&lt;br&gt;</wsdl:documentation>
       <wsdl:input message="tns:AgentImageHttpGetIn" />
       <wsdl:output message="tns:AgentImageHttpGetOut" />
     </wsdl:operation>
@@ -3033,6 +3255,11 @@
       <wsdl:input message="tns:ChangePasswordHttpGetIn" />
       <wsdl:output message="tns:ChangePasswordHttpGetOut" />
     </wsdl:operation>
+    <wsdl:operation name="UploadArtwork">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Upload final artwork for an order item&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b0&lt;/b&gt;: Success&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Unable to execute command&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: WebServiceKey can not view this Order/OfficeRef&lt;b&gt;-3&lt;/b&gt;: Permission denied foer this OrderItem&lt;br&gt;&lt;b&gt;-4&lt;/b&gt;: Invalid URL&lt;br&gt;&lt;b&gt;-5&lt;/b&gt;: Invalid Filetype&lt;br&gt;</wsdl:documentation>
+      <wsdl:input message="tns:UploadArtworkHttpGetIn" />
+      <wsdl:output message="tns:UploadArtworkHttpGetOut" />
+    </wsdl:operation>
     <wsdl:operation name="OverwriteVendorPrice">
       <wsdl:input message="tns:OverwriteVendorPriceHttpGetIn" />
       <wsdl:output message="tns:OverwriteVendorPriceHttpGetOut" />
@@ -3064,13 +3291,13 @@
       <wsdl:input message="tns:RemoveAssistantHttpGetIn" />
       <wsdl:output message="tns:RemoveAssistantHttpGetOut" />
     </wsdl:operation>
+    <wsdl:operation name="PropertyImageByOrderItem">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Add or update a property image&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Success&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Could not execute command&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: Image URL could not be retrieved&lt;br&gt;&lt;b&gt;-3&lt;/b&gt;: Only PDFs and JPGs can be uploaded&lt;br&gt;&lt;b&gt;-4&lt;/b&gt;: PropertyRef does not exist&lt;br&gt;&lt;b&gt;-5&lt;/b&gt;: WebServiceKey does not exist&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: Only JPGs / PDFs can be uploaded&lt;br&gt;&lt;b&gt;-12&lt;/b&gt;: Images over 45 megapixels are not accepted. (Approx. 7264 x 5440 pixels max)&lt;br&gt;&lt;b&gt;-13&lt;/b&gt;: Image could not be processed - it is not a valid JPG&lt;br&gt;&lt;b&gt;-14&lt;/b&gt;: Image could not be resampled - it is not a valid JPG&lt;br&gt;&lt;b&gt;-15&lt;/b&gt;: Image could not be saved&lt;br&gt;&lt;b&gt;-16&lt;/b&gt;: PDF could not be processed / rotated - possibly corrupt&lt;br&gt;&lt;b&gt;-17&lt;/b&gt;: PDF could not be opened - possibly corrupt&lt;br&gt;&lt;b&gt;-18&lt;/b&gt;: PDF too large&lt;br&gt;&lt;b&gt;-19&lt;/b&gt;: PDF could not be processed - possibly corrupt&lt;br&gt;&lt;b&gt;-20&lt;/b&gt;: Could not save PDF&lt;br&gt;&lt;b&gt;-21&lt;/b&gt;: Could not resized PDF&lt;br&gt;&lt;b&gt;-22&lt;/b&gt;: PDF could not be rasterised - check it has been distilled&lt;br&gt;&lt;b&gt;-23&lt;/b&gt;: WebServiceKey can't modify PropertyRef&lt;br&gt;</wsdl:documentation>
+      <wsdl:input message="tns:PropertyImageByOrderItemHttpGetIn" />
+      <wsdl:output message="tns:PropertyImageByOrderItemHttpGetOut" />
+    </wsdl:operation>
   </wsdl:portType>
   <wsdl:portType name="IntegrationHttpPost">
-    <wsdl:operation name="PropertyDetails">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Update, or create, a property assigned to AgentUserRef who is a member of OfficeRef&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;1&lt;/b&gt;: Property created&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Property updated&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Unable to execute command&lt;br&gt;&lt;b&gt;-10&lt;/b&gt;: OfficeRef does not exist&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: AgentUserRef does not exist or does not belong to OfficeRef&lt;br&gt;&lt;b&gt;-12&lt;/b&gt;: Unable to match PropertyType&lt;br&gt;&lt;b&gt;-13&lt;/b&gt;: Unable to match CampaignType&lt;br&gt;&lt;b&gt;-14&lt;/b&gt;: Unable to create Property&lt;br&gt;&lt;b&gt;-15&lt;/b&gt;: WebServiceKey can't modify properties in this OfficeRef&lt;br&gt;</wsdl:documentation>
-      <wsdl:input message="tns:PropertyDetailsHttpPostIn" />
-      <wsdl:output message="tns:PropertyDetailsHttpPostOut" />
-    </wsdl:operation>
     <wsdl:operation name="RemoveProperty">
       <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Remove a property, indicated by PropertyRef, belonging to WebServiceKey&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Property removed&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Unable to execute command&lt;br&gt;&lt;b&gt;-10&lt;/b&gt;: PropertyRef does not exist&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: WebServiceKey can't view this PropertyRef&lt;br&gt;&lt;b&gt;-12&lt;/b&gt;: No Orders exist on this PropertyRef&lt;br&gt;</wsdl:documentation>
       <wsdl:input message="tns:RemovePropertyHttpPostIn" />
@@ -3087,19 +3314,29 @@
       <wsdl:output message="tns:DeleteOFIHttpPostOut" />
     </wsdl:operation>
     <wsdl:operation name="PropertyImage">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Add or update a property image&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Success&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Could not execute command&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: Image URL could not be retrieved&lt;br&gt;&lt;b&gt;-3&lt;/b&gt;: Only PDFs and JPGs can be uploaded&lt;br&gt;&lt;b&gt;-4&lt;/b&gt;: PropertyRef does not exist&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: Only JPGs / PDFs can be uploaded&lt;br&gt;&lt;b&gt;-12&lt;/b&gt;: Image is too large. Maxiumum size is 15 megapixels (~4500 x 3300)&lt;br&gt;&lt;b&gt;-13&lt;/b&gt;: Image could not be processed - it is not a valid JPG&lt;br&gt;&lt;b&gt;-14&lt;/b&gt;: Image could not be resampled - it is not a valid JPG&lt;br&gt;&lt;b&gt;-15&lt;/b&gt;: Image could not be saved&lt;br&gt;&lt;b&gt;-16&lt;/b&gt;: PDF could not be processed / rotated - possibly corrupt&lt;br&gt;&lt;b&gt;-17&lt;/b&gt;: PDF could not be opened - possibly corrupt&lt;br&gt;&lt;b&gt;-18&lt;/b&gt;: PDF too large&lt;br&gt;&lt;b&gt;-19&lt;/b&gt;: PDF could not be processed - possibly corrupt&lt;br&gt;&lt;b&gt;-20&lt;/b&gt;: Could not save PDF&lt;br&gt;&lt;b&gt;-21&lt;/b&gt;: Could not resized PDF&lt;br&gt;&lt;b&gt;-22&lt;/b&gt;: PDF could not be rasterised - check it has been distilled&lt;br&gt;&lt;b&gt;-23&lt;/b&gt;: WebServiceKey can't modify PropertyRef&lt;br&gt;</wsdl:documentation>
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Add or update a property image&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Success&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Could not execute command&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: Image URL could not be retrieved&lt;br&gt;&lt;b&gt;-3&lt;/b&gt;: Only PDFs and JPGs can be uploaded&lt;br&gt;&lt;b&gt;-4&lt;/b&gt;: PropertyRef does not exist&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: Only JPGs / PDFs can be uploaded&lt;br&gt;&lt;b&gt;-12&lt;/b&gt;: Images over 45 megapixels are not accepted. (Approx. 7264 x 5440 pixels max)&lt;br&gt;&lt;b&gt;-13&lt;/b&gt;: Image could not be processed - it is not a valid JPG&lt;br&gt;&lt;b&gt;-14&lt;/b&gt;: Image could not be resampled - it is not a valid JPG&lt;br&gt;&lt;b&gt;-15&lt;/b&gt;: Image could not be saved&lt;br&gt;&lt;b&gt;-16&lt;/b&gt;: PDF could not be processed / rotated - possibly corrupt&lt;br&gt;&lt;b&gt;-17&lt;/b&gt;: PDF could not be opened - possibly corrupt&lt;br&gt;&lt;b&gt;-18&lt;/b&gt;: PDF too large&lt;br&gt;&lt;b&gt;-19&lt;/b&gt;: PDF could not be processed - possibly corrupt&lt;br&gt;&lt;b&gt;-20&lt;/b&gt;: Could not save PDF&lt;br&gt;&lt;b&gt;-21&lt;/b&gt;: Could not resized PDF&lt;br&gt;&lt;b&gt;-22&lt;/b&gt;: PDF could not be rasterised - check it has been distilled&lt;br&gt;&lt;b&gt;-23&lt;/b&gt;: WebServiceKey can't modify PropertyRef&lt;br&gt;</wsdl:documentation>
       <wsdl:input message="tns:PropertyImageHttpPostIn" />
       <wsdl:output message="tns:PropertyImageHttpPostOut" />
     </wsdl:operation>
     <wsdl:operation name="PropertyQRCode">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Add or update a property QR Code Image&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Success&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Could not execute command&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: Image URL could not be retrieved&lt;br&gt;&lt;b&gt;-3&lt;/b&gt;: Only PDFs and JPGs can be uploaded&lt;br&gt;&lt;b&gt;-4&lt;/b&gt;: PropertyRef does not exist&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: Only JPGs / PDFs can be uploaded&lt;br&gt;&lt;b&gt;-12&lt;/b&gt;: Image is too large. Maxiumum size is 15 megapixels (~4500 x 3300)&lt;br&gt;&lt;b&gt;-13&lt;/b&gt;: Image could not be processed - it is not a valid JPG&lt;br&gt;&lt;b&gt;-14&lt;/b&gt;: Image could not be resampled - it is not a valid JPG&lt;br&gt;&lt;b&gt;-15&lt;/b&gt;: Image could not be saved&lt;br&gt;&lt;b&gt;-16&lt;/b&gt;: PDF could not be processed / rotated - possibly corrupt&lt;br&gt;&lt;b&gt;-17&lt;/b&gt;: PDF could not be opened - possibly corrupt&lt;br&gt;&lt;b&gt;-18&lt;/b&gt;: PDF too large&lt;br&gt;&lt;b&gt;-19&lt;/b&gt;: PDF could not be processed - possibly corrupt&lt;br&gt;&lt;b&gt;-20&lt;/b&gt;: Could not save PDF&lt;br&gt;&lt;b&gt;-21&lt;/b&gt;: Could not resized PDF&lt;br&gt;&lt;b&gt;-22&lt;/b&gt;: PDF could not be rasterised - check it has been distilled&lt;br&gt;&lt;b&gt;-23&lt;/b&gt;: WebServiceKey can't modify PropertyRef&lt;br&gt;</wsdl:documentation>
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Add or update a property QR Code Image&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Success&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Could not execute command&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: Image URL could not be retrieved&lt;br&gt;&lt;b&gt;-3&lt;/b&gt;: Only PDFs and JPGs can be uploaded&lt;br&gt;&lt;b&gt;-4&lt;/b&gt;: PropertyRef does not exist&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: Only JPGs / PDFs can be uploaded&lt;br&gt;&lt;b&gt;-12&lt;/b&gt;: Images over 45 megapixels are not accepted. (Approx. 7264 x 5440 pixels max)&lt;br&gt;&lt;b&gt;-13&lt;/b&gt;: Image could not be processed - it is not a valid JPG&lt;br&gt;&lt;b&gt;-14&lt;/b&gt;: Image could not be resampled - it is not a valid JPG&lt;br&gt;&lt;b&gt;-15&lt;/b&gt;: Image could not be saved&lt;br&gt;&lt;b&gt;-16&lt;/b&gt;: PDF could not be processed / rotated - possibly corrupt&lt;br&gt;&lt;b&gt;-17&lt;/b&gt;: PDF could not be opened - possibly corrupt&lt;br&gt;&lt;b&gt;-18&lt;/b&gt;: PDF too large&lt;br&gt;&lt;b&gt;-19&lt;/b&gt;: PDF could not be processed - possibly corrupt&lt;br&gt;&lt;b&gt;-20&lt;/b&gt;: Could not save PDF&lt;br&gt;&lt;b&gt;-21&lt;/b&gt;: Could not resized PDF&lt;br&gt;&lt;b&gt;-22&lt;/b&gt;: PDF could not be rasterised - check it has been distilled&lt;br&gt;&lt;b&gt;-23&lt;/b&gt;: WebServiceKey can't modify PropertyRef&lt;br&gt;</wsdl:documentation>
       <wsdl:input message="tns:PropertyQRCodeHttpPostIn" />
       <wsdl:output message="tns:PropertyQRCodeHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="PropertyQRCodeListonce">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Add or update a property QR Code Image&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Success&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Could not execute command&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: Image URL could not be retrieved&lt;br&gt;&lt;b&gt;-3&lt;/b&gt;: Only PDFs and JPGs can be uploaded&lt;br&gt;&lt;b&gt;-4&lt;/b&gt;: PropertyRef does not exist&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: Only JPGs / PDFs can be uploaded&lt;br&gt;&lt;b&gt;-12&lt;/b&gt;: Images over 45 megapixels are not accepted. (Approx. 7264 x 5440 pixels max)&lt;br&gt;&lt;b&gt;-13&lt;/b&gt;: Image could not be processed - it is not a valid JPG&lt;br&gt;&lt;b&gt;-14&lt;/b&gt;: Image could not be resampled - it is not a valid JPG&lt;br&gt;&lt;b&gt;-15&lt;/b&gt;: Image could not be saved&lt;br&gt;&lt;b&gt;-16&lt;/b&gt;: PDF could not be processed / rotated - possibly corrupt&lt;br&gt;&lt;b&gt;-17&lt;/b&gt;: PDF could not be opened - possibly corrupt&lt;br&gt;&lt;b&gt;-18&lt;/b&gt;: PDF too large&lt;br&gt;&lt;b&gt;-19&lt;/b&gt;: PDF could not be processed - possibly corrupt&lt;br&gt;&lt;b&gt;-20&lt;/b&gt;: Could not save PDF&lt;br&gt;&lt;b&gt;-21&lt;/b&gt;: Could not resized PDF&lt;br&gt;&lt;b&gt;-22&lt;/b&gt;: PDF could not be rasterised - check it has been distilled&lt;br&gt;&lt;b&gt;-23&lt;/b&gt;: WebServiceKey can't modify PropertyRef&lt;br&gt;</wsdl:documentation>
+      <wsdl:input message="tns:PropertyQRCodeListonceHttpPostIn" />
+      <wsdl:output message="tns:PropertyQRCodeListonceHttpPostOut" />
     </wsdl:operation>
     <wsdl:operation name="SetPropertyWebsiteURL">
       <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get a the details of the advertising office for a PropertyID&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Success&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Could not execute command&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: PropertyRef not found&lt;br&gt;</wsdl:documentation>
       <wsdl:input message="tns:SetPropertyWebsiteURLHttpPostIn" />
       <wsdl:output message="tns:SetPropertyWebsiteURLHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SetIndividualPropertyField">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get a the details of the advertising office for a PropertyID&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Success&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Could not execute command&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: PropertyRef not found&lt;br&gt;&lt;b&gt;-3&lt;/b&gt;: Field Name not valid&lt;br&gt;&lt;b&gt;-4&lt;/b&gt;: Field Value not valid&lt;br&gt;</wsdl:documentation>
+      <wsdl:input message="tns:SetIndividualPropertyFieldHttpPostIn" />
+      <wsdl:output message="tns:SetIndividualPropertyFieldHttpPostOut" />
     </wsdl:operation>
     <wsdl:operation name="DeleteImage">
       <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Mark an image as deleted&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;&amp;ge; 0&lt;/b&gt;: &lt;i&gt;Result&lt;/i&gt; images were deleted&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Could not execute command&lt;br&gt;&lt;b&gt;-10&lt;/b&gt;: ImageRef does not exist&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: WebServiceKey can't modify this ImageRef&lt;br&gt;</wsdl:documentation>
@@ -3122,7 +3359,7 @@
       <wsdl:output message="tns:DeleteUserHttpPostOut" />
     </wsdl:operation>
     <wsdl:operation name="AgentImage">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Add an image for an agent&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Success&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Could not execute command&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: Image URL could not be retrieved&lt;br&gt;&lt;b&gt;-3&lt;/b&gt;: Only PDFs and JPGs can be uploaded&lt;br&gt;&lt;b&gt;-4&lt;/b&gt;: PropertyRef does not exist&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: Only JPGs / PDFs can be uploaded&lt;br&gt;&lt;b&gt;-12&lt;/b&gt;: Image is too large. Maxiumum size is 15 megapixels (~4500 x 3300)&lt;br&gt;&lt;b&gt;-13&lt;/b&gt;: Image could not be processed - it is not a valid JPG&lt;br&gt;&lt;b&gt;-14&lt;/b&gt;: Image could not be resampled - it is not a valid JPG&lt;br&gt;&lt;b&gt;-15&lt;/b&gt;: Image could not be saved&lt;br&gt;&lt;b&gt;-16&lt;/b&gt;: PDF could not be processed / rotated - possibly corrupt&lt;br&gt;&lt;b&gt;-17&lt;/b&gt;: PDF could not be opened - possibly corrupt&lt;br&gt;&lt;b&gt;-18&lt;/b&gt;: PDF too large&lt;br&gt;&lt;b&gt;-19&lt;/b&gt;: PDF could not be processed - possibly corrupt&lt;br&gt;&lt;b&gt;-20&lt;/b&gt;: Could not save PDF&lt;br&gt;&lt;b&gt;-21&lt;/b&gt;: Could not resized PDF&lt;br&gt;&lt;b&gt;-22&lt;/b&gt;: PDF could not be rasterised - check it has been distilled&lt;br&gt;&lt;b&gt;-23&lt;/b&gt;: WebServiceKey can't modify this UserRef&lt;br&gt;</wsdl:documentation>
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Add an image for an agent&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Success&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Could not execute command&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: Image URL could not be retrieved&lt;br&gt;&lt;b&gt;-3&lt;/b&gt;: Only PDFs and JPGs can be uploaded&lt;br&gt;&lt;b&gt;-4&lt;/b&gt;: PropertyRef does not exist&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: Only JPGs / PDFs can be uploaded&lt;br&gt;&lt;b&gt;-12&lt;/b&gt;: Images over 45 megapixels are not accepted. (Approx. 7264 x 5440 pixels max)&lt;br&gt;&lt;b&gt;-13&lt;/b&gt;: Image could not be processed - it is not a valid JPG&lt;br&gt;&lt;b&gt;-14&lt;/b&gt;: Image could not be resampled - it is not a valid JPG&lt;br&gt;&lt;b&gt;-15&lt;/b&gt;: Image could not be saved&lt;br&gt;&lt;b&gt;-16&lt;/b&gt;: PDF could not be processed / rotated - possibly corrupt&lt;br&gt;&lt;b&gt;-17&lt;/b&gt;: PDF could not be opened - possibly corrupt&lt;br&gt;&lt;b&gt;-18&lt;/b&gt;: PDF too large&lt;br&gt;&lt;b&gt;-19&lt;/b&gt;: PDF could not be processed - possibly corrupt&lt;br&gt;&lt;b&gt;-20&lt;/b&gt;: Could not save PDF&lt;br&gt;&lt;b&gt;-21&lt;/b&gt;: Could not resized PDF&lt;br&gt;&lt;b&gt;-22&lt;/b&gt;: PDF could not be rasterised - check it has been distilled&lt;br&gt;&lt;b&gt;-23&lt;/b&gt;: WebServiceKey can't modify this UserRef&lt;br&gt;</wsdl:documentation>
       <wsdl:input message="tns:AgentImageHttpPostIn" />
       <wsdl:output message="tns:AgentImageHttpPostOut" />
     </wsdl:operation>
@@ -3161,6 +3398,11 @@
       <wsdl:input message="tns:ChangePasswordHttpPostIn" />
       <wsdl:output message="tns:ChangePasswordHttpPostOut" />
     </wsdl:operation>
+    <wsdl:operation name="UploadArtwork">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Upload final artwork for an order item&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b0&lt;/b&gt;: Success&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Unable to execute command&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: WebServiceKey can not view this Order/OfficeRef&lt;b&gt;-3&lt;/b&gt;: Permission denied foer this OrderItem&lt;br&gt;&lt;b&gt;-4&lt;/b&gt;: Invalid URL&lt;br&gt;&lt;b&gt;-5&lt;/b&gt;: Invalid Filetype&lt;br&gt;</wsdl:documentation>
+      <wsdl:input message="tns:UploadArtworkHttpPostIn" />
+      <wsdl:output message="tns:UploadArtworkHttpPostOut" />
+    </wsdl:operation>
     <wsdl:operation name="OverwriteVendorPrice">
       <wsdl:input message="tns:OverwriteVendorPriceHttpPostIn" />
       <wsdl:output message="tns:OverwriteVendorPriceHttpPostOut" />
@@ -3191,6 +3433,11 @@
       <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Add an assistant to an agent user&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Assistant does not belong to agent no update&lt;br&gt;&lt;b&gt;1&lt;/b&gt;: Assistant removed from agent successfully&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Could not execute command&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: OfficeRef does not exist for supplied WebServiceKey&lt;br&gt;&lt;b&gt;-3&lt;/b&gt;: AgentUserRef does not exist in OfficeRef&lt;br&gt;&lt;b&gt;-4&lt;/b&gt;: AssistantUserRef does not exist in OfficeRef&lt;br&gt;</wsdl:documentation>
       <wsdl:input message="tns:RemoveAssistantHttpPostIn" />
       <wsdl:output message="tns:RemoveAssistantHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="PropertyImageByOrderItem">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Add or update a property image&lt;br&gt;&lt;br&gt;Possible results are;&lt;br&gt;&lt;b&gt;0&lt;/b&gt;: Success&lt;br&gt;&lt;b&gt;-1&lt;/b&gt;: Could not execute command&lt;br&gt;&lt;b&gt;-2&lt;/b&gt;: Image URL could not be retrieved&lt;br&gt;&lt;b&gt;-3&lt;/b&gt;: Only PDFs and JPGs can be uploaded&lt;br&gt;&lt;b&gt;-4&lt;/b&gt;: PropertyRef does not exist&lt;br&gt;&lt;b&gt;-5&lt;/b&gt;: WebServiceKey does not exist&lt;br&gt;&lt;b&gt;-11&lt;/b&gt;: Only JPGs / PDFs can be uploaded&lt;br&gt;&lt;b&gt;-12&lt;/b&gt;: Images over 45 megapixels are not accepted. (Approx. 7264 x 5440 pixels max)&lt;br&gt;&lt;b&gt;-13&lt;/b&gt;: Image could not be processed - it is not a valid JPG&lt;br&gt;&lt;b&gt;-14&lt;/b&gt;: Image could not be resampled - it is not a valid JPG&lt;br&gt;&lt;b&gt;-15&lt;/b&gt;: Image could not be saved&lt;br&gt;&lt;b&gt;-16&lt;/b&gt;: PDF could not be processed / rotated - possibly corrupt&lt;br&gt;&lt;b&gt;-17&lt;/b&gt;: PDF could not be opened - possibly corrupt&lt;br&gt;&lt;b&gt;-18&lt;/b&gt;: PDF too large&lt;br&gt;&lt;b&gt;-19&lt;/b&gt;: PDF could not be processed - possibly corrupt&lt;br&gt;&lt;b&gt;-20&lt;/b&gt;: Could not save PDF&lt;br&gt;&lt;b&gt;-21&lt;/b&gt;: Could not resized PDF&lt;br&gt;&lt;b&gt;-22&lt;/b&gt;: PDF could not be rasterised - check it has been distilled&lt;br&gt;&lt;b&gt;-23&lt;/b&gt;: WebServiceKey can't modify PropertyRef&lt;br&gt;</wsdl:documentation>
+      <wsdl:input message="tns:PropertyImageByOrderItemHttpPostIn" />
+      <wsdl:output message="tns:PropertyImageByOrderItemHttpPostOut" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="IntegrationSoap" type="tns:IntegrationSoap">
@@ -3231,26 +3478,8 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="PropertyDetails">
-      <soap:operation soapAction="http://webfarm.campaigntrack.com.au/PropertyDetails" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="PropertyDetailsByObject">
       <soap:operation soapAction="http://webfarm.campaigntrack.com.au/PropertyDetailsByObject" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="AllDetails">
-      <soap:operation soapAction="http://webfarm.campaigntrack.com.au/AllDetails" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -3278,15 +3507,6 @@
     </wsdl:operation>
     <wsdl:operation name="DownloadPropertyImages">
       <soap:operation soapAction="http://webfarm.campaigntrack.com.au/DownloadPropertyImages" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="AdvAllDetailsMultiAgent">
-      <soap:operation soapAction="http://webfarm.campaigntrack.com.au/AdvAllDetailsMultiAgent" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -3366,8 +3586,26 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="PropertyQRCodeListonce">
+      <soap:operation soapAction="http://webfarm.campaigntrack.com.au/PropertyQRCodeListonce" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="SetPropertyWebsiteURL">
       <soap:operation soapAction="http://webfarm.campaigntrack.com.au/SetPropertyWebsiteURL" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetIndividualPropertyField">
+      <soap:operation soapAction="http://webfarm.campaigntrack.com.au/SetIndividualPropertyField" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -3636,6 +3874,15 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="UploadArtwork">
+      <soap:operation soapAction="http://webfarm.campaigntrack.com.au/UploadArtwork" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="GetQuotes">
       <soap:operation soapAction="http://webfarm.campaigntrack.com.au/GetQuotes" style="document" />
       <wsdl:input>
@@ -3762,6 +4009,51 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="GetSuppliersByOfficeRef">
+      <soap:operation soapAction="http://webfarm.campaigntrack.com.au/GetSuppliersByOfficeRef" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetProductsBySupplierNo">
+      <soap:operation soapAction="http://webfarm.campaigntrack.com.au/GetProductsBySupplierNo" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPartsByProductNo">
+      <soap:operation soapAction="http://webfarm.campaigntrack.com.au/GetPartsByProductNo" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPropertyCopyByPropertyRef">
+      <soap:operation soapAction="http://webfarm.campaigntrack.com.au/GetPropertyCopyByPropertyRef" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PropertyImageByOrderItem">
+      <soap:operation soapAction="http://webfarm.campaigntrack.com.au/PropertyImageByOrderItem" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
   </wsdl:binding>
   <wsdl:binding name="IntegrationSoap12" type="tns:IntegrationSoap">
     <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
@@ -3801,26 +4093,8 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="PropertyDetails">
-      <soap12:operation soapAction="http://webfarm.campaigntrack.com.au/PropertyDetails" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="PropertyDetailsByObject">
       <soap12:operation soapAction="http://webfarm.campaigntrack.com.au/PropertyDetailsByObject" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="AllDetails">
-      <soap12:operation soapAction="http://webfarm.campaigntrack.com.au/AllDetails" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
@@ -3848,15 +4122,6 @@
     </wsdl:operation>
     <wsdl:operation name="DownloadPropertyImages">
       <soap12:operation soapAction="http://webfarm.campaigntrack.com.au/DownloadPropertyImages" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="AdvAllDetailsMultiAgent">
-      <soap12:operation soapAction="http://webfarm.campaigntrack.com.au/AdvAllDetailsMultiAgent" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
@@ -3936,8 +4201,26 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="PropertyQRCodeListonce">
+      <soap12:operation soapAction="http://webfarm.campaigntrack.com.au/PropertyQRCodeListonce" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="SetPropertyWebsiteURL">
       <soap12:operation soapAction="http://webfarm.campaigntrack.com.au/SetPropertyWebsiteURL" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetIndividualPropertyField">
+      <soap12:operation soapAction="http://webfarm.campaigntrack.com.au/SetIndividualPropertyField" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
@@ -4206,6 +4489,15 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="UploadArtwork">
+      <soap12:operation soapAction="http://webfarm.campaigntrack.com.au/UploadArtwork" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="GetQuotes">
       <soap12:operation soapAction="http://webfarm.campaigntrack.com.au/GetQuotes" style="document" />
       <wsdl:input>
@@ -4332,18 +4624,54 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="GetSuppliersByOfficeRef">
+      <soap12:operation soapAction="http://webfarm.campaigntrack.com.au/GetSuppliersByOfficeRef" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetProductsBySupplierNo">
+      <soap12:operation soapAction="http://webfarm.campaigntrack.com.au/GetProductsBySupplierNo" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPartsByProductNo">
+      <soap12:operation soapAction="http://webfarm.campaigntrack.com.au/GetPartsByProductNo" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPropertyCopyByPropertyRef">
+      <soap12:operation soapAction="http://webfarm.campaigntrack.com.au/GetPropertyCopyByPropertyRef" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PropertyImageByOrderItem">
+      <soap12:operation soapAction="http://webfarm.campaigntrack.com.au/PropertyImageByOrderItem" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
   </wsdl:binding>
   <wsdl:binding name="IntegrationHttpGet" type="tns:IntegrationHttpGet">
     <http:binding verb="GET" />
-    <wsdl:operation name="PropertyDetails">
-      <http:operation location="/PropertyDetails" />
-      <wsdl:input>
-        <http:urlEncoded />
-      </wsdl:input>
-      <wsdl:output>
-        <mime:mimeXml part="Body" />
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="RemoveProperty">
       <http:operation location="/RemoveProperty" />
       <wsdl:input>
@@ -4389,8 +4717,26 @@
         <mime:mimeXml part="Body" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="PropertyQRCodeListonce">
+      <http:operation location="/PropertyQRCodeListonce" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="SetPropertyWebsiteURL">
       <http:operation location="/SetPropertyWebsiteURL" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetIndividualPropertyField">
+      <http:operation location="/SetIndividualPropertyField" />
       <wsdl:input>
         <http:urlEncoded />
       </wsdl:input>
@@ -4506,6 +4852,15 @@
         <mime:mimeXml part="Body" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="UploadArtwork">
+      <http:operation location="/UploadArtwork" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="OverwriteVendorPrice">
       <http:operation location="/OverwriteVendorPrice" />
       <wsdl:input>
@@ -4562,6 +4917,15 @@
     </wsdl:operation>
     <wsdl:operation name="RemoveAssistant">
       <http:operation location="/RemoveAssistant" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PropertyImageByOrderItem">
+      <http:operation location="/PropertyImageByOrderItem" />
       <wsdl:input>
         <http:urlEncoded />
       </wsdl:input>
@@ -4572,15 +4936,6 @@
   </wsdl:binding>
   <wsdl:binding name="IntegrationHttpPost" type="tns:IntegrationHttpPost">
     <http:binding verb="POST" />
-    <wsdl:operation name="PropertyDetails">
-      <http:operation location="/PropertyDetails" />
-      <wsdl:input>
-        <mime:content type="application/x-www-form-urlencoded" />
-      </wsdl:input>
-      <wsdl:output>
-        <mime:mimeXml part="Body" />
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="RemoveProperty">
       <http:operation location="/RemoveProperty" />
       <wsdl:input>
@@ -4626,8 +4981,26 @@
         <mime:mimeXml part="Body" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="PropertyQRCodeListonce">
+      <http:operation location="/PropertyQRCodeListonce" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="SetPropertyWebsiteURL">
       <http:operation location="/SetPropertyWebsiteURL" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetIndividualPropertyField">
+      <http:operation location="/SetIndividualPropertyField" />
       <wsdl:input>
         <mime:content type="application/x-www-form-urlencoded" />
       </wsdl:input>
@@ -4743,6 +5116,15 @@
         <mime:mimeXml part="Body" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="UploadArtwork">
+      <http:operation location="/UploadArtwork" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="OverwriteVendorPrice">
       <http:operation location="/OverwriteVendorPrice" />
       <wsdl:input>
@@ -4799,6 +5181,15 @@
     </wsdl:operation>
     <wsdl:operation name="RemoveAssistant">
       <http:operation location="/RemoveAssistant" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PropertyImageByOrderItem">
+      <http:operation location="/PropertyImageByOrderItem" />
       <wsdl:input>
         <mime:content type="application/x-www-form-urlencoded" />
       </wsdl:input>

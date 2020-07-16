@@ -792,6 +792,7 @@ public class CampaignImport {
             }
             return; //We have no further work to do with completed campaigns
         }
+
         Item[] arCI = oWS.GetCampaignItems(szWSKey, szWSOffice, oP.PropertyRef, ref intErrorCode);
         checkError();
         if (OnlyUpdatePropertyDetails)
