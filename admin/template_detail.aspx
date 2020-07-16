@@ -47,7 +47,9 @@
 
         $(document).ready(function () {
 
-            CKEDITOR.replace("txtContent");
+            CKEDITOR.replace("txtContent", {
+                height: 80vh
+            });
             $('form').submit(function (event) {
                 $('#txtSubmit').val(btoa(CKEDITOR.instances['txtContent'].getData()));
                 CKEDITOR.instances['txtContent'].setData('');
@@ -115,8 +117,8 @@
                 </div>
                 <br class="Align" />
 
-                <div id="divTemplate" runat="server" style="width: 70%; float: left" enableviewstate="false">
-                    <asp:TextBox ID="txtContent" runat="server" Width="100%" Height="500" TextMode="MultiLine"></asp:TextBox>
+                <div id="divTemplate" runat="server" style="width: 70%; float: left; height: 80vh" enableviewstate="false">
+                    <asp:TextBox ID="txtContent" runat="server" Width="100%" style="height: 75vh" TextMode="MultiLine" Rows="40"></asp:TextBox>
                 </div>
                 <div id="divTemplateTerms" enableviewstate="false" runat="server" style="margin-left: 5px; float: left; padding-left: 0px; clear: right; width: 28%">
                     <div style='background: silver; text-align: center; font-family: Arial; padding: 3px;'>Replaceable terms</div>
