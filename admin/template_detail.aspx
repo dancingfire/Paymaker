@@ -122,7 +122,7 @@
                 </div>
                 <div id="divTemplateTerms" enableviewstate="false" runat="server" style="margin-left: 5px; float: left; padding-left: 0px; clear: right; width: 28%">
                     <div style='background: silver; text-align: center; font-family: Arial; padding: 3px;'>Replaceable terms</div>
-                    <div id="divCustomWords" runat="server" style="float: left; text-align: left; display: inline-block; overflow-x: hidden; height: 190px; width: 100%; margin-bottom: 5px; overflow: auto; border: solid 1px silver">
+                    <div id="divCustomWords" runat="server" style="float: left; text-align: left; display: inline-block; overflow-x: hidden; height: 220px; width: 100%; margin-bottom: 5px; overflow: auto; border: solid 1px silver">
                         <a href='javascript: insertTag("AGENTFIRSTNAME")'>Recipent first name</a><br />
                         <a href='javascript: insertTag("AGENTLASTNAME")'>Recipent last name</a><br />
                         <a href='javascript: insertTag("SENDERFIRSTNAME")'>Sender first name</a><br />
