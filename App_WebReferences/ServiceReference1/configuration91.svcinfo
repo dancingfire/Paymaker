@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<SavedWcfConfigurationInformation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="9.1" CheckSum="7zitu/fhrHOAnD1v2qMJBMk35h4=">
+<SavedWcfConfigurationInformation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="9.1" CheckSum="qyixKcd5Py8dbf78DDIyyfwXZHlNBlcmxCssQ2tYT94=">
   <bindingConfigurations>
     <bindingConfiguration bindingType="basicHttpBinding" name="IntegrationSoap">
       <properties>
@@ -34,7 +34,7 @@
           <serializedValue>65536</serializedValue>
         </property>
         <property path="/maxReceivedMessageSize" isComplexType="false" isExplicitlyDefined="true" clrType="System.Int64, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue />
+          <serializedValue>655360</serializedValue>
         </property>
         <property path="/proxyAddress" isComplexType="false" isExplicitlyDefined="false" clrType="System.Uri, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue />
@@ -110,10 +110,10 @@
         </property>
       </properties>
     </bindingConfiguration>
-    <bindingConfiguration bindingType="customBinding" name="IntegrationSoap12">
+    <bindingConfiguration bindingType="customBinding" name="IntegrationSoap121">
       <properties>
         <property path="/name" isComplexType="false" isExplicitlyDefined="true" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>IntegrationSoap12</serializedValue>
+          <serializedValue>IntegrationSoap121</serializedValue>
         </property>
         <property path="/closeTimeout" isComplexType="false" isExplicitlyDefined="true" clrType="System.TimeSpan, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue />
@@ -348,7 +348,7 @@
         </property>
       </properties>
     </endpoint>
-    <endpoint name="IntegrationSoap12" contract="ServiceReference1.IntegrationSoap" bindingType="customBinding" address="http://webfarm.campaigntrack.com.au/CtWebService2/Integration.asmx" bindingConfiguration="IntegrationSoap12">
+    <endpoint name="IntegrationSoap121" contract="ServiceReference1.IntegrationSoap" bindingType="customBinding" address="http://webfarm.campaigntrack.com.au/CtWebService2/Integration.asmx" bindingConfiguration="IntegrationSoap121">
       <properties>
         <property path="/address" isComplexType="false" isExplicitlyDefined="true" clrType="System.Uri, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue>http://webfarm.campaigntrack.com.au/CtWebService2/Integration.asmx</serializedValue>
@@ -360,7 +360,7 @@
           <serializedValue>customBinding</serializedValue>
         </property>
         <property path="/bindingConfiguration" isComplexType="false" isExplicitlyDefined="true" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>IntegrationSoap12</serializedValue>
+          <serializedValue>IntegrationSoap121</serializedValue>
         </property>
         <property path="/contract" isComplexType="false" isExplicitlyDefined="true" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue>ServiceReference1.IntegrationSoap</serializedValue>
@@ -423,7 +423,7 @@
           <serializedValue>False</serializedValue>
         </property>
         <property path="/name" isComplexType="false" isExplicitlyDefined="true" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>IntegrationSoap12</serializedValue>
+          <serializedValue>IntegrationSoap121</serializedValue>
         </property>
         <property path="/kind" isComplexType="false" isExplicitlyDefined="false" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue />
