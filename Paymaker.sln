@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27428.2037
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29926.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Paymaker", ".", "{1FA47EDD-3C72-4C0D-B0AF-2A904D54CB04}"
 	ProjectSection(WebsiteProperties) = preProject
@@ -8,7 +8,7 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Paymaker", ".", "{1FA47EDD-
 		SccAuxPath = "Svn"
 		SccLocalPath = "Svn"
 		SccProvider = "SubversionScc"
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.7.2"
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.8"
 		Debug.AspNetCompiler.VirtualPath = "/Paymaker"
 		Debug.AspNetCompiler.PhysicalPath = "..\Paymaker\"
 		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\Paymaker\"

@@ -22,39 +22,37 @@ namespace Paymaker {
                 sbEndJS.Append("printReport();");
             }
 
-            if (!Page.IsPostBack) {
-                DataSet ds = getData();
-                foreach (DataRow dr in ds.Tables[0].Rows) {
-                    Template oT = new Template(G.Settings.SalesLetterTemplateID);
-                    int UserID = Convert.ToInt32(dr["ID"]);
-                    UserDetail oU = G.UserInfo.getUser(UserID);
-                    double SalesTarget = DB.getScalar("SELECT SALESTARGET FROM DB_USER WHERE ID = " + UserID, 0);
+            DataSet ds = getData();
+            foreach (DataRow dr in ds.Tables[0].Rows) {
+                Template oT = new Template(G.Settings.SalesLetterTemplateID);
+                int UserID = Convert.ToInt32(dr["ID"]);
+                UserDetail oU = G.UserInfo.getUser(UserID);
+
+                dvUserValues = ds.Tables[3].DefaultView;
+
+                double SalesTarget = DB.getScalar("SELECT SALESTARGET FROM DB_USER WHERE ID = " + UserID, 0);
                     
-                    string FilledTemplate = oT.TemplateHTML;
-                    FilledTemplate = FilledTemplate.Replace("[AGENTFIRSTNAME]", oU.FirstName);
-                    FilledTemplate = FilledTemplate.Replace("[AGENTLASTNAME]", oU.LastName);
-                    FilledTemplate = FilledTemplate.Replace("[SALESTARGET]", Utility.formatReportMoney(SalesTarget));
-
-                    if (oU.OfficeID == 94) {
-                        FilledTemplate = FilledTemplate.Replace("<p>I would like to remind you that in order to qualify for the 5% service (focus) area extra commission, you need to comply with our service area marketing requirements which can be found within the Sales Excellence Model Document in Business Planning.</p>", "");
-                    }
-                    dv = ds.Tables[1].DefaultView;
-                    dvUserValues = ds.Tables[3].DefaultView;
+                string FilledTemplate = oT.TemplateHTML;
+                FilledTemplate = FilledTemplate.Replace("[AGENTFIRSTNAME]", oU.FirstName);
+                FilledTemplate = FilledTemplate.Replace("[AGENTLASTNAME]", oU.LastName);
+                FilledTemplate = FilledTemplate.Replace("[AGENTOFFICE]", oU.OfficeName);
+                FilledTemplate = FilledTemplate.Replace("[SALESTARGET]", Utility.formatReportMoney(SalesTarget));
+                FilledTemplate = FilledTemplate.Replace("[TRAVELALLOWANCE]", getTravelAllowance(oU.ID));
+                    
+                dv = ds.Tables[1].DefaultView;
                    
-                    FilledTemplate = FilledTemplate.Replace("[BENEFITSPAID]", getBenefitsTable(UserID));
-                    dv = ds.Tables[2].DefaultView;
+                FilledTemplate = FilledTemplate.Replace("[BENEFITSPAID]", getBenefitsTable(UserID));
+                dv = ds.Tables[2].DefaultView;
 
-                   
+                FilledTemplate = FilledTemplate.Replace("[ENTITLEMENTS]", getEntitlementsTable(UserID));
 
-                    FilledTemplate = FilledTemplate.Replace("[ENTITLEMENTS]", getEntitlementsTable(UserID));
-
-                    dr["Template"] = FilledTemplate + "<div class='page-break'></div>";
-               }
-
-                gvData.DataSource = ds;
-                gvData.DataBind();
-              
+                dr["Template"] = FilledTemplate + "<div class='page-break'></div>";
             }
+
+            gvData.DataSource = ds;
+            gvData.DataBind();
+              
+            
         }
 
     
@@ -117,6 +115,15 @@ namespace Paymaker {
             return szHTML + "</table>";
         }
 
+        private string getTravelAllowance(int UserID) {
+            dvUserValues.RowFilter = String.Format(@"USERID={0} AND CATEGORY = 'Travel Bonus' ", UserID);
+            if (dvUserValues.Count > 0) {
+
+                double Amount = DB.readDouble(dvUserValues[0]["AMOUNT"]);
+                return Utility.formatReportMoney(Amount);
+            }
+            return "";
+        }
         private string getImportedValue(int UserID, string Account, ref double dTotal) {
             dvUserValues.RowFilter = String.Format(@"USERID={0} AND CATEGORY = '{1}' ", UserID, Account);
             if (dvUserValues.Count > 0) {
