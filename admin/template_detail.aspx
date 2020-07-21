@@ -48,7 +48,7 @@
         $(document).ready(function () {
 
             CKEDITOR.replace("txtContent", {
-                height: 80vh
+                height: '70vh'
             });
             $('form').submit(function (event) {
                 $('#txtSubmit').val(btoa(CKEDITOR.instances['txtContent'].getData()));
@@ -125,6 +125,7 @@
                     <div id="divCustomWords" runat="server" style="float: left; text-align: left; display: inline-block; overflow-x: hidden; height: 220px; width: 100%; margin-bottom: 5px; overflow: auto; border: solid 1px silver">
                         <a href='javascript: insertTag("AGENTFIRSTNAME")'>Recipent first name</a><br />
                         <a href='javascript: insertTag("AGENTLASTNAME")'>Recipent last name</a><br />
+                      <a href='javascript: insertTag("AGENTOFFICE")'>Recipent office</a><br />
                         <a href='javascript: insertTag("SENDERFIRSTNAME")'>Sender first name</a><br />
                         <a href='javascript: insertTag("SENDERLASTNAME")'>Sender last name</a><br />
                         <a href='javascript: insertTag("PROPERTYDETAILS")'>Property details</a><br />
@@ -136,6 +137,12 @@
                         <a href='javascript: insertTag("TOTALSPEND")'>Total spend</a><br />
                         <a href='javascript: insertTag("TOTALINVOICED")'>Total invoiced</a><br />
                         <a href='javascript: insertTag("TOTALPAID")'>Total paid</a><br />
+                        
+                        <a href='javascript: insertTag("BENEFITSPAID")'>Benefits paid</a><br />
+                        <a href='javascript: insertTag("ENTITLEMENTS")'>Entitlements</a><br />
+                        <a href='javascript: insertTag("TRAVELALLOWANCE")'>Travel allowance</a><br />
+                        
+                        
                     </div>
                     <br class="Align" />
                 </div>
