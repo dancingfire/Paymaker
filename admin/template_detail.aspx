@@ -140,7 +140,7 @@
                         
                         <a href='javascript: insertTag("BENEFITSPAID")'>Benefits paid</a><br />
                         <a href='javascript: insertTag("ENTITLEMENTS")'>Entitlements</a><br />
-                        <a href='javascript: insertTag("TRAVELALLOWANCE")'>Travel allowance</a><br />
+                        <a href='javascript: insertTag("SALESTARGET")'>Sales target</a><br />
                         
                         
                     </div>
