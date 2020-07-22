@@ -37,7 +37,6 @@ namespace Paymaker {
                 FilledTemplate = FilledTemplate.Replace("[AGENTLASTNAME]", oU.LastName);
                 FilledTemplate = FilledTemplate.Replace("[AGENTOFFICE]", oU.OfficeName);
                 FilledTemplate = FilledTemplate.Replace("[SALESTARGET]", Utility.formatReportMoney(SalesTarget));
-                FilledTemplate = FilledTemplate.Replace("[TRAVELALLOWANCE]", getTravelAllowance(oU.ID));
                     
                 dv = ds.Tables[1].DefaultView;
                    
@@ -115,15 +114,6 @@ namespace Paymaker {
             return szHTML + "</table>";
         }
 
-        private string getTravelAllowance(int UserID) {
-            dvUserValues.RowFilter = String.Format(@"USERID={0} AND CATEGORY = 'Travel Bonus' ", UserID);
-            if (dvUserValues.Count > 0) {
-
-                double Amount = DB.readDouble(dvUserValues[0]["AMOUNT"]);
-                return Utility.formatReportMoney(Amount);
-            }
-            return "";
-        }
         private string getImportedValue(int UserID, string Account, ref double dTotal) {
             dvUserValues.RowFilter = String.Format(@"USERID={0} AND CATEGORY = '{1}' ", UserID, Account);
             if (dvUserValues.Count > 0) {
