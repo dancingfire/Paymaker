@@ -1,6 +1,7 @@
 using System;
 using System.Data;
 using System.Data.OleDb;
+using System.IO;
 using System.Web;
 
 public partial class import_values : Root {
@@ -27,15 +28,16 @@ public partial class import_values : Root {
         DB.runNonQuery("TRUNCATE TABLE USERVALUE");
         if (fuImport.HasFile) {
             foreach (HttpPostedFile uploadedFile in fuImport.PostedFiles) {
-                uploadedFile.SaveAs(Server.MapPath("./upload.xlsx"));
-                importFile(Server.MapPath("./upload.xlsx"));
+                string FilePath = Path.Combine(G.Settings.DataDir, "upload.xlsx");
+                uploadedFile.SaveAs(FilePath);
+                importFile(FilePath);
             }
         }
         loadData();
     }
 
     private void importFile(string FilePath) {
-        string szCNN = string.Format("Provider=Microsoft.ACE.OLEDB.12.0; Data Source={0}; Extended Properties='Excel 12.0; HDR=NO;IMEX=1'", FilePath);
+        string szCNN = string.Format("Provider=Microsoft.ACE.OLEDB.12.0; Data Source={0}; Extended Properties='Excel 12.0 Xml; HDR=NO;IMEX=1'", FilePath);
 
         OleDbConnection oledbConn = new OleDbConnection(szCNN);
       
@@ -58,13 +60,14 @@ public partial class import_values : Root {
         oledbConn.Close();
         int intCount = 0;
         DataRow drHeader = null;
+        int ColCount = ds.Tables[0].Columns.Count;
         foreach (DataRow dr in ds.Tables[0].Rows) {
             if(intCount > 0) {
                 int UserID = DB.getScalar(String.Format("SELECT ID FROM DB_USER WHERE INITIALSCODE = '{0}' ", DB.escape(Convert.ToString(dr[0]))), -1) ;
                 if (UserID == -1)
                     continue;
                
-                for (int i = 1; i < 8; i++) {
+                for (int i = 1; i < ColCount; i++) {
                     string szValue = Convert.ToString(dr[i]);
                     szValue = szValue.Replace("$", "").Replace(",", "").Replace(" ", "");
                     if (szValue != "-" && szValue != "") {
