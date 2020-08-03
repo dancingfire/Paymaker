@@ -99,9 +99,9 @@ namespace Paymaker {
                         <td class='PrintTableHeader'><strong>Maximum Allowance</strong></td>
                     </tr>";
 
-            szHTML += getImportedValue(UserID, "Travel Bonus", ref dTotal);
-            szHTML += getImportedValue(UserID, "Directors Allowance", ref dTotal);
-            szHTML += getImportedValue(UserID, "Directors Car Allowance", ref dTotal);
+            szHTML += getImportedValue(UserID, "Travel Allowance Budget", ref dTotal);
+            szHTML += getImportedValue(UserID, "Directors Allowance Budget", ref dTotal);
+            szHTML += getImportedValue(UserID, "Directors Car Allowance Budget", ref dTotal);
             szHTML += getExpense(UserID, "PA 1 Allowance", 40, ref dTotal);
             szHTML += getExpense(UserID, "PA 2 Allowance", 68, ref dTotal);
             szHTML += getExpense(UserID, "PA 3 Allowance", 69, ref dTotal);
