@@ -81,7 +81,8 @@ namespace Paymaker {
             szHTML += getExpense(UserID, "Rental Referral Commissions", 42, ref dTotal);
             szHTML += getExpense(UserID, "Letterbox Drop Payments", 56, ref dTotal);
             szHTML += getExpense(UserID, "Mobile Phone Payments", 15, ref dTotal);
-            szHTML += getExpense(UserID, "Service Area Assistance Payments", 58, ref dTotal);
+            szHTML += getExpense(UserID, "Service Area Assistance Payments", 88, ref dTotal);
+            szHTML += getExpense(UserID, "Social Media Payments", 58, ref dTotal);
             szHTML += getExpense(UserID, "Training & Seminar Payments", 57, ref dTotal);
             szHTML += String.Format("<tr style='border: solid 1px silver'><td>Salary on-costs 7% (Payroll Tax & Workcover)</td><td class='RightMargin' >{0}</td></tr>", Utility.formatReportMoney(dTotal * 0.07));
             dTotal += dTotal * 0.07;
