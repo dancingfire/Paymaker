@@ -81,8 +81,8 @@ namespace Paymaker {
             szHTML += getExpense(UserID, "Rental Referral Commissions", 42, ref dTotal);
             szHTML += getExpense(UserID, "Letterbox Drop Payments", 56, ref dTotal);
             szHTML += getExpense(UserID, "Mobile Phone Payments", 15, ref dTotal);
-            szHTML += getExpense(UserID, "Service Area Assistance Payments", 88, ref dTotal);
-            szHTML += getExpense(UserID, "Social Media Payments", 58, ref dTotal);
+            szHTML += getExpense(UserID, "Service Area Assistance Payments", 58, ref dTotal);
+            szHTML += getExpense(UserID, "Social Media Payments", 88, ref dTotal);
             szHTML += getExpense(UserID, "Training & Seminar Payments", 57, ref dTotal);
             szHTML += String.Format("<tr style='border: solid 1px silver'><td>Salary on-costs 7% (Payroll Tax & Workcover)</td><td class='RightMargin' >{0}</td></tr>", Utility.formatReportMoney(dTotal * 0.07));
             dTotal += dTotal * 0.07;
@@ -100,7 +100,7 @@ namespace Paymaker {
                         <td class='PrintTableHeader'><strong>Maximum Allowance</strong></td>
                     </tr>";
 
-            szHTML += getImportedValue(UserID, "Travel Allowance Budget", ref dTotal);
+            szHTML += getImportedValue(UserID, "Travel Allowance Budget", ref dTotal, "Travel Allowance achieved FY 19/20");
             szHTML += getImportedValue(UserID, "Directors Allowance Budget", ref dTotal);
             szHTML += getImportedValue(UserID, "Directors Car Allowance Budget", ref dTotal);
             szHTML += getExpense(UserID, "PA 1 Allowance", 40, ref dTotal);
@@ -115,14 +115,15 @@ namespace Paymaker {
             return szHTML + "</table>";
         }
 
-        private string getImportedValue(int UserID, string Account, ref double dTotal) {
+        private string getImportedValue(int UserID, string Account, ref double dTotal, string TableName = "") {
             dvUserValues.RowFilter = String.Format(@"USERID={0} AND CATEGORY = '{1}' ", UserID, Account);
             if (dvUserValues.Count > 0) {
                
                 double Amount = DB.readDouble(dvUserValues[0]["AMOUNT"]);
                 if (Amount > 0) {
                     dTotal += Amount;
-
+                    if (TableName != "")
+                        Account = TableName;
                     return String.Format(@"
                     <tr  style='border: solid 1px silver'><td>{0}</td><td class='RightMargin'>{1}</td></tr>", Account, Utility.formatReportMoney(Amount));
                 }
