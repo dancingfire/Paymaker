@@ -704,7 +704,7 @@ public class CampaignImport {
             G.User.ImportCurrentRecord = ++intCurrentCount;
             HttpContext.Current.Response.Write("Importing " + intCurrentCount + " of " + oCT.Length + ". (" + oP.PropertyRef + ")<br/>");
             HttpContext.Current.Response.Flush();
-            if (String.IsNullOrWhiteSpace(oP.PropertyRef))
+            if (String.IsNullOrWhiteSpace(oP.PropertyRef) || String.IsNullOrWhiteSpace(oP.StreetAddress))
                 continue;
             if (OnlyLoadNew) {
                 //Check to see if it already exists - if so, we skip it

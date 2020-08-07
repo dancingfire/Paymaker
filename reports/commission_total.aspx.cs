@@ -68,7 +68,7 @@ public class CommissionTotal : Report {
         string szFilter = String.Format(" AND P.STARTDATE  BETWEEN '{0}' AND '{1}' ", oFilter.getDBSafeStartDate(), oFilter.getDBSafeEndDate());
 
         if (!String.IsNullOrWhiteSpace(oFilter.OfficeIDList))
-            szFilter += " AND U.OFFICEID IN (" + oFilter.UserIDList + ")";
+            szFilter += " AND U.OFFICEID IN (" + oFilter.OfficeIDList + ")";
 
         bool blnIncludeInactive = Valid.getBoolean("blnIncludeInactive", false);
         string szUserActive = " AND U.ISACTIVE = 1 ";

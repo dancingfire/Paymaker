@@ -68,7 +68,7 @@ public class MebtoringCommission : Report {
         string szFilter = String.Format(" AND ISNULL(S.SALEDATE, S.FALLENTHROUGHDATE)  BETWEEN '{0}' AND '{1}' ", oFilter.getDBSafeStartDate(), oFilter.getDBSafeEndDate());
 
         if (!String.IsNullOrWhiteSpace(oFilter.OfficeIDList))
-            szFilter += " AND USS_M.OFFICEID IN (" + oFilter.UserIDList + ")";
+            szFilter += " AND USS_M.OFFICEID IN (" + oFilter.OfficeIDList + ")";
 
         bool blnIncludeInactive = Valid.getBoolean("blnIncludeInactive", false);
         string szUserActive = " AND USR_M.ISACTIVE = 1 ";
