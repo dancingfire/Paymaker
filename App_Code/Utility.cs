@@ -597,10 +597,16 @@ public class Utility {
     /// <param name="dAmount"></param>
     /// <returns></returns>
     public static string formatReportMoney(double dAmount) {
+        if(dAmount == Double.MinValue || dAmount == Double.MaxValue)
+            return Math.Round(0.0, 2).ToString("C2");
+
         return Math.Round(dAmount, 2).ToString("C2");
     }
 
     public static string formatMoneyShort(double dAmount) {
+        if (dAmount == Double.MinValue || dAmount == Double.MaxValue)
+            return Math.Round(0.0, 2).ToString("#0");
+
         return Math.Round(dAmount).ToString("#0");
     }
 
