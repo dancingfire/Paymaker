@@ -61,8 +61,9 @@ public class G {
     }
 
     public static string BaseURL {
-        get { return  HttpContext.Current.Request.Url.Host; }
+        get { return HttpContext.Current.Request.Url.Host; }
     }
+  
     /// <summary>
     /// Pay period indo
     /// </summary>
@@ -574,6 +575,9 @@ public class G {
             get {
                 return System.Configuration.ConfigurationManager.AppSettings["CampaignTrackOffice"];
             }
+        }
+        public static bool IsRingwood {
+            get { return HttpContext.Current.Request.Url.Host == "oecommission.fletchers.net.au"; }
         }
 
         /// <summary>
