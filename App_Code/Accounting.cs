@@ -246,10 +246,11 @@ public class UserPayPeriod {
 
     /// <summary>
     /// We use the retainer only when the agents' pay will be less than their retainer amount
+    /// New rule for Ringwood - always apply the retainer
     /// </summary>
     public bool UseRetainer {
         get {
-            return this.RetainerAmount > 0 && this.RetainerAmount > this.MonthlyIncomeWithoutRetainer;
+            return this.RetainerAmount > 0 && ( this.RetainerAmount > this.MonthlyIncomeWithoutRetainer || G.Settings.IsRingwood);
         }
     }
     /// <summary>
