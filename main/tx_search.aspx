@@ -15,6 +15,7 @@
         createCalendar("txtEndDate");
 
         createDataTable("gvTXs", true, false, false, intHeight);
+        $("#lstUser, #lstExpense").select2();
     });
 
     function changeDateFilter() {
@@ -39,7 +40,7 @@
 <body>
     <form id="frmMain" method="post" runat="server" target="_self" onsubmit="getFilterValues()">
         <asp:HiddenField ID="hdExpenseIDList" runat="server" />
-        <div style="width: 99%">
+        <div>
             <div class='ActionPanel'>
                 <asp:Panel ID="pPageHeader" class='PageHeader' runat="server" Width="200px">Accounting dashboard</asp:Panel>
             </div>
@@ -48,20 +49,18 @@
                     <div class="FilterLabel">Date range</div>
 
                     <asp:DropDownList ID="lstDateRange" runat="server" CssClass="Entry" Width="100%"></asp:DropDownList>
-                    <asp:TextBox ID="txtStartDate" runat="server" CssClass="Entry" Width="100"></asp:TextBox>
-                    &nbsp;to &nbsp;<asp:TextBox ID="txtEndDate" runat="server" CssClass="Entry" Width="100"></asp:TextBox>
+                    <asp:TextBox ID="txtStartDate" runat="server" CssClass="Entry" Width="110"></asp:TextBox>
+                    &nbsp;to &nbsp;<asp:TextBox ID="txtEndDate" runat="server" CssClass="Entry" Width="110"></asp:TextBox>
                 </div>
                 <div id="spUser" runat="server" class="FilterPanel">
                     <asp:Label ID="Label2" CssClass="FilterLabel" runat="server" Text="User">
                     </asp:Label>
                     <asp:ListBox ID="lstUser" runat="server" CssClass="Entry" SelectionMode="Single" Rows="1" />
-                    <br class='Align' />
                 </div>
                 <div id="spExpense" class="FilterPanel">
                     <asp:Label ID="Label10" CssClass="FilterLabel" runat="server" Text="Expense account">
                     </asp:Label>
                     <asp:ListBox ID="lstExpense" runat="server" CssClass="Entry" SelectionMode="Single" Rows="1"></asp:ListBox>
-                    <br class='Align' />
                 </div>
                 <div class="FilterPanel">
                     <asp:Label ID="Label1" CssClass="FilterLabel" runat="server" Text="Description">
@@ -69,8 +68,8 @@
                     <asp:TextBox ID="txtDescFilter" runat="server" CssClass="Entry" Width="90%"></asp:TextBox>
                     <br class='Align' />
                 </div>
-                <div class="FilterPanel" style="padding-top: 15px">
-                    <asp:Button ID="btnSearch" runat="server" Text="Search" OnClick="btnSearch_Click" class="btn" />
+                <div class="FilterPanel" style="padding-top: 20px">
+                    <asp:Button ID="btnSearch" runat="server" Text="Search" OnClick="btnSearch_Click" class="btn btn-primary" />
                 </div>
             </div>
             <asp:GridView ID="gvTXs" runat="server" AutoGenerateColumns="false" OnRowDataBound="gvCurrent_RowDataBound" Width="100%" EnableViewState="false" EmptyDataText="No transactions found.">
