@@ -30,6 +30,7 @@ public class ClientMenu {
         oM.addMenuItem("View dashboard", "../main/accounting_dashboard.aspx");
         oM.addMenuItem("Search tx", "../main/tx_search.aspx");
         oM.addMenuItem("Finalize Commission", "../main/commission_statement_finalize.aspx", MenuRole.Admin);
+        oM.addMenuItem("Commission EOM rollovers", "../main/commission_statement_rollover.aspx", MenuRole.Admin);
         oM.addMenuItem("MYOB exceptions", "../reports/myob_modifications.aspx", MenuRole.Admin);
         oM.addSpacer();
         oM.addMenuItem("Export to MYOB", "../main/MYOB_export.aspx");
