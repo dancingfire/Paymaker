@@ -159,6 +159,10 @@ namespace Paymaker {
                 dr["DEBIT AMOUNT"] = Utility.formatMoney(Amount);
             }
             dr["SUBACCOUNT"] = Utility.fixGLOfficeCode(Convert.ToString(dr["SUBACCOUNT"]));
+            if (dr["SUBACCOUNT"].ToString().Contains("PMD")) {
+                dr["ACCOUNT"] = "2-3035";
+            }
+
         }
 
 
