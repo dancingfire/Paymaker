@@ -37,7 +37,9 @@ namespace Paymaker {
                 FilledTemplate = FilledTemplate.Replace("[AGENTLASTNAME]", oU.LastName);
                 FilledTemplate = FilledTemplate.Replace("[AGENTOFFICE]", oU.OfficeName);
                 FilledTemplate = FilledTemplate.Replace("[SALESTARGET]", Utility.formatReportMoney(SalesTarget));
-                    
+                double TravelAllowance = getImportedValue(UserID, "Travel Allowance Budget");
+                FilledTemplate = FilledTemplate.Replace("[TRAVELALLOWANCE]", Utility.formatReportMoney(TravelAllowance));
+
                 dv = ds.Tables[1].DefaultView;
                    
                 FilledTemplate = FilledTemplate.Replace("[BENEFITSPAID]", getBenefitsTable(UserID));
@@ -64,12 +66,13 @@ namespace Paymaker {
                         <td style='width: 70%'><strong>Description</strong></td>
                         <td><strong>Amount Received</strong></td>
                     </tr>";
-            szHTML += getImportedValue(UserID, "Salary/Commissions Paid (Net)", ref dTotal);
+            szHTML += getImportedValueHTML(UserID, "Salary/Commissions Paid (Net)", ref dTotal);
+            szHTML += getExpense(UserID, "Super paid", 95, ref dTotal);
             szHTML += getExpense(UserID, "EOFY Bonus Comm", 95, ref dTotal);
             szHTML += getExpense(UserID, "Team Mentoring Bonus", 97, ref dTotal);
-            szHTML += getImportedValue(UserID, "Directors Allowance", ref dTotal);
-            szHTML += getImportedValue(UserID, "Directors Car Allowance", ref dTotal);
-            szHTML += getImportedValue(UserID, "Travel Award + FBT Costs", ref dTotal);
+            szHTML += getImportedValueHTML(UserID, "Directors Allowance", ref dTotal);
+            szHTML += getImportedValueHTML(UserID, "Directors Car Allowance", ref dTotal);
+            szHTML += getImportedValueHTML(UserID, "Travel Award + FBT Costs", ref dTotal);
             szHTML += getExpense(UserID, "Auctioneer Fees", 45, ref dTotal);
             szHTML += getExpense(UserID, "Conveyancing Commissions", 44, ref dTotal);
             szHTML += getExpense(UserID, "Finance Commissions", 43, ref dTotal);
@@ -100,9 +103,9 @@ namespace Paymaker {
                         <td class='PrintTableHeader'><strong>Maximum Allowance</strong></td>
                     </tr>";
 
-            szHTML += getImportedValue(UserID, "Travel Allowance Budget", ref dTotal, "Travel Allowance achieved FY 19/20");
-            szHTML += getImportedValue(UserID, "Directors Allowance Budget", ref dTotal);
-            szHTML += getImportedValue(UserID, "Directors Car Allowance Budget", ref dTotal);
+            szHTML += getImportedValueHTML(UserID, "Travel Allowance Budget", ref dTotal, "Travel Allowance achieved FY 20/21");
+            szHTML += getImportedValueHTML(UserID, "Directors Allowance Budget", ref dTotal);
+            szHTML += getImportedValueHTML(UserID, "Directors Car Allowance Budget", ref dTotal);
             szHTML += getExpense(UserID, "PA 1 Allowance", 40, ref dTotal);
             szHTML += getExpense(UserID, "PA 2 Allowance", 68, ref dTotal);
             szHTML += getExpense(UserID, "PA 3 Allowance", 69, ref dTotal);
@@ -115,7 +118,7 @@ namespace Paymaker {
             return szHTML + "</table>";
         }
 
-        private string getImportedValue(int UserID, string Account, ref double dTotal, string TableName = "") {
+        private string getImportedValueHTML(int UserID, string Account, ref double dTotal, string TableName = "") {
             dvUserValues.RowFilter = String.Format(@"USERID={0} AND CATEGORY = '{1}' ", UserID, Account);
             if (dvUserValues.Count > 0) {
                
@@ -129,6 +132,14 @@ namespace Paymaker {
                 }
             }
             return "";
+        }
+
+        private double getImportedValue(int UserID, string Account) {
+            dvUserValues.RowFilter = String.Format(@"USERID={0} AND CATEGORY = '{1}' ", UserID, Account);
+            if (dvUserValues.Count > 0) {
+                return DB.readDouble(dvUserValues[0]["AMOUNT"]);
+            }
+            return 0.0;
         }
 
         private string getExpense(int UserID, string Account, int AccountID, ref double dTotal) {

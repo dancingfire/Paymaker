@@ -11,17 +11,20 @@ namespace Paymaker {
     public partial class leave_manager_dashboard : Root {
 
         protected void Page_Load(object sender, System.EventArgs e) {
-            // Check which pages user should have access to
-            if (hdArchiveID.Value != "") {
-                DB.runNonQuery("UPDATE LEAVEREQUEST SET ISARCHIVED = 1 WHERE ID  = " + hdArchiveID.Value);
-                hdArchiveID.Value = "";
-            } else if (hdUnArchiveID.Value != "") {
-                DB.runNonQuery("UPDATE LEAVEREQUEST SET ISARCHIVED = 0 WHERE ID  = " + hdUnArchiveID.Value);
-                hdUnArchiveID.Value = "";
-            }
-
             loadRequests();
             ModalForms.createModalUpdate("Leave request", "60%", "500px", false, true);
+        }
+
+        [System.Web.Services.WebMethod]
+        public static string archiveRequest() {
+            string id =  Valid.getText("id", "");
+            // Check which pages user should have access to
+            if (Valid.getText("mode", "") == "A") {
+                DB.runNonQuery("UPDATE LEAVEREQUEST SET ISARCHIVED = 1 WHERE ID  = " + DB.escape(id));
+            } else { 
+                DB.runNonQuery("UPDATE LEAVEREQUEST SET ISARCHIVED = 0 WHERE ID  = " + DB.escape(id));
+            }
+            return "";
         }
 
         private void loadRequests() {
@@ -67,9 +70,9 @@ namespace Paymaker {
                 return "";
 
             if (IsArchived) {
-                return String.Format(@"<button type='submit'class='btn btn-secondary unarchive' data-id='{0}'>Un-archive</button>", ID);
+                return String.Format(@"<button id='b{0}' type='button' class='btn btn-secondary unarchive' data-id='{0}'>Un-archive</button>", ID);
             }            
-            return String.Format(@"<button type='submit'class='btn btn-secondary archive' data-id='{0}'>Archive</button>", ID);
+            return String.Format(@"<button id='b{0}' type='button' class='btn btn-secondary archive' data-id='{0}'>Archive</button>", ID);
         }
 
         protected void btnSearch_Click(object sender, EventArgs e) {

@@ -280,7 +280,9 @@ public class UserLogin {
     ///<param name = ""></param>
     public static bool checkLoginLock(string LoginName) {
         string IP = getIPAddress();
-
+        if(LoginName == "") {
+            return false;
+        }
         // Count of failed attempts in last 1 minute (if zero - then no lock in place)
         if (checkLoginCount(IP, LoginName, 1) == 0)
             return false;
@@ -293,17 +295,6 @@ public class UserLogin {
         return false;
     }
 
-    private static void writeLog(int OriginalUserID = -1) {
-        sqlUpdate oSQL = new sqlUpdate("LOGIN_LOG", "ID", -1);
-        oSQL.add("USER_ID", G.User.UserID);
-        if (OriginalUserID > -1)
-            oSQL.add("ORIGINAL_USER_ID", OriginalUserID);
-
-        oSQL.add("Browser", HttpContext.Current.Request.UserAgent);
-        DB.runNonQuery(oSQL.createInsertSQL());
-        oSQL = null;
-    }
-
     /// <summary>
     /// Clears config setup for user.  This is done on delegation to allow correct values to be loaded.
     /// </summary>
@@ -314,8 +305,6 @@ public class UserLogin {
 
     public static void performDelegateLogin(int UserID) {
         UserLogin.loginUserByID(UserID);
-        writeLog(G.User.OriginalUserID);
-
         clearUserConfig();
         G.Settings.loadConfigValues();
     }
