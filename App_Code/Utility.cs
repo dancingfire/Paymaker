@@ -435,7 +435,7 @@ public class Utility {
     }
 
     public static void loadPayPeriodList(ref DropDownList oList) {
-        string szSQL = "SELECT ID, DATENAME(MM, STARTDATE) AS NAME FROM PAYPERIOD ORDER BY ENDDATE DESC";
+        string szSQL = "SELECT ID, DATENAME(MM, STARTDATE) + ' ' + DATENAME(YYYY, STARTDATE) AS NAME FROM PAYPERIOD ORDER BY ENDDATE DESC";
 
         oList.DataSource = DB.runReader(szSQL);
         oList.DataValueField = "ID";

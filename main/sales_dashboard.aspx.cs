@@ -9,31 +9,30 @@ public partial class sales_dashboard : Root {
 
     protected void Page_Load(object sender, System.EventArgs e) {
         CurrentUserID = G.User.ID;
-
-        // This is for debuging and hard coded only to allow Gord's login to access other users details
-        if (CurrentUserID == 0 && G.User.UserName == "Gord Funk") {
-            int intAltUser = Valid.getInteger("UserID", -1);
-            if (intAltUser > -1)
-                CurrentUserID = intAltUser;
-        }
+        if (!Page.IsPostBack) {
+            Utility.loadPayPeriodList(ref lstPayPeriod);
+            lstPayPeriod.SelectedValue = G.CurrentPayPeriod.ToString();
+        } 
         showData();
     }
 
     private void showData() {
         Form.Controls.Add(new LiteralControl(HTML.createModalUpdate("Sale", "Sale", "95%", -1, "sale_update.aspx")));
         Form.Controls.Add(new LiteralControl(HTML.createModalUpdate("Campaign", "Campaign", "95%", 600, "../campaign/campaign_update.aspx")));
+        PayPeriod oPP = G.PayPeriodInfo.getPayPeriod(Convert.ToInt32(lstPayPeriod.SelectedValue));
         //Load the current sales for this
-        gvCurrent.DataSource = Sale.loadSalesForSalesPerson(CurrentUserID, G.CurrentPayPeriodStart, G.CurrentPayPeriodEnd);
+        gvCurrent.DataSource = Sale.loadSalesForSalesPerson(CurrentUserID, oPP.StartDate, oPP.EndDate);
         gvCurrent.DataBind();
         HTML.formatGridView(ref gvCurrent, true);
-
+        pNoDataCurrent.Visible = pNoFutureSales.Visible = pCampaignNoData.Visible =false;
         if (gvCurrent.Rows.Count == 0) {
             gvCurrent.Visible = false;
             pNoDataCurrent.Visible = true;
-        }
-
+        } 
+          
         //Load the pending sales for this agent
-        gvFuture.DataSource = Sale.loadSalesForSalesPerson(CurrentUserID, G.CurrentPayPeriodEnd, DateTime.MaxValue);
+        gvFuture.DataSource = Sale.loadSalesForSalesPerson(CurrentUserID, oPP.EndDate, DateTime.MaxValue);
+        dPendingHeader.InnerHtml = "Pending Commissions - After " + Utility.formatDate(oPP.EndDate);
         gvFuture.DataBind();
         HTML.formatGridView(ref gvFuture, true);
         if (gvFuture.Rows.Count == 0) {
@@ -171,5 +170,9 @@ public partial class sales_dashboard : Root {
             //Create a link to the report history
             return String.Format("<a href='../reports/commission_statement.aspx?szUserID={0}&szPayPeriod={1}'  target='_blank' title='Click to generate commission statement'>{2} {3}</a>", G.User.UserID, PayPeriodID, Month.Substring(0, 3), Year);
         }
+    }
+
+    protected void lstPayPeriod_SelectedIndexChanged(object sender, EventArgs e) {
+        
     }
 }
