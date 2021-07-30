@@ -39,7 +39,7 @@ namespace Paymaker {
                 FilledTemplate = FilledTemplate.Replace("[SALESTARGET]", Utility.formatReportMoney(SalesTarget));
                 double TravelAllowance = getImportedValue(UserID, "Travel Allowance Budget");
                 FilledTemplate = FilledTemplate.Replace("[TRAVELALLOWANCE]", Utility.formatReportMoney(TravelAllowance));
-
+ 
                 dv = ds.Tables[1].DefaultView;
                    
                 FilledTemplate = FilledTemplate.Replace("[BENEFITSPAID]", getBenefitsTable(UserID));
@@ -68,11 +68,11 @@ namespace Paymaker {
                     </tr>";
             szHTML += getImportedValueHTML(UserID, "Salary/Commissions Paid (Net)", ref dTotal);
             szHTML += getExpense(UserID, "Super paid", 95, ref dTotal);
-            szHTML += getExpense(UserID, "EOFY Bonus Comm", 95, ref dTotal);
+            szHTML += getExpense(UserID, "EOFY Bonus Comm Paid", 95, ref dTotal);
             szHTML += getExpense(UserID, "Team Mentoring Bonus", 97, ref dTotal);
-            szHTML += getImportedValueHTML(UserID, "Directors Allowance", ref dTotal);
-            szHTML += getImportedValueHTML(UserID, "Directors Car Allowance", ref dTotal);
-            szHTML += getImportedValueHTML(UserID, "Travel Award + FBT Costs", ref dTotal);
+            szHTML += getImportedValueHTML(UserID, "Directors Allowance Paid", ref dTotal);
+            szHTML += getImportedValueHTML(UserID, "Directors Car Allowance Paid", ref dTotal);
+            szHTML += getImportedValueHTML(UserID, "Travel Allowance Paid", ref dTotal);
             szHTML += getExpense(UserID, "Auctioneer Fees", 45, ref dTotal);
             szHTML += getExpense(UserID, "Conveyancing Commissions", 44, ref dTotal);
             szHTML += getExpense(UserID, "Finance Commissions", 43, ref dTotal);
@@ -104,7 +104,7 @@ namespace Paymaker {
                     </tr>";
 
             szHTML += getImportedValueHTML(UserID, "Travel Allowance Budget", ref dTotal, "Travel Allowance achieved FY 20/21");
-            szHTML += getImportedValueHTML(UserID, "Directors Allowance Budget", ref dTotal);
+            szHTML += getImportedValueHTML(UserID, "Directors Allowance", ref dTotal);
             szHTML += getImportedValueHTML(UserID, "Directors Car Allowance Budget", ref dTotal);
             szHTML += getExpense(UserID, "PA 1 Allowance", 40, ref dTotal);
             szHTML += getExpense(UserID, "PA 2 Allowance", 68, ref dTotal);
