@@ -989,7 +989,7 @@
                 <asp:CheckBox ID="chkNewWindow" runat="server" Text="Open in new window &nbsp;" TextAlign="Left" />
             </div>
         </div>
-        <iframe id='fReport' name="fReport" style="overflow: auto; border: 0px;height: auto" src="../blank.html" frameborder="0"></iframe>
+        <iframe id='fReport' name="fReport" style="overflow: auto; border: 0px;height: 90vh" src="../blank.html" frameborder="0"></iframe>
         <iframe id='fPDF' name="fPDF" style="overflow: auto; border: 0px; height: 0px; width: 1000px; top: 800px" src="about:blank" frameborder="0"></iframe>
     </form>
 </body>
