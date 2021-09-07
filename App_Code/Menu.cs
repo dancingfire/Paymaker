@@ -27,7 +27,7 @@ public class ClientMenu {
 
         oM.addMenu("Finance", "", MenuRole.Admin);
 
-        oM.addMenuItem("View dashboard", "../main/accounting_dashboard.aspx");
+        oM.addMenuItem("Dashboard", "../main/accounting_dashboard.aspx");
         oM.addMenuItem("Search tx", "../main/tx_search.aspx");
         oM.addMenuItem("Finalize Commission", "../main/commission_statement_finalize.aspx", MenuRole.Admin);
         oM.addMenuItem("Commission EOM rollovers", "../main/commission_statement_rollover.aspx", MenuRole.Admin);
@@ -127,7 +127,7 @@ public class ClientMenu {
 
     public string createMenu() {
         string szHTML = String.Format(@"
-                  <div id='Logo' style='margin-top: 4px; width: 100%; float: left'>
+                  <div id='Logo' style='width: 100%; float: left'>
                         <span style='width: 30%; float: left'>&nbsp;</span>
                         <img src='../sys_images/logo.png' alt='Fletchers logo' style='float: left; '/>
 

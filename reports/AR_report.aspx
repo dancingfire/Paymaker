@@ -44,7 +44,8 @@
                     <asp:BoundField HeaderText="Code" DataField="CODE" />
                     <asp:BoundField HeaderText="Entitlement date" DataField="ENTITLEMENTDATE" DataFormatString="{0:MMM dd, yyyy}" ItemStyle-HorizontalAlign="Center" />
                     <asp:BoundField HeaderText="Settlement date" DataField="SETTLEMENTDATE" DataFormatString="{0:MMM dd, yyyy}" ItemStyle-HorizontalAlign="Center" />
-                    <asp:BoundField HeaderText="Commission" DataField="CALCULATEDAMOUNT" ItemStyle-HorizontalAlign="Right" DataFormatString="{0:N2}" />
+                    <asp:BoundField HeaderText="Gross commission" DataField="CALCULATEDAMOUNT" ItemStyle-HorizontalAlign="Right" DataFormatString="{0:N2}" />
+                    <asp:BoundField HeaderText="Net commission" DataField="NETCOMMISSION" ItemStyle-HorizontalAlign="Right" DataFormatString="{0:N2}" />
                 </Columns>
             </asp:GridView>
         </div>

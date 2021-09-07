@@ -14,6 +14,7 @@
     $(document).ready(function () {
         createDataTable("gvCurrent", true, false, intHeight, false);
         createButtons();
+        $("#lstStatus, #lstSaleMonth, #lstPayPeriod").select2();
     });
 
     function runImport() {
@@ -48,17 +49,16 @@
 
     <form id="frmMain" method="post" runat="server" target="_self" defaultbutton="btnSearch">
         <div class='ActionPanel'>
-            <asp:Panel ID="pPageHeader" class='PageHeader' runat="server" Width="300px">Admin dashboard</asp:Panel>
+        </div>
+        <br />
+        <div class='GridFilter' id='dDrigFilter'>
             <span style='float: right; width: 140px'>
                 <asp:Button ID="btnImport" runat="server" Text="Import latest data" CssClass="Button btn" OnClientClick="return runImport()" /><br />
                 <a href="../boxdice/api_log.aspx">View log</a>
             </span>
-        </div>
-        <br />
-        <div class='GridFilter' id='dDrigFilter'>
             <span class='FilterPanel'>
                 <asp:Label ID="lblPropertyFilter" class='Label' runat="server" Text="Property search"></asp:Label>
-                <asp:TextBox ID="txtPropertyFilter" class='Edit' runat="server" Height="18"></asp:TextBox>
+                <asp:TextBox ID="txtPropertyFilter" class='Edit' runat="server" Height="28"></asp:TextBox>
             </span>
             <span class='FilterPanel'>
                 <asp:Label ID="lblComplete" class='Label' runat="server" Text="Status "></asp:Label>
@@ -72,17 +72,19 @@
             <span class='FilterPanel'>
                 <asp:Label ID="Label1" class='Label' runat="server" Text="Pay period"></asp:Label>
 
-                <asp:DropDownList ID="lstPayPeriod" runat="server" CssClass="Edit" AutoPostBack="true">
+                <asp:DropDownList ID="lstPayPeriod" runat="server" CssClass="Edit" AutoPostBack="true" Width="120px">
                     <asp:ListItem Text="All..." Value=""></asp:ListItem>
                 </asp:DropDownList>
             </span>
             <span class='FilterPanel'>
                 <asp:Label ID="Label2" class='Label' runat="server" Text="Sale month"></asp:Label>
 
-                <asp:DropDownList ID="lstSaleMonth" runat="server" CssClass="Edit" AutoPostBack="true">
+                <asp:DropDownList ID="lstSaleMonth" runat="server" CssClass="Edit" AutoPostBack="true" >
                 </asp:DropDownList>
+
+                   <asp:Button ID="btnSearch" runat="server" Text="Search" Style='float: right; padding-right: 10px; padding-left: 10px' CssClass="Button btn" />
             </span>
-            <asp:Button ID="btnSearch" runat="server" Text="Search" Style='float: right' CssClass="Button btn" />
+         
         </div>
         <div style="float: left; clear: both; width: 100%">
             <asp:GridView ID="gvCurrent" runat="server" AutoGenerateColumns="false" OnRowDataBound="gvCurrent_RowDataBound" EnableViewState="false" Width="100%">

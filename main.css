@@ -53,6 +53,9 @@ body{
 .modal-header {
     padding: 8px;
 }
+.ListHeader th {
+    text-align: center;
+}
 
 .modal-footer {
     display: none;
@@ -430,10 +433,7 @@ tr {
     font-family: Verdana, Tahoma;
     font-size: 8pt;
 }
-tr.even:hover {
-	background-color: #C6F5FF !important;
-    cursor: pointer;
-}
+
 
 tr.even {
     background: white;

@@ -54,22 +54,22 @@
                 $("#mTx .modal-body").css({ height: 600 });
                 $("#fTx").css({ height: 590 });
             });
+
+            $("#lstPayPeriod").select2();
         });
     </script>
 </head>
 <body>
     <form id="frmMain" method="post" runat="server" target="_self">
         <div style="width: 99%">
-            <div class='ActionPanel'>
-                <asp:Panel ID="pPageHeader" class='PageHeader' runat="server" Width="200px">Accounting dashboard</asp:Panel>
-                <span class='RightActionPanel' style="width: 400px">
+          
+            <div class='GridFilter' id='dDrigFilter' style="padding: 10px">
+                 <span class='RightActionPanel' style="width: 400px">
                     <asp:Button ID="btnInsert" runat="server" Text="Insert" CssClass="Button btn" OnClientClick=" return viewTx(-1);" UseSubmitBehavior="false" />
                     <asp:Button ID="btnInsertMultiple" runat="server" Text="Insert multiple" CssClass="Button btn" OnClientClick=" return viewMultipleTx(-100);" UseSubmitBehavior="false" Style="margin-left: 10px" />
                 </span>
 
                 <asp:Button ID="btnRefresh" runat="server" Text="Refresh" OnClick="btnRefresh_Click" Style="display: none" />
-            </div>
-            <div class='GridFilter' id='dDrigFilter'>
                 <span class='FilterPanel'>
                     <asp:Label ID="lblPropertyFilter" class='Label' runat="server" Text="Pay period"></asp:Label>
 
