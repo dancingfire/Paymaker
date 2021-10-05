@@ -138,7 +138,7 @@ public class RolePermission {
 }
 
 public class UserLogin {
-    public static string resetPasswordEmailFrom = "do-not-reply@fletchers.net.au";
+    public static string resetPasswordEmailFrom = EmailSettings.SMTPServerUserName;
 
     /// <summary>
     /// Validates the password passed in based on the rules. If the password is valid, the function will return an empty string, else the errors that
@@ -402,7 +402,7 @@ public class UserLogin {
              </html>", Token, G.Settings.DomainName);
 
         try {
-            Email.sendMail(To, "do-not-reply@fletchers.net.au", "Reset password", strMailContent);
+            Email.sendMail(To, EmailSettings.SMTPServerUserName, "Reset password", strMailContent);
             G.Notifications.addPageNotification(PageNotificationType.Success, "Email sent", "The email with reset link has been sent", true);
             G.Notifications.showPageNotification(true);
         } catch {

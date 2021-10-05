@@ -565,12 +565,6 @@ public class G {
             }
         }
 
-        public static string SMTPServer {
-            get {
-                return System.Configuration.ConfigurationManager.AppSettings["EmailServer"];
-            }
-        }
-
         public static string CampaignTrackOffice {
             get {
                 return System.Configuration.ConfigurationManager.AppSettings["CampaignTrackOffice"];

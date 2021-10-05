@@ -243,7 +243,7 @@ public partial class payroll_update : Root {
         if (blnIsAdminView) {
             Msg = " Your timesheet has been changed by " + G.User.UserName;
         }
-        Email.sendMail(szEmail, "do-not-reply@fletchers.net.au", "Timesheet submitted",
+        Email.sendMail(szEmail, EmailSettings.SMTPServerUserName, "Timesheet submitted",
                 Msg, szBCC: "payroll@fletchers.net.au", IncludeFile: new Attachment(new MemoryStream(bFile), "Timesheet.pdf"));
     }
 
@@ -274,7 +274,7 @@ public partial class payroll_update : Root {
 
         string Msg = "Your timesheet has been unlocked - you can now make further changes. Please remember to resubmit it when you are done.";
            
-        Email.sendMail(szEmail, "do-not-reply@fletchers.net.au", "Timesheet opened",
+        Email.sendMail(szEmail, EmailSettings.SMTPServerUserName, "Timesheet opened",
                 Msg, szBCC: "payroll@fletchers.net.au", IncludeFile: new Attachment(new MemoryStream(bFile), "Timesheet.pdf"));
         Response.Redirect("payroll_dashboard.aspx");
     }

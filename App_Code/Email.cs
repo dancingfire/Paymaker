@@ -32,6 +32,21 @@ public class EmailSettings {
             return System.Configuration.ConfigurationManager.AppSettings["SMTPServerPassword"];
         }
     }
+
+    /// <summary>
+    /// The live email server password
+    /// </summary>
+    public static bool SMTPServerSSL{
+        get {
+            return System.Configuration.ConfigurationManager.AppSettings["SMTPServerUseSSL"] == "TRUE";
+        }
+    }
+    public static string SMTPServerFromEmail {
+        get {
+            return System.Configuration.ConfigurationManager.AppSettings["SMTPServerFromEmail"];
+        }
+    }
+    
 }
 
 /// <summary>
@@ -71,7 +86,7 @@ public class Email {
         if (!String.IsNullOrWhiteSpace(To)) {
             msg.To.Add(To);
         } else {
-            msg.To.Add("do-not-reply@fletchers.net.au"); //We need an address here or the email will fail
+            msg.To.Add(EmailSettings.SMTPServerUserName); //We need an address here or the email will fail
         }
 
         szCC = separateEmailAddresses(szCC, lDelegates, ref szDelegatedEmailAddresses);
@@ -86,7 +101,7 @@ public class Email {
             msg.CC.Add(szDelegatedEmailAddresses.TrimEnd(','));
         }
         if (szFrom == "")
-            szFrom = "do-not-reply@fletchers.net.au";
+            szFrom = EmailSettings.SMTPServerUserName;
         msg.From = new MailAddress(szFrom, DisplayName);
         msg.Subject = Subject;
 
@@ -150,6 +165,7 @@ public class Email {
 
     public static SmtpClient getEmailServer() {
         SmtpClient oSMTP = new SmtpClient(EmailSettings.SMTPServer);
+        oSMTP.EnableSsl = EmailSettings.SMTPServerSSL;
         if (!String.IsNullOrEmpty(EmailSettings.SMTPServerUserName)) {
             System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(EmailSettings.SMTPServerUserName, EmailSettings.SMTPServerPassword);
             oSMTP.Credentials = credentials;
