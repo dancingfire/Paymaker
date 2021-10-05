@@ -15,7 +15,7 @@
                 </div>
                 <div class="form-group">
                     <label for="txtMsg" class="control-label">Message</label>
-                    <asp:TextBox ID="txtMsg" runat="server" CssClass="form-control" TextMode="MultiLine">Sending a test email to the above address. The email will be sent from do-not-reply@fletchers.net.au</asp:TextBox>
+                    <asp:TextBox ID="txtMsg" runat="server" CssClass="form-control" TextMode="MultiLine">Sending a test email to the above address. The email will be sent from payroll@fletchers.net.au</asp:TextBox>
                 </div>
                 <div class="row">
                     <asp:Button ID="btnSend" runat="server" Text="Send email" OnClick="btnSend_Click" CssClass="btn btn-default" />

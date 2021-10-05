@@ -146,7 +146,7 @@ public class LeaveRequest {
             szEmail += "The following clarification is requested: <br/><br/>" + Utility.nl2br(ManagerComment);
         }
 
-        Email.sendMail(u.Email, "do-not-reply@fletchers.net.au", Subject, szEmail, LogObjectID: intID, Type: EType);
+        Email.sendMail(u.Email, EmailSettings.SMTPServerUserName, Subject, szEmail, LogObjectID: intID, Type: EType);
     }
 
     public void delete() {
@@ -195,7 +195,7 @@ public class LeaveRequest {
                 Comments: {3} <br/><br/>", lOld.LeaveType, Utility.formatDate(lOld.StartDate), Utility.formatDate(lOld.EndDate), Utility.nl2br(lOld.Comment));
             typeOfRequest = EmailType.ChangeRequest;
         }
-        Email.sendMail(szTo, "do-not-reply@fletchers.net.au", szSubject, szEmail, LogObjectID: intID, Type: typeOfRequest, DisplayName: "Leave Request for Actioning");
+        Email.sendMail(szTo, EmailSettings.SMTPServerUserName, szSubject, szEmail, LogObjectID: intID, Type: typeOfRequest, DisplayName: "Leave Request for Actioning");
     }
 
     public void sendReminderEmailToManager() {

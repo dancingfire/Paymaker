@@ -173,8 +173,7 @@ public partial class action_detail : Root {
         msg.From = new MailAddress(G.User.Email);
         msg.Subject = txtSubject.Text;
         msg.Body = EmailBody;
-        SmtpClient oSMTP = new SmtpClient();
-        oSMTP.Host = G.Settings.SMTPServer;
+        SmtpClient oSMTP = Email.getEmailServer();
 
         try {
             oSMTP.Send(msg);
