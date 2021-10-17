@@ -184,7 +184,7 @@ public class LeaveRequest {
             ", u.Name, this.LeaveType, Utility.formatDate(StartDate), Utility.formatDate(EndDate), Utility.nl2br(Comment),
                 G.BaseURL);
 
-        string szSubject = "Leave request";
+        string szSubject = "  Leave request";
         EmailType typeOfRequest = EmailType.LeaveRequest;
         if(lOld != null) {
             szSubject = "Updated leave request";
@@ -221,7 +221,7 @@ public class LeaveRequest {
             ", u.Name, this.LeaveType, Utility.formatDate(StartDate), Utility.formatDate(EndDate), Utility.nl2br(Comment),
             G.BaseURL);
 
-        Email.sendMail(szTo, u.Email, "Leave request reminder", szEmail, LogObjectID: intID, Type: EmailType.Reminder);
+        Email.sendMail(szTo, "", "Leave request reminder", szEmail, LogObjectID: intID, Type: EmailType.Reminder);
     }
 }
 
