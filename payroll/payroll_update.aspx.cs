@@ -71,7 +71,7 @@ public partial class payroll_update : Root {
         if (intCycleRef > -1) {
             UserTimesheet oUT = new UserTimesheet(intUserID, intUserPayrollCycleID, blReadOnlyForm: blPopup);
             oUT.lEntries.Add(new UserTimesheetEntry());
-            if (oUT.lEntries[0].UserID != G.User.ID)
+            if (oUT.lEntries[0].UserID != G.User.ID || G.User.ID == 0)
                 blnIsAdminView = true;
             gvList.DataSource = oUT.lEntries;
             gvList.DataBind();

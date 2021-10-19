@@ -8,7 +8,7 @@
     <script type="text/javascript">
 
         function refreshPage() {
-            document.location.href = "user_detail.aspx";
+            document.location.href = "payroll_dashboard.aspx";
         }
 
         function closePage() {
