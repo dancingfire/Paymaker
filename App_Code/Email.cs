@@ -101,7 +101,7 @@ public class Email {
             msg.CC.Add(szDelegatedEmailAddresses.TrimEnd(','));
         }
         if (szFrom == "")
-            szFrom = EmailSettings.SMTPServerUserName;
+            szFrom = EmailSettings.SMTPServerFromEmail;
         msg.From = new MailAddress(szFrom, DisplayName);
         msg.Subject = Subject;
 

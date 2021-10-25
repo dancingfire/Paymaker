@@ -154,6 +154,32 @@ public class LeaveRequest {
             UPDATE LEAVEREQUEST
             SET ISDELETED = 1 WHERE ID = {0}", intID);
         DB.runNonQuery(szSQL);
+
+        //If this is a user deleting the request send a message to their team leader
+        if(G.User.OriginalUserID == this.RequestUserID) {
+            sendDeleteNotification();
+        }
+    }
+
+    private void sendDeleteNotification() {
+        UserDetail u = G.UserInfo.getUser(RequestUserID);
+        UserDetail m = G.UserInfo.getUser(u.SupervisorID);
+        string szTo = G.Settings.CatchAllEmail;
+
+        if (m != null && !String.IsNullOrWhiteSpace(m.Email)) {
+            szTo = m.Email;
+        }
+        string szEmail = String.Format(@"
+            {0} has deleted the following leave request:<br/><br/>
+                Type: {1} <br/>
+                Start: {2}<br/>
+                End: {3}<br/>
+                Comments: {4} <br/><br/> ", 
+                u.Name, this.LeaveType, Utility.formatDate(StartDate), Utility.formatDate(EndDate), Utility.nl2br(Comment));
+
+        string szSubject = " Leave request cancellation";
+        EmailType typeOfRequest = EmailType.Cancellation;
+        Email.sendMail(szTo, EmailSettings.SMTPServerUserName, szSubject, szEmail, LogObjectID: intID, Type: typeOfRequest, DisplayName: "Leave Request cancellation");
     }
 
     /// <summary>
