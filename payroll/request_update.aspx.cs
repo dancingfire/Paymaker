@@ -54,7 +54,7 @@ public partial class request_update : Root {
             if(l.LeaveStatus == LeaveRequestStatus.DiscussionRequired) {
                 btnReject.Visible = true;
             }
-            btnDelete.Visible = G.User.IsAdmin || G.User.hasPermission(RolePermissionType.DeleteLeaveRequests); //Admin can always delete
+            btnDelete.Visible = G.User.IsAdmin || l.StartDate < DateTime.Now;
             btnUpdate.Visible = false;
             btnCancel.InnerHtml = "Close";
             hdReadOnly.Value = "true";
