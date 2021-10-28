@@ -15,6 +15,9 @@ public partial class run_sql : Root {
     }
 
     protected void btnUpdate_Click(object sender, EventArgs e) {
+        if(!Valid.getBoolean("GORD", false)) {
+            return;
+        }
         if (!isSQLOK(txtSQL.Text))
             return;
         Utility.bindGV(ref gvOutput, DB.runDataSet(txtSQL.Text));
