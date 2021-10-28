@@ -1,4 +1,6 @@
 using System;
+using System.Web;
+using System.Web.Caching;
 
 namespace Paymaker {
 
@@ -7,13 +9,29 @@ namespace Paymaker {
     /// </summary>
     public class Global : System.Web.HttpApplication {
         private EventArgs e = null;
+        private static CacheItemRemovedCallback OnCacheRemove = null;
 
         public Global() {
         }
 
         protected void Application_Start(Object sender, EventArgs e) {
-
+            AddTask("checkEmailQueue", 30);
         }
+
+        private void AddTask(string name, int seconds) {
+            OnCacheRemove = new CacheItemRemovedCallback(CacheItemRemoved);
+            HttpRuntime.Cache.Insert(name, seconds, null, DateTime.Now.AddSeconds(seconds), Cache.NoSlidingExpiration, CacheItemPriority.NotRemovable, OnCacheRemove);
+        }
+
+        public void CacheItemRemoved(string k, object v, CacheItemRemovedReason r) {
+            try {
+                Email.EmailQueue.checkCache();
+            } catch (Exception e) {
+                ; //Ignore this - we will try again
+            }
+            AddTask(k, Convert.ToInt32(v));
+        }
+
 
         protected void Session_Start(Object sender, EventArgs e) {
         }

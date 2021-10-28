@@ -319,7 +319,7 @@ public class DB {
     }
 
     private static void setSessionSQL(string SQL) {
-        if (HttpContext.Current.Session != null) {
+        if (HttpContext.Current != null && HttpContext.Current.Session != null) {
             HttpContext.Current.Session["DEBUGSQL"] = SQL;
         }
     }

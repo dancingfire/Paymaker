@@ -255,7 +255,7 @@ public class G {
     /// </summary>
     public static bool EnableSQLTrace {
         get {
-            if (HttpContext.Current.Session == null || HttpContext.Current.Session["blnEnableTrace"] == null)
+            if (HttpContext.Current == null || HttpContext.Current.Session == null || HttpContext.Current.Session["blnEnableTrace"] == null)
                 return false;
             return HttpContext.Current.Session["blnEnableTrace"].ToString().ToUpper() == "TRUE";
         }

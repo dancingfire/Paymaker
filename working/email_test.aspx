@@ -14,6 +14,11 @@
                     <asp:TextBox ID="txtTo" runat="server" Text="payroll@fletchers.net.au" CssClass="form-control"></asp:TextBox>
                 </div>
                 <div class="form-group">
+                    <label for="chkInclude" class="control-label">Include attachment</label>
+                    <asp:CheckBox ID="chkInclude" runat="server" CssClass="form-control" />
+                    
+                </div>
+                <div class="form-group">
                     <label for="txtMsg" class="control-label">Message</label>
                     <asp:TextBox ID="txtMsg" runat="server" CssClass="form-control" TextMode="MultiLine">Sending a test email to the above address. The email will be sent from payroll@fletchers.net.au</asp:TextBox>
                 </div>

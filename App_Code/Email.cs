@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Globalization;
+using System.IO;
+using System.Linq;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
+using Dapper;
 
 public class EmailSettings {
 
@@ -65,31 +70,24 @@ public class Email {
     /// <param name="szBCC"></param>
     /// <param name="SendToUserID">In the case that emails are sent while there is no logged in user eg. Password reset, a user Id needs to be provided to log emails against</param>
     ///
-    public static void sendMail(string To, string szFrom, string Subject, string HTMLBody, string szCC = "", string szBCC = "", Attachment IncludeFile = null, int LogObjectID = -1, EmailType Type = EmailType.General, string DisplayName = "") {
-        List<UserDelegate> lDelegates = G.UserDelegateInfo.DelegateList;
+    public static bool sendMail(string To, string szFrom, string Subject, string HTMLBody, string szCC = "", string szBCC = "", Attachment IncludeFile = null, int LogObjectID = -1, EmailType Type = EmailType.General, string DisplayName = "", bool FromQueue = false) {
+        
         string szDelegatedEmailAddresses = "";
-
         MailMessage msg = new MailMessage();
-        string szLog = String.Format(@"
-            From: {0}
-            To: {1}
-            CC: {2}
-            BCC: {3}
-            Subject: {4}
-            Body: {5}
-            ", szFrom, To, szCC, szBCC, Subject, HTMLBody);
-        EmailLog.addLog(Type, Subject, szFrom, To, szCC, HTMLBody, LogObjectID);
         msg.IsBodyHtml = true;
 
-        //Perform that delegation first as this may clear out the To field
-        To = separateEmailAddresses(To, lDelegates, ref szDelegatedEmailAddresses);
+        //Perform that delegation first as this may clear out the To field 
+        if (!FromQueue) {
+            List<UserDelegate> lDelegates = G.UserDelegateInfo.DelegateList;
+            To = separateEmailAddresses(To, lDelegates, ref szDelegatedEmailAddresses);
+            szCC = separateEmailAddresses(szCC, lDelegates, ref szDelegatedEmailAddresses);
+        }
         if (!String.IsNullOrWhiteSpace(To)) {
             msg.To.Add(To);
         } else {
             msg.To.Add(EmailSettings.SMTPServerUserName); //We need an address here or the email will fail
         }
 
-        szCC = separateEmailAddresses(szCC, lDelegates, ref szDelegatedEmailAddresses);
         if (!String.IsNullOrWhiteSpace(szCC))
             msg.CC.Add(szCC);
 
@@ -104,34 +102,51 @@ public class Email {
             szFrom = EmailSettings.SMTPServerFromEmail;
         msg.From = new MailAddress(szFrom, DisplayName);
         msg.Subject = Subject;
-
-        HTMLBody = String.Format(@"<html><head>
+        if (!FromQueue) {
+            HTMLBody = String.Format(@"
+            <html><head>
             <style> </style>
             <body>
-                {0}
-
-                <br />
+                {0}<br />
             </body></html>", HTMLBody);
+        }
         msg.Body = HTMLBody;
-        if (IncludeFile != null) {
-            msg.Attachments.Add(IncludeFile);
-        }
 
-        SmtpClient oSMTP = Email.getEmailServer();
-        try {
-            oSMTP.Send(msg);
-        } catch {
-            throw;
-        } finally {
-            oSMTP = null;
+        //Determine whether we send the email now or simply add it into the Queue
+        if (!FromQueue) {
+            EmailQueue.queueEmail(msg, Type, DisplayName, IncludeFile);
+        } else {
+            if (IncludeFile != null) {
+                msg.Attachments.Add(IncludeFile);
+            }
+            SmtpClient oSMTP = Email.getEmailServer();
+            try {
+                oSMTP.Send(msg);
+                string szLog = String.Format(@"
+                    From: {0}
+                    To: {1}
+                    CC: {2}
+                    BCC: {3}
+                    Subject: {4}
+                    Body: {5}
+                    ", szFrom, To, szCC, szBCC, Subject, HTMLBody);
+                EmailLog.addLog(Type, Subject, szFrom, To, szCC, HTMLBody, LogObjectID);
+            } catch (Exception e){
+                DB.runNonQuery("--" + DB.escape(e.Message));
+                return false;
+            } finally {
+                oSMTP = null;
+            }
         }
+        return true;
     }
+
+
 
     public static string separateEmailAddresses(string Addresses) {
         string szAdd = Addresses.Replace(";", ",").Replace(Environment.NewLine, ",").Trim().Replace(" ", ",").Replace(",,", ",").TrimEnd(',');
         return szAdd;
     }
-
 
     public static string separateEmailAddresses(string Addresses, List<UserDelegate> lDelegateList, ref string DelegatedEmailAddresses) {
         string szAdd = Addresses.Replace(";", ",").Replace(Environment.NewLine, ",").Trim().Replace(" ", ",").Replace(",,", ",").Trim().TrimEnd(',');
@@ -172,6 +187,88 @@ public class Email {
         }
         return oSMTP;
     }
+
+    public static class EmailQueue {
+
+        public static void queueEmail(MailMessage msg, EmailType Type, string DisplayName, Attachment IncludeFile) {
+            sqlUpdate oSQL = new sqlUpdate("EMAILQUEUE", "ID", -1);
+            oSQL.add("EmailType", (int)Type);
+            oSQL.add("ToList", msg.To.ToString());
+            oSQL.add("CCList", msg.CC.ToString());
+            oSQL.add("BCCList", msg.Bcc.ToString());
+            oSQL.add("Subject", msg.Subject);
+            oSQL.add("Body", msg.Body);
+            oSQL.add("DisplayName", DisplayName);
+            if (IncludeFile != null) {
+                oSQL.add("ATTACHMENT", IncludeFile.Name);
+                EmailQueue.saveMailAttachment(IncludeFile);
+            }
+            DB.runNonQuery(oSQL.createInsertSQL());
+        }
+
+        /// <summary>
+        /// Sends any emails in the email cache
+        /// </summary>
+        public static void checkCache() {
+            List<EmailDB> lEmails = new List<EmailDB>();
+            using (IDbConnection _db = new SqlConnection(G.szCnn)) {
+                lEmails = _db.Query<EmailDB>("SELECT * From EMAILQUEUE where IsProcessing = 0;").ToList();
+            }
+            foreach (EmailDB oE in lEmails) {
+                Attachment IncludeFile = null;
+                if(!String.IsNullOrEmpty(oE.Attachment)) {
+                    IncludeFile = new Attachment(getAttachmentFileName(oE.Attachment));
+                }
+                oE.startProcessing();
+                if(Email.sendMail(oE.ToList, "", oE.Subject, oE.Body, oE.CCList, oE.BCCList, IncludeFile, -1, oE.EmailType, oE.DisplayName, true)) {
+                    oE.markSent();
+                } else {
+                    oE.failProcessing();
+                }
+            }
+        }
+
+        private static void saveMailAttachment(Attachment attachment) {
+            byte[] allBytes = new byte[attachment.ContentStream.Length];
+            int bytesRead = attachment.ContentStream.Read(allBytes, 0, (int)attachment.ContentStream.Length);
+
+            string destinationFile = getAttachmentFileName(attachment.Name);
+            Directory.CreateDirectory(Path.GetDirectoryName(destinationFile));
+            BinaryWriter writer = new BinaryWriter(new FileStream(destinationFile, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None));
+            writer.Write(allBytes);
+            writer.Close();
+        }
+
+        private static string getAttachmentFileName(string FileName) {
+            if (String.IsNullOrEmpty(FileName))
+                return "";
+            return Path.Combine(G.Settings.DataDir, "Attachments", FileName);
+        }
+
+        public class EmailDB {
+            public int ID { get; set; }
+            public EmailType EmailType { get; set; }
+            public string ToList { get; set; }
+            public string CCList { get; set; }
+            public string BCCList { get; set; }
+            public string Subject { get; set; }
+            public string Body { get; set; }
+            public string DisplayName { get; set; }
+            public string Attachment { get; set; }
+
+            public void markSent() {
+                DB.runNonQuery("DELETE FROM EMAILQUEUE where id = " + ID);
+            }
+
+            public void startProcessing() {
+                DB.runNonQuery("UPDATE EMAILQUEUE set IsProcessing = 1 WHERE ID = " + ID);
+            }
+            public void failProcessing() {
+                DB.runNonQuery("UPDATE EMAILQUEUE set IsProcessing = 0 WHERE ID = " + ID);
+            }
+        }
+    }
+   
 }
 
 public class RegexUtilities {
