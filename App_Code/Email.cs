@@ -114,7 +114,7 @@ public class Email {
 
         //Determine whether we send the email now or simply add it into the Queue
         if (!FromQueue) {
-            EmailQueue.queueEmail(msg, Type, DisplayName, IncludeFile);
+            EmailQueue.queueEmail(msg, Type, DisplayName, IncludeFile, G.User.UserID);
         } else {
             if (IncludeFile != null) {
                 msg.Attachments.Add(IncludeFile);
@@ -190,9 +190,10 @@ public class Email {
 
     public static class EmailQueue {
 
-        public static void queueEmail(MailMessage msg, EmailType Type, string DisplayName, Attachment IncludeFile) {
+        public static void queueEmail(MailMessage msg, EmailType Type, string DisplayName, Attachment IncludeFile, int UserID) {
             sqlUpdate oSQL = new sqlUpdate("EMAILQUEUE", "ID", -1);
             oSQL.add("EmailType", (int)Type);
+            oSQL.add("UserID", UserID);
             oSQL.add("ToList", msg.To.ToString());
             oSQL.add("CCList", msg.CC.ToString());
             oSQL.add("BCCList", msg.Bcc.ToString());
@@ -201,7 +202,7 @@ public class Email {
             oSQL.add("DisplayName", DisplayName);
             if (IncludeFile != null) {
                 oSQL.add("ATTACHMENT", IncludeFile.Name);
-                EmailQueue.saveMailAttachment(IncludeFile);
+                EmailQueue.saveMailAttachment(IncludeFile, UserID);
             }
             DB.runNonQuery(oSQL.createInsertSQL());
         }
@@ -217,7 +218,7 @@ public class Email {
             foreach (EmailDB oE in lEmails) {
                 Attachment IncludeFile = null;
                 if(!String.IsNullOrEmpty(oE.Attachment)) {
-                    IncludeFile = new Attachment(getAttachmentFileName(oE.Attachment));
+                    IncludeFile = new Attachment(getAttachmentFileName(oE.Attachment, oE.UserID));
                 }
                 oE.startProcessing();
                 if(Email.sendMail(oE.ToList, "", oE.Subject, oE.Body, oE.CCList, oE.BCCList, IncludeFile, -1, oE.EmailType, oE.DisplayName, true)) {
@@ -228,25 +229,27 @@ public class Email {
             }
         }
 
-        private static void saveMailAttachment(Attachment attachment) {
+        private static void saveMailAttachment(Attachment attachment, int UserID) {
             byte[] allBytes = new byte[attachment.ContentStream.Length];
             int bytesRead = attachment.ContentStream.Read(allBytes, 0, (int)attachment.ContentStream.Length);
 
-            string destinationFile = getAttachmentFileName(attachment.Name);
+            string destinationFile = getAttachmentFileName(attachment.Name, UserID);
             Directory.CreateDirectory(Path.GetDirectoryName(destinationFile));
-            BinaryWriter writer = new BinaryWriter(new FileStream(destinationFile, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None));
-            writer.Write(allBytes);
-            writer.Close();
+            using (BinaryWriter writer = new BinaryWriter(new FileStream(destinationFile, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None))) {
+                writer.Write(allBytes);
+                writer.Close();
+            }
         }
 
-        private static string getAttachmentFileName(string FileName) {
+        private static string getAttachmentFileName(string FileName, int UserID) {
             if (String.IsNullOrEmpty(FileName))
                 return "";
-            return Path.Combine(G.Settings.DataDir, "Attachments", FileName);
+            return Path.Combine(G.Settings.DataDir, "Attachments", UserID.ToString(), FileName);
         }
 
         public class EmailDB {
             public int ID { get; set; }
+            public int UserID { get; set; }
             public EmailType EmailType { get; set; }
             public string ToList { get; set; }
             public string CCList { get; set; }
