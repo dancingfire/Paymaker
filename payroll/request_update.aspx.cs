@@ -98,7 +98,7 @@ public partial class request_update : Root {
             btnDelete.Visible = G.User.IsAdmin; //Admin can see the delete button;
             btnDiscussion.Visible = false;
         } else if (l.LeaveStatus == LeaveRequestStatus.Approved || l.LeaveStatus == LeaveRequestStatus.ChangeRequest) {
-            btnDelete.Visible = G.User.IsAdmin; //Admin can see the delete button
+            btnDelete.Visible = G.User.IsAdmin || G.User.UserID == l.RequestUserID; //Admin and requesting staff can see the delete button
             btnUpdate.Text = "Resend approval request";
         }
         loadHistory();
