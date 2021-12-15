@@ -657,6 +657,7 @@ public class Campaign {
 
 #region CampaignImport
 
+
 public class CampaignImport {
     private ServiceReference1.IntegrationSoapClient oWS = new IntegrationSoapClient("IntegrationSoap12");
     private int intErrorCode = 0;
@@ -694,6 +695,7 @@ public class CampaignImport {
         G.User.ImportCurrentRecord = -1;
         G.User.ImportTotal = -1;
         G.User.IsImportDone = false;
+        
         CampaignTrackProperty[] oCT = oWS.CheckPropertyDetails(szWSKey, szWSOffice, ref intErrorCode);
         G.User.ImportTotal = oCT.Length;
 

@@ -220,7 +220,7 @@ public class UserLogin {
     }
 
     /// <summary>
-    /// Resets the login for MGT users
+    /// Resets the login for users
     /// </summary>
     /// <param name="UserName"></param>
     public static bool resetPassword(string UserName) {
@@ -402,7 +402,7 @@ public class UserLogin {
              </html>", Token, G.Settings.DomainName);
 
         try {
-            Email.sendMail(To, EmailSettings.SMTPServerUserName, "Reset password", strMailContent);
+            Email.sendMail(To, EmailSettings.SMTPServerUserName, "Reset password", strMailContent, UserID: 0);
             G.Notifications.addPageNotification(PageNotificationType.Success, "Email sent", "The email with reset link has been sent", true);
             G.Notifications.showPageNotification(true);
         } catch {

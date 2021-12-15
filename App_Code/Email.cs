@@ -70,7 +70,7 @@ public class Email {
     /// <param name="szBCC"></param>
     /// <param name="SendToUserID">In the case that emails are sent while there is no logged in user eg. Password reset, a user Id needs to be provided to log emails against</param>
     ///
-    public static bool sendMail(string To, string szFrom, string Subject, string HTMLBody, string szCC = "", string szBCC = "", Attachment IncludeFile = null, int LogObjectID = -1, EmailType Type = EmailType.General, string DisplayName = "", bool FromQueue = false) {
+    public static bool sendMail(string To, string szFrom, string Subject, string HTMLBody, string szCC = "", string szBCC = "", Attachment IncludeFile = null, int LogObjectID = -1, EmailType Type = EmailType.General, string DisplayName = "", bool FromQueue = false, int UserID = -1) {
         
         string szDelegatedEmailAddresses = "";
         MailMessage msg = new MailMessage();
@@ -114,7 +114,9 @@ public class Email {
 
         //Determine whether we send the email now or simply add it into the Queue
         if (!FromQueue) {
-            EmailQueue.queueEmail(msg, Type, DisplayName, IncludeFile, G.User.UserID);
+            if (UserID == -1)
+                UserID = G.User.UserID;
+            EmailQueue.queueEmail(msg, Type, DisplayName, IncludeFile, UserID);
         } else {
             if (IncludeFile != null) {
                 msg.Attachments.Add(IncludeFile);
