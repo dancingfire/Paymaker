@@ -77,9 +77,13 @@ public class MonthlySalesDetail : Report {
             szFilter += " AND U1.ID IN (" + oFilter.UserIDList + ")";
         }
 
+        string szReferralSQL = "";
+        if (oFilter.ExcludeReferral) {
+            szReferralSQL = " - ISNULL(OTT.TOTAL, 0) ";
+        }
         string szSQL = string.Format(@"
                 SELECT S.ID, S.ADDRESS,
-                S.SALEDATE, S.SALEPRICE, S.SETTLEMENTDATE, S.GROSSCOMMISSION as TOTALCOMMISSION, S.CONJUNCTIONALCOMMISSION, USS.GRAPHCOMMISSION AS GRAPHTOTAL,
+                S.SALEDATE, S.SALEPRICE, S.SETTLEMENTDATE, S.GROSSCOMMISSION as TOTALCOMMISSION, S.CONJUNCTIONALCOMMISSION, USS.GRAPHCOMMISSION {1} AS GRAPHTOTAL,
                     case WHEN S.PAYPERIODID IS NULL THEN 0 ELSE USS.ACTUALPAYMENT END AS ACTUALPAY,
                 L_OFFICE.NAME, L_SALESPLIT.NAME AS COMMISSIONTYPE, SS.COMMISSIONTYPEID, USR.INITIALSCODE AS AGENTNAME
                 FROM SALE S
@@ -90,10 +94,13 @@ public class MonthlySalesDetail : Report {
                 JOIN LIST L_COMPANY ON L_COMPANY.ID = L_OFFICE.COMPANYID
                 JOIN LIST L_SALESPLIT ON L_SALESPLIT.ID = SS.COMMISSIONTYPEID
                 JOIN  DB_USER U1 ON U1.ID = USR.TOPPERFORMERREPORTSETTINGS
-
+                LEFT JOIN (
+				    SELECT SUM(CALCULATEDAMOUNT) as TOTAL, SALEID 
+				    FROM SALEEXPENSE WHERE EXPENSETYPEID IN (140, 48)
+				    GROUP BY SALEID ) OTT ON OTT.SALEID = S.ID
                 WHERE {0} AND SS.CALCULATEDAMOUNT > 0
                 ORDER BY  ISNULL(S.PAYPERIODID, 1000), S.SALEDATE"
-            , szFilter);
+            , szFilter, szReferralSQL);
 
         DataSet ds = DB.runDataSet(szSQL);
         return ds;

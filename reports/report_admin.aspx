@@ -89,6 +89,7 @@
                         .removeAttr('multiple')
                         .val('-1');
                     $("#lstFinancialYear option[value='']").remove();
+                    $("#spReferral").show();
                     $("#spFinYear").show();
                     break;
                 case "MAINKPI":
@@ -169,6 +170,9 @@
                     } else {
                         $("#spNonAdminUserFilter").show()
                     }
+                    if (szReportVal == "MONTHLYSALESDETAIL") {
+                        $("#spReferral").show();
+                    }
                     $("#spDate").show();
                     break;
                 case "MONTHLYSALESBYPAYPERIOD":
@@ -205,6 +209,7 @@
                     } else {
                         $("#spNonAdminUserFilter").show()
                     }
+                    $("#spReferral").show();
                     $("#spDate").show();
                     break;
                 case "PREPAYMENT":
@@ -255,6 +260,7 @@
                     $("#spRole").show();
                     $("#spCompany").show();
                     $("#spDate").show();
+                    $("#spReferral").show();
                     $("#btnExport").show();
                     break;
                 case "TOPADVERTISING":
@@ -351,6 +357,8 @@
                 szParam += "&blnIncludeInactive=true";
             if ($("#lstApplyKPI").val() == "YES")
                 szParam += "&blnApplyKPI=true";
+            if ($("#lstExcludeReferral").val() == "YES")
+                szParam += "&blnExcludeReferral=true";
 
             return szParam;
         }
@@ -961,6 +969,15 @@
                 </asp:Label>
                 <asp:ListBox ID="lstRole" runat="server" CssClass="Entry" SelectionMode="single"
                     Rows="1"></asp:ListBox>
+                <br class='Align' />
+            </span>
+             <span id="spReferral" class="Filter">
+                <asp:Label ID="Label18" CssClass="FilterLabel" runat="server" Text="Exclude referral expenses">
+                </asp:Label>
+                <asp:ListBox ID="lstExcludeReferral" runat="server" CssClass="Entry" SelectionMode="Single" Rows="1">
+                    <asp:ListItem Value="NO" Text="No"></asp:ListItem>
+                    <asp:ListItem Value="YES" Text="Yes"></asp:ListItem>
+                </asp:ListBox>
                 <br class='Align' />
             </span>
             <span id="spActive" class="Filter">

@@ -18,7 +18,7 @@ public class ReportFilters {
     private string szRoleID = "";
     private string szCompanyID = "";
     private string szPayPeriodID = "";
-
+    
     public DateTime StartDate {
         get {
             if (dtStart == null || dtStart == DateTime.MinValue || dtStart == DateTime.MaxValue)
@@ -57,7 +57,7 @@ public class ReportFilters {
     public string SuburbIDList { get; set; }
     public string ExpenseCategoryIDList { get; set; }
     public string OffTheTopCategoryIDList { get; set; }
-
+    public bool ExcludeReferral { get; set; }
     public string FinancialYear {
         get { return szFY; }
         set {
@@ -161,6 +161,7 @@ public class ReportFilters {
             szEndDate = arDate[1].Replace("'", "");
             MonthsinPeriod = 1;
         }
+        ExcludeReferral = Valid.getText("blnExcludeReferral", "") == "true";
 
         if (!String.IsNullOrEmpty(szStartDate)) {
             dtStart = DateTime.Parse(szStartDate);
