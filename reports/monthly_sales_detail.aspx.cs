@@ -78,14 +78,16 @@ public class MonthlySalesDetail : Report {
         }
 
         string szReferralSQL = "";
+        bool blnCalcReferral = false;
         if (oFilter.ExcludeReferral) {
             szReferralSQL = " - ISNULL(OTT.TOTAL, 0) ";
+            blnCalcReferral = true;
         }
         string szSQL = string.Format(@"
                 SELECT S.ID, S.ADDRESS,
-                S.SALEDATE, S.SALEPRICE, S.SETTLEMENTDATE, S.GROSSCOMMISSION as TOTALCOMMISSION, S.CONJUNCTIONALCOMMISSION, USS.GRAPHCOMMISSION {1} AS GRAPHTOTAL,
+                S.SALEDATE, S.SALEPRICE, S.SETTLEMENTDATE, S.GROSSCOMMISSION, S.GROSSCOMMISSION {1} as TOTALCOMMISSION, S.CONJUNCTIONALCOMMISSION, USS.GRAPHCOMMISSION  AS GRAPHTOTAL,
                     case WHEN S.PAYPERIODID IS NULL THEN 0 ELSE USS.ACTUALPAYMENT END AS ACTUALPAY,
-                L_OFFICE.NAME, L_SALESPLIT.NAME AS COMMISSIONTYPE, SS.COMMISSIONTYPEID, USR.INITIALSCODE AS AGENTNAME
+                L_OFFICE.NAME, L_SALESPLIT.NAME AS COMMISSIONTYPE, SS.COMMISSIONTYPEID, USR.INITIALSCODE AS AGENTNAME, ISNULL(OTT.TOTAL, 0) AS REFERRALEXP
                 FROM SALE S
                 JOIN SALESPLIT SS ON SS.SALEID = S.ID AND S.STATUSID IN (1, 2) AND SS.RECORDSTATUS < 1
                 JOIN USERSALESPLIT USS ON USS.SALESPLITID = SS.ID AND USS.RECORDSTATUS < 1
@@ -103,6 +105,14 @@ public class MonthlySalesDetail : Report {
             , szFilter, szReferralSQL);
 
         DataSet ds = DB.runDataSet(szSQL);
+        if (blnCalcReferral) {
+            foreach(DataRow dr in ds.Tables[0].Rows) {
+                double dTotal = DB.readDouble(dr["GROSSCOMMISSION"]);
+                double dReferral = DB.readDouble(dr["REFERRALEXP"]);
+                double Ratio = (dTotal - dReferral) / dTotal;
+                dr["GRAPHTOTAL"] = DB.readDouble(dr["GRAPHTOTAL"]) * Ratio;
+            }
+        }
         return ds;
     }
 }
