@@ -40,12 +40,20 @@ namespace Paymaker {
             if (!String.IsNullOrWhiteSpace(szCompanyIDList))
                 szCompanyFilter += String.Format(" AND L_OFFICE.COMPANYID IN ({0})", szCompanyIDList);
 
+            string szReferralSQL = "";
+            if(Valid.getText("blnExcludeReferral", "") == "true") {
+                szReferralSQL = " - ISNULL(MAX(OTT.TOTAL), 0) ";
+            }
             string szSQL = string.Format(@"
-                SELECT U.TOPPERFORMERREPORTSETTINGS AS USERID, '' AS INITIALSCODE, 0 AS ROLEID, SUM(GRAPHCOMMISSION) AS CALCULATEDAMOUNT
+                SELECT U.TOPPERFORMERREPORTSETTINGS AS USERID, '' AS INITIALSCODE, 0 AS ROLEID, SUM(GRAPHCOMMISSION) {2} AS CALCULATEDAMOUNT
                 FROM USERSALESPLIT USS
                 JOIN SALESPLIT SS ON USS.SALESPLITID = SS.ID AND SS.RECORDSTATUS < 1 AND USS.RECORDSTATUS < 1
                 JOIN LIST L_SPLITTYPE ON SS.COMMISSIONTYPEID = L_SPLITTYPE.ID
                 JOIN SALE S ON SS.SALEID = S.ID
+                LEFT JOIN (
+				    SELECT SUM(CALCULATEDAMOUNT) as TOTAL, SALEID 
+				    FROM SALEEXPENSE WHERE EXPENSETYPEID IN (140, 48)
+				    GROUP BY SALEID ) OTT ON OTT.SALEID = S.ID
                 JOIN DB_USER U ON USS.USERID = U.ID
                 JOIN LIST L_OFFICE ON U.OFFICEID = L_OFFICE.ID
                 WHERE U.ID > 0 AND S.STATUSID IN (1, 2) AND SS.CALCULATEDAMOUNT > 0 AND U.ISACTIVE = 1 AND U.ISPAID = 1
@@ -59,7 +67,7 @@ namespace Paymaker {
                 WHERE 1=1 {1} AND USR.ISPAID = 1
                 ;
 
-               ", szSQLFilter, szCompanyFilter);
+               ", szSQLFilter, szCompanyFilter, szReferralSQL);
             DataSet ds = DB.runDataSet(szSQL);
             formatDataSet(ds);
             DataView dv = ds.Tables[0].DefaultView;

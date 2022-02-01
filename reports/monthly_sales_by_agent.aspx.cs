@@ -83,10 +83,13 @@ namespace Paymaker {
             string szUserActive = " AND USR.ISACTIVE = 1 ";
             if (blnIncludeInactive)
                 szUserActive = "";
-
+            string szReferralSQL = "";
+            if (Valid.getText("blnExcludeReferral", "") == "true") {
+                szReferralSQL = " - ISNULL(OTT.TOTAL, 0) ";
+            }
             string szSQL = string.Format(@"
                 SELECT S.ID, S.ADDRESS, CAST(CAST(DATEPART(YEAR, S.SALEDATE) AS VARCHAR) + RIGHT('0' + CAST(DATEPART(MONTH, S.SALEDATE) AS VARCHAR), 2) AS INT) AS GROUPING,
-                S.SALEDATE, S.SALEPRICE, S.SETTLEMENTDATE, S.GROSSCOMMISSION, S.CONJUNCTIONALCOMMISSION,
+                S.SALEDATE, S.SALEPRICE, S.SETTLEMENTDATE, S.GROSSCOMMISSION {2} as GROSSCOMMISSION, S.CONJUNCTIONALCOMMISSION,
                 USS.GRAPHCOMMISSION AS CALCULATEDAMOUNT,
                 L_OFFICE.NAME, L_SALESPLIT.NAME AS COMMISSIONNAME, SS.COMMISSIONTYPEID,
                 USR.INITIALSCODE
@@ -97,9 +100,13 @@ namespace Paymaker {
                 JOIN LIST L_OFFICE ON L_OFFICE.ID = USS.OFFICEID AND L_OFFICE.ISACTIVE = 1
                 JOIN LIST L_COMPANY ON L_COMPANY.ID = L_OFFICE.COMPANYID
                 JOIN LIST L_SALESPLIT ON L_SALESPLIT.ID = SS.COMMISSIONTYPEID --AND L_SALESPLIT.EXCLUDEONREPORT = 0
+                LEFT JOIN (
+				    SELECT SUM(CALCULATEDAMOUNT) as TOTAL, SALEID 
+				    FROM SALEEXPENSE WHERE EXPENSETYPEID IN (140, 48)
+				    GROUP BY SALEID ) OTT ON OTT.SALEID = S.ID
                 WHERE {0} AND SS.CALCULATEDAMOUNT > 0 {1}
                 ORDER BY CAST(CAST(DATEPART(YEAR, S.SALEDATE) AS VARCHAR) + RIGHT('0' + CAST(DATEPART(MONTH, S.SALEDATE) AS VARCHAR), 2) AS INT), SUBSTRING(S.ADDRESS, CHARINDEX(' ', S.ADDRESS) + 1, LEN(S.ADDRESS))"
-                , szFilter, szUserActive);
+                , szFilter, szUserActive, szReferralSQL);
 
             DataSet ds = DB.runDataSet(szSQL);
             formatDataSet(ds);

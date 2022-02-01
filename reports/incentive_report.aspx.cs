@@ -52,9 +52,12 @@ namespace Paymaker {
                 szFilter += String.Format(" AND L_OFFICE.ID IN ({0})", hdOfficeID.Value);
             if (!String.IsNullOrWhiteSpace(hdCompanyID.Value))
                 szFilter += String.Format(" AND L_COMPANY.ID IN ({0})", hdCompanyID.Value);
-
+            string szReferralSQL = "";
+            if (Valid.getText("blnExcludeReferral", "") == "true") {
+                szReferralSQL = " - ISNULL(MAX(OTT.TOTAL), 0) ";
+            }
             string szSQL = string.Format(@"
-                SELECT USR.LASTNAME + ', ' + USR.FIRSTNAME AS AGENT, SUM(USS.GRAPHCOMMISSION) AS GrossSalesYTD,
+                SELECT USR.LASTNAME + ', ' + USR.FIRSTNAME AS AGENT, SUM(USS.GRAPHCOMMISSION) {1} AS GrossSalesYTD,
                     MAX(L_OFFICE.NAME) AS OFFICE, MAX(USR.SALESTARGET) AS SALESTARGET, MAX(USR.INITIALSCODE) AS INITIALSCODE
                 FROM SALE S
                 JOIN SALESPLIT SS ON SS.SALEID = S.ID AND S.STATUSID IN (1, 2) AND SS.RECORDSTATUS = 0
@@ -63,10 +66,14 @@ namespace Paymaker {
                 JOIN LIST L_OFFICE ON L_OFFICE.ID = USR.OFFICEID
                 JOIN LIST L_COMPANY ON L_COMPANY.ID = L_OFFICE.COMPANYID
                 JOIN LIST L_SALESPLIT ON L_SALESPLIT.ID = SS.COMMISSIONTYPEID AND L_SALESPLIT.EXCLUDEONREPORT = 0
+                LEFT JOIN (
+				    SELECT SUM(CALCULATEDAMOUNT) as TOTAL, SALEID 
+				    FROM SALEEXPENSE WHERE EXPENSETYPEID IN (140, 48)
+				    GROUP BY SALEID ) OTT ON OTT.SALEID = S.ID
                 WHERE {0} AND SS.CALCULATEDAMOUNT > 0 AND USR.ISACTIVE = 1
                 GROUP BY USR.ID, USR.LASTNAME + ', ' + USR.FIRSTNAME, USR.ROLEID
                 ORDER BY USR.ROLEID, USR.LASTNAME + ', ' + USR.FIRSTNAME"
-                , szFilter);
+                , szFilter, szReferralSQL);
 
             DataSet ds = DB.runDataSet(szSQL);
             formatDataSet(ds.Tables[0]);
