@@ -42,24 +42,32 @@ namespace Paymaker {
 
             string szReferralSQL = "";
             if(Valid.getText("blnExcludeReferral", "") == "true") {
-                szReferralSQL = " - ISNULL(MAX(OTT.TOTAL), 0) ";
+                //Need to determine the amount of the referral costs to apply to the proportion of the graph commission that is included in this sale
+                szReferralSQL = " - (ISNULL(MAX(OTT.TOTAL), 0) * (SUM(GRAPHCOMMISSION)/MAX(S.GROSSCOMMISSION))) ";
             }
             string szSQL = string.Format(@"
-                SELECT U.TOPPERFORMERREPORTSETTINGS AS USERID, '' AS INITIALSCODE, 0 AS ROLEID, SUM(GRAPHCOMMISSION) {2} AS CALCULATEDAMOUNT
-                FROM USERSALESPLIT USS
-                JOIN SALESPLIT SS ON USS.SALESPLITID = SS.ID AND SS.RECORDSTATUS < 1 AND USS.RECORDSTATUS < 1
-                JOIN LIST L_SPLITTYPE ON SS.COMMISSIONTYPEID = L_SPLITTYPE.ID
-                JOIN SALE S ON SS.SALEID = S.ID
-                LEFT JOIN (
-				    SELECT SUM(CALCULATEDAMOUNT) as TOTAL, SALEID 
-				    FROM SALEEXPENSE WHERE EXPENSETYPEID IN (140, 48)
-				    GROUP BY SALEID ) OTT ON OTT.SALEID = S.ID
-                JOIN DB_USER U ON USS.USERID = U.ID
-                JOIN LIST L_OFFICE ON U.OFFICEID = L_OFFICE.ID
-                WHERE U.ID > 0 AND S.STATUSID IN (1, 2) AND SS.CALCULATEDAMOUNT > 0 AND U.ISACTIVE = 1 AND U.ISPAID = 1
-                {0} {1}
-                GROUP BY TOPPERFORMERREPORTSETTINGS;
+                WITH CTE AS (
+                    SELECT U.TOPPERFORMERREPORTSETTINGS AS USERID, SUM(GRAPHCOMMISSION) {2} AS CALCULATEDAMOUNT
+                    FROM USERSALESPLIT USS
+                    JOIN SALESPLIT SS ON USS.SALESPLITID = SS.ID AND SS.RECORDSTATUS < 1 AND USS.RECORDSTATUS < 1
+                    JOIN LIST L_SPLITTYPE ON SS.COMMISSIONTYPEID = L_SPLITTYPE.ID
+                    JOIN SALE S ON SS.SALEID = S.ID
+                    LEFT JOIN (
+				        SELECT SUM(CALCULATEDAMOUNT) as TOTAL, SALEID 
+				        FROM SALEEXPENSE WHERE EXPENSETYPEID IN (140, 48)
+				        GROUP BY SALEID ) OTT ON OTT.SALEID = S.ID
+                    JOIN DB_USER U ON USS.USERID = U.ID
+                    JOIN LIST L_OFFICE ON U.OFFICEID = L_OFFICE.ID
+                    JOIN  DB_USER U1 ON U1.ID = U.TOPPERFORMERREPORTSETTINGS
+                    WHERE U.ID > 0 AND S.STATUSID IN (1, 2) AND SS.CALCULATEDAMOUNT > 0 AND U1.ISACTIVE = 1 AND U1.ISPAID = 1
+                    {0} {1}
+                GROUP BY U.TOPPERFORMERREPORTSETTINGS, S.ID
+                )
 
+                SELECT USERID, '' AS INITIALSCODE, 0 AS ROLEID, SUM(CALCULATEDAMOUNT) AS CALCULATEDAMOUNT
+                FROM CTE
+                GROUP BY USERID
+            
                 SELECT USR.ID, USR.INITIALSCODE , ROLEID, ISNULL(T.AMOUNT, 0) AS OFFSET
                 FROM DB_USER USR
                 JOIN LIST L_OFFICE ON USR.OFFICEID = L_OFFICE.ID
@@ -135,11 +143,6 @@ namespace Paymaker {
                     oR["INITIALSCODE"] = dvUserDetails[0]["INITIALSCODE"].ToString();
                     if (Convert.ToInt32(dvUserDetails[0]["ROLEID"]) == 4)
                         oR["ROLEID"] = 1; //Set these to sort at the end
-
-                    //Check to see if we need to apply the 2015 offset
-                    //  if (Valid.getText("szStartDate", "", VT.TextNormal) == "Jul 01, 2014") {
-                    //    oR["CALCULATEDAMOUNT"] = Convert.ToDouble(oR["CALCULATEDAMOUNT"]) + Convert.ToDouble(dvUserDetails[0]["OFFSET"]);
-                    //}
                 }
             }
             ds.Tables[0].AcceptChanges();
@@ -190,7 +193,7 @@ namespace Paymaker {
             string szStartDate = Valid.getText("szStartDate", "", VT.TextNormal);
             string szEndDate = Valid.getText("szEndDate", "", VT.TextNormal);
             chtTopPerformers.Titles[1].Text = szStartDate + " - " + szEndDate;
-            return string.Format(@" AND S.SALEDATE >= '{0} 00:00' and S.SALEDATE <= '{1} 23:59:59'", szStartDate, szEndDate);
+            return string.Format(@" AND S.SALEDATE BETWEEN '{0} 00:00' and '{1} 23:59:59'", szStartDate, szEndDate);
         }
     }
 }
