@@ -72,9 +72,9 @@ public class MonthlySalesDetail : Report {
             szFilter += String.Format(" AND L_COMPANY.ID IN ({0})", oFilter.CompanyID);
         string szUserIDFilter = Valid.getText("szUserID", "", VT.List);
         if (!G.User.IsAdmin) //Filter for single user mode
-            szFilter += " AND U1.ID IN (" + G.User.UserID + ") ";
+            szFilter += " AND USR.TOPPERFORMERREPORTSETTINGS IN (" + G.User.UserID + ") ";
         else if (!String.IsNullOrEmpty(oFilter.UserIDList)) {
-            szFilter += " AND U1.ID IN (" + oFilter.UserIDList + ")";
+            szFilter += " AND USR.TOPPERFORMERREPORTSETTINGS IN (" + oFilter.UserIDList + ")";
         }
 
         string szReferralSQL = "";

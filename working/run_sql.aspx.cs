@@ -20,7 +20,11 @@ public partial class run_sql : Root {
         }
         if (!isSQLOK(txtSQL.Text))
             return;
-        Utility.bindGV(ref gvOutput, DB.runDataSet(txtSQL.Text));
+        try {
+            Utility.bindGV(ref gvOutput, DB.runDataSet(txtSQL.Text));
+        } catch (Exception ex) {
+            txtSQL.Text = ex.Message;
+        }
     }
 
     protected void btnUpdateBD_Click(object sender, EventArgs e) {
