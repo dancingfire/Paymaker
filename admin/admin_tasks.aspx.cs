@@ -26,7 +26,14 @@ namespace PAYMAKER {
             G.Notifications.addPageNotification(PageNotificationType.Success, "Graphs totals updated", "The graph totals have been updated.");
             G.Notifications.showPageNotification();
         }
-        
+
+
+        protected void btnSendQueuedEmails_Click(object sender, EventArgs e) {
+            Email.EmailQueue.checkCache();
+
+            G.Notifications.addPageNotification(PageNotificationType.Success, "Status", "The email queue is clear");
+            G.Notifications.showPageNotification();
+        }
 
         protected void btnTestTimesheet_Click(object sender, EventArgs e) {
             string Msg = "Started correctly.";
