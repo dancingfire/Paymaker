@@ -134,7 +134,10 @@ public class Email {
                     ", szFrom, To, szCC, szBCC, Subject, HTMLBody);
                 EmailLog.addLog(Type, Subject, szFrom, To, szCC, HTMLBody, LogObjectID);
             } catch (Exception e){
-                DB.runNonQuery("--" + DB.escape(e.Message));
+                string Error = e.Message;
+                if (e.InnerException != null)
+                    Error += " Inner exception: " + e.InnerException.Message;
+                DBLog.addRecord(DBLogType.EmailAutomation, "Email send failed with message: " + DB.escape(Error), -1, -1);
                 return false;
             } finally {
                 oSMTP = null;
@@ -183,6 +186,8 @@ public class Email {
     public static SmtpClient getEmailServer() {
         SmtpClient oSMTP = new SmtpClient(EmailSettings.SMTPServer);
         oSMTP.EnableSsl = EmailSettings.SMTPServerSSL;
+        oSMTP.Port = 587;
+        oSMTP.UseDefaultCredentials = true;
         if (!String.IsNullOrEmpty(EmailSettings.SMTPServerUserName)) {
             System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(EmailSettings.SMTPServerUserName, EmailSettings.SMTPServerPassword);
             oSMTP.Credentials = credentials;

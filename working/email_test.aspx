@@ -23,7 +23,8 @@
                     <asp:TextBox ID="txtMsg" runat="server" CssClass="form-control" TextMode="MultiLine">Sending a test email to the above address. The email will be sent from payroll@fletchers.net.au</asp:TextBox>
                 </div>
                 <div class="row">
-                    <asp:Button ID="btnSend" runat="server" Text="Send email" OnClick="btnSend_Click" CssClass="btn btn-default" />
+                    <asp:Button ID="btnSend" runat="server" Text="Send email via queue" OnClick="btnSend_Click" CssClass="btn btn-default" />
+                    <asp:Button ID="btnSendDirectly" runat="server" Text="Send email directly" OnClick="btnSendDirect_Click" CssClass="btn btn-default" />
                 </div>
             </div>
         </form>

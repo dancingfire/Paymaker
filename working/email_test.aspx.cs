@@ -20,4 +20,31 @@ public partial class email_test : Root {
         }
 
     }
+
+     SmtpClient getEmailServer() {
+        SmtpClient oSMTP = new SmtpClient(EmailSettings.SMTPServer);
+        oSMTP.EnableSsl = EmailSettings.SMTPServerSSL;
+        
+//        oSMTP.Port = 587;
+ //       oSMTP.UseDefaultCredentials = true;
+        if (!String.IsNullOrEmpty(EmailSettings.SMTPServerUserName)) {
+            System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(EmailSettings.SMTPServerUserName, EmailSettings.SMTPServerPassword);
+            oSMTP.Credentials = credentials;
+        }
+        return oSMTP;
+    }
+    protected void btnSendDirect_Click(object sender, EventArgs e) {
+        try {
+            MailMessage msg = new MailMessage();
+            msg.IsBodyHtml = true;
+            msg.Subject = "Test email from CAPS";
+            msg.To.Add(txtTo.Text);
+            msg.From  = new MailAddress(EmailSettings.SMTPServerUserName, "Test sender");
+            SmtpClient oSMTP = Email.getEmailServer();
+            oSMTP.Send(msg);
+        } catch (Exception e1) {
+            Response.Write(e1.Message);
+        }
+
+    }
 }
