@@ -186,7 +186,7 @@ public class Email {
     public static SmtpClient getEmailServer() {
         SmtpClient oSMTP = new SmtpClient(EmailSettings.SMTPServer);
         oSMTP.EnableSsl = EmailSettings.SMTPServerSSL;
-        oSMTP.Port = 587;
+        oSMTP.Port = 25;
         oSMTP.UseDefaultCredentials = true;
         if (!String.IsNullOrEmpty(EmailSettings.SMTPServerUserName)) {
             System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(EmailSettings.SMTPServerUserName, EmailSettings.SMTPServerPassword);

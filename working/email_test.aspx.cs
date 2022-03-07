@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Net.Mail;
 
 public partial class email_test : Root {
@@ -23,10 +24,8 @@ public partial class email_test : Root {
 
      SmtpClient getEmailServer() {
         SmtpClient oSMTP = new SmtpClient(EmailSettings.SMTPServer);
-        oSMTP.EnableSsl = EmailSettings.SMTPServerSSL;
-        
-//        oSMTP.Port = 587;
- //       oSMTP.UseDefaultCredentials = true;
+        oSMTP.Port = 25;
+       // oSMTP.UseDefaultCredentials = true;
         if (!String.IsNullOrEmpty(EmailSettings.SMTPServerUserName)) {
             System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(EmailSettings.SMTPServerUserName, EmailSettings.SMTPServerPassword);
             oSMTP.Credentials = credentials;
@@ -39,8 +38,8 @@ public partial class email_test : Root {
             msg.IsBodyHtml = true;
             msg.Subject = "Test email from CAPS";
             msg.To.Add(txtTo.Text);
-            msg.From  = new MailAddress(EmailSettings.SMTPServerUserName, "Test sender");
-            SmtpClient oSMTP = Email.getEmailServer();
+            msg.From  = new MailAddress(EmailSettings.SMTPServerFromEmail, "Test sender");
+            SmtpClient oSMTP = getEmailServer();
             oSMTP.Send(msg);
         } catch (Exception e1) {
             Response.Write(e1.Message);

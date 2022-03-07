@@ -68,7 +68,7 @@ namespace Paymaker {
                 FROM CTE
                 GROUP BY USERID
             
-                SELECT USR.ID, USR.INITIALSCODE , ROLEID, ISNULL(T.AMOUNT, 0) AS OFFSET
+                SELECT USR.ID, USR.INITIALSCODE , ISNULL(T.AMOUNT, 0) AS OFFSET
                 FROM DB_USER USR
                 JOIN LIST L_OFFICE ON USR.OFFICEID = L_OFFICE.ID
                 LEFT JOIN TPOFFSET2015 T ON T.USERID = USR.ID
@@ -79,12 +79,11 @@ namespace Paymaker {
             DataSet ds = DB.runDataSet(szSQL);
             formatDataSet(ds);
             DataView dv = ds.Tables[0].DefaultView;
-            dv.Sort = "ROLEID, CALCULATEDAMOUNT DESC, INITIALSCODE";
+            dv.Sort = "CALCULATEDAMOUNT DESC, INITIALSCODE";
 
             if (blnExport) {
                 DataTable dt = dv.ToTable();
                 dt.Columns.Remove("USERID");
-                dt.Columns.Remove("ROLEID");
 
                 Export.ExportToExcel2(dt, "TopPerformer" + DateTime.Now.Ticks + ".xls");
             }
@@ -141,8 +140,6 @@ namespace Paymaker {
                 dvUserDetails.RowFilter = "ID = " + oR["USERID"].ToString();
                 if (dvUserDetails.Count > 0) {
                     oR["INITIALSCODE"] = dvUserDetails[0]["INITIALSCODE"].ToString();
-                    if (Convert.ToInt32(dvUserDetails[0]["ROLEID"]) == 4)
-                        oR["ROLEID"] = 1; //Set these to sort at the end
                 }
             }
             ds.Tables[0].AcceptChanges();
