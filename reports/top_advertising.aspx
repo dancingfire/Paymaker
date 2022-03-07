@@ -23,7 +23,7 @@
         <asp:HiddenField ID="hdOfficeID" Value="" runat="server" />
         <asp:HiddenField ID="hdCompanyID" Value="" runat="server" />
         <asp:Panel ID="pNoData" runat="server" Style="float: left; margin-left: 20px" Visible="false">There was no data on the report</asp:Panel>
-        <div id="dViewer">
+        <div id="dViewer" style="height: 85vh">
             <rsweb:ReportViewer ID="rViewer" runat="server" Width="100%"  AsyncRendering="true" SizeToReportContent="true"></rsweb:ReportViewer>
         </div>
     </form>

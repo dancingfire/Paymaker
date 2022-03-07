@@ -688,6 +688,7 @@
                 $("#frmMain").attr("target", "_blank").attr("action", szSrc + szParam).submit().attr("target", "");
             else
                 $("#" + TargetFrm).attr("src", szSrc + szParam);
+            console.log(szSrc + szParam)
             return false;
         }
 
