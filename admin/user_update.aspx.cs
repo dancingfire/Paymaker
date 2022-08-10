@@ -230,7 +230,7 @@ public partial class user_update : Root {
 					-- Initials Code is saved with [deleted] appended to it to ensure the record
                     -- is not confused with any current records of the same
                     INITIALSCODE = '[deleted]'+REPLACE(REPLACE(INITIALSCODE,'{1}',''),'{2}',''),
-					ISDELETED = 1 WHERE ID = {0}", intUserID, __szDeletedTag, __szInactiveTag);
+					ISDELETED = 1, ISACTIVE = 0 WHERE ID = {0}", intUserID, __szDeletedTag, __szInactiveTag);
         DB.runNonQuery(szSQL);
         sbStartJS.Append("parent.refreshPage();");
     }
