@@ -62,6 +62,7 @@ namespace Paymaker {
                     WHERE U.ID > 0 AND S.STATUSID IN (1, 2) AND SS.CALCULATEDAMOUNT > 0 AND U1.ISACTIVE = 1 AND U1.ISPAID = 1
                     {0} {1}
                 GROUP BY U.TOPPERFORMERREPORTSETTINGS, S.ID
+                having MAX(S.GROSSCOMMISSION) > 0
                 )
 
                 SELECT USERID, '' AS INITIALSCODE, 0 AS ROLEID, SUM(CALCULATEDAMOUNT) AS CALCULATEDAMOUNT
