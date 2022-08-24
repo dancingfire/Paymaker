@@ -28,8 +28,12 @@ namespace Paymaker {
           
             Response.Buffer = true;
             Response.Clear();
-            Response.ContentType = "text/" + Path.GetExtension(file).ToLower();
-            Response.ContentType = "text/plain";
+            if (szTest.EndsWith(".PDF")) {
+                Response.ContentType = "application/pdf";
+            } else {
+                Response.ContentType = "text/" + Path.GetExtension(file).ToLower();
+            }
+
             Response.AddHeader("content-disposition", @"attachment; filename=""" + file + @"""");
             Response.BinaryWrite(bytes);
             Response.Flush();
