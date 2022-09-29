@@ -98,6 +98,7 @@ jQuery.fn.horizontalcenter = function () {
     this.css("left", ($(window).width() - this.width()) / 2 + $(window).scrollLeft() + "px");
     return this;
 };
+
 //Calls a web service
 function callWebMethod(webServicePage, webMethod, paramArray, successFn, errorFn) {
     if (typeof (errorFn) == "undefined")

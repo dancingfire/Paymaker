@@ -447,7 +447,7 @@ public class Sale {
                     FROM PROPERTY P
 	                    JOIN SALESLISTING SL ON SL.PROPERTYID = P.ID
                     	JOIN SALESVOUCHER SV ON SV.SALESLISTINGID = SL.ID
-					{1}
+					{1} AND SL.OfficeID in (3, 5, 1, 11, 7, 18, 10, 24) 
                     ORDER BY SL.ID DESC -- Latest first
 
                     -- 1. BnD records already imported

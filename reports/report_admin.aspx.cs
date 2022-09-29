@@ -47,25 +47,23 @@ namespace Paymaker {
 
             //Month
             while (dtCurr > dtMin) {
-                DateTime dtFirstDay = new DateTime(dtCurr.Year,dtCurr.Month, 1);
+                DateTime dtFirstDay = new DateTime(dtCurr.Year, dtCurr.Month, 1);
                 DateTime dtLastDay = dtFirstDay.AddMonths(1).AddDays(-1);
                 lstMonth.Items.Add(new ListItem(dtFirstDay.ToString("MMM yyyy"), "Between  '" + Utility.formatDate(dtFirstDay) + "' AND '" + Utility.formatDate(dtLastDay) + "' "));
                 dtCurr = dtFirstDay.AddDays(-1);
             }
             lstMonth.Items.Insert(0, new ListItem("Select a month...", ""));
 
-
-
             //User
             Utility.BindList(ref lstUser, DB.runDataSet(@"
                 SELECT ID, LASTNAME + ', ' + FIRSTNAME AS NAME FROM DB_USER WHERE ISACTIVE = 1 AND ISDELETED = 0 AND ISPAID = 1 ORDER BY LASTNAME, FIRSTNAME"), "ID", "NAME");
 
             Utility.BindList(ref lstNonAdminUser, DB.runDataSet(String.Format(@"
-                SELECT ID, LASTNAME + ', ' + FIRSTNAME AS NAME 
-                FROM DB_USER 
+                SELECT ID, LASTNAME + ', ' + FIRSTNAME AS NAME
+                FROM DB_USER
                 WHERE ISACTIVE = 1 AND ISDELETED = 0 AND ID IN ({0}, {1})
                 ORDER BY LASTNAME, FIRSTNAME", G.User.ID, G.User.AdminPAForThisUser)));
-          
+
             //Suburb
             szSQL = string.Format("select DISTINCT SUBURB AS ID, SUBURB AS NAME FROM SALE ORDER BY SUBURB ");
             Utility.BindList(ref lstSuburb, DB.runDataSet(szSQL), "ID", "NAME");
@@ -139,22 +137,25 @@ namespace Paymaker {
 
         private void formatPage() {
             if (!G.User.IsAdmin) {
-                sbEndJS.Append("$('#lstReport').hide();");
-                lstUserReport.Visible = true;
-                //lstReport.Visible = false;
+                sbEndJS.Append("setupForSingleUser()");
                 //Show the commission report
                 spUser.Visible = false;
                 spNonAdminUserFilter.Visible = true;
 
-                // FOr now we are clearing out the other reports...
-                if(G.User.hasPermission(RolePermissionType.ReportExpenseSummary)){
-                    lstUserReport.Items.Clear();
-                    lstUserReport.Items.Add(new ListItem("Expense summary", "EXPENSESUMMARY"));
+                // Only show the expense summary report - TODO
+                if (G.User.hasPermission(RolePermissionType.ReportExpenseSummary)) {
                 }
                 spCompany.Visible = false;
                 hfUserID.Value = G.User.ID.ToString();
             } else {
-                sbEndJS.Append("$('#lstReport').select2();");
+                string Reports = "";
+                //Load up the favourite reports
+                using (DataSet ds = DB.runDataSet(String.Format("SELECT * FROM [USERREPORT] WHERE USERID = {0}", G.User.UserID))) {
+                    foreach (DataRow dr in ds.Tables[0].Rows) {
+                        Utility.Append(ref Reports, DB.readString(dr["REPORTNAME"]), ",");
+                    }
+                }
+                hdFavouriteReports.Value = Reports; 
             }
         }
 

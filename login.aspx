@@ -52,7 +52,7 @@
         }
     </style>
 </head>
-<body style='background: #EEE6D0; width: 100%'>
+<body style='width: 100%'>
     <form id="frmMain" method="post" runat="server">
          <div style='width: 100%; text-align: center; margin-top: 150px;'>
             <div id='dLogin' style='width: 600px; margin-left: auto; margin-right: auto; padding: 20px' class='Login'>

@@ -429,9 +429,10 @@ public class Campaign {
         sqlUpdate oSQL = new sqlUpdate("CAMPAIGN", "ID", intDBID);
         bool blnNeedToUpdate = false;
         string szCTID = getCampaignNumberFromPropertyName(oProperty.PropertyName);
-
+        //DB.runNonQuery("-- CN:" + DB.escape(oProperty.PropertyName) + " CTNUMER:" + DB.escape(szCTID));
         if (szCampaignTrackID != szCTID) {
             oSQL.add("ORIGCAMPAIGNNUMBER", szCTID);
+            blnNeedToUpdate = true;
         }
 
         if (szAddress1 != oProperty.StreetAddress + " " + oProperty.Street) {

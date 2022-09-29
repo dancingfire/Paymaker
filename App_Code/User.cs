@@ -136,7 +136,7 @@ public class UserInformation {
             --User info
             SELECT U.ID, U.ISACTIVE, INITIALSCODE, FIRSTNAME, LASTNAME, EMAIL, ROLEID, ISNULL(TEAMID, -1) AS TEAM, SALARY,
              U.CREDITGLCODE, U.DEBITGLCODE, L_OFF.JOBCODE, U.OFFICEID, U.PAYROLLCYCLEID, U.SUPERVISORID, L_OFF.OFFICEMYOBCODE,
-            L_OFF.NAME AS OFFICENAME
+            L_OFF.NAME AS OFFICENAME, U.ISPAID
             FROM DB_USER U  JOIN LIST L_OFF ON L_OFF.ID = U.OFFICEID ORDER BY LASTNAME, FIRSTNAME";
 
         using (DataSet ds = DB.runDataSet(szSQL)) {
@@ -144,7 +144,7 @@ public class UserInformation {
                 int intID = Convert.ToInt32(dr["ID"]);
                 lUsers.Add(new UserDetail(intID, DB.readBool(dr["ISACTIVE"]), DB.readString(dr["INITIALSCODE"]), DB.readString(dr["FIRSTNAME"]), DB.readString(dr["LASTNAME"]), DB.readString(dr["EMAIL"]),
                     DB.readInt(dr["ROLEID"]), DB.readInt(dr["OFFICEID"]), DB.readString(dr["OFFICENAME"]), DB.readString(dr["OFFICEMYOBCODE"]), DB.readInt(dr["TEAM"]), DB.readInt(dr["SALARY"]), DB.readInt(dr["PAYROLLCYCLEID"]),
-                    DB.readInt(dr["SUPERVISORID"]), DB.readString(dr["CREDITGLCODE"]), DB.readString(dr["DEBITGLCODE"]), DB.readString(dr["JOBCODE"])));
+                    DB.readInt(dr["SUPERVISORID"]), DB.readString(dr["CREDITGLCODE"]), DB.readString(dr["DEBITGLCODE"]), DB.readString(dr["JOBCODE"]), DB.readBool(dr["ISPAID"])));
             }
             blnIsLoaded = true;
         }
@@ -163,6 +163,24 @@ public class UserInformation {
         }
         foreach (UserDetail b in lUsers) {
             if (!IncludeInactive && !b.IsActive)
+                continue;
+
+            l.Items.Add(new ListItem(b.NameIFLO, b.ID.ToString()));
+        }
+    }
+
+    /// <summary>
+    /// Loads the list from the object
+    /// </summary>
+    /// <param name="l"></param>
+    /// <param name="IncludeSelect"></param>
+    public void loadCommissionList(DropDownList l) {
+        if (blnIsLoaded == false || lUsers == null)
+            loadItems();
+        
+        l.Items.Add(new ListItem("Select an agent...", "-1"));
+        foreach (UserDetail b in lUsers) {
+            if (!b.IsActive || b.NameFLI.Contains("[deleted]") || !b.IsPaid)
                 continue;
 
             l.Items.Add(new ListItem(b.NameIFLO, b.ID.ToString()));
@@ -385,6 +403,7 @@ public class UserDetail {
     public int ID { get; set; }
     public int MentorID { get; set; }
     public bool IsActive { get; set; }
+    public bool IsPaid { get; set; }
     public int RoleID { get; set; }
     public int Salary { get; set; }
     public int OfficeID { get; set; }
@@ -437,7 +456,7 @@ public class UserDetail {
     public string NameFLI { get { return FirstName + " " + LastName + "(" + Initials + ")"; } }
     public string NameIFLO { get { return Initials + " " + FirstName + " " + LastName + " (" + OfficeName.Substring(0, 2) + ")"; } }
 
-    public UserDetail(int ID, bool IsActive, string Initials, string First, string Last, string Email, int RoleID, int OfficeID, string OfficeName, string OfficeGLCode, int MentorID, int Salary, int PayrollCycleID, int SupervisorID, string CreditGLCode, string DebitGLCode, string JobCode) {
+    public UserDetail(int ID, bool IsActive, string Initials, string First, string Last, string Email, int RoleID, int OfficeID, string OfficeName, string OfficeGLCode, int MentorID, int Salary, int PayrollCycleID, int SupervisorID, string CreditGLCode, string DebitGLCode, string JobCode, bool IsPaid) {
         this.ID = ID;
         this.IsActive = IsActive;
         this.Initials = Initials;
@@ -455,6 +474,7 @@ public class UserDetail {
         this.DebitGL = DebitGLCode;
         this.PayrollCycleID = PayrollCycleID;
         this.SupervisorID = SupervisorID;
+        this.IsPaid = IsPaid;
 
         if (MentorID <= 0 && Salary == 0) {
             PaymentStructure = PayBand.Normal;
