@@ -27,11 +27,7 @@
         .DataPanel {
             background: #E6D5AC;
             border: solid 1px #C49C42;
-            padding: 5px;
             color: #6F5928;
-            margin-bottom: 10px;
-            float: left;
-            margin-right: 10px;
         }
 
         .DataPanelHeader {
@@ -48,24 +44,33 @@
     </style>
 </head>
 <body style='margin-top: 5px'>
-    <form id="frmMain" method="post" runat="server" target="_self">
-        <div class='DataPanel' style='width: 40%; height: 80vh'>
-            <div class='DataPanelHeader'>
-                View commission PDFs
+<form id="frmMain" method="post" runat="server" target="_self">
+    <div class='container-fluid'>
+        <div class="row">
+            <div class='DataPanel col-sm-4' style='height: 80vh'>
+                <div class='DataPanelHeader'>
+                    View commission PDFs
+                </div>
+                <div class="form-group">
+                    <asp:Label runat="server" Text="Select agent" CssClass="Label"></asp:Label>    
+                     <asp:DropDownList ID="lstAgent" runat="server" AutoPostBack="true" OnSelectedIndexChanged="lstAgent_SelectedIndexChanged" CssClass="Entry form-control" ></asp:DropDownList>
+                </div>
+            </div> 
+            <div class="col-sm-8">
+               
+                <asp:GridView ID="gvHistory" runat="server" AutoGenerateColumns="false" CssClass="SelectTable" EmptyDataText="No Data Found" Width="95%">
+                    <Columns>
+                        <asp:TemplateField HeaderText="Settled Date" HeaderStyle-Width="50%" ItemStyle-HorizontalAlign="Center">
+                            <ItemTemplate>
+                                <%# getReportLink(Eval("Month").ToString(), Eval("Year").ToString(), Eval("PayPeriodID").ToString())%>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:BoundField DataField="CommissionTotal" HeaderText="Amount" HeaderStyle-Width="50%" ItemStyle-HorizontalAlign="Right" DataFormatString="{0:N2}" />
+                    </Columns>
+                </asp:GridView>
             </div>
-            <asp:Label runat="server" Text="Select agent" CssClass="Label LabelPos"></asp:Label>
-            <asp:DropDownList ID="lstAgent" runat="server" AutoPostBack="true" OnSelectedIndexChanged="lstAgent_SelectedIndexChanged" CssClass="Entry EntryPos"></asp:DropDownList>
-            <asp:GridView ID="gvHistory" runat="server" AutoGenerateColumns="false" CssClass="SelectTable" EmptyDataText="No Data Found" Width="95%">
-                <Columns>
-                    <asp:TemplateField HeaderText="Settled Date" HeaderStyle-Width="50%" ItemStyle-HorizontalAlign="Center">
-                        <ItemTemplate>
-                            <%# getReportLink(Eval("Month").ToString(), Eval("Year").ToString(), Eval("PayPeriodID").ToString())%>
-                        </ItemTemplate>
-                    </asp:TemplateField>
-                    <asp:BoundField DataField="CommissionTotal" HeaderText="Amount" HeaderStyle-Width="50%" ItemStyle-HorizontalAlign="Right" DataFormatString="{0:N2}" />
-                </Columns>
-            </asp:GridView>
         </div>
-    </form>
+    </div>
+</form>
 </body>
 </html>

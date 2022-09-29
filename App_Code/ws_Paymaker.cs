@@ -21,6 +21,15 @@ public class ws_Paymaker : System.Web.Services.WebService {
     }
 
     [WebMethod(EnableSession = true)]
+    public void saveFavouriteReport(string Report) {
+        DB.runNonQuery(String.Format("INSERT INTO USERREPORT(USERID, REPORTNAME) SELECT {0}, '{1}' WHERE NOT EXISTS (SELECT * FROM USERREPORT WHERE USERID = {0} AND REPORTNAME = '{1}')", G.User.UserID, Report));
+    }
+    [WebMethod(EnableSession = true)]
+    public void removeFavouriteReport(string Report) {
+        DB.runNonQuery(String.Format("DELETE FROM USERREPORT WHERE USERID = {0} AND REPORTNAME = '{1}'", G.User.UserID, Report));
+    }
+
+    [WebMethod(EnableSession = true)]
     public void updateActionReminderDate(string ReminderDate, int CampaignNoteID) {
         ReminderDate = Microsoft.JScript.GlobalObject.unescape(ReminderDate);
         string szSQL = String.Format(@"UPDATE CAMPAIGNNOTE SET REMINDER = '{0}' WHERE ID = {1}", ReminderDate, CampaignNoteID);

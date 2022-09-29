@@ -61,6 +61,12 @@
                 <asp:ListItem Value="2018" Text="2018/19"></asp:ListItem>
                 <asp:ListItem Value="2019" Text="2019/20"></asp:ListItem>
                 <asp:ListItem Value="2020" Text="2020/21"></asp:ListItem>
+                <asp:ListItem Value="2021" Text="2021/22"></asp:ListItem>
+                <asp:ListItem Value="2022" Text="2022/23"></asp:ListItem>
+                <asp:ListItem Value="2023" Text="2023/24"></asp:ListItem>
+                <asp:ListItem Value="2024" Text="2024/25"></asp:ListItem>
+                <asp:ListItem Value="2025" Text="2025/26"></asp:ListItem>
+                <asp:ListItem Value="2026" Text="2026/27"></asp:ListItem>
             </asp:DropDownList>
             <asp:DropDownList ID="lstAgent" runat="server"></asp:DropDownList>
             <asp:Button ID="Button1" CssClass="Button" runat="server" Width="150px" Text="Update totals" OnClientClick="showWait('Updating totals...');" OnClick="btnUpdateAgentActual_Click" />
@@ -76,6 +82,12 @@
                 <asp:ListItem Value="2018" Text="2018/19"></asp:ListItem>
                 <asp:ListItem Value="2019" Text="2019/20"></asp:ListItem>
                 <asp:ListItem Value="2020" Text="2020/21"></asp:ListItem>
+                <asp:ListItem Value="2021" Text="2021/22"></asp:ListItem>
+                <asp:ListItem Value="2022" Text="2022/23"></asp:ListItem>
+                <asp:ListItem Value="2023" Text="2023/24"></asp:ListItem>
+                <asp:ListItem Value="2024" Text="2024/25"></asp:ListItem>
+                <asp:ListItem Value="2025" Text="2025/26"></asp:ListItem>
+                <asp:ListItem Value="2026" Text="2026/27"></asp:ListItem>
             </asp:DropDownList>
 
             <asp:Button ID="btnUpdateSBS" CssClass="Button" runat="server" Width="150px" Text="Recalc EOFY" OnClientClick="showWait('Updating totals...');" OnClick="btnUpdateAnnualEOYB_Click" />

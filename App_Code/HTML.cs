@@ -70,7 +70,7 @@ public static class HTML {
         arFiles.Add("https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js");
         arFiles.Add("https://code.jquery.com/ui/1.12.1/jquery-ui.min.js");
         arFiles.Add(szDir + "include/moment-business-days/index.js?t=1");
-        arFiles.Add(szDir + "include/jquery.mods.js?v=13");
+        arFiles.Add(szDir + "include/jquery.mods.js?v=14");
         arFiles.Add("https://cdn.datatables.net/v/bs/jszip-2.5.0/dt-1.10.18/b-1.5.2/b-html5-1.5.2/fh-3.1.4/datatables.min.js");
         arFiles.Add("https://cdn.datatables.net/plug-ins/1.10.20/sorting/datetime-moment.js");
         arFiles.Add("https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js");
@@ -85,7 +85,7 @@ public static class HTML {
         arCssLinks.Add("https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css");
         arCssLinks.Add("https://cdn.datatables.net/v/bs/jszip-2.5.0/dt-1.10.18/b-1.5.2/b-html5-1.5.2/fh-3.1.4/datatables.min.css");
         arCssLinks.Add(szDir + "include/JQueryUI1.11.4/smoothness.css?v=1");
-        arCssLinks.Add(szDir + "main.css?v=2");
+        arCssLinks.Add(szDir + "main.css?v=3");
 
         foreach (string File in arCssLinks) {
             if (File == "")

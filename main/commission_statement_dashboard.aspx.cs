@@ -1,15 +1,13 @@
 using System;
 using System.Data;
 using System.IO;
-using System.Web;
 using System.Web.UI;
-using System.Web.UI.WebControls;
 
 public partial class commission_statement_dashboard : Root {
 
     protected void Page_Load(object sender, System.EventArgs e) {
         if (!Page.IsPostBack) {
-            G.UserInfo.loadList(ref lstAgent, true);
+            G.UserInfo.loadCommissionList(lstAgent);
         }
     }
 
