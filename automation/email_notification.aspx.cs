@@ -15,13 +15,16 @@ public partial class email_notification : Page {
         }
 
         if (Valid.getBoolean("Check", false)) {
-            TimesheetCycle.testAutomatedEmails(); 
+            HTML.addMinJS(this);
+            ClientMenu oM = new ClientMenu();
+            Form.Controls.AddAt(0, new LiteralControl(oM.createMenu()));
+            dOutput.InnerHtml = TimesheetCycle.testAutomatedEmails(); 
         }
     }
 
     protected void Page_Load(object sender, EventArgs e) {
         if (Valid.getBoolean("AUTORUN", false) && !IsPostBack) {
-           TimesheetCycle.checkAutomatedEmails();
+            TimesheetCycle.checkAutomatedEmails();
             LeaveReminders.checkReminders();
         }
     }

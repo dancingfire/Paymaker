@@ -9,6 +9,7 @@
 <body>
     <form runat="server" id="frmMain">
         <asp:Button ID="btnSendMorning" runat="server" Text="Check for automated emails" OnClick="btnSendMorning_Click" />
+        <div id="dOutput" runat="server" />
     </form>
 </body>
 </html>

@@ -20,36 +20,42 @@ public class ClientMenu {
 
     public ClientMenu() {
         oM.addMenu("Home", "", MenuRole.Admin);
-
         oM.addMenuItem("View dashboard", "../main/sales_dashboard.aspx");
         oM.addMenuItem("Admin dashboard", "../main/admin_dashboard.aspx", MenuRole.Admin);
         oM.addMenu("Dashboard", "../main/sales_dashboard.aspx", MenuRole.UserOnly);
-
-        oM.addMenu("Finance", "", MenuRole.Admin);
-
-        oM.addMenuItem("Dashboard", "../main/accounting_dashboard.aspx");
-        oM.addMenuItem("Search tx", "../main/tx_search.aspx");
-        oM.addMenuItem("Finalize Commission", "../main/commission_statement_finalize.aspx", MenuRole.Admin);
-        oM.addMenuItem("Commission EOM rollovers", "../main/commission_statement_rollover.aspx", MenuRole.Admin);
-        oM.addMenuItem("MYOB exceptions", "../reports/myob_modifications.aspx", MenuRole.Admin);
-        oM.addSpacer();
-        oM.addMenuItem("Export to MYOB", "../main/MYOB_export.aspx");
         oM.addSpacer();
         oM.addMenuItem("Change property details", "../main/sale_modification.aspx");
+
+        oM.addMenu("Sales Payrole", "", MenuRole.Admin);
+        oM.addMenuItem("Dashboard", "../main/accounting_dashboard.aspx");
+        oM.addMenuItem("Search transactions", "../main/tx_search.aspx");
+        oM.addMenuItem("Commission EOM rollover", "../main/commission_statement_rollover.aspx", MenuRole.Admin);
+        oM.addMenuItem("View commission PDFs", "../main/commission_statement_dashboard.aspx", MenuRole.Admin);
+        oM.addSpacer();
+        oM.addMenuItem("Export to MYOB - Commission", "../main/commission_statement_finalize.aspx", MenuRole.Admin);
+        oM.addMenuItem("Export to MYOB - Transactions", "../main/MYOB_export.aspx");
+        oM.addMenuItem("MYOB exceptions", "../reports/myob_modifications.aspx", MenuRole.Admin);
         oM.addSpacer();
         oM.addMenuItem("Setup user budgets", "../main/user_account_update.aspx");
         oM.addMenuItem("Import EOY values", "../admin/import_values.aspx");
-        oM.addMenu("Campaign", "../campaign/campaign_dashboard.aspx", MenuRole.Campaign);
+        oM.addMenuItem("Payroll settings", "../admin/sales_settings.aspx", MenuRole.Admin);
+
         if (Payroll.CanAccess) {
             if (G.User.IsAdmin) { 
-                oM.addMenu("Payroll", "");
-                oM.addMenuItem("Dashboard", "../payroll/payroll_dashboard.aspx");
-                oM.addMenuItem("Payroll settings", "../admin/sales_settings.aspx", MenuRole.Admin);
+                oM.addMenu("IS Payroll", "");
+                oM.addMenuItem("My current timesheet", "../payroll/payroll_update.aspx");
+                oM.addMenuItem("Admin - Current IS pay cycle", "../payroll/payroll_summary.aspx?type=ALL");
+                oM.addMenuItem("View IS Payroll PDFs", "../admin/payroll_pdf_files.aspx");
+                oM.addSpacer();
+                oM.addMenuItem("Check emails", "../automation/email_notification.aspx?Check=true");
+                oM.addMenuItem("View staff list", "../payroll/staff_list.aspx?");
+                
             } else {
-                oM.addMenu("Payroll", "../payroll/payroll_dashboard.aspx");
+                oM.addMenu("IS Payroll", "../payroll/payroll_dashboard.aspx");
             }
 
         }
+        oM.addMenu("Campaign", "../campaign/campaign_dashboard.aspx", MenuRole.Campaign);
         oM.addMenu("Leave");
         oM.addMenuItem("Dashboard", "../payroll/leave_dashboard.aspx");
         if (G.User.IsAdmin || G.User.UserID == 497 || G.User.UserID == 178) {
@@ -71,7 +77,7 @@ public class ClientMenu {
             oM.addMenuItem("Glossy publications", "../admin/list_detail.aspx?intListTypeID=" + (int)ListType.GlossyMagazine);
 
             oM.addSpacer();
-            oM.addMenuItem("Set current pay period", "../admin/pay_period_detail.aspx");
+            
             oM.addMenuItem("Commission types", "../admin/list_detail.aspx?intListTypeID=3");
             oM.addMenuItem("Expense categories", "../admin/list_detail.aspx?intListTypeID=2");
             oM.addMenuItem("Income categories", "../admin/list_detail.aspx?intListTypeID=4");
@@ -89,9 +95,7 @@ public class ClientMenu {
             oM.addMenuItem("View log v2", "../admin/logv2_detail.aspx", MenuRole.Admin);
             oM.addMenuItem("View email log", "../admin/email_log.aspx", MenuRole.Admin);
             oM.addMenuItem("Admin functions", "../admin/admin_tasks.aspx", MenuRole.Admin);
-            oM.addSpacer();
-            oM.addMenuItem("View commission PDFs", "../main/commission_statement_dashboard.aspx", MenuRole.Admin);
-            oM.addSpacer();
+             oM.addSpacer();
             oM.addMenuItem("Import Box Dice", "../boxdice/import.aspx");
         }
      
