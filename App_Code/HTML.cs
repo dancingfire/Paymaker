@@ -56,6 +56,30 @@ public static class ModalForms {
 
 public static class HTML {
 
+    public static void addMinJS(Page oPage) {
+        List<string> arFiles = new List<string>();
+        string szDir = "~/";
+        arFiles.Add("https://code.jquery.com/jquery-3.4.1.min.js");
+        arFiles.Add(szDir + "include/jquery.validVal.min.js");
+        arFiles.Add("https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js");
+        arFiles.Add("https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js");
+        arFiles.Add("https://code.jquery.com/ui/1.12.1/jquery-ui.min.js");
+        List<string> arCssLinks = new List<string>();
+
+        arCssLinks.Add("https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css");
+        arCssLinks.Add("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css");
+        arCssLinks.Add(szDir + "include/JQueryUI1.11.4/smoothness.css?v=1");
+        arCssLinks.Add(szDir + "main.css?v=3");
+
+        foreach (string File in arCssLinks) {
+            ClientScriptProxy.Current.RegisterCssLink(oPage, typeof(Page), File, File);
+        }
+
+        foreach (string File in arFiles) {
+            ClientScriptProxy.Current.RegisterClientScriptInclude(oPage, typeof(Page), File, ScriptRenderModes.HeaderTop);
+        }
+    }
+    
     /// <summary>
     /// Adds all the required js links to the page
     /// </summary>

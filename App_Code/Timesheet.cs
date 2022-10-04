@@ -589,8 +589,8 @@ public class TimesheetCycle {
     /// <summary>
     /// Emails staff who have not yet submitted
     /// </summary>
-    public void emailTimesheetStaff(bool TestOnly = false) {
-
+    public string emailTimesheetStaff(bool TestOnly = false) {
+        string Output = "";
         using (DataSet ds = DB.runDataSet(outstandingTimesheetSQL(TestMode: true))) {
             foreach (DataRow dr in ds.Tables[0].Rows) {
                 string szEmail = DB.readString(dr["USER_EMAIL"]);
@@ -606,13 +606,14 @@ public class TimesheetCycle {
                     Email.sendMail(szEmail, EmailSettings.SMTPServerUserName, "Fortnightly timesheet", szMsg, "", LogObjectID: DB.readInt(dr["OUTSTANDING"]));
                 } else {
                     if (DB.readString(dr["EMAILFLAG"]) == "EMAIL") {
-                        HttpContext.Current.Response.Write(String.Format("Send an email to {0}<br/>", szEmail));
+                        Output += String.Format("Send an email to {0}<br/>", szEmail);
                     } else {
-                        HttpContext.Current.Response.Write(String.Format("{0} entered. Total hours: {1}<br/>", szEmail, DB.readDouble(dr["TOTALHOURS"])));
+                        Output += String.Format("{0} entered. Total hours: {1}<br/>", szEmail, DB.readDouble(dr["TOTALHOURS"]));
                     }
                 }
             }
         }
+        return Output;
     }
 
     /// <summary>
@@ -639,15 +640,15 @@ public class TimesheetCycle {
     /// <summary>
     /// Tests the auto emails by looking 28 days into the future to see whether we would be sending any emails...
     /// </summary>
-    public static void testAutomatedEmails() {
+    public static string testAutomatedEmails() {
         AppConfigAdmin oConfigAdmin = new AppConfigAdmin(G.szCnn);
 
         DateTime oDTLastSent = DateTime.Now.AddDays(-1);
-
+        string Output = "";
         // checks for automated emails starting 1 day after last sent
         // Email 1. Please fill in your
         for (DateTime dtC = oDTLastSent.AddDays(1); dtC <= DateTime.Now.AddDays(28); dtC = dtC.AddDays(1)) {
-            HttpContext.Current.Response.Write(Utility.formatDate(dtC) + "<br/>");
+            Output += Utility.formatDate(dtC) + "<br/>";
             string szSQL = string.Format(@"
                 SELECT ID FROM TIMESHEETCYCLE
 	                WHERE
@@ -657,16 +658,18 @@ public class TimesheetCycle {
             using (DataSet ds = DB.runDataSet(szSQL)) {
                 foreach (DataRow dr in ds.Tables[0].Rows) {
                     TimesheetCycle oTC = new TimesheetCycle(DB.readInt(dr["ID"]));
-                    oTC.emailTimesheetStaff(true);
+                    Output += oTC.emailTimesheetStaff(true);
                 }
             }
         }
+        return Output;
     }
 
     /// <summary>
     /// Check for Timesheet Cycles that trigger emails to outstanding staff today
     /// </summary>
-    public static void checkAutomatedEmails() {
+    public static string checkAutomatedEmails() {
+        string Output = "";
         AppConfigAdmin oConfigAdmin = new AppConfigAdmin(G.szCnn);
         // Note: Default value is yesterday (if no value is held in config).
         oConfigAdmin.addConfig("AUTOEMAILSLASTSENT", Utility.formatDate(DateTime.Now.AddDays(-1)));
@@ -685,7 +688,7 @@ public class TimesheetCycle {
             using (DataSet ds = DB.runDataSet(szSQL)) {
                 foreach (DataRow dr in ds.Tables[0].Rows) {
                     TimesheetCycle oTC = new TimesheetCycle(DB.readInt(dr["ID"]));
-                    oTC.emailTimesheetStaff();
+                    Output += oTC.emailTimesheetStaff();
                 }
             }
         }
@@ -707,5 +710,6 @@ public class TimesheetCycle {
         }
 
         oConfigAdmin.updateConfigValueSQL("AUTOEMAILSLASTSENT", Utility.formatDate(DateTime.Now));
+        return Output;        
     }
 }
