@@ -22,11 +22,12 @@ public class ClientMenu {
         oM.addMenu("Home", "", MenuRole.Admin);
         oM.addMenuItem("View dashboard", "../main/sales_dashboard.aspx");
         oM.addMenuItem("Admin dashboard", "../main/admin_dashboard.aspx", MenuRole.Admin);
-        oM.addMenu("Dashboard", "../main/sales_dashboard.aspx", MenuRole.UserOnly);
         oM.addSpacer();
-        oM.addMenuItem("Change property details", "../main/sale_modification.aspx");
+        oM.addMenuItem("Change property details", "../main/sale_modification.aspx", MenuRole.Admin);
 
-        oM.addMenu("Sales Payrole", "", MenuRole.Admin);
+        oM.addMenu("Dashboard", "../main/sales_dashboard.aspx", MenuRole.UserOnly);
+
+        oM.addMenu("Sales Payroll", "", MenuRole.Admin);
         oM.addMenuItem("Dashboard", "../main/accounting_dashboard.aspx");
         oM.addMenuItem("Search transactions", "../main/tx_search.aspx");
         oM.addMenuItem("Commission EOM rollover", "../main/commission_statement_rollover.aspx", MenuRole.Admin);
@@ -39,7 +40,8 @@ public class ClientMenu {
         oM.addMenuItem("Setup user budgets", "../main/user_account_update.aspx");
         oM.addMenuItem("Import EOY values", "../admin/import_values.aspx");
         oM.addMenuItem("Payroll settings", "../admin/sales_settings.aspx", MenuRole.Admin);
-
+        oM.addSpacer();
+        oM.addMenuItem("Set current pay period", "../admin/pay_period_detail.aspx");
         if (Payroll.CanAccess) {
             if (G.User.IsAdmin) { 
                 oM.addMenu("IS Payroll", "");
