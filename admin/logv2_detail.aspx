@@ -19,7 +19,7 @@
         });
     </script>
 </head>
-<body class='AdminPage' style="margin-left: 25px">
+<body class='AdminPage'>
     <form id="frmMain" name="frmMain" method="post" runat="server" target="frmUpdate">
         <div class="PageHeader" style="z-index: 107; left: -1px; width: 100%; top: 1px">
             Change log

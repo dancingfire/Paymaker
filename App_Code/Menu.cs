@@ -68,28 +68,29 @@ public class ClientMenu {
             oM.addMenuItem("Public holidays", "../admin/holiday_detail.aspx", MenuRole.Admin);
             oM.addMenuItem("Settings", "../admin/leave_settings.aspx", MenuRole.Admin);
             oM.addMenuItem("Staff admin", "../admin/user_detail.aspx", MenuRole.Admin);
-        } 
+        }
 
         if (canAccessReports()) {
             oM.addMenu("Reports", "../reports/report_admin.aspx");
-
+        }
+        if (G.User.IsAdmin) { 
             oM.addMenu("Admin", "../reports/report_admin.aspx", MenuRole.Admin);
             oM.addMenuItem("Staff admin", "../admin/user_detail.aspx", MenuRole.Admin);
             oM.addMenuItem("Staff KPI admin", "../admin/user_detail_kpi.aspx", MenuRole.Admin);
-            oM.addMenuItem("Glossy publications", "../admin/list_detail.aspx?intListTypeID=" + (int)ListType.GlossyMagazine);
+            oM.addMenuItem("Glossy publications", "../admin/list_detail.aspx?intListTypeID=" + (int)ListType.GlossyMagazine, MenuRole.Admin);
 
             oM.addSpacer();
             
-            oM.addMenuItem("Commission types", "../admin/list_detail.aspx?intListTypeID=3");
-            oM.addMenuItem("Expense categories", "../admin/list_detail.aspx?intListTypeID=2");
-            oM.addMenuItem("Income categories", "../admin/list_detail.aspx?intListTypeID=4");
-            oM.addMenuItem("Off the top items", "../admin/list_detail.aspx?intListTypeID=6");
-            oM.addMenuItem("TX Categories", "../admin/list_detail.aspx?intListTypeID=10");
+            oM.addMenuItem("Commission types", "../admin/list_detail.aspx?intListTypeID=3", MenuRole.Admin);
+            oM.addMenuItem("Expense categories", "../admin/list_detail.aspx?intListTypeID=2", MenuRole.Admin);
+            oM.addMenuItem("Income categories", "../admin/list_detail.aspx?intListTypeID=4", MenuRole.Admin);
+            oM.addMenuItem("Off the top items", "../admin/list_detail.aspx?intListTypeID=6", MenuRole.Admin);
+            oM.addMenuItem("TX Categories", "../admin/list_detail.aspx?intListTypeID=10", MenuRole.Admin);
             oM.addSpacer();
-            oM.addMenuItem("Campaign GL codes", "../admin/list_detail.aspx?intListTypeID=9");
+            oM.addMenuItem("Campaign GL codes", "../admin/list_detail.aspx?intListTypeID=9", MenuRole.Admin);
             oM.addSpacer();
-            oM.addMenuItem("Branch locations", "../admin/list_detail.aspx?intListTypeID=1");
-            oM.addMenuItem("Companies", "../admin/list_detail.aspx?intListTypeID=7");
+            oM.addMenuItem("Branch locations", "../admin/list_detail.aspx?intListTypeID=1", MenuRole.Admin);
+            oM.addMenuItem("Companies", "../admin/list_detail.aspx?intListTypeID=7", MenuRole.Admin);
             oM.addSpacer();
             oM.addMenuItem("View delegations", "../reports/delegation.aspx", MenuRole.Admin);
             oM.addMenuItem("View logins", "../admin/application_audits.aspx", MenuRole.Admin);
