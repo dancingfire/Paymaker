@@ -11,7 +11,7 @@ namespace ExceptionHandler {
         // The email list that the errors will be sent to. If this is empty, the errors will not be logged.
         private string szEmails = "gord.funk@gmail.com, fletcherserrorreporting@gmail.com";
 
-        private string szFrom = "error@fletchers.net.au";
+        private string szFrom = "payroll@fletchers.net.au";
         private string szSubject = "Fletcher Paymaker error report";
         private string szSMTPServer = "";
         private string szUserName = "";
@@ -42,8 +42,8 @@ namespace ExceptionHandler {
             }
 
             if (szEmails.Length > 0) {
-                sendEmail(ex, szEmailExtraInfo);
                 saveToDB(ex);
+                sendEmail(ex, szEmailExtraInfo);
             }
         }
 

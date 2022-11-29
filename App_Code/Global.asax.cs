@@ -1,6 +1,8 @@
 using System;
+using System.Configuration;
 using System.Web;
 using System.Web.Caching;
+using Sentry;
 
 namespace Paymaker {
 
@@ -10,12 +12,21 @@ namespace Paymaker {
     public class Global : System.Web.HttpApplication {
         private EventArgs e = null;
         private static CacheItemRemovedCallback OnCacheRemove = null;
-
+        private IDisposable _sentry;
+        
         public Global() {
         }
 
         protected void Application_Start(Object sender, EventArgs e) {
             AddTask("checkEmailQueue", 30);
+            if (!String.IsNullOrEmpty(ConfigurationManager.AppSettings["SentryDNS"])) {
+                _sentry = SentrySdk.Init(o => {
+                    o.Debug = true;
+                    o.Dsn = ConfigurationManager.AppSettings["SentryDNS"];
+                    o.Environment = ConfigurationManager.AppSettings["Environment"];
+                });
+
+            };
         }
 
         private void AddTask(string name, int seconds) {
@@ -46,13 +57,17 @@ namespace Paymaker {
         }
 
         protected void Application_Error(Object sender, EventArgs e) {
-            // avoids single exception triggering error handlin twice.
-            if (this.e == e)
-                return;
-            this.e = e;
 
-            ExceptionHandler.LogException exc = new ExceptionHandler.LogException();
-            exc.HandleException(Server.GetLastError().GetBaseException());
+            var exception = Server.GetLastError();
+            SentrySdk.ConfigureScope(scope => {
+                if (G.User.Email != null) {
+                    scope.User = new Sentry.User {
+                        Id = Convert.ToString(G.User.UserID),
+                        Email = G.User.Email
+                    };
+                }
+            });
+            SentrySdk.CaptureException(exception);
         }
 
         protected void Session_End(Object sender, EventArgs e) {

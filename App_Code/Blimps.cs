@@ -132,7 +132,7 @@ public static class BlimpsHelper {
     public static string loadIDs(BlimpObject Type) {
         var request = BlimpsHelper.getRequest(-1);
         var client = BlimpsHelper.getClient();
-        client.BaseUrl = "http://fletchers.boxdice.com.au/blimps/ids";
+        client.BaseUrl = "https://fletchers.boxdice.com.au/blimps/ids";
         object o = null;
         switch (Type) {
             case BlimpObject.Property:
