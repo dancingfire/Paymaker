@@ -281,7 +281,7 @@ public class G {
             get {
                 checkSessionValue("USEREMAIL");
 
-                return HttpContext.Current.Session["USEREMAIL"].ToString();
+                return Convert.ToString(HttpContext.Current.Session["USEREMAIL"]);
             }
             set {
                 //Check for emails that are multiple and strip out the second one

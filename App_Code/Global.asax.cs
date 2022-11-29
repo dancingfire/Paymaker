@@ -1,5 +1,6 @@
 using System;
 using System.Configuration;
+using System.Net;
 using System.Web;
 using System.Web.Caching;
 using Sentry;
@@ -19,6 +20,7 @@ namespace Paymaker {
 
         protected void Application_Start(Object sender, EventArgs e) {
             AddTask("checkEmailQueue", 30);
+			ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             if (!String.IsNullOrEmpty(ConfigurationManager.AppSettings["SentryDNS"])) {
                 _sentry = SentrySdk.Init(o => {
                     o.Debug = true;
@@ -57,10 +59,10 @@ namespace Paymaker {
         }
 
         protected void Application_Error(Object sender, EventArgs e) {
-
+            System.Diagnostics.Debug.WriteLine("Hit the error");
             var exception = Server.GetLastError();
             SentrySdk.ConfigureScope(scope => {
-                if (G.User.Email != null) {
+                if (!String.IsNullOrEmpty(G.User.Email)) {
                     scope.User = new Sentry.User {
                         Id = Convert.ToString(G.User.UserID),
                         Email = G.User.Email
@@ -75,6 +77,7 @@ namespace Paymaker {
         }
 
         protected void Application_End(Object sender, EventArgs e) {
+            _sentry.Dispose();
         }
 
         private void sqlConnection1_InfoMessage(object sender, System.Data.SqlClient.SqlInfoMessageEventArgs e) {
