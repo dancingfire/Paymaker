@@ -85,6 +85,7 @@ public class ClientMenu {
             oM.addMenuItem("Expense categories", "../admin/list_detail.aspx?intListTypeID=2", MenuRole.Admin);
             oM.addMenuItem("Income categories", "../admin/list_detail.aspx?intListTypeID=4", MenuRole.Admin);
             oM.addMenuItem("Off the top items", "../admin/list_detail.aspx?intListTypeID=6", MenuRole.Admin);
+            oM.addMenuItem("Agent expense items", "../admin/list_detail.aspx?intListTypeID=" + (int)ListType.AgentOffTheTop, MenuRole.Admin);
             oM.addMenuItem("TX Categories", "../admin/list_detail.aspx?intListTypeID=10", MenuRole.Admin);
             oM.addSpacer();
             oM.addMenuItem("Campaign GL codes", "../admin/list_detail.aspx?intListTypeID=9", MenuRole.Admin);

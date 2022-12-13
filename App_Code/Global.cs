@@ -279,7 +279,7 @@ public class G {
 
         public static string Email {
             get {
-                checkSessionValue("USEREMAIL");
+                checkSessionValue("USEREMAIL", false, "");
 
                 return Convert.ToString(HttpContext.Current.Session["USEREMAIL"]);
             }
@@ -424,7 +424,22 @@ public class G {
             }
             set { HttpContext.Current.Session["ROLEID"] = value; }
         }
+        
+        /// <summary>
+        /// True when this is an initial user leave login request
+        /// </summary>
+        public static bool IsLeave {
+            get {
+                if (HttpContext.Current.Session["USER.ISLEAVE"] == null)
+                    return false;
+                else
+                    return Convert.ToBoolean(HttpContext.Current.Session["USER.ISLEAVE"]);
+            }
 
+            set {
+                HttpContext.Current.Session["USER.ISLEAVE"] = value;
+            }
+        }
         /// <summary>
         /// A generated GUID that is used to link an emails that is sent out
         /// </summary>
@@ -527,6 +542,32 @@ public class G {
     }
 
     public static class Settings {
+        public static string ServerName {
+            get {
+                return System.Configuration.ConfigurationManager.AppSettings["ServerName"];
+            }
+        }
+        /// <summary>
+        /// Settings for the SAML login process
+        /// </summary>
+        public static class SAML {
+            public static string SSOServiceURL {
+                get {
+                    return String.Format(ConfigurationManager.AppSettings["SSOAuthority"], ConfigurationManager.AppSettings["SSOTenant"]);
+                }
+            }
+            public static string SSOLogoutURL {
+                get {
+                    return ConfigurationManager.AppSettings["SSOServiceLogoutURL"];
+                }
+            }
+
+            public static string SSOClientID {
+                get {
+                    return ConfigurationManager.AppSettings["SSOClientID"];
+                }
+            }
+        }
 
         public static string DataDir {
             get {

@@ -9,6 +9,7 @@
 
         function updateCalculations() {
             calcOffTheTopExpenses();
+            calcAgentExpenses();
             updateSplitAmount();
             runSplitUpdate();
             calcUserSaleSplitCommissionTypeTotal();
@@ -17,7 +18,6 @@
         }
         //blnPassedAsID is true when we have passed thisID as an ID for the obj and not the obj itself
         function saleSplitAmountChange(thisID, blnPassedAsID) {
-            console.log(thisID);
             //get the id of the Amount text field
             var $thisID = thisID.id;
             if (blnPassedAsID) {
@@ -217,6 +217,33 @@
             $("#dOffTheTopTotal").text(parseFloat(fOffTheTopExpenses).toFixed(2));
         }
 
+        //This calcs and checks the allocation totals
+        function calcAllocationTotals() {
+            var fTotal = 0;
+            AgentTotal = parseFloat($("#dAgentTotal").text());
+            $(".JQAgentAllocationAmount").each(function () {
+                v = $(this).val();
+                id = $(this).attr('id');
+                if (v != null && v != "") {
+                    calcAmount = AgentTotal * v / 100;
+                    $("#" + id + "_Amount").text(calcAmount.toFixed(2));
+                    fTotal += parseFloat(calcAmount);
+                } else {
+                    $("#" + id + "_Amount").text("");
+                }
+            });
+            $("#dAgentAllocationTotal").text(parseFloat(fTotal).toFixed(2));
+            checkAllocationTotals();
+        }
+
+        function calcAgentExpenses() {
+            var fOffTheTopExpenses = 0;
+            $(".JQAgentExpenseAmount").each(function () {
+                fOffTheTopExpenses += parseFloat($(this).val());
+            });
+            $("#dAgentTotal").html(parseFloat(fOffTheTopExpenses).toFixed(2));
+        }
+
         function updateSplitAmount() {
             $("#hdSplitAmount").val(parseFloat($("#hdGrossCommission").val()) - parseFloat($("#dOffTheTopTotal").text()));
         }
@@ -256,8 +283,10 @@
             $(".JQFletchersUserSaleSplit").text($(".JQFletchersSaleSplit").text());
         }
 
-        //checks that a valid User is selected for each Split
+        //checks that a valid User is selected for each Split and that the category lists are behaving
         function validForSave() {
+            console.log("checking for valid form")
+            getSaleAgents();
             $("#btnUpdate").removeAttr("disabled");
             $(".JQUserSaleSplitList").each(function () {
                 //1. Find if Commission split is avaliable for this user split
@@ -273,6 +302,14 @@
                     }
                 }
             });
+           
+            if (checkAllocationTotals()) {
+                console.log('FOrm is valid');
+                $("#btnUpdate").removeAttr("disabled");
+            }
+        }
+
+        function validateSaleExpenseCategory() {
             //for expense we don't want to have the same expense selected more than once
             var selExpenseCategories = "";
 
@@ -280,6 +317,7 @@
                 if (inCommaSeparatedString($(this).val(), selExpenseCategories)) {
                     $("#btnUpdate").attr("disabled", true);
                     alert('You have selected a sale expense that is already selected above. Please select a different sale expense.');
+                    return;
                 }
                 if ($(this).val() == "-1") {
                     $("#btnUpdate").attr("disabled", true);
@@ -288,7 +326,57 @@
                     selExpenseCategories = selExpenseCategories + "," + $(this).val();
                 }
             });
+        }
 
+        function validateAgentExpenseCategory() {
+            var selExpenseCategories = "";
+            $(".JQAgentExpenseCategory").each(function () {
+                if (inCommaSeparatedString($(this).val(), selExpenseCategories)) {
+                    $("#btnUpdate").attr("disabled", true);
+                    alert('You have selected an agent expense that is already selected above. Please select a different agent expense.');
+                    return;
+                }
+                if ($(this).val() == "-1") {
+                    $("#btnUpdate").attr("disabled", true);
+                }
+                else {
+                    selExpenseCategories = selExpenseCategories + "," + $(this).val();
+                }
+            });
+        }
+
+        function checkAllocationTotals() {
+            
+            AgentTotal = parseFloat($("#dAgentTotal").text());
+            console.log($("#dAgentTotal").text() + " MUST MATCH " + $("#dAgentAllocationTotal").text());
+            if ($("#dAgentTotal").text() != $("#dAgentAllocationTotal").text()) {
+                $("#btnUpdate").attr("disabled", true);
+                $(".JQAgentAllocationAmount").addClass("error");
+                return false;
+            } else {
+                $(".JQAgentAllocationAmount").removeClass("error");
+                $("#btnUpdate").removeAttr("disabled");
+            }
+
+        }
+
+        function getSaleAgents() {
+            var InitialsList = "";
+            szHTML = "";
+            $(".JQUserSaleSplitList").each(function (e) {
+                Initials = $("option:selected", this).text();
+                if (Initials != "Select...") {
+                    Initials = Initials.split(' ')[0];
+                    UserID = $(this).val();
+                    if (!inCommaSeparatedString(Initials, InitialsList) && $('#txtAgentAllocation_' + UserID).length == 0) {
+                        InitialsList += Initials + ",";
+                        szHTML += "<span class='AllocationInitials'>" + Initials + " :</span><input id='txtAgentAllocation_" + UserID + "' name='txtAgentAllocation_" + UserID + "' pattern='\d*' class='Entry integer JQAgentAllocationAmount' min='0' max='100' type='number' step='1'/>";
+                        szHTML += "% <span id='txtAgentAllocation_" + UserID + "_Amount' class='AllocationTotal'></span><br/>";
+                    }
+                }
+            })
+            $("#dAgentAllocations").html($("#dAgentAllocations").html() + szHTML);
+            calcAllocationTotals();
         }
 
         function getPercentage(dAmount, dPercent) {
@@ -393,12 +481,30 @@
             updateCalculations();
         }
 
-        function addSaleExpense() {
-            callWebMethod("../web_services/ws_Paymaker.asmx", "getExpenseHTML", ["SaleExpenseCount", $("#ulExpenses li").length], getExpenseHTMLSuccess);
+        function deleteAgentExpense(thisID, intID) {
+            if (jQuery($("#" + thisID.id).parent().parent().attr('id') == 'uncategorized')) {
+                jQuery($("#" + thisID.id).parent().parent().remove());
+                szDelIDs = $("#hdDelAgentExpenseIDs").val();
+                if (szDelIDs != "")
+                    szDelIDs += ",";
+                szDelIDs += intID;
+                $("#hdDelExpenseIDs").val(szDelIDs)
+            }
+            updateCalculations();
         }
+
+        function addSaleOTTExpense() {
+            callWebMethod("../web_services/ws_Paymaker.asmx", "getOTTExpenseHTML", ["SaleExpenseCount", $("#ulSaleExpenses li").length], getExpenseHTMLSuccess);
+        }
+
+        function addAgentOTTExpense() {
+            callWebMethod("../web_services/ws_Paymaker.asmx", "getAgentOTTExpenseHTML", ["AgentExpenseCount", $("#ulAgentExpenses li").length], getAgentExpenseHTMLSuccess);
+        }
+
         function checkExpenseCategory(obj) {
             setDefaultAmountTypeForExpense(obj);
         }
+
         function setDefaultAmountTypeForExpense(obj) {
             var oExpenseObj = arrSalesExpense[$("#" + obj.id).val()];
             $("#" + obj.id.replace("lstCategory_SE_", "lstAmountType_SE_")).val(oExpenseObj.AmountType);
@@ -418,11 +524,22 @@
             if (szHTML == "")
                 return;
 
-            $("#ulExpenses").append("<li id='li_" + szHTML.split('^^***^^')[1] + "'>" + szHTML.split('^^***^^')[0] + "</li>");
+            $("#ulSaleExpenses").append("<li id='li_" + szHTML.split('^^***^^')[1] + "'>" + szHTML.split('^^***^^')[0] + "</li>");
             addValidation();
-            $("#ulExpenses select[id*=lstCategory_SE_]").focus();
+            $("#ulSaleExpenses select[id*=lstCategory_SE_]").focus();
             validForSave();
         }
+
+        function getAgentExpenseHTMLSuccess(szHTML) {
+            if (szHTML == "")
+                return;
+
+            $("#ulAgentExpenses").append("<li id='li_" + szHTML.split('^^***^^')[1] + "'>" + szHTML.split('^^***^^')[0] + "</li>");
+            addValidation();
+            $("#ulAgentExpenses select[id*=lstCategory_AgentSE_]").focus();
+            validForSave();
+        }
+
         function updateSaleSplit() {
             $(".JQSaleSplit").each(function () {
                 if ($(this).hasClass('JQSaleSplit')) {
@@ -438,7 +555,6 @@
                     $("#hdUserSaleSplit").val($("#hdUserSaleSplit").val() + "," + $(this).attr("id") + ";" + $(this).text());
                 }
             });
-            //alert($("#hdUserSaleSplit").val());
         }
 
         function updateOffTheTopExpensesSplit() {
@@ -449,8 +565,17 @@
             });
         }
 
-        //lstAmountType_CT_9_SS_-1 -> txtAmount_CT_9_SS_-1 ->  txtCalculatedAmount_CT_9_SS_-1
-        //lstAmountType_CT_9_SS_-1_USS_1 -> txtAmount_CT_9_SS_-1_USS_1 -> txtCalculatedAmount_CT_9_SS_-1_USS_1
+        function updateAgentOTTExpensesSplit() {
+            $(".JQAgentExpenseAmount").each(function () {
+                $("#hdAgentOTTExpensesSplit").val($("#hdAgentOTTExpensesSplit").val() + "," + $(this).attr("id") + ";" + $(this).text());
+            });
+        }
+
+        function updateAgentAllocationSplits() {
+            $(".JQAgentAllocationAmount").each(function () {
+                $("#hdAgentAllocationSplits").val($("#hdAgentAllocationSplits").val() + "," + $(this).attr("id") + ";" + $(this).text());
+            });
+        }
 
         var blUpdatePressed = false;
 
@@ -460,6 +585,8 @@
                 if (blUpdatePressed)
                     return false;
                 updateOffTheTopExpensesSplit();
+                updateAgentOTTExpensesSplit();
+                updateAgentAllocationSplits();
                 updateSaleSplit();
                 updateUserSaleSplit();
                 writeKPIUser();
@@ -549,7 +676,24 @@
                     checkExpenseCategory(this);
                  }
             });
-            
+
+            $(document).on("change", ".JQSaleExpenseCategory", function (e) {
+                validateSaleExpenseCategory();
+            });
+
+            $(document).on("change", ".JQAgentExpenseCategory", function (e) {
+                validateAgentExpenseCategory();
+            });
+
+            $(document).on("change", ".JQAgentExpenseAmount", function (e) {
+                calcAgentExpenses();
+                calcAllocationTotals();
+            });
+             
+            $(document).on("change", ".JQAgentAllocationAmount", function (e) {
+                calcAllocationTotals();
+            });
+
             updateCalculations();
             addValidation();
             showHideUserSplitTotalRow();
@@ -561,7 +705,7 @@
                 $(".JQFletchersUserSaleSplit").text($(".JQFletchersSaleSplit").text());
             });
             createCalendar("txtAuctionDate");
-
+            getSaleAgents();
             
             blUpdatePressed = false;
         });
@@ -629,6 +773,31 @@
         .Short .EntryPos {
             width: 100px;
         }
+
+        .RoundPanelHeader {
+            width: 100%;
+        }
+
+        .LinkButton {
+            font-size: 8px;
+        }
+
+        .AllocationInitials {
+            display: inline-block;
+            width: 40px;
+        }
+        .error{
+            background: #FFA6A6;
+        }
+
+        .JQAgentAllocationAmount {
+            width: 30px;
+        }
+
+        .AllocationTotal {
+            margin-left: 5px;
+            font-weight: 600
+        }
     </style>
 </head>
 <body>
@@ -639,11 +808,14 @@
         <asp:HiddenField ID="hdGrossCommission" runat="server" Value="0" />
         <asp:HiddenField ID="hdSplitAmount" runat="server" Value="0" />
         <asp:HiddenField ID="hdOffTheTopExpensesSplit" runat="server" Value="" />
+        <asp:HiddenField ID="hdAgentOTTExpensesSplit" runat="server" Value="" />
+        <asp:HiddenField ID="hdAgentAllocationSplits" runat="server" Value="" />
         <asp:HiddenField ID="hdSaleSplit" runat="server" Value="" />
         <asp:HiddenField ID="hdUserSaleSplit" runat="server" Value="" />
         <asp:HiddenField ID="hdDebugMode" runat="server" Value="false" />
         <asp:HiddenField ID="hdKPIUserID" runat="server" Value="-1" />
         <asp:HiddenField ID="hdDelExpenseIDs" runat="server" Value="" />
+        <asp:HiddenField ID="hdDelAgentExpenseIDs" runat="server" Value="" />
         <input id="hdDifferenceSpiltAmountAndCommissionTotal" type="hidden" value="0" />
         <input id="hdDifferenceUserSpiltAmountAndCommissionTotal" type="hidden" value="0" />
         <div class='ActionPanel' style="width: 99%; float: left">
@@ -659,7 +831,7 @@
                 <asp:Button ID="btnFinalize" CssClass="Button btn" runat="server" Text="Finalize" UseSubmitBehavior="true" OnClick="btnFinalize_Click" Visible="false" />
             </div>
             <div id="pPageHeader" class='PageHeader' runat="server" style='font-size: 11px; width: 90%; float: left;'>
-                <div style='width: 24%; margin-right: 2%; float: left;' class='RoundPanel Short'>
+                <div style='width: 20%; margin-right: 1%; float: left;' class='RoundPanel Short'>
                     <asp:Label ID="txtCode" CssClass="Normal EntryPos" runat="server" Text="" Style="width: 200px"></asp:Label>
                     <br class='Align' />
                     <asp:Label ID="lblCommission" CssClass="Label LabelPos" runat="server" Text="Gross commission"></asp:Label>
@@ -682,7 +854,7 @@
                     </asp:DropDownList>
                     <br class='Align' />
                 </div>
-                <div style='width: 24%; margin-right: 2%; float: left;' class='RoundPanel Short'>
+                <div style='width: 20%; margin-right: 1%; float: left;' class='RoundPanel Short'>
                     <div class="Box1Head" style="float: left; width: 99%; clear: both">KPI information</div>
                     <asp:Label ID="Label1" CssClass="Label LabelPos" runat="server" Text="Auction date"></asp:Label>
                     <asp:TextBox ID="txtAuctionDate" runat="server" CssClass="Normal EntryPos"></asp:TextBox>
@@ -704,18 +876,42 @@
                     <asp:CheckBox ID="chkIgnoreBonus" runat="server" />
                     <br class='Align' />
                 </div>
-                <div style='width: 44%; float: left' class='RoundPanel'>
-                    <span class='RoundPanelHeader' id='oOFfTheTopExpense'>Off the top expenses</span>
-                    <ul id="ulExpenses" class="nobullets" runat="server" style='margin-top: 0px; margin-left: 5px'>
+                <div style='width:28%; float: left; margin-right: 1%;' class='RoundPanel'>
+                    <span class='RoundPanelHeader' id='oOffTheTopExpense'>Off the top expenses</span>
+                    <ul id="ulSaleExpenses" class="nobullets" runat="server" style='margin-top: 0px; margin-left: -25px'>
                     </ul>
-                    <div style="text-align: right; padding-right: 30px">
-                        <a class='LinkButton JQHideOnReadOnly' onclick='addSaleExpense(this)' href='#'>Add new expense</a>
+                    <div style="text-align: left; padding-left: 10px; margin-top: -10px">
+                        <a class='LinkButton JQHideOnReadOnly' onclick='addSaleOTTExpense(this)' href='#' style="font-size: 11px; font-weight: 500; ">Add new expense</a>
                     </div>
                     <div style="text-align: right; padding-right: 30px">
                         <hr />
-                        <span class="JQExpenseSplitTotal CalcTotal">Expense total :</span> <span class="JQExpenseSplitTotal CalcTotal" id="dOffTheTopTotal" runat="server"></span>
+                        <span>Expense total :</span> <span id="dOffTheTopTotal" runat="server"></span>
                     </div>
                 </div>
+                <div style='width: 28%; float: left' class='RoundPanel'>
+                    <div class='RoundPanelHeader' id='dAgentOTTExpense'>Agent expenses</div>
+                     <div style="float: left; width: 60%">
+                        <ul id="ulAgentExpenses" class="nobullets" runat="server" style='margin-top: 0px; margin-left: -25px'></ul>
+                         
+                        <div style="text-align: left; padding-left: 10px; margin-top: -10px">
+                            <a class='LinkButton JQHideOnReadOnly' onclick='addAgentOTTExpense(this)' href='#' style="font-size: 11px; font-weight: 500; ">Add new expense</a>
+                        </div>
+                        
+                        <div style="text-align: right; padding-right: 30px">
+                            <hr />
+                            <span>Agent expense total :</span> <span  id="dAgentTotal" runat="server"></span>
+                        </div>
+                    </div>
+                    <div style="float: right; width: 38%; background: #DBCAA6">
+                        Allocations
+
+                         <div id="dAgentAllocations" runat="server" style="padding: 4px"></div>
+                         <div style="padding-left: 40px; background: #C5AC78">
+                            <span class="AllocationInitials">Total :</span> <span id="dAgentAllocationTotal" runat="server"></span>
+                        </div>
+                    </div>
+                </div>
+
             </div>
             <asp:Label ID="Label7" CssClass="Label LabelPos" runat="server" Text="Comments"></asp:Label>
             <asp:TextBox ID="txtComments" runat="server" CssClass="Normal EntryPos" TextMode="MultiLine" Height="30" Width="80%"></asp:TextBox>

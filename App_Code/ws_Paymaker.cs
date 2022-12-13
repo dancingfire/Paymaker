@@ -97,8 +97,13 @@ public class ws_Paymaker : System.Web.Services.WebService {
     }
 
     [WebMethod(EnableSession = true)]
-    public string getExpenseHTML(int SaleExpenseCount) {
-        return SalesExpense.getHTML(false, SaleExpenseCount * -1);
+    public string getOTTExpenseHTML(int SaleExpenseCount) {
+        return SalesExpense.getExpenseHTML(false, SaleExpenseCount * -1);
+    }
+
+    [WebMethod(EnableSession = true)]
+    public string getAgentOTTExpenseHTML(int AgentExpenseCount) {
+        return AgentExpense.getExpenseHTML(false, AgentExpenseCount * -1);
     }
 
     [WebMethod(EnableSession = true)]
