@@ -39,9 +39,10 @@ public partial class list_update : Root {
         }
 
         pDefaultAmount.Visible = oListType == ListType.Commission || oListType == ListType.OffTheTop;
+        pMaxAmount.Visible = oListType == ListType.OffTheTop;
         pJobCode.Visible = oListType == ListType.Office || oListType == ListType.Expense || oListType == ListType.Income;
-        pCreditGLCode.Visible = oListType == ListType.Expense || oListType == ListType.CampaignGL;
-        pDebitGLCode.Visible = oListType == ListType.Income;
+        pCreditGLCode.Visible = oListType == ListType.Expense || oListType == ListType.CampaignGL || oListType == ListType.AgentOffTheTop;
+        pDebitGLCode.Visible = oListType == ListType.Income || oListType == ListType.AgentOffTheTop;
         pOfficeCode.Visible =  oListType == ListType.Company || oListType == ListType.Office;
         if (oListType == ListType.CampaignGL)
             lblDescription.Text = "MYOB text";
@@ -147,6 +148,9 @@ public partial class list_update : Root {
         if (pDefaultAmount.Visible) {
             oSQL.add("AMOUNT", txtAmount.Text);
             oSQL.add("AMOUNTTYPEID", lstAmountValue.SelectedValue);
+        }
+        if (pMaxAmount.Visible) {
+            oSQL.add("MAXAMOUNT", txtMaxAmount.Text);
         }
         if (pCreditGLCode.Visible)
             oSQL.add("CREDITGLCODE", txtCreditGLCode.Text);

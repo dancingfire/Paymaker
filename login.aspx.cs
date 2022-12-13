@@ -9,7 +9,6 @@ namespace Paymaker {
     public partial class login : Root {
         protected System.Data.SqlClient.SqlConnection cnn;
         private string szForgotUserNameEntered = string.Empty;
-        private bool blnLeave = false;
 
         protected void Page_Init(object sender, System.EventArgs e) {
             blnUseSession = false;
@@ -29,8 +28,8 @@ namespace Paymaker {
             if (!IsPostBack && HttpContext.Current.Session != null)
                 HttpContext.Current.Session.Abandon();
             //Check whether we are redirecting to the leave page
-            blnLeave = Request.QueryString["LEAVE"] != null;
-
+            G.User.IsLeave = Request.QueryString["LEAVE"] != null;
+            
             if (Request.QueryString["Timeout"] != null) {
                 lblTimeout.Visible = true;
             } else {
@@ -64,17 +63,7 @@ namespace Paymaker {
 
         private void loginSuccess(int UserID) {
             UserLogin.loginUserByID(UserID);
-            string szStartPage = "main/sales_dashboard.aspx";
-            if (blnLeave) {
-                szStartPage = "payroll/leave_manager_dashboard.aspx";
-            } else if (G.User.IsAdmin) {
-                szStartPage = "main/admin_dashboard.aspx";
-            } else if (G.User.hasPermission(RolePermissionType.ViewCampaignModule)) {
-                szStartPage = "campaign/campaign_dashboard.aspx";
-            } else if (G.User.RoleID == 5) {
-                szStartPage = "payroll/payroll_dashboard.aspx";
-            }
-            sbEndJS.AppendFormat("window.top.location.href = '{0}';", szStartPage);
+            sbEndJS.AppendFormat("window.top.location.href = '{0}';", UserLogin.getStartPage());
             pPage.Visible = false;
         }
 

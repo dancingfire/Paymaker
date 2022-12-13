@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Text;
 using System.Web.UI;
@@ -69,6 +70,8 @@ public partial class sale_update : Root {
         Utility.setListBoxItems(ref lstStatus, oS.Status.ToString());
         hdCurrStatusID.Value = oS.Status.ToString();
         drawSaleExpense(oS);
+        drawAgentExpense(oS);
+        drawAgentAllocations(oS);
         sbHTML.AppendFormat(@"<table class='Box1' id='tSalesInfo' width='100%'><thead class='Box1Head'><tr><td colspan='5'></td><tr></thead>");
         int rowCount = 0;
         foreach (SalesSplit oSS in oS.lSaleSplits) {
@@ -238,6 +241,8 @@ public partial class sale_update : Root {
         string szSQLUpdate = "";
 
         updateSaleExpenses(ref szSQLUpdate, ref oS);
+        updateAgentExpenses(ref szSQLUpdate, ref oS);
+        updateAgentAllocations(ref szSQLUpdate, ref oS);
 
         string[] arrSaleSplit = hdSaleSplit.Value.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
         foreach (string oTagID in arrSaleSplit) {
@@ -327,6 +332,46 @@ public partial class sale_update : Root {
         }
     }
 
+    private void updateAgentExpenses(ref string szSQLUpdate, ref Sale oS) {
+        string[] arrAgentOTTSplit = hdAgentOTTExpensesSplit.Value.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+        foreach (string oTagID in arrAgentOTTSplit) {
+            string szTagID = oTagID.Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries)[0];
+            string[] arrIDs = szTagID.Split(new string[] { "_" }, StringSplitOptions.RemoveEmptyEntries);
+            int CategoryID = Convert.ToInt32(Valid.getList(szTagID.Replace("txtAmount", "lstCategory"), "0"));
+            int intDBID = Convert.ToInt32(Valid.getInteger(szTagID.Replace("txtAmount", "hdAgentExpenseDBID"), -1));
+            string Amount = Valid.getText(szTagID, VT.NoValidation);
+            if (!String.IsNullOrEmpty(Amount)) {
+                Utility.Append(ref szSQLUpdate, oS.updateAgentSaleExpense(intDBID, CategoryID, Convert.ToDouble(Amount)), ";");
+            }
+        }
+
+        string szDelIDs = hdDelAgentExpenseIDs.Value;
+        if (!String.IsNullOrWhiteSpace(szDelIDs)) {
+            string[] arIDs = szDelIDs.Split(',');
+            foreach (string szID in arIDs) {
+                oS.deleteAgentExpense(Convert.ToInt32(szID));
+            }
+        }
+    }
+
+    private void updateAgentAllocations(ref string szSQLUpdate, ref Sale oS) {
+        string[] arrAgentOTTSplit = hdAgentAllocationSplits.Value.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+        List<int> lAgents = new List<int>();
+        foreach (string oTagID in arrAgentOTTSplit) {
+            string szTagID = oTagID.Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries)[0];
+            string[] arrIDs = szTagID.Split(new string[] { "_" }, StringSplitOptions.RemoveEmptyEntries);
+            int UserID = Convert.ToInt32(arrIDs[1]);
+            string Amount = Valid.getText(szTagID, VT.NoValidation);
+            if (!String.IsNullOrEmpty(Amount)) {
+                Utility.Append(ref szSQLUpdate, oS.updateAgentAllocation(UserID, Convert.ToDouble(Amount)), ";");
+                lAgents.Add(UserID);
+            }
+        }
+        if (lAgents.Count > 0) {
+            DB.runNonQuery(String.Format("Delete from AGENTSALEALLOCATION WHERE SALEID = {0} and USERID NOT IN ({1})", oS.SaleID, String.Join(",", lAgents)));
+        }
+    }
+
     protected void drawSaleExpense(Sale oS) {
         StringBuilder sbHTML = new StringBuilder();
         int count = 0;
@@ -337,11 +382,34 @@ public partial class sale_update : Root {
                 blnAddButton = true;
             }
 
-            sbHTML.Append(SalesExpense.getHTML(blnAddButton, oSE.ExpenseTypeID, oSE));
+            sbHTML.Append(SalesExpense.getExpenseHTML(blnAddButton, oSE.ExpenseTypeID, oSE));
         }
-        ulExpenses.InnerHtml = sbHTML.ToString();
+        ulSaleExpenses.InnerHtml = sbHTML.ToString();
     }
 
+    protected void drawAgentExpense(Sale oS) {
+        StringBuilder sbHTML = new StringBuilder();
+        int count = 0;
+        bool blnAddButton = false;
+        foreach (AgentExpense oSE in oS.lAgentExpenses) {
+            count++;
+            if (count == oS.lAgentExpenses.Count) {
+                blnAddButton = true;
+            }
+
+            sbHTML.Append(AgentExpense.getExpenseHTML(blnAddButton, oSE.ExpenseTypeID, oSE));
+        }
+        ulAgentExpenses.InnerHtml = sbHTML.ToString();
+    }
+
+    protected void drawAgentAllocations(Sale oS) {
+        StringBuilder sbHTML = new StringBuilder();
+        
+        foreach (AgentAllocation oAA in oS.lAgentAllocations) {
+            sbHTML.Append(AgentAllocation.getExpenseHTML(oAA.UserID, oAA));
+        }
+        dAgentAllocations.InnerHtml = sbHTML.ToString();
+    }
     protected void btnHide_Click(object sender, EventArgs e) {
         string szSQL = "UPDATE SALE SET STATUSID = 3 WHERE ID = " + hdSaleID.Value;
         DB.runNonQuery(szSQL);

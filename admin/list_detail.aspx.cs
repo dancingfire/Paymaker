@@ -15,6 +15,10 @@ public partial class list_detail : Root {
 
     private void initPage() {
         switch (oListType) {
+            case ListType.AgentOffTheTop:
+                lblItemName.Text = "Agent expenses";
+                lblInsertText.Text = "Add new expense category";
+                break;
             case ListType.Commission:
                 lblItemName.Text = "Commision items";
                 lblInsertText.Text = "Add new commission item";

@@ -309,6 +309,35 @@ public class UserLogin {
         G.Settings.loadConfigValues();
     }
 
+    public static bool loginUserByEmail(string Email) {
+        int UserID = DB.getScalar("SELECT ID FROM DB_USER WHERE EMAIL = '" + DB.escape(Email) + "'", -1);
+        if (UserID < 0) {
+            return false;
+        }
+        UserLogin.loginUserByID(UserID);
+        clearUserConfig();
+        G.Settings.loadConfigValues();
+        return true;
+    }
+
+    /// <summary>
+    /// Initial page of the application
+    /// </summary>
+    /// <returns></returns>
+    public static string getStartPage() {
+        string szStartPage = "main/sales_dashboard.aspx";
+        if (G.User.IsLeave) {
+            szStartPage = "payroll/leave_manager_dashboard.aspx";
+            G.User.IsLeave = false;
+        } else if (G.User.IsAdmin) {
+            szStartPage = "main/admin_dashboard.aspx";
+        } else if (G.User.hasPermission(RolePermissionType.ViewCampaignModule)) {
+            szStartPage = "campaign/campaign_dashboard.aspx";
+        } else if (G.User.RoleID == 5) {
+            szStartPage = "payroll/payroll_dashboard.aspx";
+        }
+        return szStartPage;
+    }
     /// <summary>
     /// Logs in the user by the passed in ID - this can be used as an admin login or the final step on the login page
     /// </summary>

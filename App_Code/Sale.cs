@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web.UI.WebControls;
+using System.Xml;
 
 /// <summary>
 /// Summary description for Sale
@@ -35,6 +36,8 @@ public class Sale {
     private bool blnIgnoreSaleBonus = false;
     public List<SalesSplit> lSaleSplits = new List<SalesSplit>();
     public List<SalesExpense> lSaleExpenses = new List<SalesExpense>();
+    public List<AgentExpense> lAgentExpenses = new List<AgentExpense>();
+    public List<AgentAllocation> lAgentAllocations = new List<AgentAllocation>();
     private int intBnDSaleID = Int32.MinValue;
 
     public double ExpenseAmount {
@@ -193,6 +196,8 @@ public class Sale {
         }
         if (intSaleID > -1 || (intSaleID == -1 && CreateIfNotInDB)) {
             loadSaleExpenses(IsCompleted);
+            loadAgentSaleExpenses();
+            loadAgentAllocations();
             loadSaleSplits(ForceCommissionTypeLoad);
         }
     }
@@ -387,12 +392,51 @@ public class Sale {
         return oSE.updateToDB();
     }
 
+    /// <summary>
+    /// Updates the sales expense with the new information
+    /// </summary>
+    /// <param name="SaleID"></param>
+    /// <param name="ExpenseTypeID"></param>
+    /// <param name="Amount"></param>
+    /// <returns></returns>
+    public string updateAgentSaleExpense(int ExpenseID, int ExpenseTypeID, double Amount) {
+        AgentExpense oSE = lAgentExpenses.Find(t => t.ID == ExpenseID);
+        if (oSE == null) {
+            oSE = new AgentExpense(-1, SaleID, ExpenseTypeID, Amount);
+            lAgentExpenses.Add(oSE);
+        }
+        oSE.ExpenseTypeID = ExpenseTypeID;
+        oSE.Amount = Amount;
+        return oSE.updateToDB();
+    }
+
+    public string updateAgentAllocation(int UserID, double Amount) {
+        AgentAllocation oAA = lAgentAllocations.Find(t => t.UserID == UserID);
+        if (oAA == null) {
+            oAA = new AgentAllocation(-1, SaleID, UserID, Amount);
+            lAgentAllocations.Add(oAA);
+        }
+        oAA.Amount = Amount;
+        return oAA.updateToDB();
+    }
+
     public void deleteSalesExpense(int SalesExpenseID) {
         SalesExpense oSE = lSaleExpenses.Find(t => t.ID == SalesExpenseID);
         if (oSE != null)
             oSE.delete();
     }
 
+    public void deleteAgentExpense(int AgentSalesExpenseID) {
+        AgentExpense oSE = lAgentExpenses.Find(t => t.ID == AgentSalesExpenseID);
+        if (oSE != null)
+            oSE.delete();
+    }
+
+    public void deleteAgentAllocation(int AgentAllocationID) {
+        AgentAllocation oAA = lAgentAllocations.Find(t => t.ID == AgentAllocationID);
+        if (oAA != null)
+            oAA.delete(); 
+    }
     /// <summary>
     /// Used to check for various null / invalid date values.  including DateTime.MinVal & 1900-01-01
     /// </summary>
@@ -903,6 +947,30 @@ public class Sale {
         }
     }
 
+    protected void loadAgentSaleExpenses() {
+        string szSQL = String.Format(@"
+            SELECT SE.ID, SE.EXPENSETYPEID, SE.AMOUNT
+            FROM AGENTSALEEXPENSE SE
+            WHERE SE.SALEID = {0}", intSaleID);
+        DataSet dsData = DB.runDataSet(szSQL);
+        foreach (DataRow oRow in dsData.Tables[0].Rows) {
+            dExpenseAmount += Convert.ToDouble(oRow["AMOUNT"]);
+            lAgentExpenses.Add(new AgentExpense(Convert.ToInt32(oRow["ID"]), intSaleID, Convert.ToInt32(oRow["EXPENSETYPEID"]), Convert.ToDouble(oRow["AMOUNT"])));
+        }
+    }
+
+    protected void loadAgentAllocations() {
+        string szSQL = String.Format(@"
+            SELECT SE.ID, SE.USERID, SE.AMOUNT
+            FROM AGENTSALEALLOCATION SE
+            WHERE SE.SALEID = {0}", intSaleID);
+        DataSet dsData = DB.runDataSet(szSQL);
+        foreach (DataRow oRow in dsData.Tables[0].Rows) {
+            dExpenseAmount += Convert.ToDouble(oRow["AMOUNT"]);
+            lAgentAllocations.Add(new AgentAllocation(Convert.ToInt32(oRow["ID"]), intSaleID, Convert.ToInt32(oRow["USERID"]), Convert.ToDouble(oRow["AMOUNT"])));
+        }
+    }
+
     private void insertDefaultSaleExpense() {
         string intExpenseTypeID = "";
         string szAmount = "0";
@@ -911,7 +979,7 @@ public class Sale {
 
         string szSQL = string.Format(@"
             SELECT ID AS EXPENSETYPEID, AMOUNT, AMOUNTTYPEID
-            FROM LIST WHERE LISTTYPEID = {0} AND NAME = '6% Incentive' AND ISACTIVE = {1}", (int)ListType.OffTheTop, (int)TrueFalse.True);
+            FROM LIST WHERE LISTTYPEID = {0} AND NAME = '6% Incentive' AND ISACTIVE = 1", (int)ListType.OffTheTop);
         DataSet ds = DB.runDataSet(szSQL);
 
         foreach (DataRow oRow in ds.Tables[0].Rows) {
@@ -1122,7 +1190,7 @@ public class SalesExpense : AuditClass {
     /// <param name="SaleExpenseID"></param>
     /// <param name="oSE"></param>
     /// <returns></returns>
-    public static string getHTML(bool blnAddButton, int SaleExpenseID, SalesExpense oSE = null) {
+    public static string getExpenseHTML(bool blnAddButton, int SaleExpenseID, SalesExpense oSE = null) {
         string szIDTag = "";
         szIDTag = "SE_" + SaleExpenseID;
         int intID = -1;
@@ -1132,10 +1200,11 @@ public class SalesExpense : AuditClass {
 
         string szSQL = string.Format(@"
             SELECT ID, NAME
-            FROM LIST WHERE LISTTYPEID = {0} AND ISACTIVE = {1}", (int)ListType.OffTheTop, (int)TrueFalse.True);
-        DataSet dsSalesExpense = DB.runDataSet(szSQL);
+            FROM LIST WHERE LISTTYPEID = {0} AND ISACTIVE = 1", (int)ListType.OffTheTop);
+        
         Utility.BindList(ref ddlCategory, DB.runDataSet(szSQL), "ID", "NAME");
         ddlCategory.Items.Insert(0, new ListItem("Select...", "-1"));
+
 
         if (oSE != null) {
             Utility.setListBoxItems(ref ddlCategory, oSE.ExpenseTypeID.ToString());
@@ -1172,6 +1241,205 @@ public class SalesExpense : AuditClass {
             return string.Format(@" {0} {1} {2} {3} {4} ^^***^^{5} ", Utility.ControlToString(ddlCategory), szHTMLAmount, Utility.ControlToString(ddlAmountType), szHTMLCalcAmount, szHTMLButton, szIDTag);
         }
         return string.Format(@"<li id='li_{5}'> {0} {1} {2} {3} {4} </li>", Utility.ControlToString(ddlCategory), szHTMLAmount, Utility.ControlToString(ddlAmountType), szHTMLCalcAmount, szHTMLButton, szIDTag);
+    }   
+}
+
+/// <summary>
+/// Contains the details of Agent Expenses for a sale
+/// </summary>
+public class AgentExpense : AuditClass {
+    private int intID = 0;
+    private double dAmount = 0;
+    private int intExpenseTypeID = -1;
+    private int intSaleID = -1;
+
+    public int ID {
+        get { return intID; }
+    }
+
+    public int SaleID {
+        get { return intSaleID; }
+        set { intSaleID = value; }
+    }
+
+    public int ExpenseTypeID {
+        get { return intExpenseTypeID; }
+        set { intExpenseTypeID = setValue("Expense type", intExpenseTypeID, value); }
+    }
+
+    public double Amount {
+        get { return dAmount; }
+        set { dAmount = setValue("Amount", dAmount, value); }
+    }
+
+ 
+    /// <summary>
+    /// Creates a sales expense record
+    /// </summary>
+    /// <param name="ID"></param>
+    /// <param name="ExpenseTypeID"></param>
+    /// <param name="Amount"></param>
+    /// <param name="Type"></param>
+    /// <param name="CalculatedAmount"></param>
+    public AgentExpense(int ID, int SaleID, int ExpenseTypeID, double Amount) {
+        intID = ID;
+        intSaleID = SaleID;
+        intExpenseTypeID = ExpenseTypeID;
+        dAmount = Amount;
+        oCT = new SalesExpenseChangeTracker(intSaleID, intID);
+    }
+
+    /// <summary>
+    /// Updates the valus in place in the DB
+    /// </summary>
+    /// <returns></returns>
+    public string updateToDB() {
+        if (!oCT.AreChangesRecorded && intID > 0)
+            return "";
+
+        sqlUpdate oSQL = new sqlUpdate("AGENTSALEEXPENSE", "ID", intID);
+        oSQL.add("SALEID", SaleID);
+        oSQL.add("EXPENSETYPEID", ExpenseTypeID);
+        oSQL.add("AMOUNT", dAmount);
+        string szSQL = "";
+        if (intID == -1) {
+            szSQL += oSQL.createInsertSQL();
+            oCT.addChange("Created");
+        } else
+            szSQL += oSQL.createUpdateSQL();
+
+        oCT.writeToDB();
+        return szSQL;
+    }
+
+    public void delete() {
+        DB.runNonQuery("DELETE FROM AGENTSALEEXPENSE WHERE ID = " + intID);
+    }
+
+    
+    /// <summary>
+    /// Gets the HTML for a row of agent funded sales expense
+    /// </summary>
+    /// <param name="blnAddButton"></param>
+    /// <param name="SaleExpenseID"></param>
+    /// <param name="oSE"></param>
+    /// <returns></returns>
+    public static string getExpenseHTML(bool blnAddButton, int SaleExpenseID, AgentExpense oSE = null) {
+        string szIDTag = "";
+        szIDTag = "AgentSE_" + SaleExpenseID;
+        int intID = -1;
+        if (oSE != null)
+            intID = oSE.ID;
+        DropDownList ddlCategory = HTML.createAmountTypeListBox("lstCategory_" + szIDTag, "Entry JQAgentExpenseCategory", "");
+
+        string szSQL = string.Format(@"
+            SELECT ID, NAME
+            FROM LIST WHERE LISTTYPEID = {0} AND ISACTIVE = 1", (int)ListType.AgentOffTheTop);
+
+        Utility.BindList(ref ddlCategory, DB.runDataSet(szSQL), "ID", "NAME");
+        ddlCategory.Items.Insert(0, new ListItem("Select...", "-1"));
+        string szAmount = "";
+        if (oSE != null) {
+            Utility.setListBoxItems(ref ddlCategory, oSE.ExpenseTypeID.ToString());
+            szAmount = oSE.Amount.ToString();
+        }
+        
+        string szHTMLAmount = string.Format(@"
+           <input id='{0}' name='{0}' value='{1}' class='Entry JQAgentExpenseAmount numbersOnly' style='width:80px;' onfocus='highlightTextOnFocus(this)' onblur='calcAgentExpenses()'/>
+            <input type='hidden' id='{3}' name='{2}' value='{3}' />
+            ", "txtAmount_" + szIDTag, szAmount, "hdAgentExpenseDBID_" + szIDTag, intID);
+
+        string szHTMLButton = string.Format(@"
+            <span id='spSaleExpenseDeleteButton' style='padding-left:10px; padding-top:3px'>
+                <input name='btnAgentDelete_{0}' id='btnAgentDelete_{0}' title='Delete expense' style='' onclick='deleteAgentExpense(this, {1}); return false;'  type='image' src='../sys_images/delete.gif' border='0'/>
+            </span>", szIDTag, intID);
+        if (SaleExpenseID < 0) {
+            return string.Format(@" {0} {1} {2} ^^***^^{3} ", Utility.ControlToString(ddlCategory), szHTMLAmount, szHTMLButton, szIDTag);
+        }
+        return string.Format(@"<li id='li_{3}'> {0} {1} {2} </li>", Utility.ControlToString(ddlCategory), szHTMLAmount, szHTMLButton, szIDTag);
+    }
+}
+
+/// <summary>
+/// Contains the details of Agent Expenses for a sale
+/// </summary>
+public class AgentAllocation : AuditClass {
+    private int intID = 0;
+    private double dAmount = 0;
+    private int intUserID = -1;
+    private int intSaleID = -1;
+
+    public int ID {
+        get { return intID; }
+    }
+
+    public int SaleID {
+        get { return intSaleID; }
+        set { intSaleID = value; }
+    }
+
+    public int UserID {
+        get { return intUserID; }
+        set { intUserID = setValue("Sale agent", intUserID, value); }
+    }
+
+    public double Amount {
+        get { return dAmount; }
+        set { dAmount = setValue("Amount", dAmount, value); }
+    }
+
+
+    /// <summary>
+    /// The amount of teh sale expsnses taht are allocated to a user
+    /// </summary>
+    /// <param name="ID"></param>
+        /// <param name="Amount"></param>
+    /// <param name="Type"></param>
+    /// <param name="CalculatedAmount"></param>
+    public AgentAllocation(int ID, int SaleID, int UserID, double Amount) {
+        intID = ID;
+        intSaleID = SaleID;
+        intUserID = UserID;
+        dAmount = Amount;
+        oCT = new SalesExpenseChangeTracker(intSaleID, intID);
+    }
+    public static string getExpenseHTML(int UserID, AgentAllocation oAA = null) {
+        string Initials = G.UserInfo.getInitials(UserID);
+        string szAmount = "0";
+        if(oAA != null) {
+            szAmount = oAA.Amount.ToString();
+        }
+
+        return string.Format(@"
+            <span class='AllocationInitials'>{2} :</span><input id='txtAgentAllocation_{0}' name='txtAgentAllocation_{0}' value='{1}' class='Entry integer JQAgentAllocationAmount' onfocus='highlightTextOnFocus(this)' type='number' min='0' max='100' step='1' pattern='\d*'/>% <span id='txtAgentAllocation_{0}_Amount' class='AllocationTotal'></span><br/>
+            ", UserID, szAmount, Initials);
+
+    }
+    /// <summary>
+    /// Updates the valus in place in the DB
+    /// </summary>
+    /// <returns></returns>
+    public string updateToDB() {
+        if (!oCT.AreChangesRecorded && intID > 0)
+            return "";
+
+        sqlUpdate oSQL = new sqlUpdate("AGENTSALEALLOCATION", "ID", intID);
+        oSQL.add("SALEID", SaleID);
+        oSQL.add("USERID", UserID);
+        oSQL.add("AMOUNT", dAmount);
+        string szSQL = "";
+        if (intID == -1) {
+            szSQL += oSQL.createInsertSQL();
+            oCT.addChange("Created");
+        } else
+            szSQL += oSQL.createUpdateSQL();
+
+        oCT.writeToDB();
+        return szSQL;
+    }
+
+    public void delete() {
+        DB.runNonQuery("DELETE FROM AGENTSALEALLOCATION WHERE ID = " + intID);
     }
 }
 

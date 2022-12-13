@@ -70,7 +70,8 @@ public enum ListType {
     TXCategory = 10,
     LeaveType = 11,
     LeaveStatus = 12,
-    GlossyMagazine = 13
+    GlossyMagazine = 13,
+    AgentOffTheTop = 14
 }
 
 public enum AmountType {

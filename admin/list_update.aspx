@@ -68,6 +68,12 @@
                 <br class="Align" />
             </asp:Panel>
 
+            <asp:Panel ID="pMaxAmount" runat="server" Visible="false">
+                <asp:Label ID="Label6" runat="server" CssClass="Label LabelPos">Mamimum amount</asp:Label>
+                <asp:TextBox ID="txtMaxAmount" runat="server" CssClass="Entry EntryPos" Text="" Style="width: 150px; margin-right: 5px" TabIndex="30"></asp:TextBox>
+                <br class="Align" />
+            </asp:Panel>
+
             <asp:Label ID="lblStatus" runat="server" CssClass="Label LabelPos">Status</asp:Label>
             <asp:DropDownList ID="lstStatus" runat="server" CssClass="Entry EntryPos"
                 TabIndex="50">
