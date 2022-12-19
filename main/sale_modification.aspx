@@ -8,6 +8,19 @@
         function checkFields() {
             return true;
         }
+
+        function insertSale(intID) {
+            $('#mSale').on('show.bs.modal', function () {
+                $('#fSale').attr("src", "sale_insert.aspx?IsPopup=true");
+            });
+            $('#mSale').on('hidden.bs.modal', function () {
+                $('#fSale')[0].contentWindow.removeValidation();
+            });
+
+            $('#mSale').modal('show');
+            return false;
+        }
+
     </script>
 </head>
 <body>
@@ -28,11 +41,11 @@
             <asp:Label ID="lblPropertyFilter" class='Label' runat="server" Text="Property code"></asp:Label>
             <asp:TextBox ID="txtPropertyFilter" class='Edit' runat="server"
                 Style="width: 426px;"></asp:TextBox>
-            <asp:Button ID="btnSearch" runat="server" Text="Search" CssClass="btn btn-default"
-                OnClick="btnSearch_Click" />
+            <asp:Button ID="btnSearch" runat="server" Text="Search" CssClass="btn btn-default" OnClick="btnSearch_Click" />
+            <button type="button" onclick="insertSale()" CssClass="btn btn-default">Insert Sale</button>
         </div>
 
-        <asp:Panel ID="pDetails" runat="server" Visible="false" style="margin-top:15px; float: left">
+        <asp:Panel ID="pDetails" runat="server" Visible="false" style="margin-top:15px; float: left; clear: left">
 
             <asp:GridView ID="gvSales" runat="server" AutoGenerateColumns="false" Style="width: 850px; cursor: pointer"
                 OnRowDataBound="gvSales_RowDataBound" DataKeyNames="ID" ClientIDMode="Predictable">
