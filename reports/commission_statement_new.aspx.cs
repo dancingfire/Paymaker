@@ -326,7 +326,7 @@ namespace Paymaker {
                         lSaleData.Add(Curr);
                     }
                     CommissionType CommTypeID = (CommissionType)DB.readInt(dr["COMMISSIONTYPEID"]);
-                    Curr.TotalPercent += DB.readInt(dr["TOTALCOMMPERCENTAGE"]);
+                    
                     if (CommTypeID == CommissionType.Lead) {
                         Curr.Lead = DB.readDouble(dr["ACTUALPAYMENT"]);
                     } else if (CommTypeID == CommissionType.List) {
@@ -793,7 +793,11 @@ namespace Paymaker {
             public double Manager { get; set; }
             public double Seller { get; set; }
             public double Mentoring { get; set; }
-            public int TotalPercent {get; set;}
+            public int TotalPercent {
+                get {
+                    return Convert.ToInt32((TotalDollar/(GrossComm - OTTExp)) * 100);
+                } 
+            }
                 /// <summary>
                 /// Sum of everything except the OTT expenses
                 /// </summary>

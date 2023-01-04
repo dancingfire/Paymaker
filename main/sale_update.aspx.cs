@@ -368,7 +368,13 @@ public partial class sale_update : Root {
             }
         }
         if (lAgents.Count > 0) {
-            DB.runNonQuery(String.Format("Delete from AGENTSALEALLOCATION WHERE SALEID = {0} and USERID NOT IN ({1})", oS.SaleID, String.Join(",", lAgents)));
+            DB.runNonQuery(String.Format(@"
+                DELETE FROM USERTX 
+                WHERE AGENTSALEALLOCATIONID IN 
+                    (SELECT ID FROM AGENTSALEALLOCATION WHERE SALEID = {0} and USERID NOT IN ({1}));
+
+                DELETE FROM AGENTSALEALLOCATION WHERE SALEID = {0} AND USERID NOT IN ({1});
+                ", oS.SaleID, String.Join(",", lAgents)));
         }
     }
 
@@ -384,7 +390,7 @@ public partial class sale_update : Root {
 
             sbHTML.Append(SalesExpense.getExpenseHTML(blnAddButton, oSE.ExpenseTypeID, oSE));
         }
-        ulSaleExpenses.InnerHtml = sbHTML.ToString();
+        dSaleExpenses.InnerHtml = sbHTML.ToString();
     }
 
     protected void drawAgentExpense(Sale oS) {
@@ -399,7 +405,7 @@ public partial class sale_update : Root {
 
             sbHTML.Append(AgentExpense.getExpenseHTML(blnAddButton, oSE.ExpenseTypeID, oSE));
         }
-        ulAgentExpenses.InnerHtml = sbHTML.ToString();
+        dAgentExpenses.InnerHtml = sbHTML.ToString();
     }
 
     protected void drawAgentAllocations(Sale oS) {

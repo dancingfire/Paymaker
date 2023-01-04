@@ -208,6 +208,7 @@ public class Sale {
     public void performPostProcessing() {
         updateGraphTotals();
         calculateSalesCommissionBonus();
+        updateAgentExpenseTXRecords();
     }
 
     /// <summary>
@@ -237,9 +238,10 @@ public class Sale {
         double dSell = 0;
         double dMentor = 0;
 
-        Client.getGraphCommisionPercentage(ref dFarm, ref dLead, ref dList, ref dManage, ref dSell, ref dMentor, blnHasFarm, blnHasMentor);
+        DateTime dSaleDate = Utility.isDateTime(SaleDate) ? Convert.ToDateTime(SaleDate) : DateTime.MinValue;
+        Client.getGraphCommisionPercentage(dSaleDate, ref dFarm, ref dLead, ref dList, ref dManage, ref dSell, ref dMentor, blnHasFarm, blnHasMentor);
         DB.runNonQuery(String.Format(@"
-            --Update graph commission
+            --Update graph commissiom 
             UPDATE USS
             SET GRAPHCOMMISSION =
                 ISNULL(
@@ -262,6 +264,50 @@ public class Sale {
             ", SaleID, dFarm, dMentor, dLead, dList, dManage, dSell));
     }
 
+    private void updateAgentExpenseTXRecords() {
+        string szSQL = String.Format(@"
+            SELECT SUM(AMOUNT) FROM AGENTSALEEXPENSE WHERE SALEID = {0};
+
+           SELECT A.*, ISNULL(T.ID, -1) as INDB
+            from AGENTSALEALLOCATION A 
+            LEFT JOIN USERTX T ON A.ID = T.AGENTSALEALLOCATIONID
+            WHERE A.SALEID = {0}", this.intSaleID);
+        
+        using (DataSet ds = DB.runDataSet(szSQL)) {
+            double TotalAmount = 0;
+            if(ds.Tables[0].Rows.Count > 0) {
+                TotalAmount = Convert.ToDouble(ds.Tables[0].Rows[0][0]);
+            }
+            foreach(DataRow dr in ds.Tables[1].Rows) {
+                double CalcAmount = TotalAmount * DB.readDouble(dr["AMOUNT"]) / 100;
+                int TXID = DB.readInt(dr["INDB"]);
+                sqlUpdate oSQL = new sqlUpdate("USERTX", "ID", TXID);
+                //Add the data to the DB if it doesn't exist
+                if (TXID < 0) {
+                    oSQL.add("AMOUNT", CalcAmount);
+                    oSQL.add("TOTALAMOUNT", CalcAmount);
+                    oSQL.add("FLETCHERAMOUNT", 0);
+                    oSQL.add("ACCOUNTID", 55);
+                    oSQL.add("USERID", DB.readInt(dr["USERID"]));
+                    oSQL.add("AGENTSALEALLOCATIONID", DB.readInt(dr["ID"]));
+                    oSQL.add("AMOUNTTYPEID", 1);
+                    oSQL.add("TXDATE", this.SaleDate);
+                    oSQL.add("CREDITGLCODE", "");
+                    oSQL.add("DEBITGLCODE", "");
+                    oSQL.add("CREDITJOBCODE", "");
+                    oSQL.add("DEBITJOBCODE", "");
+                    oSQL.add("COMMENT", this.Address);
+                } else {
+                    //Ensure the category and amount are unchanged
+                    oSQL.add("AMOUNT", CalcAmount);
+                    oSQL.add("TOTALAMOUNT", CalcAmount);
+                    oSQL.add("ACCOUNTID", 55);
+                    oSQL.add("COMMENT", this.Address);
+                }
+                DB.runNonQuery(oSQL.createSQL());
+            }
+        }
+    }
     /// <summary>
     /// Calculate and sales bonuses based on a junior agent belonging to a TEAM
     /// </summary>
@@ -736,7 +782,7 @@ public class Sale {
                 S.CONJUNCTIONALCOMMISSION AS CONJUNCTIONALCOMMISSION, S.GROSSCOMMISSION,
             USS.AMOUNT AS AMOUNT, USS.AMOUNTTYPEID, USS.ACTUALPAYMENT, USS.CALCULATEDAMOUNT AS GRAPHTOTAL,
                 CASE WHEN SS.AMOUNTTYPEID = 1 THEN CAST(SS.AMOUNT as varchar) + '%' ELSE '$'+ CAST(SS.AMOUNT as varchar) END AS SS_AMOUNT, USS.COMMISSIONTIERID,
-            isnull((SELECT SUM(CALCULATEDAMOUNT) FROM SALEEXPENSE WHERE SALEID = S.ID), 0) AS OTTEXP, SS.AMOUNT AS TOTALCOMMPERCENTAGE
+            isnull((SELECT SUM(CALCULATEDAMOUNT) FROM SALEEXPENSE WHERE SALEID = S.ID), 0) AS OTTEXP
 
             FROM USERSALESPLIT USS
             JOIN SALESPLIT SS ON USS.SALESPLITID = SS.ID AND SS.RECORDSTATUS = 0 AND USS.RECORDSTATUS < 1   AND USS.RECORDSTATUS < 1
@@ -835,7 +881,7 @@ public class Sale {
                 S.CONJUNCTIONALCOMMISSION AS CONJUNCTIONALCOMMISSION, S.GROSSCOMMISSION, SS.ID AS SALESPLITID,
                 USS.AMOUNT AS AMOUNT, USS.AMOUNTTYPEID, USS.ACTUALPAYMENT, USS.ID AS USERSPLITID, USS.CALCULATEDAMOUNT,
                 CASE WHEN SS.AMOUNTTYPEID = 1 THEN CAST(SS.AMOUNT as varchar) + '%' ELSE '$'+ CAST(SS.AMOUNT as varchar) END AS SS_AMOUNT,
-                USS.OFFICEID, ISNULL((SELECT SUM(CALCULATEDAMOUNT) FROM SALEEXPENSE WHERE SALEID = S.ID), 0) AS OTTEXP,  SS.AMOUNT AS TOTALCOMMPERCENTAGE
+                USS.OFFICEID, ISNULL((SELECT SUM(CALCULATEDAMOUNT) FROM SALEEXPENSE WHERE SALEID = S.ID), 0) AS OTTEXP
 
             FROM USERSALESPLIT USS
             JOIN SALESPLIT SS ON USS.SALESPLITID = SS.ID AND SS.RECORDSTATUS = 0 AND USS.RECORDSTATUS < 1
@@ -1210,6 +1256,7 @@ public class SalesExpense : AuditClass {
             Utility.setListBoxItems(ref ddlCategory, oSE.ExpenseTypeID.ToString());
         }
         ddlCategory.Attributes.Add("onchange", "return checkExpenseCategory(this)");
+        ddlCategory.Style.Add("width", "50%");
         DropDownList ddlAmountType = HTML.createAmountTypeListBox("lstAmountType_" + szIDTag, "Entry JQSaleExpenseAmountType", "width: 45px");
         ddlAmountType.Attributes.Add("onchange", "amountTypeChange(this);");
 
@@ -1226,7 +1273,7 @@ public class SalesExpense : AuditClass {
         }
 
         string szHTMLAmount = string.Format(@"
-           <input id='{0}' name='{0}' value='{1}' class='Entry JQSaleExpenseAmount {2}' style='width:80px;' onfocus='highlightTextOnFocus(this)' onblur='saleSplitAmountChange(this)'/>
+           <input id='{0}' name='{0}' value='{1}' class='Entry JQSaleExpenseAmount {2}' style='width:60px;' onfocus='highlightTextOnFocus(this)' onblur='saleSplitAmountChange(this)'/>
             <input type='hidden' id='{3}' name='{3}' value='{4}' />
             "
           , "txtAmount_" + szIDTag, szAmount, szValidationType, "hdExpenseDBID_" + szIDTag, intID);
@@ -1234,13 +1281,13 @@ public class SalesExpense : AuditClass {
            <span id='{0}' class='JQExpenseSplit CalcTotal', style='width:80px; text-align:right'>{1}</span>"
             , "txtCalculatedAmount_" + szIDTag, szCalcAmount);
         string szHTMLButton = string.Format(@"
-            <span id='spSaleExpenseDeleteButton' style='padding-left:10px; padding-top:3px'>
+            <span id='spSaleExpenseDeleteButton' style='padding-left: 2px; padding-top:3px'>
                 <input name='btnDelete_{0}' id='btnDelete_{0}' title='Delete expense' style='' onclick='deleteSaleExpense(this, {1}); return false;'  type='image' src='../sys_images/delete.gif' border='0'/>
             </span>", szIDTag, intID);
         if (SaleExpenseID < 0) {
             return string.Format(@" {0} {1} {2} {3} {4} ^^***^^{5} ", Utility.ControlToString(ddlCategory), szHTMLAmount, Utility.ControlToString(ddlAmountType), szHTMLCalcAmount, szHTMLButton, szIDTag);
         }
-        return string.Format(@"<li id='li_{5}'> {0} {1} {2} {3} {4} </li>", Utility.ControlToString(ddlCategory), szHTMLAmount, Utility.ControlToString(ddlAmountType), szHTMLCalcAmount, szHTMLButton, szIDTag);
+        return string.Format(@"<div id='li_{5}'> {0} {1} {2} {3} {4} </div>", Utility.ControlToString(ddlCategory), szHTMLAmount, Utility.ControlToString(ddlAmountType), szHTMLCalcAmount, szHTMLButton, szIDTag);
     }   
 }
 
@@ -1290,7 +1337,7 @@ public class AgentExpense : AuditClass {
     }
 
     /// <summary>
-    /// Updates the valus in place in the DB
+    /// Updates the values in place in the DB
     /// </summary>
     /// <returns></returns>
     public string updateToDB() {
@@ -1313,7 +1360,9 @@ public class AgentExpense : AuditClass {
     }
 
     public void delete() {
-        DB.runNonQuery("DELETE FROM AGENTSALEEXPENSE WHERE ID = " + intID);
+        DB.runNonQuery(String.Format(@"
+            DELETE FROM AGENTSALEEXPENSE WHERE ID = {0};
+            ", intID));
     }
 
     
@@ -1338,6 +1387,7 @@ public class AgentExpense : AuditClass {
 
         Utility.BindList(ref ddlCategory, DB.runDataSet(szSQL), "ID", "NAME");
         ddlCategory.Items.Insert(0, new ListItem("Select...", "-1"));
+        ddlCategory.Style.Add("width", "65%");
         string szAmount = "";
         if (oSE != null) {
             Utility.setListBoxItems(ref ddlCategory, oSE.ExpenseTypeID.ToString());
@@ -1345,18 +1395,18 @@ public class AgentExpense : AuditClass {
         }
         
         string szHTMLAmount = string.Format(@"
-           <input id='{0}' name='{0}' value='{1}' class='Entry JQAgentExpenseAmount numbersOnly' style='width:80px;' onfocus='highlightTextOnFocus(this)' onblur='calcAgentExpenses()'/>
+           <input id='{0}' name='{0}' value='{1}' class='Entry JQAgentExpenseAmount numbersOnly' style='width:60px;' onfocus='highlightTextOnFocus(this)' onblur='calcAgentExpenses()'/>
             <input type='hidden' id='{3}' name='{2}' value='{3}' />
             ", "txtAmount_" + szIDTag, szAmount, "hdAgentExpenseDBID_" + szIDTag, intID);
 
         string szHTMLButton = string.Format(@"
-            <span id='spSaleExpenseDeleteButton' style='padding-left:10px; padding-top:3px'>
+            <span id='spSaleExpenseDeleteButton' style='padding-left:2px; padding-top:3px'>
                 <input name='btnAgentDelete_{0}' id='btnAgentDelete_{0}' title='Delete expense' style='' onclick='deleteAgentExpense(this, {1}); return false;'  type='image' src='../sys_images/delete.gif' border='0'/>
             </span>", szIDTag, intID);
         if (SaleExpenseID < 0) {
             return string.Format(@" {0} {1} {2} ^^***^^{3} ", Utility.ControlToString(ddlCategory), szHTMLAmount, szHTMLButton, szIDTag);
         }
-        return string.Format(@"<li id='li_{3}'> {0} {1} {2} </li>", Utility.ControlToString(ddlCategory), szHTMLAmount, szHTMLButton, szIDTag);
+        return string.Format(@"<div id='li_{3}'> {0} {1} {2} </div>", Utility.ControlToString(ddlCategory), szHTMLAmount, szHTMLButton, szIDTag);
     }
 }
 

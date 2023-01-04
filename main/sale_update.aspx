@@ -494,11 +494,11 @@
         }
 
         function addSaleOTTExpense() {
-            callWebMethod("../web_services/ws_Paymaker.asmx", "getOTTExpenseHTML", ["SaleExpenseCount", $("#ulSaleExpenses li").length], getExpenseHTMLSuccess);
+            callWebMethod("../web_services/ws_Paymaker.asmx", "getOTTExpenseHTML", ["SaleExpenseCount", $("#dSaleExpenses li").length], getExpenseHTMLSuccess);
         }
 
         function addAgentOTTExpense() {
-            callWebMethod("../web_services/ws_Paymaker.asmx", "getAgentOTTExpenseHTML", ["AgentExpenseCount", $("#ulAgentExpenses li").length], getAgentExpenseHTMLSuccess);
+            callWebMethod("../web_services/ws_Paymaker.asmx", "getAgentOTTExpenseHTML", ["AgentExpenseCount", $("#dAgentExpenses div").length], getAgentExpenseHTMLSuccess);
         }
 
         function checkExpenseCategory(obj) {
@@ -524,9 +524,9 @@
             if (szHTML == "")
                 return;
 
-            $("#ulSaleExpenses").append("<li id='li_" + szHTML.split('^^***^^')[1] + "'>" + szHTML.split('^^***^^')[0] + "</li>");
+            $("#dSaleExpenses").append("<div id='li_" + szHTML.split('^^***^^')[1] + "'>" + szHTML.split('^^***^^')[0] + "</div>");
             addValidation();
-            $("#ulSaleExpenses select[id*=lstCategory_SE_]").focus();
+            $("#dSaleExpenses select[id*=lstCategory_SE_]").focus();
             validForSave();
         }
 
@@ -534,9 +534,9 @@
             if (szHTML == "")
                 return;
 
-            $("#ulAgentExpenses").append("<li id='li_" + szHTML.split('^^***^^')[1] + "'>" + szHTML.split('^^***^^')[0] + "</li>");
+            $("#dAgentExpenses").append("<div id='li_" + szHTML.split('^^***^^')[1] + "'>" + szHTML.split('^^***^^')[0] + "</div>");
             addValidation();
-            $("#ulAgentExpenses select[id*=lstCategory_AgentSE_]").focus();
+            $("#dAgentExpenses select[id*=lstCategory_AgentSE_]").focus();
             validForSave();
         }
 
@@ -878,9 +878,9 @@
                 </div>
                 <div style='width:28%; float: left; margin-right: 1%;' class='RoundPanel'>
                     <span class='RoundPanelHeader' id='oOffTheTopExpense'>Off the top expenses</span>
-                    <ul id="ulSaleExpenses" class="nobullets" runat="server" style='margin-top: 0px; margin-left: -25px'>
-                    </ul>
-                    <div style="text-align: left; padding-left: 10px; margin-top: -10px">
+                    <div id="dSaleExpenses" class="nobullets" runat="server" >
+                    </div>
+                    <div style="text-align: left; padding-left: 10px; ">
                         <a class='LinkButton JQHideOnReadOnly' onclick='addSaleOTTExpense(this)' href='#' style="font-size: 11px; font-weight: 500; ">Add new expense</a>
                     </div>
                     <div style="text-align: right; padding-right: 30px">
@@ -891,9 +891,9 @@
                 <div style='width: 28%; float: left' class='RoundPanel'>
                     <div class='RoundPanelHeader' id='dAgentOTTExpense'>Agent expenses</div>
                      <div style="float: left; width: 60%">
-                        <ul id="ulAgentExpenses" class="nobullets" runat="server" style='margin-top: 0px; margin-left: -25px'></ul>
+                        <div id="dAgentExpenses" runat="server" style='margin-top: 0px;'></div>
                          
-                        <div style="text-align: left; padding-left: 10px; margin-top: -10px">
+                        <div style="text-align: left; padding-left: 10px; ">
                             <a class='LinkButton JQHideOnReadOnly' onclick='addAgentOTTExpense(this)' href='#' style="font-size: 11px; font-weight: 500; ">Add new expense</a>
                         </div>
                         

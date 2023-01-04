@@ -1,4 +1,5 @@
-﻿using System;
+﻿using iTextSharp.text;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 
@@ -68,38 +69,24 @@ public static class Client {
     /// <param name="dMentor"></param>
     /// <param name="blnHasFarm"></param>
     /// <param name="blnHasMentor"></param>
-    public static void getGraphCommisionPercentage(ref double dFarm, ref double dLead, ref double dList, ref double dManage, ref double dSell, ref double dMentor, bool blnHasFarm, bool blnHasMentor) {
+    public static void getGraphCommisionPercentage(DateTime SaleDate, ref double dFarm, ref double dLead, ref double dList, ref double dManage, ref double dSell, ref double dMentor, bool blnHasFarm, bool blnHasMentor) {
         switch (G.Settings.ClientID) {
             case ClientID.HeadOffice:
-                dFarm = 0;
-                dLead = 0.1111;
-                dList = 0.4445;
-                dManage = 0.2222;
-                dSell = 0.2222;
-                dMentor = 0;
-
-                /*if (blnHasFarm && blnHasMentor) {
-                    dFarm = 0.0833;
-                    dLead = 0.0833;
-                    dList = 0.3333;
-                    dManage = 0.1667;
-                    dSell = 0.1667;
-                    dMentor = 0.1667;
-                } else if (blnHasFarm) {
-                    dFarm = 0.10;
+                if (SaleDate < new DateTime(2023, 1, 1)) {
+                    dFarm = 0;
+                    dLead = 0.1111;
+                    dList = 0.4445;
+                    dManage = 0.2222;
+                    dSell = 0.2222;
+                    dMentor = 0;
+                } else {
+                    dFarm = 0;
                     dLead = 0.10;
-                    dList = 0.40;
+                    dList = 0.50;
                     dManage = 0.20;
                     dSell = 0.20;
                     dMentor = 0;
-                } else if (blnHasMentor) {
-                    dFarm = 0;
-                    dLead = 0.0909;
-                    dList = 0.3637;
-                    dManage = 0.1818;
-                    dSell = 0.1818;
-                    dMentor = 0.1818;
-                }*/
+                }
 
                 break;
 
