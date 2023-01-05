@@ -494,11 +494,15 @@
         }
 
         function addSaleOTTExpense() {
-            callWebMethod("../web_services/ws_Paymaker.asmx", "getOTTExpenseHTML", ["SaleExpenseCount", $("#dSaleExpenses li").length], getExpenseHTMLSuccess);
+            d = document.getElementById('dSaleExpenses');
+            count = d.getElementsByTagName('div').length
+            callWebMethod("../web_services/ws_Paymaker.asmx", "getOTTExpenseHTML", ["SaleExpenseCount", count], getExpenseHTMLSuccess);
         }
 
         function addAgentOTTExpense() {
-            callWebMethod("../web_services/ws_Paymaker.asmx", "getAgentOTTExpenseHTML", ["AgentExpenseCount", $("#dAgentExpenses div").length], getAgentExpenseHTMLSuccess);
+            d = document.getElementById('dAgentExpenses') ;
+            count = d.getElementsByTagName('div').length;
+            callWebMethod("../web_services/ws_Paymaker.asmx", "getAgentOTTExpenseHTML", ["AgentExpenseCount", count], getAgentExpenseHTMLSuccess);
         }
 
         function checkExpenseCategory(obj) {
@@ -506,6 +510,7 @@
         }
 
         function setDefaultAmountTypeForExpense(obj) {
+            console.log(obj);
             var oExpenseObj = arrSalesExpense[$("#" + obj.id).val()];
             $("#" + obj.id.replace("lstCategory_SE_", "lstAmountType_SE_")).val(oExpenseObj.AmountType);
             $("#" + obj.id.replace("lstCategory_SE_", "txtAmount_SE_")).val(oExpenseObj.Amount);
