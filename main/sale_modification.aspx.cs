@@ -4,8 +4,12 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 public partial class sale_modification : Root {
+    protected void Page_Load(object sender, System.EventArgs e) {
+        Form.Controls.Add(new LiteralControl(HTML.createModalUpdate("Sale", "Sale", "65%", 650, "sale_update_special.aspx")));
+    }
+    
 
-    protected void btnSearch_Click(object sender, EventArgs e) {
+     protected void btnSearch_Click(object sender, EventArgs e) {
         pDetails.Visible = false;
         loadSalesData();
         pDetails.Visible = true;
@@ -13,7 +17,7 @@ public partial class sale_modification : Root {
 
     private void loadSalesData() {
         string szSQL = String.Format(@"
-            SELECT DATENAME(m, P.STARTDATE) AS PAYPERIOD, S.*, ISNULL(S.PAYPERIODID, -1) AS SAFEPAYPERIODID
+            SELECT Top 100 DATENAME(m, P.STARTDATE) AS PAYPERIOD, S.*, ISNULL(S.PAYPERIODID, -1) AS SAFEPAYPERIODID
             FROM SALE S LEFT JOIN PAYPERIOD P ON S.PAYPERIODID = P.ID
             WHERE CODE LIKE '%{0}%' or address like '%{0}%'", DB.escape(txtPropertyFilter.Text));
         DataSet ds = DB.runDataSet(szSQL);
@@ -24,7 +28,6 @@ public partial class sale_modification : Root {
             G.Notifications.showPageNotification();
         }
         HTML.formatGridView(ref gvSales);
-        Form.Controls.Add(new LiteralControl(HTML.createModalUpdate("Sale", "Sale", "65%", 650, "sale_update_special.aspx")));
     }
 
     public string getStatus(int StatusID) {

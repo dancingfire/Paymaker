@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Reflection.Metadata;
 
 public class UserTX {
     private int intID = 0;                              //DB Account ID
@@ -173,6 +174,9 @@ public class UserTX {
     /// <param name="PayPeriod"></param>
     /// <returns></returns>
     public static DataSet loadUserTx(int UserID, int PayPeriod, ListType oListType) {
+        string ListType = Convert.ToString((int)oListType);
+        if (oListType == global::ListType.Expense)
+            ListType = " 2, 14";
         string szSQL = string.Format(@"select STARTDATE, ENDDATE from PAYPERIOD WHERE ID = {0}", PayPeriod);
         DataSet ds = DB.runDataSet(szSQL);
         string szTxDate = string.Format(@"
@@ -181,10 +185,10 @@ public class UserTX {
         szSQL = String.Format(@"
             SELECT L_TXTYPE.NAME, UTX.AMOUNT, UTX.COMMENT, L_CAT.NAME AS CATEGORY
             FROM USERTX UTX
-            JOIN LIST L_TXTYPE ON UTX.ACCOUNTID = L_TXTYPE.ID AND LISTTYPEID = {0}
+            JOIN LIST L_TXTYPE ON UTX.ACCOUNTID = L_TXTYPE.ID AND LISTTYPEID IN ({0})
             AND UTX.USERID = {1} AND UTX.ISDELETED = 0
             {2}
-			LEFT JOIN LIST L_CAT ON UTX.TXCATEGORYID = L_CAT.ID", (int)oListType, UserID, szTxDate);
+			LEFT JOIN LIST L_CAT ON UTX.TXCATEGORYID = L_CAT.ID", ListType, UserID, szTxDate);
         return DB.runDataSet(szSQL);
     }
 }

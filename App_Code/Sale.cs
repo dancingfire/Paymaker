@@ -265,48 +265,21 @@ public class Sale {
     }
 
     private void updateAgentExpenseTXRecords() {
-        string szSQL = String.Format(@"
-            SELECT SUM(AMOUNT) FROM AGENTSALEEXPENSE WHERE SALEID = {0};
+        if (this.Status != 2) //We only process these when they are finalized
+            return;
 
-           SELECT A.*, ISNULL(T.ID, -1) as INDB
-            from AGENTSALEALLOCATION A 
-            LEFT JOIN USERTX T ON A.ID = T.AGENTSALEALLOCATIONID
-            WHERE A.SALEID = {0}", this.intSaleID);
+        DB.runNonQuery(String.Format(@"
+            DELETE FROM USERTX  
+            WHERE AGENTSALEALLOCATIONID in (SELECT ID FROM AGENTSALEALLOCATION WHERE SALEID = {0});
+
+            INSERT INTO USERTX(AMOUNT, TOTALAMOUNT, FLETCHERAMOUNT, ACCOUNTID, USERID, AGENTSALEALLOCATIONID, AMOUNTTYPEID, TXDATE, CREDITGLCODE, DEBITGLCODE, CREDITJOBCODE, DEBITJOBCODE, COMMENT)
+            SELECT A.AMOUNT * E.AMOUNT/100, A.AMOUNT * E.AMOUNT/100, 0, E.EXPENSETYPEID, A.USERID, A.ID, 1, S.SALEDATE, L.CREDITGLCODE, L.DEBITGLCODE, 'FL-' + U.INITIALSCODE, 'FL-' + U.INITIALSCODE, S.ADDRESS
+            from AGENTSALEALLOCATION A JOIN AGENTSALEEXPENSE E ON A.SALEID = E.SALEID
+            JOIN SALE S ON S.ID = A.SALEID
+            JOIN LIST L ON E.EXPENSETYPEID = L.ID
+            JOIN DB_USER U ON U.ID = A.USERID
+            WHERE A.SALEID = {0}", this.intSaleID));
         
-        using (DataSet ds = DB.runDataSet(szSQL)) {
-            double TotalAmount = 0;
-            if(ds.Tables[0].Rows.Count > 0) {
-                TotalAmount = Convert.ToDouble(ds.Tables[0].Rows[0][0]);
-            }
-            foreach(DataRow dr in ds.Tables[1].Rows) {
-                double CalcAmount = TotalAmount * DB.readDouble(dr["AMOUNT"]) / 100;
-                int TXID = DB.readInt(dr["INDB"]);
-                sqlUpdate oSQL = new sqlUpdate("USERTX", "ID", TXID);
-                //Add the data to the DB if it doesn't exist
-                if (TXID < 0) {
-                    oSQL.add("AMOUNT", CalcAmount);
-                    oSQL.add("TOTALAMOUNT", CalcAmount);
-                    oSQL.add("FLETCHERAMOUNT", 0);
-                    oSQL.add("ACCOUNTID", 55);
-                    oSQL.add("USERID", DB.readInt(dr["USERID"]));
-                    oSQL.add("AGENTSALEALLOCATIONID", DB.readInt(dr["ID"]));
-                    oSQL.add("AMOUNTTYPEID", 1);
-                    oSQL.add("TXDATE", this.SaleDate);
-                    oSQL.add("CREDITGLCODE", "");
-                    oSQL.add("DEBITGLCODE", "");
-                    oSQL.add("CREDITJOBCODE", "");
-                    oSQL.add("DEBITJOBCODE", "");
-                    oSQL.add("COMMENT", this.Address);
-                } else {
-                    //Ensure the category and amount are unchanged
-                    oSQL.add("AMOUNT", CalcAmount);
-                    oSQL.add("TOTALAMOUNT", CalcAmount);
-                    oSQL.add("ACCOUNTID", 55);
-                    oSQL.add("COMMENT", this.Address);
-                }
-                DB.runNonQuery(oSQL.createSQL());
-            }
-        }
     }
     /// <summary>
     /// Calculate and sales bonuses based on a junior agent belonging to a TEAM

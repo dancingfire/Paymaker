@@ -9,7 +9,7 @@
             return true;
         }
 
-        function insertSale(intID) {
+        function insertSale() {
             $('#mSale').on('show.bs.modal', function () {
                 $('#fSale').attr("src", "sale_insert.aspx?IsPopup=true");
             });
