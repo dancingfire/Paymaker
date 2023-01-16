@@ -23,32 +23,42 @@
             if (blnPassedAsID) {
                 $thisID = thisID;
             }
-
+            var calcValue = 0;
+            console.log($thisID);
+            $amount = $("#" + $thisID);
+            $category = $("#" + $thisID.replace("txtAmount_", "lstCategory_"));
             //get the id of the amount type
             $thisAmountTypeID = $thisID.replace("txtAmount_", "lstAmountType_");
             if ($("#" + $thisAmountTypeID).val() == "1") { //%
-                if ($("#" + $thisID).hasClass('JQSaleSplitAmount')) {
-                    var calcValue = getPercentage(getNetCommission(), $("#" + $thisID).val());
+                if ($amount.hasClass('JQSaleSplitAmount')) {
+                    calcValue = getPercentage(getNetCommission(), $("#" + $thisID).val());
                     $("#" + $thisID.replace("txtAmount_", "txtCalculatedAmount_")).text(calcValue);
                 }
-                if ($("#" + $thisID).hasClass('JQUserSaleSplitAmount')) {
+                if ($amount.hasClass('JQUserSaleSplitAmount')) {
                     var $AmountToSplit = $("#" + $thisID.split("_USS_")[0].replace("txtAmount_", "txtCalculatedAmount_")).text();
-                    var calcValue = getPercentage($AmountToSplit, $("#" + $thisID).val());
+                    calcValue = getPercentage($AmountToSplit, $amount.val());
                     $("#" + $thisID.replace("txtAmount_", "txtCalculatedAmount_")).text(calcValue);
                 }
-                if ($("#" + $thisID).hasClass('JQSaleExpenseAmount')) {
+                if ($amount.hasClass('JQSaleExpenseAmount')) {
                     var $currID = $thisID.replace("txtAmount_", "txtCalculatedAmount_");
                     var fOffTheTopExpenses = 0;
                     $(".JQExpenseSplit").each(function () {
-                        if ($("#" + $thisID).attr("id") != $currID)//we don't want to take the current value in consideration
-                            fOffTheTopExpenses += parseFloat($("#" + $thisID).val());
+                        if ($amount.attr("id") != $currID)//we don't want to take the current value in consideration
+                            fOffTheTopExpenses += parseFloat($amount.val());
                     });
-                    var calcValue = (parseFloat($("#hdGrossCommission").val()) - parseFloat(fOffTheTopExpenses)) * parseFloat($("#" + $thisID).val()) / 100;
+                    calcValue = (parseFloat($("#hdGrossCommission").val()) - parseFloat(fOffTheTopExpenses)) * parseFloat($amount.val()) / 100;
                     $("#" + $thisID.replace("txtAmount_", "txtCalculatedAmount_")).text(parseFloat(calcValue).toFixed(2));
 
                 }
             } else {
-                $("#" + $thisID.replace("txtAmount_", "txtCalculatedAmount_")).text(parseFloat($("#" + $thisID).val()).toFixed(2));
+                calcValue = parseFloat($amount.val());
+                $("#" + $thisID.replace("txtAmount_", "txtCalculatedAmount_")).text(parseFloat($amount.val()).toFixed(2));
+            }
+            catID = $category.val();
+            maxVal = $("#hdMaxOTTCategoryAmount_" + catID).val();
+            
+            if (!blnLoadingPage && maxVal > 0 && calcValue > maxVal){
+                alert("Warning: The maximum allowable value for this category is $" + maxVal + ". Please update accordingly.")
             }
             updateCalculations();
             return true;
@@ -669,7 +679,7 @@
         function highlightTextOnFocus(obj) {
             obj.select();
         }
-
+        blnLoadingPage = true;
         $(document).ready(function () {
             $(".RoundPanel").corner();
             $("#hdUserSaleSplit").val("");
@@ -713,6 +723,7 @@
             getSaleAgents();
             
             blUpdatePressed = false;
+            blnLoadingPage = false;
         });
     </script>
     <style type="text/css">

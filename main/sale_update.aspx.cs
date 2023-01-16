@@ -72,6 +72,15 @@ public partial class sale_update : Root {
         drawSaleExpense(oS);
         drawAgentExpense(oS);
         drawAgentAllocations(oS);
+
+        //load the maximum values
+        string szSQL = string.Format(@"
+            SELECT ID, ISNULL(MAXAMOUNT, 0) as MAXAMOUNT
+            FROM LIST WHERE LISTTYPEID = {0} AND ISACTIVE = 1", (int)ListType.OffTheTop);
+        foreach (DataRow oR in DB.runDataSet(szSQL).Tables[0].Rows) {
+            Form.Controls.Add(HTML.createHidden("hdMaxOTTCategoryAmount_" + oR["ID"].ToString(), oR["MAXAMOUNT"].ToString()));
+        }
+
         sbHTML.AppendFormat(@"<table class='Box1' id='tSalesInfo' width='100%'><thead class='Box1Head'><tr><td colspan='5'></td><tr></thead>");
         int rowCount = 0;
         foreach (SalesSplit oSS in oS.lSaleSplits) {
