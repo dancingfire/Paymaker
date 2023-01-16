@@ -22,15 +22,16 @@ public partial class ConsumerService : System.Web.UI.Page {
             if (!samlResponse.IsSuccess()) {
                 throw new ApplicationException("SAML response is not success");
             }
-           
+
             // Get the asserted identity.
             if (samlResponse.GetAssertions().Length > 0) {
                 Assertion[] lAssertions = samlResponse.GetAssertions();
                 foreach (Assertion s in samlResponse.GetAssertions()) {
                     foreach (AttributeStatement Statement in s.AttributeStatements) {
                         foreach (ComponentPro.Saml2.Attribute a in Statement.Attributes) {
-                            if (a.Name != null && Convert.ToString(a.Name).EndsWith("emailaddress")) {
+                            if (a.Name != null && Convert.ToString(a.Name).EndsWith("claims/name")) {
                                 emailAddress = ((AttributeValue)a.Values[0]).ToString();
+                                break;
                             }
                         }
                     }
@@ -38,8 +39,6 @@ public partial class ConsumerService : System.Web.UI.Page {
             } else {
                 throw new ApplicationException("No encrypted assertions found in the SAML response");
             }
-
-           
         } catch (Exception exception) {
             Response.Write(exception.Message);
         }

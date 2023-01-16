@@ -64,6 +64,7 @@ public partial class list_update : Root {
         txtDebitGLCode.Text = dr["DEBITGLCode"].ToString();
         txtOfficeCode.Text = dr["OFFICEMYOBCODE"].ToString();
         txtMYOBBranch.Text = dr["OFFICEMYOBBRANCH"].ToString();
+        txtMaxAmount.Text = DB.readString(dr["MaxAmount"]);
         Utility.setListBoxItems(ref lstAmountValue, dr["AMOUNTTYPEID"].ToString());
         Utility.setListBoxItems(ref lstStatus, Convert.ToInt32(dr["ISACTIVE"]).ToString());
         if (pCompany.Visible)
