@@ -38,7 +38,7 @@ namespace Paymaker {
                 S.CODE, SUM(GRAPHCOMMISSION) AS CALCULATEDAMOUNT, S.SETTLEMENTDATE, 
                 MAX(S.CONJUNCTIONALCOMMISSION) AS CONJUNCTIONALCOMMISSION, 
                     ISNULL((SELECT SUM(SE.CALCULATEDAMOUNT) FROM SALEEXPENSE SE JOIN LIST L ON SE.EXPENSETYPEID = L.ID 
-                            AND  (L.NAME = '6% Incentive' OR L.NAME = 'Gifts' or L.NAME = 'Unauth Advertising' or L.NAME = 'Auctioneer Fee')
+                            AND  (L.NAME like '%Incentive%' OR L.NAME like 'Gifts%' or L.NAME = 'Unauth Advertising' or L.NAME = 'Auctioneer Fee')
                 WHERE SE.SALEID = S.ID), 0) as EXPENSES, 0.00 as NETCOMMISSION
                 FROM SALE S
                 JOIN SALESPLIT SS ON SS.SALEID = S.ID AND S.STATUSID = 1 AND SS.RECORDSTATUS = 0
