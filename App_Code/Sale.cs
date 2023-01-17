@@ -998,7 +998,7 @@ public class Sale {
 
         string szSQL = string.Format(@"
             SELECT ID AS EXPENSETYPEID, AMOUNT, AMOUNTTYPEID
-            FROM LIST WHERE LISTTYPEID = {0} AND NAME = '6% Incentive' AND ISACTIVE = 1", (int)ListType.OffTheTop);
+            FROM LIST WHERE LISTTYPEID = {0} AND NAME like '%Incentive%' AND ISACTIVE = 1", (int)ListType.OffTheTop);
         DataSet ds = DB.runDataSet(szSQL);
 
         foreach (DataRow oRow in ds.Tables[0].Rows) {
