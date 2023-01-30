@@ -103,7 +103,7 @@ public class ClientMenu {
             oM.addMenuItem("Import Box Dice", "../boxdice/import.aspx");
         }
      
-        oM.addMenu("Logout", "../login.aspx");
+        oM.addMenu("Logout", "../acs/logout.aspx");
 
         if (G.User.IsAdmin) {
             oM.lUserRoles.Add(MenuRole.Admin);
