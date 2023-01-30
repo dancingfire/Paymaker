@@ -492,14 +492,13 @@
         }
 
         function deleteAgentExpense(thisID, intID) {
-            if (jQuery($("#" + thisID.id).parent().parent().attr('id') == 'uncategorized')) {
-                jQuery($("#" + thisID.id).parent().parent().remove());
-                szDelIDs = $("#hdDelAgentExpenseIDs").val();
-                if (szDelIDs != "")
-                    szDelIDs += ",";
-                szDelIDs += intID;
-                $("#hdDelExpenseIDs").val(szDelIDs)
-            }
+            console.log(thisID + ' ' + intID);
+            jQuery($("#" + thisID.id).parent().parent().remove());
+            szDelIDs = $("#hdDelAgentExpenseIDs").val();
+            if (szDelIDs != "")
+                szDelIDs += ",";
+            szDelIDs += intID;
+            $("#hdDelAgentExpenseIDs").val(szDelIDs)
             updateCalculations();
         }
 

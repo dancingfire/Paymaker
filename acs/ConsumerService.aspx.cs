@@ -3,6 +3,7 @@
 using ComponentPro.Saml2;
 using System;
 using System.Net.Mail;
+using System.Web;
 using System.Web.UI;
 
 public partial class ConsumerService : System.Web.UI.Page {
@@ -43,6 +44,10 @@ public partial class ConsumerService : System.Web.UI.Page {
             Response.Write(exception.Message);
         }
 
+        if (String.IsNullOrEmpty(emailAddress)) {
+            Response.Write("You do not currently have access to GEARs. Please contact the site administrator to add you to the system. The email address we tried was: " + emailAddress);
+            Response.End();
+        }
         bool blnLoggedIn = UserLogin.loginUserByEmail(emailAddress);
         if (!blnLoggedIn) {
             Response.Write("You do not currently have access to GEARs. Please contact the site administrator to add you to the system. The email address we tried was: " + emailAddress);
