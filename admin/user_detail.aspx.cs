@@ -15,7 +15,7 @@ public partial class user_detail : Root {
         if (chkViewInactive.Checked)
             szInactive = "";
         string szSQL = string.Format(@"
-            SELECT U.ID, U.INITIALSCODE + ' ' + U.FIRSTNAME + ' ' + U.LASTNAME AS NAME, R.NAME AS ROLE,
+            SELECT U.ID, U.INITIALSCODE + ' ' + U.FIRSTNAME + ' ' + U.LASTNAME AS NAME, R.NAME AS ROLE, U.EMAIL,
                 CASE WHEN U.ISACTIVE = 0 THEN 'Inactive' ELSE 'Active' END AS STATUS, U.ISACTIVE, T.FIRSTNAME + ' ' + T.LASTNAME AS TEAM,
                 LEFT(O.NAME, 2) AS OFFICE, CASE WHEN S.ID = 0 THEN '' ELSE S.FIRSTNAME + ' ' + S.LASTNAME END AS SUPERVISOR
             FROM DB_USER U

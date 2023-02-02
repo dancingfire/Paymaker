@@ -310,7 +310,7 @@ public class UserLogin {
     }
 
     public static bool loginUserByEmail(string Email) {
-        int UserID = DB.getScalar("SELECT ID FROM DB_USER WHERE EMAIL = '" + DB.escape(Email) + "'", -1);
+        int UserID = DB.getScalar(String.Format("SELECT ID FROM DB_USER WHERE (EMAIL = '{0}' OR Login = '{0}') AND ISDELETED = 0 AND ISACTIVE = 1 AND LOGIN != '' ORDER BY ROLEID", DB.escape(Email)), -1);
         if (UserID < 0) {
             return false;
         }
@@ -349,8 +349,8 @@ public class UserLogin {
         using (SqlDataReader dr = DB.runReader(szSQL)) {
             if (dr.HasRows) {
                 dr.Read();
-                UserLogin.writeLog(UserID, Convert.ToString(dr["LOGIN"]), true);
-                HttpContext.Current.Session["LOGIN"] = Convert.ToString(dr["LOGIN"]);
+                UserLogin.writeLog(UserID, Convert.ToString(dr["EMAIL"]), true);
+                HttpContext.Current.Session["LOGIN"] = Convert.ToString(dr["EMAIL"]);
                 G.User.UserName = Convert.ToString(dr["FirstName"] + " " + dr["LastName"]);
                 G.User.AdminPAForThisUser = DB.readInt(dr["ADMINPAFORUSERID"]);
                 G.User.Email = Convert.ToString(dr["EMAIL"]);
