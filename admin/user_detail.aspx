@@ -30,7 +30,7 @@
                 scrollCollapse: true,
                 fixedHeader: true,
                 initComplete: function () {
-                    this.api().columns([1, 3]).every(function () {
+                    this.api().columns([2, 4]).every(function () {
                         var column = this;
                         var title = this.header().innerHTML.toLowerCase();
                         var select = $('<select class="TableFilter"><option value="">All ' + title + 's...</option></select>')
@@ -60,6 +60,12 @@
         .dt-buttons {
             display: inline
         }
+
+        .NoOverFlow {
+            white-space: nowrap; 
+            text-overflow:ellipsis; 
+            overflow: hidden;
+        }
     </style>
 </head>
 <body class='AdminPage'>
@@ -72,11 +78,12 @@
             
                 <asp:GridView ID="gvList" runat="server" AutoGenerateColumns="false"
                     OnRowDataBound="gvList_RowDataBound" BorderWidth="0"
-                    EmptyDataText="No Data Found" EnableViewState="false">
+                    EmptyDataText="No Data Found" EnableViewState="false" style="table-layout: fixed">
                     <Columns>
-                        <asp:BoundField DataField="Name" HeaderText="Name" HeaderStyle-Width="30%" />
-                        <asp:BoundField DataField="Role" HeaderText="Role" HeaderStyle-Width="30%" />
-                        <asp:BoundField DataField="Team" HeaderText="Team" HeaderStyle-Width="20%" />
+                        <asp:BoundField DataField="Name" HeaderText="Name" HeaderStyle-Width="25%" />
+                        <asp:BoundField DataField="Email" HeaderText="Email" HeaderStyle-Width="30%"  ItemStyle-CssClass="NoOverFlow" />
+                        <asp:BoundField DataField="Role" HeaderText="Role" HeaderStyle-Width="15%" />
+                        <asp:BoundField DataField="Team" HeaderText="Team" HeaderStyle-Width="10%" />
                         <asp:BoundField DataField="Office" HeaderText="Office" HeaderStyle-Width="10%" ItemStyle-HorizontalAlign="Center" />
                         <asp:BoundField DataField="Supervisor" HeaderText="Supervisor" HeaderStyle-Width="10%"  />
                     </Columns>
