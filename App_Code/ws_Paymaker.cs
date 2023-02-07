@@ -24,9 +24,14 @@ public class ws_Paymaker : System.Web.Services.WebService {
     public void saveFavouriteReport(string Report) {
         DB.runNonQuery(String.Format("INSERT INTO USERREPORT(USERID, REPORTNAME) SELECT {0}, '{1}' WHERE NOT EXISTS (SELECT * FROM USERREPORT WHERE USERID = {0} AND REPORTNAME = '{1}')", G.User.UserID, Report));
     }
+    
+    /// <summary>
+    /// Removed the template from the list of templated transactions
+    /// </summary>
+    /// <param name="ID"></param>
     [WebMethod(EnableSession = true)]
-    public void removeFavouriteReport(string Report) {
-        DB.runNonQuery(String.Format("DELETE FROM USERREPORT WHERE USERID = {0} AND REPORTNAME = '{1}'", G.User.UserID, Report));
+    public void removeTemplatedTX(int ID) {
+        DB.runNonQuery(String.Format("UPDATE USERTX SET ISTEMPLATE = 0 WHERE ID = {0}", ID));
     }
 
     [WebMethod(EnableSession = true)]

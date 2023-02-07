@@ -91,6 +91,7 @@ public partial class tx_update : Root {
         else
             rbIncome.Checked = true;
 
+        chkIsTemplate.Checked = tx.IsTemplate;
         //calc the TotalAmount
         ws_Paymaker ows_Paymaker = new ws_Paymaker();
         string szResult = ows_Paymaker.getBudgetAmount(tx.AccountID, tx.UserID, rbExpense.Checked);
@@ -159,6 +160,8 @@ public partial class tx_update : Root {
             oSQL.add("ACCOUNTID", lstExpenseAccounts.SelectedValue);
         else
             oSQL.add("ACCOUNTID", lstIncomeAccounts.SelectedValue);
+        
+        oSQL.add("ISTEMPLATE", chkIsTemplate);
         oSQL.add("USERID", lstUserID.SelectedValue);
         oSQL.add("COMMENT", txtComment.Text);
 

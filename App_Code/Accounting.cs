@@ -85,6 +85,11 @@ public class UserTX {
         get { return szComment; }
     }
 
+    /// <summary>
+    /// Will this tx be included as a templated tx 
+    /// </summary>
+    public bool IsTemplate { get; set; } 
+    
     public string DebitGLCode {
         get { return szDebitGLCode; }
     }
@@ -127,6 +132,7 @@ public class UserTX {
             dtTX = Convert.ToDateTime(dr["TXDATE"]);
             blnShowExGST = Convert.ToBoolean(dr["SHOWEXGST"]);
             blnLockCodes = Convert.ToBoolean(dr["OVERRIDEGLCODES"]);
+            IsTemplate = Convert.ToBoolean(dr["IsTemplate"]);
             if (dr["MYOBEXPORTID"] != System.DBNull.Value)
                 intMYOBExportID = Convert.ToInt32(dr["MYOBEXPORTID"]);
         }
@@ -160,7 +166,7 @@ public class UserTX {
             JOIN LIST L ON L.ID = TX.ACCOUNTID
             JOIN DB_USER U ON U.ID = TX.USERID AND TX.ISDELETED = 0
             LEFT JOIN LIST C ON C.ID = TX.TXCATEGORYID
-            WHERE TX.TXDATE BETWEEN '{0} 00:00:00' AND '{1} 23:59:59'
+            WHERE TX.TXDATE BETWEEN '{0} 00:00:00' AND '{1} 23:59:59' AND TX.ISDELETED = 0
             ORDER BY [USER], TX.TXDATE DESC"
             , Utility.formatDate(dtStartDate), Utility.formatDate(dtEndDate));
 

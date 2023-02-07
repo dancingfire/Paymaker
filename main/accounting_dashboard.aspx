@@ -7,9 +7,25 @@
     <script type="text/javascript">
         intHeight = $(window).height() - 100;
 
-        function viewMultipleTx(intID) {
+        function viewMultipleTx() {
             $('#mTx').on('show.bs.modal', function () {
-                $('#fTx').attr("src", "multiple_tx_update.aspx?IsPopup=true&blnReadOnly=" + blnReadOnly + "&intItemID=" + intID);
+                $('#fTx').attr("src", "multiple_tx_update.aspx?IsPopup=true");
+            });
+            $('#mTx').modal({ 'backdrop': 'static' });
+
+            var winHeight = $(window).height();
+
+            $("#mTx .modal-dialog").css({ width: '99%' });
+            $("#mTx .modal-body").css({ height: winHeight - 100 });
+            $("#fTx").css({ height: winHeight - 110 });
+            $('#mTx').modal('show');
+
+            return false;
+        }
+
+        function viewTemplateTx() {
+            $('#mTx').on('show.bs.modal', function () {
+                $('#fTx').attr("src", "templated_tx_update.aspx?IsPopup=true");
             });
             $('#mTx').modal({ 'backdrop': 'static' });
 
@@ -65,8 +81,9 @@
           
             <div class='GridFilter' id='dDrigFilter' style="padding: 10px">
                  <span class='RightActionPanel' style="width: 400px">
-                    <asp:Button ID="btnInsert" runat="server" Text="Insert" CssClass="Button btn" OnClientClick=" return viewTx(-1);" UseSubmitBehavior="false" />
-                    <asp:Button ID="btnInsertMultiple" runat="server" Text="Insert multiple" CssClass="Button btn" OnClientClick=" return viewMultipleTx(-100);" UseSubmitBehavior="false" Style="margin-left: 10px" />
+                    <asp:Button ID="btnInsert" runat="server" Text="Insert" CssClass="Button btn" OnClientClick=" return viewTx(-1);" UseSubmitBehavior="false" Style="margin-left: 10px; padding:4px; padding-left: 6px; padding-right: 6px;"/>
+                    <asp:Button ID="btnInsertMultiple" runat="server" Text="Multiple" CssClass="Button btn" OnClientClick=" return viewMultipleTx();" UseSubmitBehavior="false" Style="margin-left: 10px; padding:4px; padding-left: 6px; padding-right: 6px;" />
+                    <asp:Button ID="btnTemplated" runat="server" Text="Recurring" CssClass="Button btn" OnClientClick=" return viewTemplateTx();" UseSubmitBehavior="false" Style="margin-left: 10px; padding:4px; padding-left: 6px; padding-right: 6px;" />
                 </span>
 
                 <asp:Button ID="btnRefresh" runat="server" Text="Refresh" OnClick="btnRefresh_Click" Style="display: none" />
