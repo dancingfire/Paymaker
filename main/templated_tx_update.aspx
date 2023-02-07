@@ -1,4 +1,4 @@
-<%@ Page Language="c#" Inherits="multiple_tx_update" EnableViewState="True" AutoEventWireup="true" CodeFile="multiple_tx_update.aspx.cs" %>
+<%@ Page Language="c#" Inherits="templated_tx_update" EnableViewState="True" AutoEventWireup="true" CodeFile="templated_tx_update.aspx.cs" %>
 
 <!DOCTYPE html>
 <html>
@@ -77,6 +77,8 @@
         function getBudgetAmount(Row) {
             intAccountID = getSelectedAccount(Row);
             blnIsExpense = $("#lstType" + Row).val() == "EXPENSE";
+            if (intAccountID == null)
+                return;
             if (intAccountID != "-1" && $("lstUserID" + Row).val != "-1") {
                 intAjaxRow = Row;
                 callWebMethod("../web_services/ws_Paymaker.asmx", "getBudgetAmount", ["AccountID", intAccountID, "UserID", $("#lstUserID" + Row).val(), "blnIsExpense", blnIsExpense], getBudgetAmountSuccess);
@@ -251,13 +253,44 @@
             $('.TxCategoryList').html(szInnerHtml + '<option value="' + intID + '">' + szTitle + '</option>');
         }
 
+        function fillDefaults(o) {
+            console.log(o.USERID);
+            $("#lstUserID" + intRow).val(o.USERID).trigger('change');
+            $("#lstIncomeAccounts" + intRow).val(o.ACCOUNTID).trigger('change');
+            $("#lstExpenseAccounts" + intRow).val(o.ACCOUNTID).trigger('change');
+            getSelectedAccount(intRow);
+            if ($("#lstExpenseAccounts" + intRow).val() == null) {
+                $("#lstType" + intRow).val("INCOME").trigger('change');
+            }
+            $("#txtAmount" + intRow).val(o.TOTALAMOUNT);
+            $("#chkIncludeGST" + intRow).prop('checked', !o.SHOWEXGST);
+            $("#txtFletcherContribution" + intRow).val(o.FLETCHERCONTRIBUTION);
+            $("#lstAmountType" + intRow).val(o.AMOUNTTYPEID).trigger('change');
+            $("#txtUserAmount" + intRow).val(o.AMOUNT);
+            $("#lstCategory" + intRow).val(o.TXCATEGORYID).trigger('change');
+            $("#txtComment" + intRow).val(o.COMMENT);
+            $("#txtGLCredit" + intRow).val(o.CREDITGLCODE).trigger('change');
+            $("#txtJobCredit" + intRow).val(o.CREDITJOBCODE).trigger('change');
+            $("#txtGLDebit" + intRow).val(o.DEBITGLCODE).trigger('change');
+            $("#txtJobDebit" + intRow).val(o.DEBITJOBCODE).trigger('change');
+            $("#chkOverrideCodes" + intRow).prop('checked', o.OVERRIDEGLCODES);
+        }
+        
         function loadPage() {
             createCalendar("txtTxDate");
-            createTx();
+            data = JSON.parse(TX);
+            console.log(data);
+            for (i in data) {
+                o = data[i];
+                console.log(o);
+                createTx();
+                fillDefaults(o)
+            }
             $('form').submit(function () {
                 blnAllowClose = true;
                 window.onbeforeunload = null;
             });
+            
          
         }
     </script>
@@ -280,9 +313,9 @@
                 <tr class="TableHeader">
                     <th style="width: 8%">User</th>
                     <th style="width: 6%">Type</th>
-                    <th style="width: 9%">Account</th>
+                    <th style="width: 10%">Account</th>
                     <th style="width: 4%">Budget amount</th>
-                    <th style="width: 5%">Total amount</th>
+                    <th style="width: 4%">Total amount</th>
                     <th style="width: 4%">Exclude GST</th>
                     <th style="width: 5%">Total amount (ex GST)</th>
                     <th style="width: 6%">Fletcher's contrib</th>
@@ -326,7 +359,7 @@
                         <asp:Label ID="lblAmountExGST_ROWNUM" runat="server" CssClass="Entry EntryPos" Width="60px"></asp:Label>
                     </td>
                     <td style="width: 90px">
-                        <asp:TextBox ID="txtFletcherContribution_ROWNUM" runat="server" CssClass="Entry EntryPos" Style="width: 35px;" TabIndex="100"></asp:TextBox>
+                        <asp:TextBox ID="txtFletcherContribution_ROWNUM" runat="server" CssClass="Entry EntryPos" Style="width: 45px;" TabIndex="100"></asp:TextBox>
                         <asp:DropDownList ID="lstAmountType_ROWNUM" runat="server" CssClass="Entry EntryPos" onchange="checkValidation();" Style="width: 35px" TabIndex="100">
                             <asp:ListItem Text="%" Value="1"></asp:ListItem>
                             <asp:ListItem Text="$" Value="0"></asp:ListItem>

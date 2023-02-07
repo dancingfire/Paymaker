@@ -40,6 +40,7 @@ public class ClientMenu {
         oM.addMenuItem("Setup user budgets", "../main/user_account_update.aspx");
         oM.addMenuItem("Import EOY values", "../admin/import_values.aspx");
         oM.addMenuItem("Payroll settings", "../admin/sales_settings.aspx", MenuRole.Admin);
+        oM.addMenuItem("Templated TXs", "../main/templated_tx.aspx", MenuRole.Admin);
         oM.addSpacer();
         oM.addMenuItem("Set current pay period", "../admin/pay_period_detail.aspx");
         if (Payroll.CanAccess) {

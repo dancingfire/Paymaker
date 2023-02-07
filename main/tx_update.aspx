@@ -277,7 +277,14 @@
             <asp:Label ID="Label6" runat="server" CssClass="Label LabelPos">Comment</asp:Label>
             <asp:TextBox CssClass="Entry EntryPos" ID="txtComment" runat="server" Text="" TextMode="MultiLine"
                 Rows="10"></asp:TextBox>
-            <br class="Align" />
+             <br class="Align" />
+            
+            <asp:Label ID="Label13" runat="server" CssClass="Label LabelPos">Use as template</asp:Label>
+            <asp:CheckBox ID="chkIsTemplate" CssClass="Entry EntryPos" runat="server" />
+             <br class="Align" />
+            
+             
+            
             <asp:Panel ID="pReversal" runat="server" CssClass="panel TableHeader" style="margin-top: 15px; width: 400px">
                 
                 <asp:Label ID="Label12" runat="server" CssClass="Label LabelPos">Reversal date</asp:Label>
