@@ -14,10 +14,9 @@ public partial class payroll_pdf_files : Root {
         // Only Admin staff can access this page
         if (!G.User.IsAdmin) // Admin
             throw new Exception("Page restricted to only Admin staff");
-        if (!IsPostBack) {
-            getLocalDirectoriesAndFiles(cDIRECTORYPATH, "timesheets_1", tvDirectoryList.Nodes[0]);
-            getLocalDirectoriesAndFiles(cDIRECTORYPATH, "timesheets_2", tvTimesheet2.Nodes[0]);
-        }
+        
+        getLocalDirectoriesAndFiles(cDIRECTORYPATH, "timesheets_1", tvDirectoryList.Nodes[0]);
+        getLocalDirectoriesAndFiles(cDIRECTORYPATH, "timesheets_2", tvTimesheet2.Nodes[0]);
     }
 
     private void getLocalDirectoriesAndFiles(string szPath, string FileFilter, TreeNode node) {
@@ -45,7 +44,7 @@ public partial class payroll_pdf_files : Root {
                 newNode.NavigateUrl = file.FullName.Replace(cDIRECTORYPATH, cWEBPATH);
             }
             node.ChildNodes.Add(newNode);
-            if (FileCount > 20)
+            if (!chkShowAll.Checked && FileCount > 20)
                 break;
         }
     }
