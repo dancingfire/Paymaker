@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="54d2f5ae-9ddc-455f-ac9c-26157f716635" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+<ReferenceGroup xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="e9c08fed-1997-4a3c-ac0c-179529e60511" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
   <ClientOptions>
     <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
     <EnableDataBinding>true</EnableDataBinding>
     <ExcludedTypes />
     <ImportXmlTypes>false</ImportXmlTypes>
@@ -18,11 +19,10 @@
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="http://webfarm.campaigntrack.com.au/CtWebService2/Integration.asmx" Protocol="http" SourceId="1" />
+    <MetadataSource Address="https://webfarm.campaigntrack.com.au/CtWebService2/Integration.asmx?wsdl" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="Integration.disco" MetadataType="Disco" ID="deffa28c-5783-464b-95e8-19ba940b2674" SourceId="1" SourceUrl="http://webfarm.campaigntrack.com.au/CtWebService2/Integration.asmx?disco" />
-    <MetadataFile FileName="Integration.wsdl" MetadataType="Wsdl" ID="07b9b5b3-fac2-4b17-937a-2d09b8b9c9af" SourceId="1" SourceUrl="http://webfarm.campaigntrack.com.au/CtWebService2/Integration.asmx?wsdl" />
+    <MetadataFile FileName="Integration.wsdl" MetadataType="Wsdl" ID="4940e745-a560-44e5-b6ca-61bf50ed1f05" SourceId="1" SourceUrl="https://webfarm.campaigntrack.com.au/CtWebService2/Integration.asmx?wsdl" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
