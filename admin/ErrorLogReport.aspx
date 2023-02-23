@@ -1,7 +1,7 @@
 <%@ Page Language="c#" Inherits="ErrorLogReport" CodeFile="ErrorLogReport.aspx.cs"
     AutoEventWireup="true" AspCompat="true" %>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!DOCTYPE HTML>
 <html>
 <head runat="server" id="Head">
     <title>Report</title>

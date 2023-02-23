@@ -40,9 +40,9 @@ namespace ExceptionHandler {
                 if (ex.Message.Contains(szMessage))
                     return; // An error that doesn't affect the app.
             }
+            saveToDB(ex);
 
             if (szEmails.Length > 0) {
-                saveToDB(ex);
                 sendEmail(ex, szEmailExtraInfo);
             }
         }
