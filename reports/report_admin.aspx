@@ -237,6 +237,7 @@
                     $("#spCompany").show();
                     break;
                 case "MONTHLYSALES":
+                case "MONTHLYSALESAGENTEXPENSES":
                 case "NATIONALSALESAWARD":
                 case "MONTHLYSALESDETAIL":
                     $("#lstFinancialYear option[value='']").remove();
@@ -648,6 +649,11 @@
                     var szParam = getFilterValues();
                     szParam += getSelectedUser(false);
                     break;
+                case "MONTHLYSALESAGENTEXPENSES":
+                    var szSrc = "monthly_sales_agent_expenses.aspx";
+                    var szParam = getFilterValues();
+                    szParam += getSelectedUser(false);
+                    break;
                 case "MONTHLYSALESDETAIL":
                     var szSrc = "monthly_sales_detail.aspx";
                     var szParam = getFilterValues();
@@ -937,7 +943,7 @@
                 </div>
                 <div id="dUserReports" style="display:none">
                     <div class="ReportColHeader">Reports</div>
-                        <div class='ReportLink'><i class="far fa-star" data-report="COMMISSION"></i><a href='javascript: selectReport("COMMISSION")'>Commission statement - NEW</a></div>
+                        <div class='ReportLink'><i class="far fa-star" data-report="COMMISSION"></i><a href='javascript: selectReport("COMMISSION")'>Commission statement</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="EXPENSESUMMARY"></i><a href='javascript: selectReport("EXPENSESUMMARY")'>Expense summary</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="MONTHLYSALES"></i><a href='javascript: selectReport("MONTHLYSALES")'>Monthly sales</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="MONTHLYSALESBYAGENT"></i><a href='javascript: selectReport("MONTHLYSALESBYAGENT")'>Monthly sales by agent</a></div>
@@ -966,6 +972,7 @@
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="INCENTIVE"></i><a href='javascript: selectReport("INCENTIVE")'>Incentive summary</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="MONTHLYRETAINER"></i><a href='javascript: selectReport("MONTHLYRETAINER")'>Monthly retainer</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="MONTHLYSALES"></i><a href='javascript: selectReport("MONTHLYSALES")'>Monthly sales</a></div>
+                        <div class='ReportLink'><i class="far fa-star MyReports" data-report="MONTHLYSALESAGENTEXPENSES"></i><a href='javascript: selectReport("MONTHLYSALESAGENTEXPENSES")'>Monthly sales - agent expenses</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="MONTHLYSALESDETAIL"></i><a href='javascript: selectReport("MONTHLYSALESDETAIL")'>Monthly sales detail (graph totals)</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="MONTHLYSALESBYAGENT"></i><a href='javascript: selectReport("MONTHLYSALESBYAGENT")'>Monthly sales by agent</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="MONTHLYSALESBYPAYPERIOD"></i><a href='javascript: selectReport("MONTHLYSALESBYPAYPERIOD")'>Monthly sales by pay period</a></div>
