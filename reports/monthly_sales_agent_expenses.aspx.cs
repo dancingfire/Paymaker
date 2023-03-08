@@ -89,27 +89,34 @@ public class MonthlySalesAgentExpenses : Report {
         string szUserActive = " AND USR.ISACTIVE = 1 ";
         if (blnIncludeInactive)
             szUserActive = "";
-        string szOrderBy = " SUBSTRING(S.ADDRESS, CHARINDEX(' ', S.ADDRESS) + 1, LEN(S.ADDRESS))";
+        string szOrderBy = " S.ADDRESS ";
         if (G.Settings.ClientID == global::ClientID.Eltham)
             szOrderBy = "S.SALEDATE";
-        DB.runNonQuery("update sale set AuctioneerID = (select top 1 AuctioneerID from Fletchers_BoxDiceAPI.dbo.SALESLISTING SL where SL.ID = sale.BnDSALEID)where AuctioneerID is null ");
+        
         string szSQL = string.Format(@"
                 SELECT  S.*, ASE.AMOUNT AS EXPENSEAMOUNT, L.NAME AS EXPENSETYPE
                 FROM 
                 ( 
                     SELECT S.ID, MAX(S.ADDRESS) AS ADDRESS, CAST(CAST(DATEPART(YEAR, S.SALEDATE) AS VARCHAR) + RIGHT('0' + CAST(DATEPART(MONTH, S.SALEDATE) AS VARCHAR), 2) AS INT) AS GROUPING,
                     MAX(S.SALEDATE) AS SALEDATE, MAX(S.SALEPRICE) as SALEPRICE, MAX(S.SETTLEMENTDATE) AS SETTLEMENTDATE, MAX(S.GROSSCOMMISSION) as GROSSCOMMISSION, 
-                    MAX(S.CONJUNCTIONALCOMMISSION) AS CONJUNCTIONALCOMMISSION,
+                    MAX(S.CONJUNCTIONALCOMMISSION) AS CONJUNCTIONALCOMMISSION, 
                     MAX(USS.GRAPHCOMMISSION) AS CALCULATEDAMOUNT, MAX(L_OFFICE.NAME) AS Office, MAX(A.INITIALSCODE) AS AUCTIONEER,
                     MAX(LIST.INITIALS) AS LISTER, MAX(MANAGE.INITIALS) AS MANAGER, MAX(SELL.INITIALS) AS SELLER, MAX(LEAD.INITIALS) AS LEAD,
-                    ROUND(SUM(USS.CALCULATEDAMOUNT)/MAX(S.GROSSCOMMISSION) * 100, 0) AS CommissionPercentage
+                    MAX(SS_COMM.COMMISSIONPERCENT) AS CommissionPercentage, MAX(STATUS.NAME),  AS ENTITLEMENTDATE
                     FROM SALE S
                     JOIN SALESPLIT SS ON SS.SALEID = S.ID AND S.STATUSID IN (1, 2) AND SS.RECORDSTATUS < 1
                     JOIN USERSALESPLIT USS ON USS.SALESPLITID = SS.ID AND USS.RECORDSTATUS < 1
                     JOIN DB_USER USR ON USR.ID = USS.USERID AND USR.ID > 0
                     JOIN LIST L_OFFICE ON L_OFFICE.ID = USR.OFFICEID AND L_OFFICE.ISACTIVE = 1
                     JOIN LIST L_COMPANY ON L_COMPANY.ID = L_OFFICE.COMPANYID
-                    LEFT JOIN DB_USER A ON A.ID = S.AUCTIONEERID
+                    JOIN Fletchers_BoxDiceAPI.dbo.SALESLISTING sl on s.BnDSALEID = sl.id
+                    LEFT JOIN DB_USER A ON A.ID = SL.AUCTIONEERID
+                    LEFT JOIN SALESSTATUS STATUS ON STATUS.ID = S.STATUSID
+                    JOIN (
+						SELECT SS.SALEID, SUM(SS.AMOUNT) AS COMMISSIONPERCENT
+						FROM SALESPLIT SS  WHERE SS.COMMISSIONTYPEID != 35
+						GROUP BY SS.SALEID
+						) AS SS_COMM ON SS_COMM.SALEID = S.ID
                     LEFT JOIN (
 					    SELECT SS.SALEID, dbo.ufCommissionInitials(sS.SaleID, 6) as INITIALS
 					    FROM  SALESPLIT SS 
@@ -143,6 +150,7 @@ public class MonthlySalesAgentExpenses : Report {
 					    JOIN DB_USER USR ON USR.ID = USS.USERID AND USR.ID > 0
 					    WHERE L_SALESPLIT.NAME = 'SELLER'
 					    GROUP BY SS.SALEID,  L_SALESPLIT.NAME)  as SELL ON SELL.SALEID = S.ID
+                    
                     WHERE {0} AND SS.CALCULATEDAMOUNT > 0 {1}
                     GROUP BY CAST(CAST(DATEPART(YEAR, S.SALEDATE) AS VARCHAR) + RIGHT('0' + CAST(DATEPART(MONTH, S.SALEDATE) AS VARCHAR), 2) AS INT), S.ID, SUBSTRING(S.ADDRESS, CHARINDEX(' ', S.ADDRESS) + 1, LEN(S.ADDRESS))
                 ) AS S LEFT JOIN AGENTSALEEXPENSE ASE ON ASE.SALEID = S.ID 
