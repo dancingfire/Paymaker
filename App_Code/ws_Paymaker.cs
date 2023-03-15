@@ -24,7 +24,12 @@ public class ws_Paymaker : System.Web.Services.WebService {
     public void saveFavouriteReport(string Report) {
         DB.runNonQuery(String.Format("INSERT INTO USERREPORT(USERID, REPORTNAME) SELECT {0}, '{1}' WHERE NOT EXISTS (SELECT * FROM USERREPORT WHERE USERID = {0} AND REPORTNAME = '{1}')", G.User.UserID, Report));
     }
-    
+
+    [WebMethod(EnableSession = true)]
+    public void removeFavouriteReport(string Report) {
+        DB.runNonQuery(String.Format("DELETE USERREPORT WHERE USERID = {0} AND REPORTNAME = '{1}'", G.User.UserID, DB.escape(Report)));
+    }
+
     /// <summary>
     /// Removed the template from the list of templated transactions
     /// </summary>
