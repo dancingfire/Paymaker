@@ -18,12 +18,13 @@ namespace Paymaker {
         private int MaxSalesValue = 0;
         private DateTime dtStart = DateTime.MaxValue;
         private DateTime dtEnd = DateTime.MaxValue;
-
+        int NumberOfPeople = 0;
         protected void Page_Load(object sender, System.EventArgs e) {
             blnShowMenu = false;
             intRoleID = Valid.getInteger("szRoleID");
             blnPrint = Valid.getBoolean("blnPrint", false);
             blnExport = Valid.getText("blnPrint", "") == "EXPORT";
+            NumberOfPeople = Valid.getInteger("szNumberOfPeople", 1000);    
             setChart();
             bindData();
         }
@@ -65,9 +66,10 @@ namespace Paymaker {
                 having MAX(S.GROSSCOMMISSION) > 0
                 )
 
-                SELECT USERID, '' AS INITIALSCODE, 0 AS ROLEID, SUM(CALCULATEDAMOUNT) AS CALCULATEDAMOUNT
+                SELECT TOP {3} USERID, '' AS INITIALSCODE, 0 AS ROLEID, SUM(CALCULATEDAMOUNT) AS CALCULATEDAMOUNT
                 FROM CTE
                 GROUP BY USERID
+                ORDER BY SUM(CALCULATEDAMOUNT) DESC
             
                 SELECT USR.ID, USR.INITIALSCODE , ISNULL(T.AMOUNT, 0) AS OFFSET
                 FROM DB_USER USR
@@ -76,7 +78,7 @@ namespace Paymaker {
                 WHERE 1=1 {1} AND USR.ISPAID = 1
                 ;
 
-               ", szSQLFilter, szCompanyFilter, szReferralSQL);
+               ", szSQLFilter, szCompanyFilter, szReferralSQL, NumberOfPeople);
             DataSet ds = DB.runDataSet(szSQL);
             formatDataSet(ds);
             DataView dv = ds.Tables[0].DefaultView;

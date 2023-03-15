@@ -337,6 +337,7 @@
                     break;
                 case "TOPPERFORMER":
                     $("#spRole").show();
+                    $("#spNumberOfPeople").show();
                     $("#spCompany").show();
                     $("#spDate").show();
                     $("#spReferral").show();
@@ -427,6 +428,7 @@
             szParam += "&szFletcherOrAgent=" + $("#lstFletcherOrAgent").val();
             szParam += "&szOffTheTopID=" + $("#lstOffTheTop").val();
             szParam += "&szRoleID=" + $("#lstRole").val();
+            szParam += "&szNumberOfPeople=" + $("#lstNumberOfPeople").val();
             szParam += "&szFY=" + $("#lstFinancialYear").val();
             szParam += "&szQuarter=" + $("#lstQuarter").val();
             szParam += "&szMonth=" + $("#lstMonth").val();
@@ -1125,7 +1127,16 @@
                                 <asp:TextBox ID="txtStartDate" runat="server" CssClass="Entry" Width="100"></asp:TextBox>
                                 &nbsp;to &nbsp;<asp:TextBox ID="txtEndDate" runat="server" CssClass="Entry" Width="100"></asp:TextBox>
                             </div>
-
+                            <span id="spNumberOfPeople" class="Filter">
+                                <asp:Label ID="Label19" CssClass="FilterLabel" runat="server" Text="Role">
+                                </asp:Label>
+                                <asp:ListBox ID="lstNumberOfPeople" runat="server" CssClass="Entry" SelectionMode="single" Rows="1">
+                                    <asp:ListItem Value="5">5</asp:ListItem>
+                                    <asp:ListItem Value="7">7</asp:ListItem>
+                                    <asp:ListItem Value="5000">All</asp:ListItem>
+                                </asp:ListBox>
+                                <br class='Align' />
+                            </span>
                             <span id="spRole" class="Filter">
                                 <asp:Label ID="Label7" CssClass="FilterLabel" runat="server" Text="Role">
                                 </asp:Label>
@@ -1133,7 +1144,7 @@
                                     Rows="1"></asp:ListBox>
                                 <br class='Align' />
                             </span>
-                                <span id="spReferral" class="Filter">
+                           <span id="spReferral" class="Filter">
                                 <asp:Label ID="Label18" CssClass="FilterLabel" runat="server" Text="Exclude referral expenses">
                                 </asp:Label>
                                 <asp:ListBox ID="lstExcludeReferral" runat="server" CssClass="Entry" SelectionMode="Single" Rows="1">
