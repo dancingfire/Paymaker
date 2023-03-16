@@ -336,12 +336,16 @@
                     $("#spDate").show();
                     break;
                 case "TOPPERFORMER":
+
                     $("#spRole").show();
                     $("#spNumberOfPeople").show();
                     $("#spCompany").show();
                     $("#spDate").show();
                     $("#spReferral").show();
                     $("#btnExport").show();
+                    break;
+                case "USERTOPPERFORMER":
+                    $("#spDate").show();
                     break;
                 case "TOPADVERTISING":
                     $("#spRole").show();
@@ -496,6 +500,13 @@
                     break;
                 case "TOPPERFORMER":
                     var szSrc = "top_performer.aspx";
+
+                    var szParam = getFilterValues();
+                    if (blnPrint == "EXPORT")
+                        szParam += "blnPrint=EXPORT";
+                    break;
+                case "USERTOPPERFORMER":
+                    var szSrc = "user_top_performer.aspx";
 
                     var szParam = getFilterValues();
                     if (blnPrint == "EXPORT")
@@ -946,10 +957,10 @@
                 <div id="dUserReports" style="display:none">
                     <div class="ReportColHeader">Reports</div>
                         <div class='ReportLink'><i class="far fa-star" data-report="COMMISSION"></i><a href='javascript: selectReport("COMMISSION")'>Commission statement</a></div>
-                        <div class='ReportLink'><i class="far fa-star MyReports" data-report="EXPENSESUMMARY"></i><a href='javascript: selectReport("EXPENSESUMMARY")'>Expense summary</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="MONTHLYSALES"></i><a href='javascript: selectReport("MONTHLYSALES")'>Monthly sales</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="MONTHLYSALESBYAGENT"></i><a href='javascript: selectReport("MONTHLYSALESBYAGENT")'>Monthly sales by agent</a></div>
-                        <div class='ReportLink'><i class="far fa-star MyReports" data-report="PAYROLL"></i><a href='javascript: selectReport("PAYROLL")'>Sales payroll reconcilliation</a></div>
+                        <div class='ReportLink'><i class="far fa-star MyReports" data-report="MONTHLYSALESDETAIL"></i><a href='javascript: selectReport("MONTHLYSALESDETAIL")'>Monthly sales detail (graph totals)</a></div>
+                        <div class='ReportLink'><i class="far fa-star MyReports" data-report="USERTOPPERFORMER"></i><a href='javascript: selectReport("USERTOPPERFORMER")'>Top performer</a></div>
                 </div>
                 <div id="pCampaign" class="col-sm-2 AdminReports">
                     <div class="ReportColHeader">Campaign reports</div>
@@ -1128,7 +1139,7 @@
                                 &nbsp;to &nbsp;<asp:TextBox ID="txtEndDate" runat="server" CssClass="Entry" Width="100"></asp:TextBox>
                             </div>
                             <span id="spNumberOfPeople" class="Filter">
-                                <asp:Label ID="Label19" CssClass="FilterLabel" runat="server" Text="Role">
+                                <asp:Label ID="Label19" CssClass="FilterLabel" runat="server" Text="Show Top # of People">
                                 </asp:Label>
                                 <asp:ListBox ID="lstNumberOfPeople" runat="server" CssClass="Entry" SelectionMode="single" Rows="1">
                                     <asp:ListItem Value="5">5</asp:ListItem>
