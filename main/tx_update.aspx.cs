@@ -21,9 +21,9 @@ public partial class tx_update : Root {
                 loadTx();
         }
     }
-
+    
     private void bindData() {
-        string szSQL = String.Format("SELECT ID, NAME FROM LIST WHERE LISTTYPEID = {0} ORDER BY SEQUENCENO, NAME", (int)ListType.Expense);
+        string szSQL = String.Format("SELECT ID, NAME FROM LIST WHERE LISTTYPEID IN(2, 14) ORDER BY SEQUENCENO, NAME", ListType.Expense, ListType.AgentOffTheTop);
         Utility.BindList(ref lstExpenseAccounts, DB.runReader(szSQL), "ID", "NAME");
         lstExpenseAccounts.Items.Insert(0, new ListItem("Select an account...", "-1"));
 
