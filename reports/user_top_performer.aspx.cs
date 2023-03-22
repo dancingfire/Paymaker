@@ -25,16 +25,7 @@ namespace Paymaker {
         }
 
         protected void bindData() {
-            string szSQLFilter = "";
-            if (intRoleID > -1) {
-                szSQLFilter = string.Format(@" AND U.ROLEID IN ({0}) ", intRoleID);
-            }
-            szSQLFilter += getDateFilter();
-
-            string szCompanyIDList = Valid.getText("szCompanyID", "", VT.TextNormal);
-            string szCompanyFilter = "";
-            if (!String.IsNullOrWhiteSpace(szCompanyIDList))
-                szCompanyFilter += String.Format(" AND L_OFFICE.COMPANYID IN ({0})", szCompanyIDList);
+            string szSQLFilter = getDateFilter();
 
             string szSQL = string.Format(@"
                 WITH CTE AS (
@@ -51,28 +42,39 @@ namespace Paymaker {
                     JOIN LIST L_OFFICE ON U.OFFICEID = L_OFFICE.ID
                     JOIN  DB_USER U1 ON U1.ID = U.TOPPERFORMERREPORTSETTINGS
                     WHERE U.ID > 0 AND S.STATUSID IN (1, 2) AND SS.CALCULATEDAMOUNT > 0 AND U1.ISACTIVE = 1 AND U1.ISPAID = 1
-                    {0} {1}
+                    {0} 
                 GROUP BY U.TOPPERFORMERREPORTSETTINGS, S.ID
                 having MAX(S.GROSSCOMMISSION) > 0
                 )
 
-                SELECT Top 7 USERID, '' AS INITIALSCODE, 0 AS ROLEID, SUM(CALCULATEDAMOUNT) AS CALCULATEDAMOUNT
-                FROM CTE
-                GROUP BY USERID
-                UNION 
-                SELECT  USERID, '' AS INITIALSCODE, 0 AS ROLEID, SUM(CALCULATEDAMOUNT) AS CALCULATEDAMOUNT
-                FROM CTE WHERE USERID = {2}
-                GROUP BY USERID
-                ORDER BY SUM(CALCULATEDAMOUNT) DESC;
+                SELECT * FROM
+				(
+				     (
+                        SELECT Top 7 USERID, '' AS INITIALSCODE, 0 AS ROLEID, SUM(CALCULATEDAMOUNT) AS CALCULATEDAMOUNT
+                        FROM CTE
+                        GROUP BY USERID
+                        ORDER BY SUM(CALCULATEDAMOUNT) DESC
+                    )
+
+                    UNION
+                    
+                    (   
+                        SELECT  TOP 1 USERID, '' AS INITIALSCODE, 0 AS ROLEID, SUM(CALCULATEDAMOUNT) AS CALCULATEDAMOUNT
+                        FROM CTE WHERE USERID = {1}
+                        GROUP BY USERID
+                        ORDER BY SUM(CALCULATEDAMOUNT) DESC
+                        )               
+                ) T                 
+                ORDER BY CALCULATEDAMOUNT DESC;
 
                 SELECT USR.ID, USR.INITIALSCODE , ISNULL(T.AMOUNT, 0) AS OFFSET
                 FROM DB_USER USR
                 JOIN LIST L_OFFICE ON USR.OFFICEID = L_OFFICE.ID
                 LEFT JOIN TPOFFSET2015 T ON T.USERID = USR.ID
-                WHERE 1=1 {1} AND USR.ISPAID = 1
+                WHERE USR.ISPAID = 1
                 ;
 
-               ", szSQLFilter, szCompanyFilter, G.User.UserID);
+               ", szSQLFilter, G.User.UserID);
             DataSet ds = DB.runDataSet(szSQL);
             formatDataSet(ds);
             DataView dv = ds.Tables[0].DefaultView;
