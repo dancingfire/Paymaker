@@ -6,7 +6,7 @@ using System.Web.UI.WebControls;
 
 namespace Paymaker {
 
-    public partial class user_top_performer : Root {
+    public partial class user_top_performer_monthly : Root {
         private ChartArea chtArea = new ChartArea("chtArea");
         protected int intRoleID = -1;
         protected string szFY = "";
@@ -28,66 +28,33 @@ namespace Paymaker {
             string szSQLFilter = getDateFilter();
 
             string szSQL = string.Format(@"
-                WITH CTE AS (
-                    SELECT U.TOPPERFORMERREPORTSETTINGS AS USERID, SUM(GRAPHCOMMISSION)  AS CALCULATEDAMOUNT
-                    FROM USERSALESPLIT USS
-                    JOIN SALESPLIT SS ON USS.SALESPLITID = SS.ID AND SS.RECORDSTATUS < 1 AND USS.RECORDSTATUS < 1
-                    JOIN LIST L_SPLITTYPE ON SS.COMMISSIONTYPEID = L_SPLITTYPE.ID
-                    JOIN SALE S ON SS.SALEID = S.ID
-                    LEFT JOIN (
-				        SELECT SUM(CALCULATEDAMOUNT) as TOTAL, SALEID 
-				        FROM SALEEXPENSE WHERE EXPENSETYPEID IN (140, 48)
-				        GROUP BY SALEID ) OTT ON OTT.SALEID = S.ID
-                    JOIN DB_USER U ON USS.USERID = U.ID
-                    JOIN LIST L_OFFICE ON U.OFFICEID = L_OFFICE.ID
-                    JOIN  DB_USER U1 ON U1.ID = U.TOPPERFORMERREPORTSETTINGS
-                    WHERE U.ID > 0 AND S.STATUSID IN (1, 2) AND SS.CALCULATEDAMOUNT > 0 AND U1.ISACTIVE = 1 AND U1.ISPAID = 1
-                    {0} 
-                GROUP BY U.TOPPERFORMERREPORTSETTINGS, S.ID
+                
+                SELECT U.TOPPERFORMERREPORTSETTINGS AS USERID, MAX(u.INitialsCode) as INitialsCode , SUM(GRAPHCOMMISSION)  AS CALCULATEDAMOUNT, DATEPART(yy, SaleDate) AS SALEYEAR, DATEPART(mm, SaleDate) AS SALEMONTH
+                FROM USERSALESPLIT USS
+                JOIN SALESPLIT SS ON USS.SALESPLITID = SS.ID AND SS.RECORDSTATUS < 1 AND USS.RECORDSTATUS < 1
+                JOIN LIST L_SPLITTYPE ON SS.COMMISSIONTYPEID = L_SPLITTYPE.ID
+                JOIN SALE S ON SS.SALEID = S.ID
+                LEFT JOIN (
+				    SELECT SUM(CALCULATEDAMOUNT) as TOTAL, SALEID 
+				    FROM SALEEXPENSE WHERE EXPENSETYPEID IN (140, 48)
+				    GROUP BY SALEID ) OTT ON OTT.SALEID = S.ID
+                JOIN DB_USER U ON USS.USERID = U.ID
+                JOIN LIST L_OFFICE ON U.OFFICEID = L_OFFICE.ID
+                JOIN  DB_USER U1 ON U1.ID = U.TOPPERFORMERREPORTSETTINGS
+                WHERE U.ID = {1} AND S.STATUSID IN (1, 2) AND SS.CALCULATEDAMOUNT > 0 AND U1.ISACTIVE = 1 AND U1.ISPAID = 1
+                {0} 
+                GROUP BY U.TOPPERFORMERREPORTSETTINGS, DATEPART(yy, SaleDate), DATEPART(mm, SaleDate) 
                 having MAX(S.GROSSCOMMISSION) > 0
-                )
-
-                SELECT * FROM
-				(
-				     (
-                        SELECT Top 7 USERID, '' AS INITIALSCODE, 0 AS ROLEID, SUM(CALCULATEDAMOUNT) AS CALCULATEDAMOUNT
-                        FROM CTE
-                        GROUP BY USERID
-                        ORDER BY SUM(CALCULATEDAMOUNT) DESC
-                    )
-
-                    UNION
-                    
-                    (   
-                        SELECT  TOP 1 USERID, '' AS INITIALSCODE, 0 AS ROLEID, SUM(CALCULATEDAMOUNT) AS CALCULATEDAMOUNT
-                        FROM CTE WHERE USERID = {1}
-                        GROUP BY USERID
-                        ORDER BY SUM(CALCULATEDAMOUNT) DESC
-                        )               
-                ) T                 
-                ORDER BY CALCULATEDAMOUNT DESC;
-
-                SELECT USR.ID, USR.INITIALSCODE , ISNULL(T.AMOUNT, 0) AS OFFSET
-                FROM DB_USER USR
-                JOIN LIST L_OFFICE ON USR.OFFICEID = L_OFFICE.ID
-                LEFT JOIN TPOFFSET2015 T ON T.USERID = USR.ID
-                WHERE USR.ISPAID = 1
-                ;
 
                ", szSQLFilter, G.User.UserID);
             DataSet ds = DB.runDataSet(szSQL);
-            formatDataSet(ds);
             DataView dv = ds.Tables[0].DefaultView;
-            dv.Sort = "CALCULATEDAMOUNT DESC, INITIALSCODE";
+            dv.Sort = "SALEYEAR, SALEMONTH";
 
-            string Initials = G.UserInfo.getInitials(G.User.UserID);
             //sort on the basis of the role, then amount
             oSeries = getSeries("Top Performers");
             foreach (DataRowView oR in dv) {
-                if (String.IsNullOrEmpty(oR["INITIALSCODE"].ToString()))
-                    continue;
-                
-                oSeries.Points.AddXY(Convert.ToString(oR["INITIALSCODE"]), Math.Round(Convert.ToDouble(oR["CALCULATEDAMOUNT"])));
+                oSeries.Points.AddXY(getMonth(DB.readInt(oR["SALEMONTH"])) +" " + Convert.ToString(oR["SALEYEAR"]), Math.Round(Convert.ToDouble(oR["CALCULATEDAMOUNT"])));
                 oSeries.YValueType = ChartValueType.Double;
                 if (Math.Round(Convert.ToDouble(oR["CALCULATEDAMOUNT"])) > MaxSalesValue)
                     MaxSalesValue = Convert.ToInt32(Math.Round(Convert.ToDouble(oR["CALCULATEDAMOUNT"])));
@@ -105,14 +72,7 @@ namespace Paymaker {
             chtTopPerformers.Series.Add(oSeries);
             chtTopPerformers.Series[oSeries.Name]["PointWidth"] = (0.4).ToString();
             // oSeries.LabelAngle = 90;
-            foreach (DataPoint dp in chtTopPerformers.Series[0].Points) {
-                dp.IsValueShownAsLabel = false;
-                if (dp.AxisLabel == Initials) {
-                    dp.Color = Color.DarkRed;
-                } else {
-                    dp.Color = Color.Silver;
-                }
-            }
+           
             if (MaxSalesValue > 2000000)
                 chtArea.AxisY.Maximum = MaxSalesValue + 150000;
             else if (MaxSalesValue > 200000)
@@ -124,20 +84,10 @@ namespace Paymaker {
             chtArea.AxisX.LabelAutoFitMaxFontSize = 8;
         }
 
-        protected void formatDataSet(DataSet ds) {
-            DataView dvUserDetails = ds.Tables[1].DefaultView;
+        string getMonth(int month) {
+            DateTime date = new DateTime(2020, month, 1);
 
-            foreach (DataRow oR in ds.Tables[0].Rows) {
-                if (System.DBNull.Value == oR["USERID"] || Convert.ToInt32(oR["USERID"]) == -1) {
-                    oR.Delete();
-                    continue;
-                }
-                dvUserDetails.RowFilter = "ID = " + oR["USERID"].ToString();
-                if (dvUserDetails.Count > 0) {
-                    oR["INITIALSCODE"] = dvUserDetails[0]["INITIALSCODE"].ToString();
-                }
-            }
-            ds.Tables[0].AcceptChanges();
+            return date.ToString("MMM");
         }
 
         protected Series getSeries(string szVlaue) {
@@ -147,7 +97,7 @@ namespace Paymaker {
         }
 
         protected void setChart() {
-            chtTopPerformers.Titles[0].Text = "Top Performer";
+            chtTopPerformers.Titles[0].Text = "Sales totals - " + G.UserInfo.getName(G.User.UserID);
             chtTopPerformers.BorderSkin.SkinStyle = BorderSkinStyle.Emboss;
             chtTopPerformers.BackColor = ColorTranslator.FromHtml("#D3DFF0");
             chtTopPerformers.BorderlineDashStyle = ChartDashStyle.Solid;
@@ -182,14 +132,10 @@ namespace Paymaker {
         }
 
         private string getDateFilter() {
-            int PayPeriod = Valid.getInteger("szPayPeriod", 0);
-            PayPeriod oP = G.PayPeriodInfo.getPayPeriod(PayPeriod);
-            string szStartDate = Utility.formatDate(oP.StartDate);
-            string szEndDate = Utility.formatDate(oP.EndDate);
+            string szStartDate = Valid.getText("szStartDate", "", VT.TextNormal);
+            string szEndDate = Valid.getText("szEndDate", "", VT.TextNormal);
             chtTopPerformers.Titles[1].Text = szStartDate + " - " + szEndDate;
             return string.Format(@" AND S.SALEDATE BETWEEN '{0} 00:00' and '{1} 23:59:59'", szStartDate, szEndDate);
         }
-
-        
     }
 }
