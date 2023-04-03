@@ -44,10 +44,31 @@ namespace Paymaker {
                 WHERE U.ID = {1} AND S.STATUSID IN (1, 2) AND SS.CALCULATEDAMOUNT > 0 AND U1.ISACTIVE = 1 AND U1.ISPAID = 1
                 {0} 
                 GROUP BY U.TOPPERFORMERREPORTSETTINGS, DATEPART(yy, SaleDate), DATEPART(mm, SaleDate) 
-                having MAX(S.GROSSCOMMISSION) > 0
+                having MAX(S.GROSSCOMMISSION) > 0;
+
+                SELECT SUM(GRAPHCOMMISSION)  AS CALCULATEDAMOUNT
+                FROM USERSALESPLIT USS
+                JOIN SALESPLIT SS ON USS.SALESPLITID = SS.ID AND SS.RECORDSTATUS < 1 AND USS.RECORDSTATUS < 1
+                JOIN LIST L_SPLITTYPE ON SS.COMMISSIONTYPEID = L_SPLITTYPE.ID
+                JOIN SALE S ON SS.SALEID = S.ID
+                LEFT JOIN (
+				    SELECT SUM(CALCULATEDAMOUNT) as TOTAL, SALEID 
+				    FROM SALEEXPENSE WHERE EXPENSETYPEID IN (140, 48)
+				    GROUP BY SALEID ) OTT ON OTT.SALEID = S.ID
+                JOIN DB_USER U ON USS.USERID = U.ID
+                JOIN LIST L_OFFICE ON U.OFFICEID = L_OFFICE.ID
+                JOIN  DB_USER U1 ON U1.ID = U.TOPPERFORMERREPORTSETTINGS
+                WHERE U.ID = {1} AND S.STATUSID IN (1, 2) AND SS.CALCULATEDAMOUNT > 0 AND U1.ISACTIVE = 1 AND U1.ISPAID = 1
+                having MAX(S.GROSSCOMMISSION) > 0;
 
                ", szSQLFilter, G.User.UserID);
             DataSet ds = DB.runDataSet(szSQL);
+            double Total = 0.0;
+            foreach(DataRow d in ds.Tables[1].Rows) {
+                Total = Convert.ToDouble(d["CALCULATEDAMOUNT"]);
+            }
+            chtTopPerformers.Titles[2].Text = "Total: " + Utility.formatReportMoney(Total);
+
             DataView dv = ds.Tables[0].DefaultView;
             dv.Sort = "SALEYEAR, SALEMONTH";
 
@@ -90,14 +111,15 @@ namespace Paymaker {
             return date.ToString("MMM");
         }
 
-        protected Series getSeries(string szVlaue) {
-            Series oSeries = new Series(szVlaue);
+        protected Series getSeries(string Value) {
+            Series oSeries = new Series(Value);
             oSeries.ChartType = SeriesChartType.Column;
             return oSeries;
         }
 
         protected void setChart() {
-            chtTopPerformers.Titles[0].Text = "Sales totals - " + G.UserInfo.getName(G.User.UserID);
+            chtTopPerformers.Titles[0].Text = "Top Performer Report - " + G.UserInfo.getName(G.User.UserID);
+            
             chtTopPerformers.BorderSkin.SkinStyle = BorderSkinStyle.Emboss;
             chtTopPerformers.BackColor = ColorTranslator.FromHtml("#D3DFF0");
             chtTopPerformers.BorderlineDashStyle = ChartDashStyle.Solid;
