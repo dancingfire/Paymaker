@@ -18,7 +18,10 @@
                     <asp:Title ShadowColor="32, 0, 0, 0" Font="Trebuchet MS, 14.25pt, style=Bold" Text=""
                         ForeColor="26, 59, 105">
                     </asp:Title>
-                    <asp:Title ShadowColor="32, 0, 0, 0" Font="Trebuchet MS, 14.25pt, style=Bold" Text=""
+                    <asp:Title ShadowColor="32, 0, 0, 0" Font="Trebuchet MS, 13.25pt, style=Bold" Text=""
+                        ForeColor="26, 59, 105">
+                    </asp:Title>
+                     <asp:Title ShadowColor="32, 0, 0, 0" Font="Trebuchet MS, 12.25pt, style=Bold" Text=""
                         ForeColor="26, 59, 105">
                     </asp:Title>
                 </Titles>

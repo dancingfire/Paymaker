@@ -970,8 +970,8 @@
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="MONTHLYSALES"></i><a href='javascript: selectReport("MONTHLYSALES")'>Monthly sales</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="MONTHLYSALESBYAGENT"></i><a href='javascript: selectReport("MONTHLYSALESBYAGENT")'>Monthly sales by agent</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="MONTHLYSALESDETAIL"></i><a href='javascript: selectReport("MONTHLYSALESDETAIL")'>Monthly sales detail (graph totals)</a></div>
-                        <div class='ReportLink'><i class="far fa-star MyReports" data-report="USERTOPPERFORMER"></i><a href='javascript: selectReport("USERTOPPERFORMER")'>Top performer</a></div>
-                        <div class='ReportLink'><i class="far fa-star MyReports" data-report="USERTOPPERFORMERMONTHLY"></i><a href='javascript: selectReport("USERTOPPERFORMERMONTHLY")'>Top performer (monthly)</a></div>
+                        <div class='ReportLink'><i class="far fa-star MyReports" data-report="USERTOPPERFORMER"></i><a href='javascript: selectReport("USERTOPPERFORMER")'>Top Performer (Top 7)</a></div>
+                        <div class='ReportLink'><i class="far fa-star MyReports" data-report="USERTOPPERFORMERMONTHLY"></i><a href='javascript: selectReport("USERTOPPERFORMERMONTHLY")'>Your Top Performer Report</a></div>
                 </div>
                 <div id="pCampaign" class="col-sm-2 AdminReports">
                     <div class="ReportColHeader">Campaign reports</div>
