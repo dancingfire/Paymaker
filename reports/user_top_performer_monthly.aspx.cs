@@ -59,6 +59,7 @@ namespace Paymaker {
                 JOIN LIST L_OFFICE ON U.OFFICEID = L_OFFICE.ID
                 JOIN  DB_USER U1 ON U1.ID = U.TOPPERFORMERREPORTSETTINGS
                 WHERE U.ID = {1} AND S.STATUSID IN (1, 2) AND SS.CALCULATEDAMOUNT > 0 AND U1.ISACTIVE = 1 AND U1.ISPAID = 1
+                {0}
                 having MAX(S.GROSSCOMMISSION) > 0;
 
                ", szSQLFilter, G.User.UserID);
