@@ -313,8 +313,9 @@ public class UserPayPeriod {
 
         //Get the heldover amount
         int intPrevPayperiodID = PayPeriodID - 1;
-        if (intPrevPayperiodID == 14)
-            intPrevPayperiodID = 13;
+        //Fix where there is a skipped pay period
+        if (intPrevPayperiodID == 146)
+            intPrevPayperiodID = 145;
         szSQL = string.Format(@"
             SELECT HELDOVERAMOUNT
             FROM USERPAYPERIOD WHERE USERID = {0} AND PAYPERIODID = {1}", UserID, intPrevPayperiodID);
