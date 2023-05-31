@@ -35,11 +35,10 @@ namespace Paymaker {
             string szSQL = string.Format(@"
 
                 SELECT MAX(S.SALEDATE) as SALEDATE, S.ENTITLEMENTDATE as ENTITLEMENTDATE,
-                S.CODE, SUM(GRAPHCOMMISSION) AS CALCULATEDAMOUNT, S.SETTLEMENTDATE, 
-                MAX(S.CONJUNCTIONALCOMMISSION) AS CONJUNCTIONALCOMMISSION, 
-                    ISNULL((SELECT SUM(SE.CALCULATEDAMOUNT) FROM SALEEXPENSE SE JOIN LIST L ON SE.EXPENSETYPEID = L.ID 
-                            AND  (L.NAME like '%Incentive%' OR L.NAME like 'Gifts%' or L.NAME = 'Unauth Advertising' or L.NAME = 'Auctioneer Fee')
-                WHERE SE.SALEID = S.ID), 0) as EXPENSES, 0.00 as NETCOMMISSION
+                S.CODE, SUM(GRAPHCOMMISSION) AS CALCULATEDAMOUNT,  S.SETTLEMENTDATE, 
+                ISNULL((SELECT SUM(SE.CALCULATEDAMOUNT) FROM SALEEXPENSE SE JOIN LIST L ON SE.EXPENSETYPEID = L.ID 
+                        AND  (L.NAME like '%Incentive%' OR L.NAME like 'Gifts%' or L.NAME = 'Unauth Advertising' or L.NAME = 'Auctioneer Fee')
+                WHERE SE.SALEID = S.ID), 0) as EXPENSES,  SUM(ACTUALPAYMENT) as NETCOMMISSION
                 FROM SALE S
                 JOIN SALESPLIT SS ON SS.SALEID = S.ID AND S.STATUSID = 1 AND SS.RECORDSTATUS = 0
                 JOIN USERSALESPLIT USS ON USS.SALESPLITID = SS.ID  AND USS.RECORDSTATUS < 1
@@ -52,9 +51,7 @@ namespace Paymaker {
                 ORDER BY S.ENTITLEMENTDATE
                 ", Utility.formatDate(dtStartDate), Utility.formatDate(dtEndDate), szCompanyFilter);
             DataSet ds = DB.runDataSet(szSQL);
-            foreach(DataRow dr in ds.Tables[0].Rows) {
-                dr["NETCOMMISSION"] = DB.readDouble(dr["CALCULATEDAMOUNT"], 0) - DB.readDouble(dr["CONJUNCTIONALCOMMISSION"], 0) - DB.readDouble(dr["EXPENSES"], 0);
-            }
+           
             helper = new GridViewHelper(gvTable, true);
 
             helper.RegisterSummary("CALCULATEDAMOUNT", SummaryOperation.Sum);

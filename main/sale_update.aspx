@@ -27,10 +27,12 @@
             console.log($thisID);
             $amount = $("#" + $thisID);
             $category = $("#" + $thisID.replace("txtAmount_", "lstCategory_"));
+            console.log("Category: " + $category.val());
             //get the id of the amount type
             $thisAmountTypeID = $thisID.replace("txtAmount_", "lstAmountType_");
             if ($("#" + $thisAmountTypeID).val() == "1") { //%
                 if ($amount.hasClass('JQSaleSplitAmount')) {
+                    
                     calcValue = getPercentage(getNetCommission(), $("#" + $thisID).val());
                     $("#" + $thisID.replace("txtAmount_", "txtCalculatedAmount_")).text(calcValue);
                 }
@@ -42,11 +44,13 @@
                 if ($amount.hasClass('JQSaleExpenseAmount')) {
                     var $currID = $thisID.replace("txtAmount_", "txtCalculatedAmount_");
                     var fOffTheTopExpenses = 0;
-                    $(".JQExpenseSplit").each(function () {
+                    /*$(".JQExpenseSplit").each(function () {
                         if ($amount.attr("id") != $currID)//we don't want to take the current value in consideration
                             fOffTheTopExpenses += parseFloat($amount.val());
-                    });
+                    });*/
+                    console.log('Gross comm: ' + $("#hdGrossCommission").val() + " Amount: " + $amount.val());
                     calcValue = (parseFloat($("#hdGrossCommission").val()) - parseFloat(fOffTheTopExpenses)) * parseFloat($amount.val()) / 100;
+                    
                     $("#" + $thisID.replace("txtAmount_", "txtCalculatedAmount_")).text(parseFloat(calcValue).toFixed(2));
 
                 }
@@ -71,6 +75,7 @@
             $("#" + $thisAmountID).removeClass("numbersOnly").removeClass("percent").unbind("keypress");
 
             if ($("#" + $thisID).val() == "1") {//"%" is selected
+                console.log('Calulating based off percent');
                 $("#" + $thisAmountID).addClass("percent").unbind("keypress");
                 addValidation();
                 if ($("#" + $thisID).hasClass('JQSaleSplitAmount')) {
@@ -89,10 +94,13 @@
                         if ($("#" + $thisID).attr("id") != $currID)//we don't want to take the current value in consideration
                             fOffTheTopExpenses += parseFloat($("#" + $thisID).text());
                     });
+
                     var calcValue = (parseFloat($("#hdGrossCommission").val()) - parseFloat(fOffTheTopExpenses)) * parseFloat($("#" + $thisAmountID).val()) / 100;
+                    
                     $("#" + $thisID.replace("lstAmountType_", "txtCalculatedAmount_")).text(parseFloat(calcValue).toFixed(2));
                 }
             } else {
+                console.log('Calulating based off percent');
                 $("#" + $thisAmountID).addClass("numbersOnly").removeClass("percent").unbind("keypress");
                 addValidation();
                 $("#" + $thisID.replace("lstAmountType_", "txtCalculatedAmount_")).text(parseFloat($("#" + $thisAmountID).val()).toFixed(2));
