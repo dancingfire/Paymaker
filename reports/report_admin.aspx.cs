@@ -140,6 +140,7 @@ namespace Paymaker {
                 sbEndJS.Append("setupForSingleUser()");
                 //Show the commission report
                 spUser.Visible = false;
+                spRecreate.Visible = false;
                 spNonAdminUserFilter.Visible = true;
 
                 // Only show the expense summary report - TODO
