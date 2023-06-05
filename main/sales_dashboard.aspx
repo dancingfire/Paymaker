@@ -114,13 +114,13 @@
 <body style='margin-top: 5px'>
     <form id="frmMain" method="post" runat="server" target="_self">
         <div class="container-fluid">
-            <div class="col-sm-3 DataPanel" style="height: 80vh">
+            <div class="col-sm-2 DataPanel" style="height: 80vh">
                 <div class='DataPanelHeader'>
                     Monthly commission
                 </div>
                 <asp:GridView ID="gvHistory" runat="server"  EnableViewState="false" AutoGenerateColumns="false" CssClass="SelectTable" EmptyDataText="No Data Found" Width="95%">
                     <Columns>
-                        <asp:TemplateField HeaderText="Settled Date" HeaderStyle-Width="50%" ItemStyle-HorizontalAlign="Center">
+                        <asp:TemplateField HeaderText="Settled Date" HeaderStyle-Width="50%" >
                             <ItemTemplate>
                                 <%# getReportLink(Eval("Month").ToString(), Eval("Year").ToString(), Eval("PayPeriodID").ToString())%>
                             </ItemTemplate>
@@ -129,7 +129,7 @@
                     </Columns>
                 </asp:GridView>
             </div>
-            <div class="col-sm-8">
+            <div class="col-sm-9">
                 <div class="row">
                     <div class="DataPanel">
                         <div class='DataPanelHeader'>

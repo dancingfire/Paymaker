@@ -40,7 +40,7 @@ public partial class sales_dashboard : Root {
             pNoFutureSales.Visible = true;
         }
         //Load the summary sales for this agent
-        DataSet dsHistorical = Sale.loadYTDSalesForSalesPerson(CurrentUserID, Utility.getFinYearStart(DateTime.Now));
+        DataSet dsHistorical = Sale.loadYTDSalesForSalesPerson(CurrentUserID, Utility.getFinYearStart(oPP.EndDate));
         DataRow drTotal = dsHistorical.Tables[0].NewRow();
         double dTotal = 0;
         foreach (DataRow dr in dsHistorical.Tables[0].Rows) {
