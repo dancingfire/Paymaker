@@ -12,6 +12,8 @@ namespace Paymaker {
         SALESDOLLARS = 1
     }
 
+    
+   
     public partial class no_of_sales : Root {
         private ChartArea chtArea = new ChartArea("chtArea");
         private Hashtable htIDNameOffice = new Hashtable();
@@ -23,7 +25,7 @@ namespace Paymaker {
         private int endYear = 3000;
         private ChartType oChartType = ChartType.NOOFSALES;
         private bool blnPrint = false;
-        protected int iColor = 38;
+        protected int iColor = 0;
 
         private DateTime dtMaxValue = DateTime.MinValue;
 
@@ -120,7 +122,8 @@ namespace Paymaker {
             chtNoOfSales.BackColor = ColorTranslator.FromHtml("#D3DFF0");
             chtNoOfSales.BorderlineDashStyle = ChartDashStyle.Solid;
             chtNoOfSales.Palette = ChartColorPalette.None;
-            chtNoOfSales.PaletteCustomColors = new Color[] { Color.Red, Color.Blue, Color.Green, Color.Brown, Color.Orange, Color.LightSkyBlue, Color.Black }; chtNoOfSales.BackSecondaryColor = Color.White;
+           // chtNoOfSales.PaletteCustomColors = new Color[] { Color.Red, Color.Blue, Color.Green, Color.Brown, Color.Orange, Color.LightSkyBlue, Color.Black }; 
+            chtNoOfSales.BackSecondaryColor = Color.White;
             chtNoOfSales.BackGradientStyle = GradientStyle.TopBottom;
             chtNoOfSales.BorderlineWidth = 2;
             chtNoOfSales.BorderlineColor = Color.FromArgb(26, 59, 105);
@@ -146,7 +149,7 @@ namespace Paymaker {
             chtArea.AxisX.Interval = 1; //shows every month, year on the chart
             chtArea.AxisY.MajorGrid.Enabled = true;
             chtArea.AxisX.MajorGrid.Enabled = false;
-            chtArea.AxisX.MajorGrid.LineColor = Color.Transparent;
+            chtArea.AxisY.MajorGrid.LineColor = Color.LightGray;
             chtArea.AxisY.MajorGrid.LineDashStyle = ChartDashStyle.Dash;
 
             chtNoOfSales.ChartAreas.Add(chtArea);//Add chart area to chart
@@ -155,7 +158,9 @@ namespace Paymaker {
         protected Series getSeries(string szVlaue) {
             Series oSeries = new Series(szVlaue);
             oSeries.ChartType = SeriesChartType.Line;
-            oSeries.Color = Color.FromKnownColor((KnownColor)Enum.ToObject(typeof(KnownColor), iColor++));
+            
+            oSeries.Color = ChartColor.getColor(iColor++);
+            oSeries.BorderWidth = 2;
             return oSeries;
         }
 
