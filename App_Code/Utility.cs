@@ -14,6 +14,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using BootstrapWrapper;
+using System.Drawing;
 
 /// <summary>
 /// What is the payment structure for the current agent
@@ -138,6 +139,36 @@ internal static class Extensions {
     }
 }
 
+public static class ChartColor {
+    public static Color getColor(int ID) {
+        switch (ID) {
+            case 0:
+                return Color.DarkRed;
+            case 1:
+                return Color.DarkGreen;
+            case 2:
+                return Color.Red;
+            case 3:
+                return Color.Fuchsia;
+            case 4:
+                return Color.DarkOrange;
+            case 5:
+                return Color.DeepSkyBlue;
+            case 6:
+                return Color.Black;
+            case 7:
+                return Color.Purple;
+            case 8:
+                return Color.HotPink;
+            case 9:
+                return Color.DarkGray;
+            case 10:
+                return Color.Azure;
+        }
+        return Color.Black;
+    }
+
+}
 public class Utility {
 
     public Utility() {

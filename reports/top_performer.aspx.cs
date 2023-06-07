@@ -1,3 +1,4 @@
+using FlexCel.Core;
 using System;
 using System.Data;
 using System.Drawing;
@@ -101,32 +102,37 @@ namespace Paymaker {
                 if (Math.Round(Convert.ToDouble(oR["CALCULATEDAMOUNT"])) > MaxSalesValue)
                     MaxSalesValue = Convert.ToInt32(Math.Round(Convert.ToDouble(oR["CALCULATEDAMOUNT"])));
             }
-            oSeries.Font = new Font("Arial narrow", 8);
+            
+            oSeries.Font = new Font("Arial narrow", NumberOfPeople < 10? 12:8);
             oSeries.IsValueShownAsLabel = true;
             oSeries.SmartLabelStyle.Enabled = true;
+            if(NumberOfPeople < 10)
+                oSeries.LabelFormat = "{#,###}";
+            else
+                oSeries.LabelFormat = "{#,##,}K";
+            
+            
             SmartLabelStyle oS = new SmartLabelStyle();
             oS.Enabled = true;
-            // oS.CalloutStyle = LabelCalloutStyle.Box;
+            oS.CalloutStyle = LabelCalloutStyle.Box;
             oS.MovingDirection = LabelAlignmentStyles.Top;
             oS.MinMovingDistance = 40;
+            
             oSeries.SmartLabelStyle = oS;
 
             chtTopPerformers.Series.Add(oSeries);
-            chtTopPerformers.Series[oSeries.Name]["PointWidth"] = (0.4).ToString();
+            chtTopPerformers.Series[oSeries.Name]["PointWidth"] = (0.6).ToString();
             // oSeries.LabelAngle = 90;
             foreach (DataPoint dp in chtTopPerformers.Series[0].Points) {
                 dp.IsValueShownAsLabel = false;
                 dp.Color = Color.FromKnownColor((KnownColor)Enum.ToObject(typeof(KnownColor), iColor++));
             }
-            if (MaxSalesValue > 2000000)
-                chtArea.AxisY.Maximum = MaxSalesValue + 150000;
-            else if (MaxSalesValue > 200000)
-                chtArea.AxisY.Maximum = MaxSalesValue + 60000;
-            else
-                chtArea.AxisY.Maximum = MaxSalesValue + 8000;
+
+            chtArea.AxisY.LabelStyle.Format = "{#,##}";
             chtArea.AxisY.Interval = Math.Round((chtArea.AxisY.Maximum / 15) / 500) * 500; //Round to nearest 500
             chtArea.AxisX.LabelAutoFitMinFontSize = 8;
             chtArea.AxisX.LabelAutoFitMaxFontSize = 8;
+            chtArea.AxisY.Maximum = getRoundedMaxValue(MaxSalesValue);
             if (blnPrint) {
                 Charts.sendChartToClient(chtTopPerformers);
             }
@@ -154,6 +160,30 @@ namespace Paymaker {
             return oSeries;
         }
 
+        int getRoundedMaxValue(int MaxSalesValue) {
+            int Max = MaxSalesValue;
+            if (MaxSalesValue > 6000000)
+                Max = MaxSalesValue + 500000;
+            else if (MaxSalesValue > 2000000)
+                Max = MaxSalesValue + 200000;
+            else if (MaxSalesValue > 200000)
+                Max = MaxSalesValue + 20000;
+            else
+                Max = MaxSalesValue + 8000;
+            if (Max < 50000) {
+                // Set max to nearest 10000 value
+                Max = (int)(Math.Ceiling((double)Max / 10000) * 10000);
+            } else if (Max < 1000000) {
+                // Set max to nearest 100000 value
+                Max = (int)(Math.Ceiling((double)Max / 100000) * 100000);
+            }  else {
+                // Set max to nearest 100000 value
+                Max = (int)(Math.Ceiling((double)Max / 250000) * 250000);
+            }
+            
+            return Max;
+
+        }
         protected void setChart() {
             chtTopPerformers.Titles[0].Text = "Top Performer";
             chtTopPerformers.BorderSkin.SkinStyle = BorderSkinStyle.Emboss;
