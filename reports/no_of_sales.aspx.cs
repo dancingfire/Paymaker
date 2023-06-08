@@ -112,6 +112,7 @@ namespace Paymaker {
 
                 case ChartType.SALESDOLLARS:
                     chtNoOfSales.Titles[0].Text = "Sales Dollars Per Office";
+                    pPageHeader.InnerHtml = "Sales Dollars Per Office";
                     break;
             }
         }
@@ -122,7 +123,6 @@ namespace Paymaker {
             chtNoOfSales.BackColor = ColorTranslator.FromHtml("#D3DFF0");
             chtNoOfSales.BorderlineDashStyle = ChartDashStyle.Solid;
             chtNoOfSales.Palette = ChartColorPalette.None;
-           // chtNoOfSales.PaletteCustomColors = new Color[] { Color.Red, Color.Blue, Color.Green, Color.Brown, Color.Orange, Color.LightSkyBlue, Color.Black }; 
             chtNoOfSales.BackSecondaryColor = Color.White;
             chtNoOfSales.BackGradientStyle = GradientStyle.TopBottom;
             chtNoOfSales.BorderlineWidth = 2;
