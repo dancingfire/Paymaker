@@ -145,7 +145,7 @@ public static class ChartColor {
             case 0:
                 return Color.DarkRed;
             case 1:
-                return Color.DarkGreen;
+                return Color.Green;
             case 2:
                 return Color.Red;
             case 3:
@@ -155,17 +155,17 @@ public static class ChartColor {
             case 5:
                 return Color.DeepSkyBlue;
             case 6:
-                return Color.Black;
+                return Color.Teal;
             case 7:
                 return Color.Purple;
             case 8:
                 return Color.HotPink;
             case 9:
-                return Color.DarkGray;
+                return Color.Black;
             case 10:
-                return Color.Azure;
+                return Color.DarkGray;
         }
-        return Color.Black;
+        return Color.FromKnownColor((KnownColor)Enum.ToObject(typeof(KnownColor), ID + 24)); ;
     }
 
 }
