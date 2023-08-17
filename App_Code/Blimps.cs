@@ -38,7 +38,7 @@ public static class BlimpsHelper {
     /// <returns></returns>
     public static int getUpdateID(BlimpObject Type) {
         string szConfigName = Type.ToString() + "LATESTID";
-        AppConfigAdmin oConfigAdmin = new AppConfigAdmin(DB.BoxDiceDBConn);
+        AppConfigAdmin oConfigAdmin = new AppConfigAdmin();
         oConfigAdmin.addConfig(szConfigName, "-1");
         oConfigAdmin.loadValuesFromDB();
         return Convert.ToInt32(oConfigAdmin.getValue(szConfigName));
@@ -53,7 +53,7 @@ public static class BlimpsHelper {
         if (UpdateValue == -1)
             return;
         string szConfigName = Type.ToString() + "LATESTID";
-        AppConfigAdmin oConfigAdmin = new AppConfigAdmin(DB.BoxDiceDBConn);
+        AppConfigAdmin oConfigAdmin = new AppConfigAdmin();
         oConfigAdmin.addConfig(szConfigName, "-1");
         oConfigAdmin.loadValuesFromDB();
         oConfigAdmin.setValue(szConfigName, UpdateValue.ToString());
@@ -224,9 +224,9 @@ public static class BlimpsHelper {
 
         string szTableName = String.Format("__IDCHECK_{0}_{1}", Type, rand.Next());
 
-        DB.runNonQuery(string.Format(@"CREATE TABLE {0}([ID] [int] NOT NULL)", szTableName), DB.BoxDiceDBConn);
+        DB.runNonQuery(string.Format(@"CREATE TABLE {0}([ID] [int] NOT NULL)", szTableName));
 
-        SQLInsertQueue oSQL = new SQLInsertQueue(string.Format("INSERT INTO {0}(ID) VALUES", szTableName), DB.BoxDiceDBConn);
+        SQLInsertQueue oSQL = new SQLInsertQueue(string.Format("INSERT INTO {0}(ID) VALUES", szTableName));
         foreach (int id in intResult)
             oSQL.addSQL(String.Format(@"({0})", id));
 
@@ -236,7 +236,7 @@ public static class BlimpsHelper {
     }
 
     public static void removeIDTable(string IDTable) {
-        DB.runNonQuery(string.Format("DROP TABLE {0}", IDTable), DB.BoxDiceDBConn);
+        DB.runNonQuery(string.Format("DROP TABLE {0}", IDTable));
     }
 
     public static void runFullImport(bool UserUpdate = false) {
@@ -260,7 +260,7 @@ public static class BlimpsHelper {
         iTask.importLatest();
 
         string szConfigName = "LASTUPDATE";
-        AppConfigAdmin oConfigAdmin = new AppConfigAdmin(DB.BoxDiceDBConn);
+        AppConfigAdmin oConfigAdmin = new AppConfigAdmin();
         oConfigAdmin.addConfig(szConfigName, "-1");
         oConfigAdmin.loadValuesFromDB();
         oConfigAdmin.updateConfigValueSQL(szConfigName, Utility.formatDateTime(DateTime.Now));
@@ -326,18 +326,18 @@ public class iOffice {
     }
 
     public void writeToDB() {
-        string szSQL = String.Format(@"SELECT ID FROM OFFICE WHERE ID = {0}", id);
-        int intDBID = DB.getScalar(szSQL, -1, DB.BoxDiceDBConn);
-        sqlUpdate oSQL = new sqlUpdate("OFFICE", "ID", intDBID);
+        string szSQL = String.Format(@"SELECT ID FROM bdOFFICE WHERE ID = {0}", id);
+        int intDBID = DB.getScalar(szSQL, -1);
+        sqlUpdate oSQL = new sqlUpdate("bdOFFICE", "ID", intDBID);
         oSQL.add("NAME", name);
         oSQL.add("ID", id);
 
         if (intDBID == -1) {
             oSQL.add("CODE", "");
             oSQL.add("ISACTIVE", true);
-            DB.runNonQuery(oSQL.createInsertSQL(), DB.BoxDiceDBConn);
+            DB.runNonQuery(oSQL.createInsertSQL());
         } else
-            DB.runNonQuery(oSQL.createUpdateSQL(), DB.BoxDiceDBConn);
+            DB.runNonQuery(oSQL.createUpdateSQL());
     }
 }
 
@@ -413,9 +413,9 @@ public class iOfficeCommissions {
     }
 
     public void writeToDB() {
-        string szSQL = String.Format(@"SELECT ID FROM OFFICECOMMISSION WHERE ID = {0}", id);
-        int intDBID = DB.getScalar(szSQL, -1, DB.BoxDiceDBConn);
-        sqlUpdate oSQL = new sqlUpdate("OFFICECOMMISSION", "ID", intDBID);
+        string szSQL = String.Format(@"SELECT ID FROM bdOFFICECOMMISSION WHERE ID = {0}", id);
+        int intDBID = DB.getScalar(szSQL, -1);
+        sqlUpdate oSQL = new sqlUpdate("bdOFFICECOMMISSION", "ID", intDBID);
         oSQL.add("OFFICEID", officeId);
         oSQL.add("AMOUNT", amount);
         oSQL.add("PERCENTAGE", percentage);
@@ -425,9 +425,9 @@ public class iOfficeCommissions {
         try {
             if (intDBID == -1) {
                 oSQL.add("ID", id);
-                DB.runNonQuery(oSQL.createInsertSQL(), DB.BoxDiceDBConn);
+                DB.runNonQuery(oSQL.createInsertSQL());
             } else
-                DB.runNonQuery(oSQL.createUpdateSQL(), DB.BoxDiceDBConn);
+                DB.runNonQuery(oSQL.createUpdateSQL());
         } catch (Exception e) {
             if (!e.Message.Contains("INSERT statement conflicted")) {
                 throw;
@@ -485,16 +485,16 @@ public class Team {
     }
 
     public void writeToDB() {
-        string szSQL = String.Format(@"SELECT ID FROM TEAM WHERE ID = {0}", id);
-        int intDBID = DB.getScalar(szSQL, -1, DB.BoxDiceDBConn);
-        sqlUpdate oSQL = new sqlUpdate("TEAM", "ID", intDBID);
+        string szSQL = String.Format(@"SELECT ID FROM bdTEAM WHERE ID = {0}", id);
+        int intDBID = DB.getScalar(szSQL, -1);
+        sqlUpdate oSQL = new sqlUpdate("bdTEAM", "ID", intDBID);
         oSQL.add("NAME", name);
         oSQL.add("ID", id);
 
         if (intDBID == -1)
-            DB.runNonQuery(oSQL.createInsertSQL(), DB.BoxDiceDBConn);
+            DB.runNonQuery(oSQL.createInsertSQL());
         else
-            DB.runNonQuery(oSQL.createUpdateSQL(), DB.BoxDiceDBConn);
+            DB.runNonQuery(oSQL.createUpdateSQL());
     }
 }
 
@@ -592,9 +592,9 @@ public class iConsultant {
 
     public void writeToDB() {
         string szSQL = String.Format(@"
-            SELECT * FROM DB_USER WHERE ID = {0};
-            SELECT * FROM USERTEAM WHERE USERID = {0};", id);
-        using (DataSet ds = DB.runDataSet(szSQL, DB.BoxDiceDBConn)) {
+            SELECT * FROM bdDB_USER WHERE ID = {0};
+            SELECT * FROM bdUSERTEAM WHERE USERID = {0};", id);
+        using (DataSet ds = DB.runDataSet(szSQL)) {
             int intDBID = -1;
             DataRow dr = null;
             if (ds.Tables[0].Rows.Count > 0) {
@@ -602,7 +602,7 @@ public class iConsultant {
                 intDBID = Convert.ToInt32(dr["ID"]);
             }
 
-            sqlUpdate oSQL = new sqlUpdate("DB_USER", "ID", intDBID);
+            sqlUpdate oSQL = new sqlUpdate("bdDB_USER", "ID", intDBID);
 
             if (Utility.valueHasChanged(dr, "FIRSTNAME", firstName))
                 oSQL.add("FIRSTNAME", firstName);
@@ -625,27 +625,27 @@ public class iConsultant {
             if (intDBID == -1) {
                 oSQL.add("ID", id);
                 oSQL.add("ISDELETED", false);
-                DB.runNonQuery(oSQL.createInsertSQL(), DB.BoxDiceDBConn);
+                DB.runNonQuery(oSQL.createInsertSQL());
                 intDBID = id;
             } else if (oSQL.HasUpdates) {
                 oSQL.add("ID", id);
                 oSQL.add("ISMODIFIED", 1);
-                DB.runNonQuery(oSQL.createUpdateSQL(), DB.BoxDiceDBConn);
+                DB.runNonQuery(oSQL.createUpdateSQL());
             }
             if (teamIds == null) {
-                DB.runNonQuery("DELETE FROM USERTEAM WHERE TEAMID != 11 AND USERID = " + intDBID, DB.BoxDiceDBConn);
+                DB.runNonQuery("DELETE FROM bdUSERTEAM WHERE TEAMID != 11 AND USERID = " + intDBID);
             } else {
                 string szTeamIDs = String.Join(",", teamIds.Select(x => x.ToString()).ToArray());
 
                 if (szTeamIDs == "") {
-                    DB.runNonQuery("DELETE FROM USERTEAM WHERE TEAMID != 11 AND USERID = " + intDBID, DB.BoxDiceDBConn);
+                    DB.runNonQuery("DELETE FROM bdUSERTEAM WHERE TEAMID != 11 AND USERID = " + intDBID);
                 } else {
                     szSQL = String.Format(@"
-                        DELETE FROM USERTEAM WHERE USERID = {0} AND TEAMID NOT IN ({1}, 11);
-                        INSERT INTO USERTEAM(USERID, TEAMID)
+                        DELETE FROM bdUSERTEAM WHERE USERID = {0} AND TEAMID NOT IN ({1}, 11);
+                        INSERT INTO bdUSERTEAM(USERID, TEAMID)
                         SELECT {0}, ID
-                        FROM TEAM T WHERE T.ID IN ({1}) AND ID NOT IN (SELECT TEAMID FROM USERTEAM WHERE USERID = {0});", intDBID, szTeamIDs);
-                    DB.runNonQuery(szSQL, DB.BoxDiceDBConn);
+                        FROM bdTEAM T WHERE T.ID IN ({1}) AND ID NOT IN (SELECT TEAMID FROM bdUSERTEAM WHERE USERID = {0});", intDBID, szTeamIDs);
+                    DB.runNonQuery(szSQL);
                 }
             }
         }
@@ -698,10 +698,10 @@ public class iContact {
 
     public void writeToDB() {
         string szSQL = String.Format(@"
-                SELECT ID FROM CONTACT WHERE ID = {0}
-                SELECT ID FROM PROPERTY WHERE ID = {1}", id, residentialPropertyId);
+                SELECT ID FROM bdCONTACT WHERE ID = {0}
+                SELECT ID FROM bdPROPERTY WHERE ID = {1}", id, residentialPropertyId);
         int intDBID = -1;
-        using (DataSet ds = DB.runDataSet(szSQL, DB.BoxDiceDBConn)) {
+        using (DataSet ds = DB.runDataSet(szSQL)) {
             foreach (DataRow dr in ds.Tables[0].Rows)
                 intDBID = DB.readInt(dr["ID"]);
 
@@ -711,7 +711,7 @@ public class iContact {
                 residentialPropertyId = DB.readInt(dr["ID"]);
         }
 
-        sqlUpdate oSQL = new sqlUpdate("CONTACT", "ID", intDBID);
+        sqlUpdate oSQL = new sqlUpdate("bdCONTACT", "ID", intDBID);
         oSQL.add("FIRSTNAME", firstName);
         oSQL.add("LASTNAME", lastName);
         oSQL.add("JOBTITLE", jobTitle);
@@ -720,9 +720,9 @@ public class iContact {
             oSQL.add("RESIDENTIALPROPERTYID", residentialPropertyId);
         oSQL.add("ID", id);
         if (intDBID == -1)
-            DB.runNonQuery(oSQL.createInsertSQL(), DB.BoxDiceDBConn);
+            DB.runNonQuery(oSQL.createInsertSQL());
         else
-            DB.runNonQuery(oSQL.createUpdateSQL(), DB.BoxDiceDBConn);
+            DB.runNonQuery(oSQL.createUpdateSQL());
     }
 
     /// <summary>
@@ -806,15 +806,15 @@ public class iContactActivityType {
     }
 
     public void writeToDB() {
-        string szSQL = String.Format(@"SELECT ID FROM CONTACTACTIVITYTYPE WHERE ID = {0}", id);
-        int intDBID = DB.getScalar(szSQL, -1, DB.BoxDiceDBConn);
-        sqlUpdate oSQL = new sqlUpdate("CONTACTACTIVITYTYPE", "ID", intDBID);
+        string szSQL = String.Format(@"SELECT ID FROM bdCONTACTACTIVITYTYPE WHERE ID = {0}", id);
+        int intDBID = DB.getScalar(szSQL, -1);
+        sqlUpdate oSQL = new sqlUpdate("bdCONTACTACTIVITYTYPE", "ID", intDBID);
         oSQL.add("NAME", name);
         oSQL.add("ID", id);
         if (intDBID == -1)
-            DB.runNonQuery(oSQL.createInsertSQL(), DB.BoxDiceDBConn);
+            DB.runNonQuery(oSQL.createInsertSQL());
         else
-            DB.runNonQuery(oSQL.createUpdateSQL(), DB.BoxDiceDBConn);
+            DB.runNonQuery(oSQL.createUpdateSQL());
     }
 
     /// <summary>
@@ -898,9 +898,9 @@ public class iContactActivity {
     }
 
     public void writeToDB() {
-        string szSQL = String.Format(@"SELECT ID FROM CONTACTACTIVITY WHERE ID = {0}", id);
-        int intDBID = DB.getScalar(szSQL, -1, DB.BoxDiceDBConn);
-        sqlUpdate oSQL = new sqlUpdate("CONTACTACTIVITY", "ID", intDBID);
+        string szSQL = String.Format(@"SELECT ID FROM bdCONTACTACTIVITY WHERE ID = {0}", id);
+        int intDBID = DB.getScalar(szSQL, -1);
+        sqlUpdate oSQL = new sqlUpdate("bdCONTACTACTIVITY", "ID", intDBID);
         if (salesListingId == 0)
             return; //If theres not matching sales listing ID we don't care about this client contact type
         oSQL.add("PROPERTYID", propertyId);
@@ -924,9 +924,9 @@ public class iContactActivity {
             if (intDBID == -1) {
                 oSQL.add("ID", id);
 
-                DB.runNonQuery(oSQL.createInsertSQL(), DB.BoxDiceDBConn);
+                DB.runNonQuery(oSQL.createInsertSQL());
             } else
-                DB.runNonQuery(oSQL.createUpdateSQL(), DB.BoxDiceDBConn);
+                DB.runNonQuery(oSQL.createUpdateSQL());
         } catch (Exception e) {
             if (!e.Message.Contains("FK_CONTACTACTIVITY_SALESLISTING"))
                 throw;
@@ -1014,15 +1014,15 @@ public class iContactCategoryType {
     }
 
     public void writeToDB() {
-        string szSQL = String.Format(@"SELECT ID FROM CONTACTCATEGORYTYPE WHERE ID = {0}", id);
-        int intDBID = DB.getScalar(szSQL, -1, DB.BoxDiceDBConn);
-        sqlUpdate oSQL = new sqlUpdate("CONTACTCATEGORYTYPE", "ID", intDBID);
+        string szSQL = String.Format(@"SELECT ID FROM bdCONTACTCATEGORYTYPE WHERE ID = {0}", id);
+        int intDBID = DB.getScalar(szSQL, -1);
+        sqlUpdate oSQL = new sqlUpdate("bdCONTACTCATEGORYTYPE", "ID", intDBID);
         oSQL.add("NAME", name);
         oSQL.add("ID", id);
         if (intDBID == -1)
-            DB.runNonQuery(oSQL.createInsertSQL(), DB.BoxDiceDBConn);
+            DB.runNonQuery(oSQL.createInsertSQL());
         else
-            DB.runNonQuery(oSQL.createUpdateSQL(), DB.BoxDiceDBConn);
+            DB.runNonQuery(oSQL.createUpdateSQL());
     }
 
     /// <summary>
@@ -1082,9 +1082,9 @@ public class iContactCategory {
     }
 
     public void writeToDB() {
-        string szSQL = String.Format(@"SELECT ID FROM CONTACTCATEGORY WHERE ID = {0}", id);
-        int intDBID = DB.getScalar(szSQL, -1, DB.BoxDiceDBConn);
-        sqlUpdate oSQL = new sqlUpdate("CONTACTCATEGORY", "ID", intDBID);
+        string szSQL = String.Format(@"SELECT ID FROM bdCONTACTCATEGORY WHERE ID = {0}", id);
+        int intDBID = DB.getScalar(szSQL, -1);
+        sqlUpdate oSQL = new sqlUpdate("bdCONTACTCATEGORY", "ID", intDBID);
         oSQL.add("CONSULTANTID", consultantId);
         oSQL.add("CONTACTID", contactId);
         oSQL.add("CONTACTCATEGORYTYPEID", typeId);
@@ -1092,9 +1092,9 @@ public class iContactCategory {
             if (intDBID == -1) {
                 oSQL.add("ID", id);
 
-                DB.runNonQuery(oSQL.createInsertSQL(), DB.BoxDiceDBConn);
+                DB.runNonQuery(oSQL.createInsertSQL());
             } else
-                DB.runNonQuery(oSQL.createUpdateSQL(), DB.BoxDiceDBConn);
+                DB.runNonQuery(oSQL.createUpdateSQL());
         } catch (Exception e) {
             ;
         }
@@ -1135,25 +1135,25 @@ public class iContactCategory {
     private static void updateContactCounts() {
         //Insert the current month value
         DB.runNonQuery(@"
-            INSERT INTO AGENTCONTACTCOUNT(USERID, MONTHDATE)
+            INSERT INTO bdAGENTCONTACTCOUNT(USERID, MONTHDATE)
             SELECT ID, DATEADD(m, DATEDIFF(m, 0, GETDATE()), 0)-- First day of month
-            FROM DB_USER U
-            WHERE U.ID NOT IN(SELECT USERID FROM AGENTCONTACTCOUNT WHERE MONTHDATE = DATEADD(m, DATEDIFF(m, 0, GETDATE()), 0))
+            FROM bdDB_USER U
+            WHERE U.ID NOT IN(SELECT USERID FROM bdAGENTCONTACTCOUNT WHERE MONTHDATE = DATEADD(m, DATEDIFF(m, 0, GETDATE()), 0))
             ");
 
         //Update the counts (now that we know they exist)
         using (DataSet ds = DB.runDataSet(@"
            SELECT U.ID, SUM(CASE WHEN CC.CONTACTCATEGORYTYPEID = 1 THEN 1 ELSE 0 END) AS CONTACTCOUNT,
             SUM(CASE WHEN CCT.NAME LIKE '%buyer bulletin%' THEN 1 ELSE 0 END) AS BUYERCOUNT
-            FROM CONTACTCATEGORY CC
-            JOIN CONTACTCATEGORYTYPE CCT ON CC.CONTACTCATEGORYTYPEID = CCT.ID
-            JOIN DB_USER C ON CC.CONSULTANTID = C.ID
-            JOIN PAYMAKER.dbo.DB_USER U on U.INITIALSCODE = C.INITIALS COLLATE Latin1_General_CI_AS
+            FROM bdCONTACTCATEGORY CC
+            JOIN bdCONTACTCATEGORYTYPE CCT ON CC.CONTACTCATEGORYTYPEID = CCT.ID
+            JOIN bdDB_USER C ON CC.CONSULTANTID = C.ID
+            JOIN DB_USER U on U.INITIALSCODE = C.INITIALS COLLATE Latin1_General_CI_AS
             GROUP BY U.ID
-            ", DB.BoxDiceDBConn)) {
+            ")) {
             foreach (DataRow dr in ds.Tables[0].Rows) {
                 DB.runNonQuery(String.Format(@"
-                    UPDATE AGENTCONTACTCOUNT SET CONTACTCOUNT = {0}, BUYERCOUNT = {1} WHERE USERID = {2} AND MONTHDATE = DATEADD(m, DATEDIFF(m, 0, GETDATE()), 0)
+                    UPDATE bdAGENTCONTACTCOUNT SET CONTACTCOUNT = {0}, BUYERCOUNT = {1} WHERE USERID = {2} AND MONTHDATE = DATEADD(m, DATEDIFF(m, 0, GETDATE()), 0)
                 ", DB.readInt(dr["CONTACTCOUNT"]), DB.readInt(dr["BUYERCOUNT"]), DB.readInt(dr["ID"])));
             }
         }
@@ -1325,9 +1325,9 @@ public class iProperty {
     }
 
     public void writeToDB() {
-        string szSQL = String.Format(@"SELECT ID FROM PROPERTY WHERE ID = {0}", id);
-        int intDBID = DB.getScalar(szSQL, -1, DB.BoxDiceDBConn);
-        sqlUpdate oSQL = new sqlUpdate("PROPERTY", "ID", intDBID);
+        string szSQL = String.Format(@"SELECT ID FROM bdPROPERTY WHERE ID = {0}", id);
+        int intDBID = DB.getScalar(szSQL, -1);
+        sqlUpdate oSQL = new sqlUpdate("bdPROPERTY", "ID", intDBID);
         oSQL.add("ID", id);
         oSQL.add("TIMESTAMP", ts);
         oSQL.add("ADDRESS", address);
@@ -1347,9 +1347,9 @@ public class iProperty {
         oSQL.add("DESCRIPTION", houseDescription);
         if (intDBID == -1) {
             oSQL.add("ISACTIVE", 1);
-            DB.runNonQuery(oSQL.createInsertSQL(), DB.BoxDiceDBConn);
+            DB.runNonQuery(oSQL.createInsertSQL());
         } else
-            DB.runNonQuery(oSQL.createUpdateSQL(), DB.BoxDiceDBConn);
+            DB.runNonQuery(oSQL.createUpdateSQL());
     }
 }
 
@@ -1645,19 +1645,19 @@ public class SalesListing {
 
         try {
             string szSQL = string.Format(@"
-            DELETE FROM SALESLISTINGEXPENSE WHERE SALESLISTINGID IN (SELECT SL.ID FROM SALESLISTING SL left join {0} I ON I.ID = SL.ID where I.ID IS NULL);
-            DELETE FROM COMMISSION WHERE SALESVOUCHERID IN (
-                SELECT ID FROM SALESVOUCHER  WHERE SALESLISTINGID IN (
-                    SELECT SL.ID FROM SALESLISTING SL left join {0} I ON I.ID = SL.ID where I.ID IS NULL)
+            DELETE FROM bdSALESLISTINGEXPENSE WHERE SALESLISTINGID IN (SELECT SL.ID FROM bdSALESLISTING SL left join {0} I ON I.ID = SL.ID where I.ID IS NULL);
+            DELETE FROM bdCOMMISSION WHERE SALESVOUCHERID IN (
+                SELECT ID FROM bdSALESVOUCHER  WHERE SALESLISTINGID IN (
+                    SELECT SL.ID FROM bdSALESLISTING SL left join {0} I ON I.ID = SL.ID where I.ID IS NULL)
                 );
 
-            DELETE FROM SALESVOUCHER WHERE SALESLISTINGID IN (SELECT SL.ID FROM SALESLISTING SL left join {0} I ON I.ID = SL.ID where I.ID IS NULL);
-            DELETE FROM CONTACTACTIVITY WHERE SALESLISTINGID IN (SELECT SL.ID FROM SALESLISTING SL left join {0} I ON I.ID = SL.ID where I.ID IS NULL);
+            DELETE FROM bdSALESVOUCHER WHERE SALESLISTINGID IN (SELECT SL.ID FROM bdSALESLISTING SL left join {0} I ON I.ID = SL.ID where I.ID IS NULL);
+            DELETE FROM bdCONTACTACTIVITY WHERE SALESLISTINGID IN (SELECT SL.ID FROM bdSALESLISTING SL left join {0} I ON I.ID = SL.ID where I.ID IS NULL);
 
-            DELETE FROM SALESLISTING
+            DELETE FROM bdSALESLISTING
             WHERE ID IN (
-            SELECT SL.ID FROM SALESLISTING SL left join {0} I ON I.ID = SL.ID where I.ID IS NULL)", szIDTable);
-            DB.runNonQuery(szSQL, DB.BoxDiceDBConn);
+            SELECT SL.ID FROM bdSALESLISTING SL left join {0} I ON I.ID = SL.ID where I.ID IS NULL)", szIDTable);
+            DB.runNonQuery(szSQL);
         } catch (Exception e) {; }//Ignore the error
         BlimpsHelper.removeIDTable(szIDTable);
     }
@@ -1666,15 +1666,15 @@ public class SalesListing {
         // Check if sale listing already exists.  Check if property data exists
         string szSQL = String.Format(@"
                 -- 0.
-                SELECT ID FROM SALESLISTING WHERE ID = {0}
+                SELECT ID FROM bdSALESLISTING WHERE ID = {0}
                 -- 1.
-                SELECT ID FROM PROPERTY WHERE ID = {1}
+                SELECT ID FROM bdPROPERTY WHERE ID = {1}
                 -- 2.
-                SELECT * FROM LISTINGSOURCE WHERE ID = {2}", id, propertyId, sourceId);
+                SELECT * FROM bdLISTINGSOURCE WHERE ID = {2}", id, propertyId, sourceId);
         int intDBID = -1;
         bool blnPropertyExists;
         bool blnListingSourceExists;
-        using (DataSet ds = DB.runDataSet(szSQL, DB.BoxDiceDBConn)) {
+        using (DataSet ds = DB.runDataSet(szSQL)) {
             foreach (DataRow dr in ds.Tables[0].Rows)
                 intDBID = DB.readInt(dr["ID"]);
 
@@ -1686,7 +1686,7 @@ public class SalesListing {
         if (!blnPropertyExists)
             return;
 
-        sqlUpdate oSQL = new sqlUpdate("SALESLISTING", "ID", intDBID);
+        sqlUpdate oSQL = new sqlUpdate("bdSALESLISTING", "ID", intDBID);
         oSQL.add("ID", id);
         oSQL.add("TIMESTAMP", ts);
         oSQL.add("PROPERTYID", propertyId);
@@ -1744,9 +1744,9 @@ public class SalesListing {
             oSQL.add("LISTINGSOURCEID", sourceId);
 
         if (intDBID == -1)
-            DB.runNonQuery(oSQL.createInsertSQL(), DB.BoxDiceDBConn);
+            DB.runNonQuery(oSQL.createInsertSQL());
         else
-            DB.runNonQuery(oSQL.createUpdateSQL(), DB.BoxDiceDBConn);
+            DB.runNonQuery(oSQL.createUpdateSQL());
     }
 }
 
@@ -1902,9 +1902,9 @@ public class iSalesVouchers {
     }
 
     public void writeToDB() {
-        string szSQL = String.Format(@"SELECT ID FROM SALESVOUCHER WHERE ID = {0}", id);
-        int intDBID = DB.getScalar(szSQL, -1, DB.BoxDiceDBConn);
-        sqlUpdate oSQL = new sqlUpdate("SALESVOUCHER", "ID", intDBID);
+        string szSQL = String.Format(@"SELECT ID FROM bdSALESVOUCHER WHERE ID = {0}", id);
+        int intDBID = DB.getScalar(szSQL, -1);
+        sqlUpdate oSQL = new sqlUpdate("bdSALESVOUCHER", "ID", intDBID);
         oSQL.add("SALESLISTINGID", listingId);
         oSQL.add("SALEPRICE", salePrice);
         if (grossCommissionCriteria == "INC_GST")
@@ -1945,9 +1945,9 @@ public class iSalesVouchers {
         try {
             if (intDBID == -1) {
                 oSQL.add("ID", id);
-                DB.runNonQuery(oSQL.createInsertSQL(), DB.BoxDiceDBConn);
+                DB.runNonQuery(oSQL.createInsertSQL());
             } else
-                DB.runNonQuery(oSQL.createUpdateSQL(), DB.BoxDiceDBConn);
+                DB.runNonQuery(oSQL.createUpdateSQL());
         } catch (Exception e) {
             if (e.Message.Contains("FK_SALESVOUCHER_SALESLISTING")) {
                 LogException oL = new LogException();
@@ -2024,7 +2024,7 @@ public class iSalesVoucherDeductions {
 
     public static void importLatest() {
         /*        // temp work around
-                using (DataSet ds = DB.runDataSet(string.Format("SELECT ID FROM SALESVOUCHER WHERE SOLDDATE >= '{0}'", Utility.formatDate(G.TransitionToBnDDate)), DB.BoxDiceDBConn)) {
+                using (DataSet ds = DB.runDataSet(string.Format("SELECT ID FROM SALESVOUCHER WHERE SOLDDATE >= '{0}'", Utility.formatDate(G.TransitionToBnDDate)))) {
                     foreach (DataRow dr in ds.Tables[0].Rows) {
                         importRecord(DB.readInt(dr["ID"]), true);
                     }
@@ -2098,9 +2098,9 @@ public class iSalesVoucherDeductions {
     }
 
     public void writeToDB() {
-        string szSQL = String.Format(@"SELECT ID FROM SALESVOUCHERDEDUCTION WHERE ID = {0}", id);
-        int intDBID = DB.getScalar(szSQL, -1, DB.BoxDiceDBConn);
-        sqlUpdate oSQL = new sqlUpdate("SALESVOUCHERDEDUCTION", "ID", intDBID);
+        string szSQL = String.Format(@"SELECT ID FROM bdSALESVOUCHERDEDUCTION WHERE ID = {0}", id);
+        int intDBID = DB.getScalar(szSQL, -1);
+        sqlUpdate oSQL = new sqlUpdate("bdSALESVOUCHERDEDUCTION", "ID", intDBID);
         oSQL.add("SALESVOUCHERID", voucherId);
         oSQL.add("AMOUNT", amount);
         oSQL.add("REASON", reason);
@@ -2112,9 +2112,9 @@ public class iSalesVoucherDeductions {
         try {
             if (intDBID == -1) {
                 oSQL.add("ID", id);
-                DB.runNonQuery(oSQL.createInsertSQL(), DB.BoxDiceDBConn);
+                DB.runNonQuery(oSQL.createInsertSQL());
             } else
-                DB.runNonQuery(oSQL.createUpdateSQL(), DB.BoxDiceDBConn);
+                DB.runNonQuery(oSQL.createUpdateSQL());
         } catch (Exception e) {
             if (!e.Message.Contains("INSERT statement conflicted")) {
                 throw;
@@ -2130,10 +2130,10 @@ public class iSalesVoucherDeductions {
             return;
 
         string szSQL = string.Format(@"
-            DELETE FROM SALESVOUCHERDEDUCTION
+            DELETE FROM bdSALESVOUCHERDEDUCTION
             WHERE ID > -1 AND ID IN (
-            SELECT C.ID FROM SALESVOUCHERDEDUCTION C left join {0} I ON I.ID = C.ID where I.ID IS NULL)", szIDTable);
-        DB.runNonQuery(szSQL, DB.BoxDiceDBConn);
+            SELECT C.ID FROM bdSALESVOUCHERDEDUCTION C left join {0} I ON I.ID = C.ID where I.ID IS NULL)", szIDTable);
+        DB.runNonQuery(szSQL);
 
         BlimpsHelper.removeIDTable(szIDTable);
     }
@@ -2218,9 +2218,9 @@ public class iSalesListingExpenses {
     }
 
     public void writeToDB() {
-        string szSQL = String.Format(@"SELECT ID FROM SALESLISTINGEXPENSE WHERE ID = {0}", id);
-        int intDBID = DB.getScalar(szSQL, -1, DB.BoxDiceDBConn);
-        sqlUpdate oSQL = new sqlUpdate("SALESLISTINGEXPENSE", "ID", intDBID);
+        string szSQL = String.Format(@"SELECT ID FROM bdSALESLISTINGEXPENSE WHERE ID = {0}", id);
+        int intDBID = DB.getScalar(szSQL, -1);
+        sqlUpdate oSQL = new sqlUpdate("bdSALESLISTINGEXPENSE", "ID", intDBID);
         oSQL.add("SALESLISTINGID", listingId);
         oSQL.add("RECEIVEDAMOUNT", receivedAmount);
         oSQL.add("COST", cost);
@@ -2231,9 +2231,9 @@ public class iSalesListingExpenses {
         try {
             if (intDBID == -1) {
                 oSQL.add("ID", id);
-                DB.runNonQuery(oSQL.createInsertSQL(), DB.BoxDiceDBConn);
+                DB.runNonQuery(oSQL.createInsertSQL());
             } else
-                DB.runNonQuery(oSQL.createUpdateSQL(), DB.BoxDiceDBConn);
+                DB.runNonQuery(oSQL.createUpdateSQL());
         } catch (Exception e) {
             ;// throw;
         }
@@ -2320,10 +2320,10 @@ public class iSalesVouchersCommissions {
             return;
 
         string szSQL = string.Format(@"
-            DELETE FROM COMMISSION
+            DELETE FROM bdCOMMISSION
             WHERE ID IN (
-            SELECT C.ID FROM COMMISSION C left join {0} I ON I.ID = C.ID where I.ID IS NULL)", szIDTable);
-        DB.runNonQuery(szSQL, DB.BoxDiceDBConn);
+            SELECT C.ID FROM bdCOMMISSION C left join {0} I ON I.ID = C.ID where I.ID IS NULL)", szIDTable);
+        DB.runNonQuery(szSQL);
         BlimpsHelper.removeIDTable(szIDTable);
     }
 
@@ -2362,9 +2362,9 @@ public class iSalesVouchersCommissions {
     }
 
     public void writeToDB() {
-        string szSQL = String.Format(@"SELECT ID FROM COMMISSION WHERE ID = {0}", id);
-        int intDBID = DB.getScalar(szSQL, -1, DB.BoxDiceDBConn);
-        sqlUpdate oSQL = new sqlUpdate("COMMISSION", "ID", intDBID);
+        string szSQL = String.Format(@"SELECT ID FROM bdCOMMISSION WHERE ID = {0}", id);
+        int intDBID = DB.getScalar(szSQL, -1);
+        sqlUpdate oSQL = new sqlUpdate("bdCOMMISSION", "ID", intDBID);
         oSQL.add("ID", id);
         oSQL.add("SALESVOUCHERID", voucherId);
         oSQL.add("CONSULTANTID", consultantId);
@@ -2384,9 +2384,9 @@ public class iSalesVouchersCommissions {
 
         try {
             if (intDBID == -1) {
-                DB.runNonQuery(oSQL.createInsertSQL(), DB.BoxDiceDBConn);
+                DB.runNonQuery(oSQL.createInsertSQL());
             } else
-                DB.runNonQuery(oSQL.createUpdateSQL(), DB.BoxDiceDBConn);
+                DB.runNonQuery(oSQL.createUpdateSQL());
         } catch (Exception e) {
             ;// throw;
         }
@@ -2415,16 +2415,16 @@ public class iPropertyCategory {
     }
 
     public void writeToDB() {
-        string szSQL = String.Format(@"SELECT ID FROM PROPERTYCATEGORY WHERE ID = {0}", id);
-        int intDBID = DB.getScalar(szSQL, -1, DB.BoxDiceDBConn);
-        sqlUpdate oSQL = new sqlUpdate("PROPERTYCATEGORY", "ID", intDBID);
+        string szSQL = String.Format(@"SELECT ID FROM bdPROPERTYCATEGORY WHERE ID = {0}", id);
+        int intDBID = DB.getScalar(szSQL, -1);
+        sqlUpdate oSQL = new sqlUpdate("bdPROPERTYCATEGORY", "ID", intDBID);
         oSQL.add("NAME", name);
         oSQL.add("PROPERTYTYPEID", typeID);
         oSQL.add("ID", id);
         if (intDBID == -1)
-            DB.runNonQuery(oSQL.createInsertSQL(), DB.BoxDiceDBConn);
+            DB.runNonQuery(oSQL.createInsertSQL());
         else
-            DB.runNonQuery(oSQL.createUpdateSQL(), DB.BoxDiceDBConn);
+            DB.runNonQuery(oSQL.createUpdateSQL());
     }
 
     /// <summary>
@@ -2473,16 +2473,16 @@ public class iPropertyType {
     }
 
     public void writeToDB() {
-        string szSQL = String.Format(@"SELECT ID FROM PROPERTYTYPE WHERE ID = {0}", id);
-        int intDBID = DB.getScalar(szSQL, -1, DB.BoxDiceDBConn);
-        sqlUpdate oSQL = new sqlUpdate("PROPERTYTYPE", "ID", intDBID);
+        string szSQL = String.Format(@"SELECT ID FROM bdPROPERTYTYPE WHERE ID = {0}", id);
+        int intDBID = DB.getScalar(szSQL, -1);
+        sqlUpdate oSQL = new sqlUpdate("bdPROPERTYTYPE", "ID", intDBID);
         oSQL.add("NAME", name);
         //oSQL.add("CODE", key);
         oSQL.add("ID", id);
         if (intDBID == -1)
-            DB.runNonQuery(oSQL.createInsertSQL(), DB.BoxDiceDBConn);
+            DB.runNonQuery(oSQL.createInsertSQL());
         else
-            DB.runNonQuery(oSQL.createUpdateSQL(), DB.BoxDiceDBConn);
+            DB.runNonQuery(oSQL.createUpdateSQL());
     }
 
     /// <summary>
@@ -2551,21 +2551,21 @@ public class iListingSource {
             }
         }
         if (szIDList != "") {
-            DB.runDataSet("DELETE FROM LISTINGSOURCE WHERE ID NOT IN (0," + szIDList + ") ", DB.BoxDiceDBConn);
+            DB.runDataSet("DELETE FROM bdLISTINGSOURCE WHERE ID NOT IN (0," + szIDList + ") ");
         }
     }
 
     public void writeToDB() {
-        string szSQL = String.Format(@"SELECT ID FROM LISTINGSOURCE WHERE ID = {0}", id);
-        int intDBID = DB.getScalar(szSQL, -1, DB.BoxDiceDBConn);
-        sqlUpdate oSQL = new sqlUpdate("LISTINGSOURCE", "ID", intDBID);
+        string szSQL = String.Format(@"SELECT ID FROM bdLISTINGSOURCE WHERE ID = {0}", id);
+        int intDBID = DB.getScalar(szSQL, -1);
+        sqlUpdate oSQL = new sqlUpdate("bdLISTINGSOURCE", "ID", intDBID);
         oSQL.add("NAME", name);
         oSQL.add("ID", id);
         oSQL.add("ISCOMPANY", 0);
         if (intDBID == -1)
-            DB.runNonQuery(oSQL.createInsertSQL(), DB.BoxDiceDBConn);
+            DB.runNonQuery(oSQL.createInsertSQL());
         else
-            DB.runNonQuery(oSQL.createUpdateSQL(), DB.BoxDiceDBConn);
+            DB.runNonQuery(oSQL.createUpdateSQL());
     }
 }
 
@@ -2635,15 +2635,15 @@ public class iTask {
 
     public void writeToDB() {
         string szSQL = String.Format(@"
-                SELECT ID FROM TASK WHERE ID = {0}
-                SELECT ID FROM PROPERTY WHERE ID = {1}", id, propertyId);
+                SELECT ID FROM bdTASK WHERE ID = {0}
+                SELECT ID FROM bdPROPERTY WHERE ID = {1}", id, propertyId);
         int intDBID = -1;
-        using (DataSet ds = DB.runDataSet(szSQL, DB.BoxDiceDBConn)) {
+        using (DataSet ds = DB.runDataSet(szSQL)) {
             foreach (DataRow dr in ds.Tables[0].Rows)
                 intDBID = DB.readInt(dr["ID"]);
             if (ds.Tables[1].Rows.Count == 0 && propertyId > 0) {
                 iProperty.importRecord(propertyId, forceReload: true);
-                using (DataSet ds1 = DB.runDataSet(szSQL, DB.BoxDiceDBConn)) {
+                using (DataSet ds1 = DB.runDataSet(szSQL)) {
                     if (ds.Tables[1].Rows.Count == 0) {
                         propertyId = 0;
                     }
@@ -2651,7 +2651,7 @@ public class iTask {
             }
         }
 
-        sqlUpdate oSQL = new sqlUpdate("TASK", "ID", intDBID);
+        sqlUpdate oSQL = new sqlUpdate("bdTASK", "ID", intDBID);
         oSQL.add("ID", id);
         oSQL.add("CONSULTANTID", consultantId);
         if (propertyId > 0)
@@ -2668,14 +2668,14 @@ public class iTask {
         else
             szSQL = oSQL.createUpdateSQL();
 
-        szSQL += string.Format(" DELETE FROM CONTACTTASK WHERE TASKID = {0}; ", id);
+        szSQL += string.Format(" DELETE FROM bdCONTACTTASK WHERE TASKID = {0}; ", id);
 
         if (contactIds != null && contactIds.Length > 0) {
             // Ensures link to contact is only written where contact exists
-            string szContactSQL = string.Format("SELECT ID FROM CONTACT WHERE ID IN ({0})", string.Join(",", contactIds));
-            using (DataSet ds = DB.runDataSet(szContactSQL, DB.BoxDiceDBConn)) {
+            string szContactSQL = string.Format("SELECT ID FROM bdCONTACT WHERE ID IN ({0})", string.Join(",", contactIds));
+            using (DataSet ds = DB.runDataSet(szContactSQL)) {
                 foreach (DataRow dr in ds.Tables[0].Rows) {
-                    sqlUpdate oSQL1 = new sqlUpdate("CONTACTTASK", "TASKID", intDBID);
+                    sqlUpdate oSQL1 = new sqlUpdate("bdCONTACTTASK", "TASKID", intDBID);
                     oSQL1.add("CONTACTID", DB.readInt(dr["ID"]));
                     oSQL1.add("TASKID", id);
                     szSQL += oSQL1.createInsertSQL();
@@ -2683,7 +2683,7 @@ public class iTask {
             }
         }
 
-        DB.runNonQuery(szSQL, DB.BoxDiceDBConn);
+        DB.runNonQuery(szSQL);
     }
 
     /// <summary>

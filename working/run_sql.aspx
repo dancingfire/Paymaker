@@ -24,8 +24,6 @@
                 <div class="col-sm-2">
                     <asp:Button ID="btnUpdate" runat="server" Text="Run SQL" CssClass="btn btn-block" OnClick="btnUpdate_Click" />
                     <br />    
-                    <asp:Button ID="btnBD" runat="server" Text="Run against B&D" CssClass="btn btn-block" OnClick="btnUpdateBD_Click" />
-                    <br />
 
                 </div>
             </div>

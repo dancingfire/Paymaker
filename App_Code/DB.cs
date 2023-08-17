@@ -51,16 +51,6 @@ public class DB {
     }
 
     /// <summary>
-    /// The connection to the DB based off the web config client
-    /// </summary>
-    public static string BoxDiceDBConn {
-        get {
-            string szCnn = ConfigurationManager.AppSettings["DB"];
-            return szCnn.Replace("DBNAME", "Fletchers_BoxDiceAPI").Replace("Paymaker", "Fletchers_BoxDiceAPI");
-        }
-    }
-
-    /// <summary>
     /// Returns either a valid string of DateValue
     /// </summary>
     /// <param name="DateValue"></param>

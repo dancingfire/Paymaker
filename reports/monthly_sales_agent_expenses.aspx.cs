@@ -109,7 +109,7 @@ public class MonthlySalesAgentExpenses : Report {
                     JOIN DB_USER USR ON USR.ID = USS.USERID AND USR.ID > 0
                     JOIN LIST L_OFFICE ON L_OFFICE.ID = USR.OFFICEID AND L_OFFICE.ISACTIVE = 1
                     JOIN LIST L_COMPANY ON L_COMPANY.ID = L_OFFICE.COMPANYID
-                    JOIN Fletchers_BoxDiceAPI.dbo.SALESLISTING sl on s.BnDSALEID = sl.id
+                    JOIN bdSALESLISTING sl on s.BnDSALEID = sl.id
                     LEFT JOIN DB_USER A ON A.ID = SL.AUCTIONEERID
                     LEFT JOIN SALESSTATUS STATUS ON STATUS.ID = S.STATUSID
                     JOIN (

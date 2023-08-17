@@ -7,7 +7,7 @@ public partial class run_sql : Root {
     }
 
     protected void Page_Load(object sender, System.EventArgs e) {
-       
+
     }
 
     bool isSQLOK(string SQL) {
@@ -15,7 +15,7 @@ public partial class run_sql : Root {
     }
 
     protected void btnUpdate_Click(object sender, EventArgs e) {
-        if(!Valid.getBoolean("GORD", false)) {
+        if (!Valid.getBoolean("GORD", false)) {
             return;
         }
         if (!isSQLOK(txtSQL.Text))
@@ -25,11 +25,5 @@ public partial class run_sql : Root {
         } catch (Exception ex) {
             txtSQL.Text = ex.Message;
         }
-    }
-
-    protected void btnUpdateBD_Click(object sender, EventArgs e) {
-        if (!isSQLOK(txtSQL.Text))
-            return;
-        Utility.bindGV(ref gvOutput, DB.runDataSet(txtSQL.Text, DB.BoxDiceDBConn));
     }
 }

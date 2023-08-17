@@ -160,7 +160,7 @@ public class G {
 
     private static void checkSessionValue(string szValue) {
         if (HttpContext.Current.Session == null || HttpContext.Current.Session[szValue] == null) {
-            HttpContext.Current.Response.Redirect("~/login.aspx?Timeout=true&sv=" + szValue);
+            HttpContext.Current.Response.Redirect("~/redirect.aspx?Timeout=true&sv=" + szValue);
         }
     }
 
@@ -168,7 +168,7 @@ public class G {
         if (HttpContext.Current.Session[szValue] == null) {
             if (RedirectToLoginOnNull) {
                 try {
-                    HttpContext.Current.Response.Redirect("~/login.aspx?Timeout=true&sv=" + szValue);
+                    HttpContext.Current.Response.Redirect("~/redirect.aspx?Timeout=true&sv=" + szValue);
                 } catch { }
             } else {
                 lock (HttpContext.Current.Session) {
@@ -187,7 +187,7 @@ public class G {
     public static DateTime checkSessionValue(string szValue, bool RedirectToLoginOnNull, DateTime Default) {
         if (HttpContext.Current.Session[szValue] == null) {
             if (RedirectToLoginOnNull)
-                HttpContext.Current.Response.Redirect("~/login.aspx?Timeout=true&sv=" + szValue);
+                HttpContext.Current.Response.Redirect("~/redirect.aspx?Timeout=true&sv=" + szValue);
             else {
                 lock (HttpContext.Current.Session) {
                     if (HttpContext.Current.Session[szValue] != null)
@@ -205,7 +205,7 @@ public class G {
     public static string checkSessionValue(string szValue, bool RedirectToLoginOnNull, string Default = "") {
         if (HttpContext.Current.Session[szValue] == null) {
             if (RedirectToLoginOnNull)
-                HttpContext.Current.Response.Redirect("~/login.aspx?Timeout=true&sv=" + szValue);
+                HttpContext.Current.Response.Redirect("~/redirect.aspx?Timeout=true&sv=" + szValue);
             else {
                 lock (HttpContext.Current.Session) {
                     if (HttpContext.Current.Session[szValue] != null)
@@ -605,7 +605,11 @@ public class G {
                 return (ClientID)Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["ClientID"]);
             }
         }
-
+        public static string Env {
+            get {
+                return System.Configuration.ConfigurationManager.AppSettings["env"];
+            }
+        }
         public static string CampaignTrackOffice {
             get {
                 return System.Configuration.ConfigurationManager.AppSettings["CampaignTrackOffice"];

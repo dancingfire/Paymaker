@@ -1183,11 +1183,11 @@ public class APILog {
     /// <param name="oSource"></param>
     /// <param name="Message"></param>
     public static void addLog(APISource oSource, string Message) {
-        sqlUpdate oSQL = new sqlUpdate("APILOG", "ID", -1);
+        sqlUpdate oSQL = new sqlUpdate("bdAPILOG", "ID", -1);
         oSQL.add("APISOURCEID", (int)oSource);
         oSQL.add("LOG", Message.Replace("'", "''").Trim());
         oSQL.add("TIMESTAMP", Utility.formatDateTime(DateTime.Now));
-        DB.runNonQuery(oSQL.createInsertSQL(), DB.BoxDiceDBConn);
+        DB.runNonQuery(oSQL.createInsertSQL());
     }
 }
 
