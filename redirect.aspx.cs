@@ -9,12 +9,18 @@ namespace Paymaker {
         }
 
         protected void Page_Load(object sender, System.EventArgs e) {
-            if (HttpContext.Current.Session["USERID"] == null) {
-                if (!UserLogin.loginUserByEmail(HttpContext.Current.User.Identity.Name)) {
-                    Response.Write("Please contact your administrator to setup access to this application. We tried with the name: " + HttpContext.Current.User.Identity.Name);
-                    Response.End();
-                } else {
+
+            if (HttpContext.Current.Session["USERID"] == null && G.Settings.Env != "dev") {
+                
+                if (!HttpContext.Current.User.Identity.IsAuthenticated) {
                     Response.Redirect("/.auth/login/aad?post_login_redirect_url=/redirect.aspx");
+                } else {
+                    if (!UserLogin.loginUserByEmail(HttpContext.Current.User.Identity.Name)) {
+                        Response.Write("Please contact your administrator to setup access to this application. We tried with the name: " + HttpContext.Current.User.Identity.Name);
+                        Response.End();
+                    } else {
+                        Response.Redirect("/.auth/login/aad?post_login_redirect_url=/redirect.aspx");
+                    }
                 }
             }
             string szStartPage = UserLogin.getStartPage();
