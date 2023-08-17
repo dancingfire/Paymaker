@@ -183,9 +183,12 @@ public class Utility {
     /// </summary>
     /// <param name="dt"></param>
     /// <param name="FileName"></param>
-    public static void dataTableToCSVFile(DataTable dt, string FileName = @"C:\Temp\output.csv") {
+    public static void dataTableToCSVFile(DataTable dt, string FileName = "") {
         StringBuilder sb = new StringBuilder();
 
+        if(FileName == "") {
+            FileName = Path.Combine(System.IO.Path.GetTempPath(), "output.csv");
+        }
         IEnumerable<string> columnNames = dt.Columns.Cast<DataColumn>().
                                           Select(column => '"' + column.ColumnName.Replace(@"""", " ") + '"');
         sb.AppendLine(string.Join(",", columnNames));

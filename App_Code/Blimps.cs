@@ -257,7 +257,7 @@ public static class BlimpsHelper {
         iSalesVouchers.importLatest();
         iSalesListingExpenses.importLatest();
         iSalesVoucherDeductions.importLatest();
-        iTask.importLatest();
+        //iTask.importLatest();
 
         string szConfigName = "LASTUPDATE";
         AppConfigAdmin oConfigAdmin = new AppConfigAdmin();
@@ -592,7 +592,7 @@ public class iConsultant {
 
     public void writeToDB() {
         string szSQL = String.Format(@"
-            SELECT * FROM bdDB_USER WHERE ID = {0};
+            SELECT * FROM bdCONSULTANT WHERE ID = {0};
             SELECT * FROM bdUSERTEAM WHERE USERID = {0};", id);
         using (DataSet ds = DB.runDataSet(szSQL)) {
             int intDBID = -1;
@@ -602,7 +602,7 @@ public class iConsultant {
                 intDBID = Convert.ToInt32(dr["ID"]);
             }
 
-            sqlUpdate oSQL = new sqlUpdate("bdDB_USER", "ID", intDBID);
+            sqlUpdate oSQL = new sqlUpdate("bdCONSULTANT", "ID", intDBID);
 
             if (Utility.valueHasChanged(dr, "FIRSTNAME", firstName))
                 oSQL.add("FIRSTNAME", firstName);
@@ -1137,7 +1137,7 @@ public class iContactCategory {
         DB.runNonQuery(@"
             INSERT INTO bdAGENTCONTACTCOUNT(USERID, MONTHDATE)
             SELECT ID, DATEADD(m, DATEDIFF(m, 0, GETDATE()), 0)-- First day of month
-            FROM bdDB_USER U
+            FROM bdCONSULTANT U
             WHERE U.ID NOT IN(SELECT USERID FROM bdAGENTCONTACTCOUNT WHERE MONTHDATE = DATEADD(m, DATEDIFF(m, 0, GETDATE()), 0))
             ");
 
@@ -1147,7 +1147,7 @@ public class iContactCategory {
             SUM(CASE WHEN CCT.NAME LIKE '%buyer bulletin%' THEN 1 ELSE 0 END) AS BUYERCOUNT
             FROM bdCONTACTCATEGORY CC
             JOIN bdCONTACTCATEGORYTYPE CCT ON CC.CONTACTCATEGORYTYPEID = CCT.ID
-            JOIN bdDB_USER C ON CC.CONSULTANTID = C.ID
+            JOIN bdCONSULTANT C ON CC.CONSULTANTID = C.ID
             JOIN DB_USER U on U.INITIALSCODE = C.INITIALS COLLATE Latin1_General_CI_AS
             GROUP BY U.ID
             ")) {
