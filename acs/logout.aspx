@@ -15,7 +15,7 @@
 				<div class="col-12 text-center">
 					 You have been logged out. Please close this window or login again.
 				<br /><br /><br />
-				<button onclick="document.location.href='samllogin.aspx'" class="btn" type="button">Login again</button>
+				<button onclick="document.location.href='../redirect.aspx'" class="btn" type="button">Login again</button>
 				</div>
 			</div>
 		</div>

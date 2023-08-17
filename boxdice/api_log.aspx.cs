@@ -14,11 +14,11 @@ public partial class api_log : Root {
 
         szSQL = String.Format(@"
             SELECT TOP 10 *
-            FROM APILOG L  
+            FROM bdAPILOG L  
             ORDER BY ID DESC
             ");
 
-        DataSet dsList = DB.runDataSet(szSQL, DB.BoxDiceDBConn);
+        DataSet dsList = DB.runDataSet(szSQL);
         gvLog.DataSource = dsList;
         gvLog.DataBind();
         HTML.formatGridView(ref gvLog, true);

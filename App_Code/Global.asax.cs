@@ -73,7 +73,7 @@ namespace Paymaker {
         }
 
         protected void Session_End(Object sender, EventArgs e) {
-            Response.Redirect("login.aspx");
+            Response.Redirect("redirect.aspx");
         }
 
         protected void Application_End(Object sender, EventArgs e) {

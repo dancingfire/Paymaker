@@ -10,9 +10,9 @@ public partial class apilog_detail : Root
     private void initPage() {
         DataSet ds = DB.runDataSet(@"
                SELECT TOP 250 *
-                 FROM APILOG A
+                 FROM bdAPILOG A
                  ORDER BY ID DESC
-                 ", DB.BoxDiceDBConn);
+                 ");
         gvList.DataSource = ds;
         gvList.DataBind();
         HTML.formatGridView(ref gvList, true);
