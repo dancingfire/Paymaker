@@ -6,7 +6,7 @@ using System.Security.Cryptography.X509Certificates;
 namespace Paymaker {
 
     public partial class view_doc : Root {
-        private string Directory = G.Settings.DataDir;
+        private string Directory = Path.Combine(G.Settings.DataDir, "LeaveData");
 
         protected void Page_Load(object sender, System.EventArgs e) {
             /* SECURITY : DO NOT REMOVE
