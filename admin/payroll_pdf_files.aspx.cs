@@ -1,3 +1,4 @@
+using iTextSharp.tool.xml.html;
 using System;
 using System.IO;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Web.UI.WebControls;
 
 public partial class payroll_pdf_files : Root {
     protected string directories = "";
-    protected string cDIRECTORYPATH = G.Settings.FileDir + "PayrollTimeSheets\\";
+    protected string cDIRECTORYPATH = Path.Combine(G.Settings.DataDir, "PayrollTimeSheets\\");
     protected string cWEBPATH = "payroll_pdf.aspx?file=";
 
     protected void Page_Load(object sender, System.EventArgs e) {
@@ -23,6 +24,7 @@ public partial class payroll_pdf_files : Root {
         int FileCount = 0;
         DirectoryInfo dirInfo = new DirectoryInfo(szPath);
         foreach (DirectoryInfo dir in dirInfo.GetDirectories()) {
+            
             TreeNode newNode = new TreeNode("&nbsp;" + dir.Name);
             newNode.Value = dir.FullName;
             getLocalDirectoriesAndFiles(dir.FullName, FileFilter, newNode);
