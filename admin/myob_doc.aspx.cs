@@ -24,7 +24,7 @@ namespace Paymaker {
             if (!szTest.EndsWith(".CSV") && !szTest.EndsWith(".TXT"))
                 throw new Exception("Invalid file type");
 
-            byte[] bytes = File.ReadAllBytes(Directory + file);
+            byte[] bytes = File.ReadAllBytes(Path.Combine(Directory, file));
             Response.Buffer = true;
             Response.Clear();
             Response.ContentType = "text/csv";
