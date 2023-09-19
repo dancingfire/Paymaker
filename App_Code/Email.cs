@@ -7,6 +7,8 @@ using System.IO;
 using System.Linq;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
+using System.Web;
+using System.Web.Caching;
 using Dapper;
 
 public class EmailSettings {
@@ -85,7 +87,7 @@ public class Email {
         if (!String.IsNullOrWhiteSpace(To)) {
             msg.To.Add(To);
         } else {
-            msg.To.Add(EmailSettings.SMTPServerUserName); //We need an address here or the email will fail
+            msg.To.Add(EmailSettings.SMTPServerFromEmail); //We need an address here or the email will fail
         }
 
         if (!String.IsNullOrWhiteSpace(szCC))
@@ -100,6 +102,7 @@ public class Email {
         }
         if (szFrom == "")
             szFrom = EmailSettings.SMTPServerFromEmail;
+
         msg.From = new MailAddress(szFrom, DisplayName);
         msg.Subject = Subject;
         if (!FromQueue) {
@@ -186,7 +189,8 @@ public class Email {
     public static SmtpClient getEmailServer() {
         SmtpClient oSMTP = new SmtpClient(EmailSettings.SMTPServer);
         oSMTP.EnableSsl = EmailSettings.SMTPServerSSL;
-        oSMTP.Port = 25;
+        oSMTP.DeliveryMethod = SmtpDeliveryMethod.Network;
+        oSMTP.Port = 587;
         oSMTP.UseDefaultCredentials = true;
         if (!String.IsNullOrEmpty(EmailSettings.SMTPServerUserName)) {
             System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(EmailSettings.SMTPServerUserName, EmailSettings.SMTPServerPassword);
