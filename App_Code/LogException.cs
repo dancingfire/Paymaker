@@ -96,7 +96,7 @@ namespace ExceptionHandler {
             msg.IsBodyHtml = true;
             msg.To.Add(szEmails.Replace(';', ','));
 
-            msg.From = new MailAddress(EmailSettings.SMTPServerUserName);
+            msg.From = new MailAddress(EmailSettings.SMTPServerFromEmail);
             msg.Subject = szSubject;
             msg.Body = szEmailHeader + szEmailBody + "</body></html>";
             try {

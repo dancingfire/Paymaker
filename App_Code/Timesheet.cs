@@ -581,7 +581,7 @@ public class TimesheetCycle {
                     <p>Please log on and review your teams timesheets.</p>
                     <p>These need to be approved by Wednesday 2pm at the latest.</p>
                     <p>Thanks</p>");
-                Email.sendMail(oSuper.Email, EmailSettings.SMTPServerUserName, "All staff timesheets submitted", szMsg);
+                Email.sendMail(oSuper.Email, EmailSettings.SMTPServerFromEmail, "All staff timesheets submitted", szMsg);
             }
         }
     }
@@ -603,7 +603,7 @@ public class TimesheetCycle {
                     <p>Please remember if you are going on annual leave to prefill out your timesheet so you don’t miss out on your pay.</p>
                     <p>Thanks</p>", G.BaseURL);
                 if (!TestOnly) {
-                    Email.sendMail(szEmail, EmailSettings.SMTPServerUserName, "Fortnightly timesheet", szMsg, "", LogObjectID: DB.readInt(dr["OUTSTANDING"]));
+                    Email.sendMail(szEmail, EmailSettings.SMTPServerFromEmail, "Fortnightly timesheet", szMsg, "", LogObjectID: DB.readInt(dr["OUTSTANDING"]));
                 } else {
                     if (DB.readString(dr["EMAILFLAG"]) == "EMAIL") {
                         Output += String.Format("Send an email to {0}<br/>", szEmail);
@@ -632,7 +632,7 @@ public class TimesheetCycle {
                     <p>Remember - policy is, NO timesheet NO Pay.</p>
                     <p>Thanks</p>", G.BaseURL);
 
-                Email.sendMail(szEmail, EmailSettings.SMTPServerUserName, "Timesheet outstanding", szMsg, "", LogObjectID: DB.readInt(dr["OUTSTANDING"]));
+                Email.sendMail(szEmail, EmailSettings.SMTPServerFromEmail, "Timesheet outstanding", szMsg, "", LogObjectID: DB.readInt(dr["OUTSTANDING"]));
             }
         }
     }
