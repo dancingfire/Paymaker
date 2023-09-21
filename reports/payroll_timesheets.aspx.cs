@@ -26,8 +26,9 @@ namespace Paymaker {
                     rViewer.ShowPageNavigationControls = true;
                     rViewer.LocalReport.Refresh();
                     byte[] bFile = rViewer.LocalReport.Render("PDF");
-
-                    Directory.CreateDirectory(G.Settings.FileDir + "PayrollTimeSheets");
+                    if (!Directory.Exists(Path.Combine(G.Settings.FileDir, "PayrollTimeSheets"))) {
+                        Directory.CreateDirectory(Path.Combine(G.Settings.FileDir, "PayrollTimeSheets"));
+                    }
                     File.WriteAllBytes(string.Format("{0}PayrollTimeSheets\\Timesheets_{1}_{2}.pdf", G.Settings.FileDir, ReportType, DateTime.Now.ToString("yyyyMMdd")), bFile);
                 }
 
