@@ -203,7 +203,7 @@ public class ClientMenu {
                     {2}
                     <li id='oHelp' role='presentation'><a role='menuitem' tabindex='-1' href='../help/CAPSAgentViewingInfo.pdf'  target='_blank'>Show help <img src='../sys_images/help.gif' align='right' title='Click here to view help'/></a></li>
                     <li role='presentation' class='divider'></li>
-                    <li role='presentation'><a role='menuitem' tabindex='-1' href='../login.aspx?Logout=true'>Logout</a></li>
+                    <li role='presentation'><a role='menuitem' tabindex='-1' href='../acs/logout.aspx'>Logout</a></li>
                 </ul>
             </div>", G.UserInfo.getName(G.User.OriginalUserID), szLoggedInAsMsg, szDelegation);
         
