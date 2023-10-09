@@ -56,7 +56,7 @@ namespace Paymaker {
                 dtStart = oP.StartDate;
                 dtEnd = oP.EndDate;
             }
-            string szPath = G.Settings.MYOBDir + FileName;
+            string szPath = Path.Combine(G.Settings.MYOBDir, FileName);
 
             string szSQL = string.Format(@"
                 -- 0) All normal commissions

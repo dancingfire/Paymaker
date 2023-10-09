@@ -8,7 +8,7 @@ using System.Web.UI.WebControls;
 
 public partial class payroll_pdf_files : Root {
     protected string directories = "";
-    protected string cDIRECTORYPATH = Path.Combine(G.Settings.DataDir, "PayrollTimeSheets\\");
+    protected string cDIRECTORYPATH = Path.Combine(G.Settings.DataDir, "PayrollTimeSheets");
     protected string cWEBPATH = "payroll_pdf.aspx?file=";
 
     protected void Page_Load(object sender, System.EventArgs e) {

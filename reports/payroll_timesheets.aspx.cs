@@ -26,10 +26,11 @@ namespace Paymaker {
                     rViewer.ShowPageNavigationControls = true;
                     rViewer.LocalReport.Refresh();
                     byte[] bFile = rViewer.LocalReport.Render("PDF");
-                    if (!Directory.Exists(Path.Combine(G.Settings.FileDir, "PayrollTimeSheets"))) {
-                        Directory.CreateDirectory(Path.Combine(G.Settings.FileDir, "PayrollTimeSheets"));
+                    string FilePath = Path.Combine(G.Settings.DataDir, "PayrollTimeSheets");
+                    if (!Directory.Exists(FilePath)) {
+                        Directory.CreateDirectory(FilePath);
                     }
-                    File.WriteAllBytes(string.Format("{0}PayrollTimeSheets\\Timesheets_{1}_{2}.pdf", G.Settings.FileDir, ReportType, DateTime.Now.ToString("yyyyMMdd")), bFile);
+                    File.WriteAllBytes(Path.Combine(FilePath, string.Format("Timesheets_{0}_{1}.pdf", ReportType, DateTime.Now.ToString("yyyyMMdd"))), bFile);
                 }
 
                 // Mark time sheet cycles completed

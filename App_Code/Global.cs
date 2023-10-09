@@ -585,11 +585,6 @@ public class G {
             get { return HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) + HttpContext.Current.Request.ApplicationPath; }
         }
 
-        public static string FileDir {
-            get {
-                return System.Configuration.ConfigurationManager.AppSettings["AppFilePath"];
-            }
-        }
 
         public static int SalesLetterTemplateID {
             get {
