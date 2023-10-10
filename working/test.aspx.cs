@@ -7,7 +7,7 @@ public partial class test : Root {
     }
 
   protected void btnSend_Click(object sender, EventArgs e) {
-        UserLogin.loginUserByID(529);
+        UserLogin.loginUserByID(228);
 
     }
 }
