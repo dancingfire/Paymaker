@@ -1,3 +1,4 @@
+using Sentry.Protocol;
 using System;
 using System.Data;
 using System.IO;
@@ -39,6 +40,8 @@ public partial class sales_dashboard : Root {
             gvFuture.Visible = false;
             pNoFutureSales.Visible = true;
         }
+
+      
         //Load the summary sales for this agent
         DataSet dsHistorical = Sale.loadYTDSalesForSalesPerson(CurrentUserID, Utility.getFinYearStart(oPP.EndDate));
         DataRow drTotal = dsHistorical.Tables[0].NewRow();
@@ -54,6 +57,7 @@ public partial class sales_dashboard : Root {
         gvHistory.DataBind();
         HTML.formatGridView(ref gvHistory, true);
 
+        loadPendingPayments(oPP);
         loadCampaignActions();
         loadPrePaymentHistory();
     }
@@ -132,6 +136,22 @@ public partial class sales_dashboard : Root {
         gvPrePayment.DataSource = dtPre;
         gvPrePayment.DataBind();
         HTML.formatGridView(ref gvPrePayment, true);
+    }
+
+    void loadPendingPayments( PayPeriod oPP) {
+        //Load the pending refund transactions for this agent
+        string szSQL = String.Format(@"
+            SELECT T.AMOUNT, T.TxDate, A.NAME AS ACCOUNT, T.COMMENT
+            FROM USERTX T JOIN LIST A ON A.id = T.ACCOUNTID 
+            WHERE TXDATE > '{1}' AND USERID = {0} ", CurrentUserID, Utility.formatDate(oPP.EndDate));
+        gvPayments.DataSource = DB.runDataSet(szSQL);
+        dvPayments.InnerHtml = "Pending payments - After " + Utility.formatDate(oPP.EndDate);
+        gvPayments.DataBind();
+        HTML.formatGridView(ref gvPayments, true);
+        if (gvPayments.Rows.Count == 0) {
+            gvPayments.Visible = false;
+            pNoPayments.Visible = true;
+        }
     }
 
     protected string getSettlementDate(string szSettlementDate) {

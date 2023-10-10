@@ -46,6 +46,19 @@
                 });
             }
 
+            if ($("#gvPayments tr").length > 1) {
+                var oTable = $('#gvPayments').dataTable({
+                    "bPaginate": false,
+                    "bLengthChange": false,
+                    "bFilter": false,
+                    "bSort": true,
+                    "bInfo": false,
+                    "bAutoWidth": false,
+                    "sScrollX": "99%",
+                    "aaSorting": []
+                });
+            }
+
             if ($("#gvFuture tr").length > 1) {
                 var oTable = $('#gvFuture').dataTable({
                     "bPaginate": false,
@@ -186,7 +199,7 @@
                                     </ItemTemplate>
                                 </asp:TemplateField>
                                 <asp:BoundField DataField="CommissionTotal" HeaderText="Commission total" HeaderStyle-Width="10%" ItemStyle-HorizontalAlign="Right" />
-                                <asp:BoundField DataField="SalePrice" HeaderText="Sale price" HeaderStyle-Width="10%" ItemStyle-HorizontalAlign="Right" />
+                                <asp:BoundField DataField="SalePrice" HeaderText="Sale price" HeaderStyle-Width="10%" ItemStyle-HorizontalAlign="Right" DataFormatString="{0:C2}"/>
                             </Columns>
                             <EmptyDataTemplate>
                                 There are no pending sales.
@@ -194,6 +207,29 @@
                         </asp:GridView>
                         <asp:Panel ID="pNoFutureSales" Visible="false" runat="server">
                             <asp:Label ID="Label3" class='Label' runat="server" Style="width: 350px" Text="There are no pending sales."></asp:Label>
+                        </asp:Panel>
+                    </div>
+                </div>
+                     <div class="row">
+                    <div class="DataPanel">
+                        <div id="dvPayments" class='DataPanelHeader' runat="server">
+                            Pending payments
+                        </div>
+                        <asp:GridView ID="gvPayments" runat="server"  EnableViewState="false" AutoGenerateColumns="false" Width="100%">
+                            <Columns>
+                                <asp:BoundField DataField="Account" HeaderText="Expense type" HeaderStyle-Width="20%" />
+                                <asp:BoundField DataField="Comment" HeaderText="Address" HeaderStyle-Width="20%" />
+                                <asp:BoundField DataField="TxDate" HeaderText="Entitlement date" DataFormatString="{0:MMM dd, yyyy}"
+                                    HeaderStyle-Width="15%" />
+                               
+                                <asp:BoundField DataField="Amount" HeaderText="Amount" HeaderStyle-Width="10%" ItemStyle-HorizontalAlign="Right" DataFormatString="{0:F2}"/>
+                            </Columns>
+                            <EmptyDataTemplate>
+                                There are no pending payments.
+                            </EmptyDataTemplate>
+                        </asp:GridView>
+                        <asp:Panel ID="pNoPayments" Visible="false" runat="server">
+                            <asp:Label ID="Label2" class='Label' runat="server" Style="width: 350px" Text="There are no pending payments."></asp:Label>
                         </asp:Panel>
                     </div>
                 </div>
