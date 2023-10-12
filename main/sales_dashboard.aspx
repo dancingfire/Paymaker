@@ -72,31 +72,6 @@
                 });
             }
 
-            if ($("#gvCampaign tr").length > 1) {
-                var oTable = $('#gvCampaign').dataTable({
-                    "bPaginate": false,
-                    "bLengthChange": false,
-                    "bFilter": true,
-                    "bSort": true,
-                    "bInfo": false,
-                    "bAutoWidth": false,
-                    "sScrollX": "99%",
-                    "aaSorting": []
-                });
-            }
-
-            if ($("#gvPrePayment tr").length > 1) {
-                var oTable = $('#gvPrePayment').dataTable({
-                    "bPaginate": false,
-                    "bLengthChange": false,
-                    "bFilter": false,
-                    "bSort": true,
-                    "bInfo": false,
-                    "bAutoWidth": false,
-                    "sScrollX": "99%",
-                    "aaSorting": []
-                });
-            }
             $(".DataPanel").corner();
         });
     </script>
@@ -222,7 +197,7 @@
                                 <asp:BoundField DataField="TxDate" HeaderText="Entitlement date" DataFormatString="{0:MMM dd, yyyy}"
                                     HeaderStyle-Width="15%" />
                                
-                                <asp:BoundField DataField="Amount" HeaderText="Amount" HeaderStyle-Width="10%" ItemStyle-HorizontalAlign="Right" DataFormatString="{0:F2}"/>
+                                <asp:BoundField DataField="Amount" HeaderText="Amount" HeaderStyle-Width="10%" ItemStyle-HorizontalAlign="Right" DataFormatString="{0:C2}"/>
                             </Columns>
                             <EmptyDataTemplate>
                                 There are no pending payments.
@@ -231,49 +206,6 @@
                         <asp:Panel ID="pNoPayments" Visible="false" runat="server">
                             <asp:Label ID="Label2" class='Label' runat="server" Style="width: 350px" Text="There are no pending payments."></asp:Label>
                         </asp:Panel>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="DataPanel">
-                        <div class='DataPanelHeader'>
-                            Campaign actions required
-                        </div>
-                        <asp:GridView ID="gvCampaign" runat="server"  EnableViewState="false" AutoGenerateColumns="false" CssClass="SelectTable"
-                            OnRowDataBound="gvCampaign_RowDataBound" Width="100%" EmptyDataText="No Data Found">
-                            <Columns>
-                                <asp:BoundField DataField="CampaignNumber" HeaderText="Campaign #" HeaderStyle-Width="10%" />
-                                <asp:BoundField DataField="StartDate" HeaderText="Start date" HeaderStyle-Width="8%" DataFormatString="{0:MMM dd, yyyy}" />
-                                <asp:BoundField DataField="Address" HeaderText="Address" HeaderStyle-Width="24%" HtmlEncode="false" />
-                                <asp:BoundField DataField="ApprovedBudget" HeaderText="Approved budget" HeaderStyle-Width="8%" ItemStyle-HorizontalAlign="Right" DataFormatString="{0:F2}" />
-                                <asp:BoundField DataField="TOTALSPENT" HeaderText="Total spent" HeaderStyle-Width="8%" ItemStyle-HorizontalAlign="Right" DataFormatString="{0:F2}" />
-                                <asp:BoundField DataField="AmountLeft" HeaderText="Over/under" HeaderStyle-Width="8%" ItemStyle-HorizontalAlign="Right" DataFormatString="{0:F2}" />
-                                <asp:BoundField DataField="TOTALINVOICED" HeaderText="Total invoiced" HeaderStyle-Width="8%" ItemStyle-HorizontalAlign="Right" DataFormatString="{0:F2}" />
-                                <asp:BoundField DataField="TOTALPAID" HeaderText="Total paid" HeaderStyle-Width="8%" ItemStyle-HorizontalAlign="Right" DataFormatString="{0:F2}" />
-                                <asp:BoundField DataField="TOTALOwing" HeaderText="Owing" HeaderStyle-Width="8%" ItemStyle-HorizontalAlign="Right" DataFormatString="{0:F2}" />
-                                <asp:BoundField DataField="Action" HeaderText="Action" HeaderStyle-Width="20%" />
-                            </Columns>
-                        </asp:GridView>
-                        <asp:Panel ID="pCampaignNoData" Visible="false" runat="server">
-                            <asp:Label ID="Label1" class='Label' runat="server" Style="width: 350px" Text="There are no campaigns that require your attention"></asp:Label>
-                        </asp:Panel>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="DataPanel">
-                        <div class='DataPanelHeader'>
-                            Campaign prepayment
-                        </div>
-                        <asp:GridView ID="gvPrePayment" runat="server" AutoGenerateColumns="false" Width="100%" EmptyDataText="No Data Found" EnableViewState="false" Style='float: left'>
-                            <Columns>
-                                <asp:BoundField DataField="CAMPAIGNNUMBER" HeaderText="Campaign #" HeaderStyle-Width="5%" />
-                                <asp:BoundField DataField="ListedDate" HeaderText="Listed date" HeaderStyle-Width="8%" DataFormatString="{0:MMM dd, yyyy}" />
-                                <asp:BoundField DataField="Address" HeaderText="Address" HeaderStyle-Width="20%" HtmlEncode="false" />
-                                <asp:BoundField DataField="TOTALSPENT" HeaderText="Adv $'s sold" HeaderStyle-Width="8%" ItemStyle-HorizontalAlign="Right" DataFormatString="{0:F2}" />
-                                <asp:BoundField DataField="TOTALPAID" HeaderText="Adv $'s Paid" HeaderStyle-Width="8%" ItemStyle-HorizontalAlign="Right" DataFormatString="{0:F2}" />
-                                <asp:BoundField DataField="% Prepaid" HeaderText="% Prepaid" HeaderStyle-Width="8%" ItemStyle-HorizontalAlign="Center" DataFormatString="{0:0%}" HtmlEncode="false" />
-                                <asp:BoundField DataField="TOtalOwing" HeaderText="Outstanding $'s" HeaderStyle-Width="8%" ItemStyle-HorizontalAlign="Right" DataFormatString="{0:F2}" />
-                            </Columns>
-                        </asp:GridView>
                     </div>
                 </div>
             </div>

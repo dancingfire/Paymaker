@@ -58,7 +58,6 @@ public class ClientMenu {
             }
 
         }
-        oM.addMenu("Campaign", "../campaign/campaign_dashboard.aspx", MenuRole.Campaign);
         oM.addMenu("Leave");
         oM.addMenuItem("Dashboard", "../payroll/leave_dashboard.aspx");
         if (G.User.IsAdmin || G.User.UserID == 497 || G.User.UserID == 178) {

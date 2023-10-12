@@ -9,7 +9,7 @@
     <div class="container-fluid">
         <form method="post" id="frmMain" runat="server" class="form-horizontal">
             
-                    <asp:Button ID="btnSend" runat="server" Text="Send email" OnClick="btnSend_Click" CssClass="btn btn-default" />
+                    <asp:Button ID="btnSend" runat="server" Text="Login" OnClick="btnSend_Click" CssClass="btn btn-default" />
             
         </form>
     </div>
