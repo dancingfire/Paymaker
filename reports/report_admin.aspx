@@ -959,36 +959,17 @@
         <img id="dFilterToggle" src="../sys_images/show_filter.gif" title="Show the report filters" />
         <div class="container-fluid">
             <div class="row" ID="pReports" runat="server" style="margin-top: 10px">
-                <div id="dHidden" style="display:none">
-                    <div class="ReportColHeader">KPI</div>
-                        <div class='ReportLink' ><i class="far fa-user MyReports" data-report="MAINKPI"></i><a href='javascript: selectReport("MAINKPI")'>KPI</a></div>
-                        <div class='ReportLink'><a href='javascript: selectReport("KPIAGENT")'>KPI agent detail</a></div>
-                        <div class='ReportLink'><a href='javascript: selectReport("KPIMUNICIPALITY")'>KPI municipality detail</a></div>
-                        <div class='ReportLink'><a href='javascript: selectReport("KPISUBURB")'>KPI suburb detail</a></div>
-                        <div class='ReportLink'><a href='javascript: selectReport("KPIOFFICE")'>KPI Office agents</a></div>
-                        <div class='ReportLink'><a href='javascript: selectReport("KPICARD")'>KPI agent card</a></div>
-                        <div class='ReportLink'><a href='javascript: selectReport("KPIOFFICEAUCTION")'>KPI Office agents auction details</a></div>
-                </div>
                 <div id="dUserReports" style="display:none">
                     <div class="ReportColHeader">Reports</div>
                         <div class='ReportLink'><i class="far fa-star" data-report="COMMISSION"></i><a href='javascript: selectReport("COMMISSION")'>Commission statement</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="MONTHLYSALES"></i><a href='javascript: selectReport("MONTHLYSALES")'>Monthly sales</a></div>
-                        <div class='ReportLink'><i class="far fa-star MyReports" data-report="MONTHLYSALESBYAGENT"></i><a href='javascript: selectReport("MONTHLYSALESBYAGENT")'>Monthly sales by agent</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="MONTHLYSALESDETAIL"></i><a href='javascript: selectReport("MONTHLYSALESDETAIL")'>Monthly sales detail (graph totals)</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="USERTOPPERFORMER"></i><a href='javascript: selectReport("USERTOPPERFORMER")'>Top Performer (Top 7)</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="USERTOPPERFORMERMONTHLY"></i><a href='javascript: selectReport("USERTOPPERFORMERMONTHLY")'>Your Top Performer Report</a></div>
                 </div>
-                <div id="pCampaign" class="col-sm-2 AdminReports">
-                    <div class="ReportColHeader">Campaign reports</div>
-                    <div class='ReportLink'><i class="far fa-star MyReports" data-report="PREPAYMENT"></i><a href='javascript: selectReport("PREPAYMENT")'>Campaign prepayment</a></div>
-                    <div class='ReportLink'><i class="far fa-star MyReports" data-report="PREPAYMENTN"></i><a href='javascript: selectReport("PREPAYMENTN")'>Campaign prepayment (N)</a></div>
-                    <div class='ReportLink'><i class="far fa-star MyReports" data-report="PREPAYMENTCHART"></i><a href='javascript: selectReport("PREPAYMENTCHART")'>Campaign prepayment graph</a></div>
-                    <div class='ReportLink'><i class="far fa-star MyReports" data-report="CAMPAIGNOUTSTANDING"></i><a href='javascript: selectReport("CAMPAIGNOUTSTANDING")'>Outstanding invoice summary</a></div>
-                    <div class='ReportLink'><i class="far fa-star MyReports" data-report="CAMPAIGNSAGING"></i><a href='javascript: selectReport("CAMPAIGNSAGING")'>Outstanding invoices aged</a></div>
-                </div>
                      
                 <div id="pPayment" class="col-sm-3 AdminReports">
-                    <div class="ReportColHeader">Sales Peports</div>
+                    <div class="ReportColHeader">Sales Reports</div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="AGENTEOMBALANCE"></i><a href='javascript: selectReport("AGENTEOMBALANCE")'>Agents EOM Balances</a></div>
                        <div class='ReportLink'><i class="far fa-star MyReports" data-report="AGENTEOMBALANCEANDPROMOEXPENSES"></i><a href='javascript: selectReport("AGENTEOMBALANCEANDPROMOEXPENSES")'>Agents EOM Balances & Promo Expenses</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="AGENTOFFTHETOP"></i><a href='javascript: selectReport("AGENTOFFTHETOP")'>Agents off the top</a></div>
@@ -996,8 +977,6 @@
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="BUDGETREPORT"></i><a href='javascript: selectReport("BUDGETREPORT")'>Budget report</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="COMMISSION"></i><a href='javascript: selectReport("COMMISSION")'>Commission statement</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="COMMISSIONTOTAL"></i><a href='javascript: selectReport("COMMISSIONTOTAL")'>Commission - Totals</a></div>
-                        <div class='ReportLink'><i class="far fa-star MyReports" data-report="MENTORCOMMISSION"></i><a href='javascript: selectReport("MENTORCOMMISSION")'>Commission - Mentoring</a></div>
-                        <div class='ReportLink'><i class="far fa-star MyReports" data-report="FARMCOMMISSION"></i><a href='javascript: selectReport("FARMCOMMISSION")'>Commission - Service Area</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="EXPENSESUMMARY"></i><a href='javascript: selectReport("EXPENSESUMMARY")'>Expense summary</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="INCENTIVE"></i><a href='javascript: selectReport("INCENTIVE")'>Incentive summary</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="MONTHLYRETAINER"></i><a href='javascript: selectReport("MONTHLYRETAINER")'>Monthly retainer</a></div>
@@ -1006,20 +985,18 @@
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="MONTHLYSALESDETAIL"></i><a href='javascript: selectReport("MONTHLYSALESDETAIL")'>Monthly sales detail (graph totals)</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="MONTHLYSALESBYAGENT"></i><a href='javascript: selectReport("MONTHLYSALESBYAGENT")'>Monthly sales by agent</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="MONTHLYSALESBYPAYPERIOD"></i><a href='javascript: selectReport("MONTHLYSALESBYPAYPERIOD")'>Monthly sales by pay period</a></div>
-                        <div class='ReportLink'><i class="far fa-star MyReports" data-report="MISSINGSALES"></i><a href='javascript: selectReport("MISSINGSALES")'>Missing sales</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="NATIONALSALESAWARD"></i><a href='javascript: selectReport("NATIONALSALESAWARD")'>National sales award</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="OFFTHETOP"></i><a href='javascript: selectReport("OFFTHETOP")'>Off the top monthly expenses</a></div>
-                        <div class='ReportLink'><i class="far fa-star MyReports" data-report="TOPADVERTISINGDETAIL"></i><a href='javascript: selectReport("TOPADVERTISINGDETAIL")'>Top advertising (detail)</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="YTDSALES"></i><a href='javascript: selectReport("YTDSALES")'>Year to date branch sales</a></div>
                 </div>
                 <div id="pGraph" class="col-sm-2 AdminReports">
                     <div class="ReportColHeader">Graphing reports</div>
-                        <div class='ReportLink'><i class="far fa-star MyReports" data-report="INCENTIVECHART"></i><a href='javascript: selectReport("INCENTIVECHART")'>Incentive chart</a></div>
+                       
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="NOOFSALES"></i><a href='javascript: selectReport("NOOFSALES")'>No of sales per office</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="SYSTEMQUARTERLY"></i><a href='javascript: selectReport("SYSTEMQUARTERLY")'>Quarterly top performer</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="SALESDOLLARS"></i><a href='javascript: selectReport("SALESDOLLARS")'>Sales Dollars per office</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="TOPPERFORMER"></i><a href='javascript: selectReport("TOPPERFORMER")'>Top performer</a></div>
-                        <div class='ReportLink'><i class="far fa-star MyReports" data-report="TOPADVERTISING"></i><a href='javascript: selectReport("TOPADVERTISING")'>Top advertising</a></div>
+                        
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="TOPADVERTISINGAVERAGE"></i><a href='javascript: selectReport("TOPADVERTISINGAVERAGE")'>Top advertising (average)</a></div>
 
                 </div>
@@ -1028,8 +1005,6 @@
                     <div class='ReportLink'><i class="far fa-star MyReports" data-report="SALESLETTER"></i><a href='javascript: selectReport("SALESLETTER")'>Sales letter</a></div>
                     <div class='ReportLink'><i class="far fa-star MyReports" data-report="EOFYBONUSDETAIL"></i><a href='javascript: selectReport("EOFYBONUSDETAIL")'>EOFY bonus detail</a></div>
                     <div class='ReportLink'><i class="far fa-star MyReports" data-report="EOFYBONUSSUMMARY"></i><a href='javascript: selectReport("EOFYBONUSSUMMARY")'>EOFY bonus summary</a></div>
-                    <div class='ReportLink'><i class="far fa-star MyReports" data-report="MENTORBONUSDETAIL"></i><a href='javascript: selectReport("MENTORBONUSDETAIL")'>Mentor bonus detail</a></div>
-                    <div class='ReportLink'><i class="far fa-star MyReports" data-report="MENTORBONUSSUMMARY"></i><a href='javascript: selectReport("MENTORBONUSSUMMARY")'>Mentor bonus summary</a></div>
                     <div class='ReportLink'><i class="far fa-star MyReports" data-report="PAYROLL"></i><a href='javascript: selectReport("PAYROLL")'>Sales payroll reconcilliation</a></div>
                 </div>
                      
@@ -1040,6 +1015,23 @@
                     <div class='ReportLink'><i class="far fa-star MyReports" data-report="AR_REPORT"></i><a href='javascript: selectReport("AR_REPORT")'>Proposed income</a></div>
                     <div class='ReportLink'><i class="far fa-star MyReports" data-report="SECTION27"></i><a href='javascript: selectReport("SECTION27")'>Section 27 proposed income</a></div>
                     <div class='ReportLink'><i class="far fa-star MyReports" data-report="MISSINGSECTION27"></i><a href='javascript: selectReport("MISSINGSECTION27")'>Missing section 27</a></div>
+                </div>
+                <div id="pOldReports" class="col-sm-2 AdminReports">
+                    <div class="ReportColHeader">Old Reports</div>
+                        <div class='ReportLink'><i class="far fa-star MyReports" data-report="PREPAYMENT"></i><a href='javascript: selectReport("PREPAYMENT")'>Campaign prepayment</a></div>
+                        <div class='ReportLink'><i class="far fa-star MyReports" data-report="PREPAYMENTN"></i><a href='javascript: selectReport("PREPAYMENTN")'>Campaign prepayment (N)</a></div>
+                        <div class='ReportLink'><i class="far fa-star MyReports" data-report="PREPAYMENTCHART"></i><a href='javascript: selectReport("PREPAYMENTCHART")'>Campaign prepayment graph</a></div>
+                        <div class='ReportLink'><i class="far fa-star MyReports" data-report="MENTORCOMMISSION"></i><a href='javascript: selectReport("MENTORCOMMISSION")'>Commission - Mentoring</a></div>
+                        <div class='ReportLink'><i class="far fa-star MyReports" data-report="INCENTIVECHART"></i><a href='javascript: selectReport("INCENTIVECHART")'>Incentive chart</a></div>
+                        <div class='ReportLink'><i class="far fa-star MyReports" data-report="FARMCOMMISSION"></i><a href='javascript: selectReport("FARMCOMMISSION")'>Commission - Service Area</a></div>
+                        <div class='ReportLink'><i class="far fa-star MyReports" data-report="MENTORBONUSDETAIL"></i><a href='javascript: selectReport("MENTORBONUSDETAIL")'>Mentor bonus detail</a></div>
+                        <div class='ReportLink'><i class="far fa-star MyReports" data-report="MENTORBONUSSUMMARY"></i><a href='javascript: selectReport("MENTORBONUSSUMMARY")'>Mentor bonus summary</a></div>
+
+                        <div class='ReportLink'><i class="far fa-star MyReports" data-report="MISSINGSALES"></i><a href='javascript: selectReport("MISSINGSALES")'>Missing sales</a></div>
+                        <div class='ReportLink'><i class="far fa-star MyReports" data-report="CAMPAIGNOUTSTANDING"></i><a href='javascript: selectReport("CAMPAIGNOUTSTANDING")'>Outstanding invoice summary</a></div>
+                        <div class='ReportLink'><i class="far fa-star MyReports" data-report="CAMPAIGNSAGING"></i><a href='javascript: selectReport("CAMPAIGNSAGING")'>Outstanding invoices aged</a></div>
+                        <div class='ReportLink'><i class="far fa-star MyReports" data-report="TOPADVERTISING"></i><a href='javascript: selectReport("TOPADVERTISING")'>Top advertising</a></div>
+                        <div class='ReportLink'><i class="far fa-star MyReports" data-report="TOPADVERTISINGDETAIL"></i><a href='javascript: selectReport("TOPADVERTISINGDETAIL")'>Top advertising (detail)</a></div>
                 </div>
                 <div class="col-sm-3">
                 </div>
