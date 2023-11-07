@@ -259,13 +259,16 @@ public static class LeaveReminders {
 
     public static void checkReminders() {
         string szSQL = @"    
-            SELECT LR.ID
+            SELECT LR.*
             FROM LEAVEREQUEST LR JOIN LIST L ON L.ID = LR.LEAVETYPEID
             JOIN LEAVESTATUS LS ON LS.ID = LR.LEAVESTATUSID
             JOIN DB_USER U ON LR.USERID = U.ID
+			LEFT JOIN  EMAILLOG EL ON EL.ObjectID = LR.ID AND EL.TYPEID = 3
             WHERE LR.ISDELETED = 0   AND MANAGERSIGNOFFDATE IS NULL
                 AND DATEDIFF(d, getdate(), entrydate) % 3 = 0 AND Convert(Date, ENTRYDATE) < Convert(Date, getDate())
-                ORDER BY LR.ENTRYDATE";
+				AND EL.ID IS NULL
+                ORDER BY LR.ENTRYDATE
+";
 
         using (DataSet ds = DB.runDataSet(szSQL)) {
             foreach (DataRow dr in ds.Tables[0].Rows) {
