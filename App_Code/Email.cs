@@ -119,7 +119,7 @@ public class Email {
         if (!FromQueue) {
             if (UserID == -1)
                 UserID = G.User.UserID;
-            EmailQueue.queueEmail(msg, Type, DisplayName, IncludeFile, UserID);
+            EmailQueue.queueEmail(msg, Type, DisplayName, IncludeFile, UserID, LogObjectID);
         } else {
             if (IncludeFile != null) {
                 msg.Attachments.Add(IncludeFile);
@@ -188,11 +188,11 @@ public class Email {
 
     public static SmtpClient getEmailServer() {
         SmtpClient oSMTP = new SmtpClient(EmailSettings.SMTPServer);
-        oSMTP.EnableSsl = EmailSettings.SMTPServerSSL;
-        oSMTP.DeliveryMethod = SmtpDeliveryMethod.Network;
-        oSMTP.Port = 587;
-        oSMTP.UseDefaultCredentials = true;
         if (!String.IsNullOrEmpty(EmailSettings.SMTPServerUserName)) {
+            oSMTP.EnableSsl = EmailSettings.SMTPServerSSL;
+            oSMTP.DeliveryMethod = SmtpDeliveryMethod.Network;
+            oSMTP.Port = 587;
+            oSMTP.UseDefaultCredentials = true;
             System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(EmailSettings.SMTPServerUserName, EmailSettings.SMTPServerPassword);
             oSMTP.Credentials = credentials;
         }
@@ -201,7 +201,7 @@ public class Email {
 
     public static class EmailQueue {
 
-        public static void queueEmail(MailMessage msg, EmailType Type, string DisplayName, Attachment IncludeFile, int UserID) {
+        public static void queueEmail(MailMessage msg, EmailType Type, string DisplayName, Attachment IncludeFile, int UserID, int ObjectID) {
             sqlUpdate oSQL = new sqlUpdate("EMAILQUEUE", "ID", -1);
             oSQL.add("EmailType", (int)Type);
             oSQL.add("UserID", UserID);
@@ -211,6 +211,7 @@ public class Email {
             oSQL.add("Subject", msg.Subject);
             oSQL.add("Body", msg.Body);
             oSQL.add("DisplayName", DisplayName);
+            oSQL.add("ObjectID", ObjectID);
             if (IncludeFile != null) {
                 oSQL.add("ATTACHMENT", IncludeFile.Name);
                 EmailQueue.saveMailAttachment(IncludeFile, UserID);
@@ -232,7 +233,7 @@ public class Email {
                     IncludeFile = new Attachment(getAttachmentFileName(oE.Attachment, oE.UserID));
                 }
                 oE.startProcessing();
-                if(Email.sendMail(oE.ToList, "", oE.Subject, oE.Body, oE.CCList, oE.BCCList, IncludeFile, -1, oE.EmailType, oE.DisplayName, true)) {
+                if(Email.sendMail(oE.ToList, "", oE.Subject, oE.Body, oE.CCList, oE.BCCList, IncludeFile, oE.ObjectID, oE.EmailType, oE.DisplayName, true)) {
                     oE.markSent();
                 } else {
                     oE.failProcessing();
@@ -258,9 +259,13 @@ public class Email {
             return Path.Combine(G.Settings.DataDir, "Attachments", UserID.ToString(), FileName);
         }
 
+        /// <summary>
+        /// References a single email object that is stored in the EmailQueue table
+        /// </summary>
         public class EmailDB {
             public int ID { get; set; }
             public int UserID { get; set; }
+            public int ObjectID { get; set; }
             public EmailType EmailType { get; set; }
             public string ToList { get; set; }
             public string CCList { get; set; }
