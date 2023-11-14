@@ -4,6 +4,8 @@ using ComponentPro.Saml2;
 using System;
 using System.Net.Mail;
 using System.Web;
+using System.Web.Configuration;
+using System.Web.Security;
 using System.Web.UI;
 
 public partial class ConsumerService : System.Web.UI.Page {
@@ -45,12 +47,14 @@ public partial class ConsumerService : System.Web.UI.Page {
         }
 
         if (String.IsNullOrEmpty(emailAddress)) {
-            Response.Write("You do not currently have access to GEARs. Please contact the site administrator to add you to the system. The email address we tried was: " + emailAddress);
+            Response.Write("You do not currently have access to CAPss. Please contact the site administrator to add you to the system. The email address we tried was: " + emailAddress);
+            UserLogin.logout();
             Response.End();
         }
         bool blnLoggedIn = UserLogin.loginUserByEmail(emailAddress);
         if (!blnLoggedIn) {
-            Response.Write("You do not currently have access to GEARs. Please contact the site administrator to add you to the system. The email address we tried was: " + emailAddress);
+            Response.Write("You do not currently have access to CAPsss. Please contact the site administrator to add you to the system. The email address we tried was: " + emailAddress);
+            UserLogin.logout();
         } else {
             string szStartPage = UserLogin.getStartPage();
             Response.Write(String.Format("<script>window.top.location.href = '../{0}';</script>", szStartPage));
