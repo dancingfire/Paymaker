@@ -1,10 +1,13 @@
+using Sentry;
 using System;
 using System.Collections;
 using System.Data;
 using System.Data.SqlClient;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Web.Configuration;
 using System.Web.Security;
+using System.Web.UI.WebControls;
 
 /// <summary>
 /// Summary description for RolePermissionType
@@ -219,6 +222,23 @@ public class UserLogin {
         return "";
     }
 
+    /// <summary>
+    /// Logout out of the forms authentication
+    /// </summary>
+    public static void logout() {
+        FormsAuthentication.SignOut();
+        HttpContext.Current.Session.Abandon();
+        // clear authentication cookie
+        HttpCookie cookie1 = new HttpCookie(FormsAuthentication.FormsCookieName, "");
+        cookie1.Expires = DateTime.Now.AddYears(-1);
+        HttpContext.Current.Response.Cookies.Add(cookie1);
+
+        SessionStateSection sessionStateSection = (SessionStateSection)WebConfigurationManager.GetSection("system.web/sessionState");
+        HttpCookie cookie2 = new HttpCookie(sessionStateSection.CookieName, "");
+        cookie2.Expires = DateTime.Now.AddYears(-1);
+        HttpContext.Current.Response.Cookies.Add(cookie2);
+       // HttpContext.Current.Response.Redirect(String.Format("https://login.microsoftonline.com/{0}/oauth2/v2.0/logout", G.Settings.SAML.SSOTenant));
+    }
     /// <summary>
     /// Resets the login for users
     /// </summary>

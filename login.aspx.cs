@@ -18,7 +18,7 @@ namespace Paymaker {
             G.User.IsLeave = Request.QueryString["LEAVE"] != null;
 
             if (!HttpContext.Current.User.Identity.IsAuthenticated) {
-                Response.Redirect("/.auth/login/aad?post_login_redirect_url=payroll/leave_manager_dashboard.aspx.aspx");
+                Response.Redirect("/acs/samllogin.aspx?post_login_redirect_url=payroll/leave_manager_dashboard.aspx.aspx");
             } else {
                 //Oupput the javascript to redirect to the leave page if the user is already logged in
                 StringBuilder sbEndJS = new StringBuilder();

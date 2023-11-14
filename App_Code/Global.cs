@@ -567,6 +567,12 @@ public class G {
                     return ConfigurationManager.AppSettings["SSOClientID"];
                 }
             }
+
+            public static string SSOTenant {
+                get {
+                    return ConfigurationManager.AppSettings["SSOTenant"];
+                }
+            }
         }
 
         public static string DataDir {

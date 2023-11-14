@@ -20,7 +20,9 @@ namespace Paymaker {
 
         protected void Application_Start(Object sender, EventArgs e) {
             AddTask("checkEmailQueue", 30);
-			ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            ComponentPro.Saml.SamlSettings.LogWriter = new ComponentPro.Saml.Diagnostics.FileLogWriter("c:\\home\\site\\wwwroot\\saml.log", ComponentPro.Saml.Diagnostics.LogLevel.Verbose, false);
+
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             if (!String.IsNullOrEmpty(ConfigurationManager.AppSettings["SentryDNS"])) {
                 _sentry = SentrySdk.Init(o => {
                     o.Debug = true;

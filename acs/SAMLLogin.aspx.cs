@@ -19,7 +19,6 @@ public partial class SAMLLogin : System.Web.UI.Page {
 
     protected void initiateLogin() {
         ComponentPro.Licensing.Saml.LicenseManager.SetLicenseKey(ComponentProKey);
-        
         // Set the server certificate validation callback.
         ServicePointManager.ServerCertificateValidationCallback = ValidateRemoteServerCertificate;
 
@@ -32,6 +31,7 @@ public partial class SAMLLogin : System.Web.UI.Page {
        
         // Send the authentication request to the identity provider over the selected binding.
         string idpUrl = string.Format("{0}?binding={1}", G.Settings.SAML.SSOServiceURL, HttpUtility.UrlEncode("urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"));
+        
         a.SendHttpPost(Response, idpUrl, relayState);
         Response.End();
     }
@@ -44,7 +44,7 @@ public partial class SAMLLogin : System.Web.UI.Page {
     private AuthnRequest BuildAuthenticationRequest() {
         string issuerUrl = Util.GetAbsoluteUrl(this, "~/");
         string AssertionURL = String.Format("https://{0}/acs/ConsumerService.aspx", G.Settings.ServerName);
-        string assertionConsumerServiceUrl = string.Format("{0}?binding={1}", AssertionURL, HttpUtility.UrlEncode("urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"));
+        string assertionConsumerServiceUrl = string.Format("{0}", AssertionURL, HttpUtility.UrlEncode("urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"));
 
         // Create the authentication request.
         AuthnRequest authnRequest = new AuthnRequest();
@@ -53,7 +53,7 @@ public partial class SAMLLogin : System.Web.UI.Page {
         authnRequest.ForceAuthn = false;
         authnRequest.NameIdPolicy = new NameIdPolicy(null, null, true);
         authnRequest.ProtocolBinding = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST";
-        authnRequest.AssertionConsumerServiceUrl = AssertionURL;
+        authnRequest.AssertionConsumerServiceUrl = assertionConsumerServiceUrl;
         return authnRequest;
     }
 
