@@ -25,9 +25,8 @@ namespace Paymaker {
             // Lists only files that are *.txt or *.csv
             if (!szTest.EndsWith(".JPG") && !szTest.EndsWith(".PDF"))
                 throw new Exception("Invalid file type");
-            string connectionString = ConfigurationManager.AppSettings["StorageConnectionString"];
 
-            byte[] bytes = File.ReadAllBytes(Directory + "/"+ file);
+            byte[] bytes = File.ReadAllBytes(Path.Combine(Directory , file));
           
             Response.Buffer = true;
             Response.Clear();
