@@ -90,11 +90,12 @@ public class LeaveRequest {
     }
 
     public void addFile(FileUpload FileUpload1) {
-        if (!Directory.Exists(G.Settings.DataDir))
-            Directory.CreateDirectory(G.Settings.DataDir);
+        string DestDir = Path.Combine(G.Settings.DataDir, "LeaveData");
+        if (!Directory.Exists(DestDir))
+            Directory.CreateDirectory(DestDir);
         if (FileUpload1.HasFile) {
             string FileName = "Evidence" + intID + Path.GetExtension(FileUpload1.FileName);
-            FileUpload1.SaveAs(Path.Combine(G.Settings.DataDir, FileName));
+            FileUpload1.SaveAs(Path.Combine(DestDir, FileName));
             DB.runNonQuery(String.Format("UPDATE LEAVEREQUEST SET SUPPORTINGFILE = '{0}' WHERE ID = {1}", DB.escape(FileName), intID));
         }
     }
