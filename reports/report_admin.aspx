@@ -309,6 +309,7 @@
                     $("#spCompany").show();
                     break;
                 case "AGENTEOMBALANCE":
+                case "AGENTEOMBALANCEWITHROLLOVER":
                 case "AGENTEOMBALANCEANDPROMOEXPENSES":
                     $("#lstFinancialYear option[value='']").remove();
                     $("#spOffice").show();
@@ -710,6 +711,10 @@
                     var szSrc = "agent_eom_balance.aspx";
                     var szParam = getFilterValues();
                     break;
+                case "AGENTEOMBALANCEWITHROLLOVER":
+                    var szSrc = "agent_eom_balance_and_rollover.aspx";
+                    var szParam = getFilterValues();
+                    break;
                 case "AGENTEOMBALANCEANDPROMOEXPENSES":
                     var szSrc = "agent_eom_balance_and_promo_expenses.aspx";
                     var szParam = getFilterValues();
@@ -971,7 +976,8 @@
                 <div id="pPayment" class="col-sm-3 AdminReports">
                     <div class="ReportColHeader">Sales Reports</div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="AGENTEOMBALANCE"></i><a href='javascript: selectReport("AGENTEOMBALANCE")'>Agents EOM Balances</a></div>
-                       <div class='ReportLink'><i class="far fa-star MyReports" data-report="AGENTEOMBALANCEANDPROMOEXPENSES"></i><a href='javascript: selectReport("AGENTEOMBALANCEANDPROMOEXPENSES")'>Agents EOM Balances & Promo Expenses</a></div>
+                        <div class='ReportLink'><i class="far fa-star MyReports" data-report="AGENTEOMBALANCEWITHROLLOVER"></i><a href='javascript: selectReport("AGENTEOMBALANCEWITHROLLOVER")'>Agents EOM Balances with Comm Rollover</a></div>
+                        <div class='ReportLink'><i class="far fa-star MyReports" data-report="AGENTEOMBALANCEANDPROMOEXPENSES"></i><a href='javascript: selectReport("AGENTEOMBALANCEANDPROMOEXPENSES")'>Agents EOM Balances & Promo Expenses</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="AGENTOFFTHETOP"></i><a href='javascript: selectReport("AGENTOFFTHETOP")'>Agents off the top</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="PAYROLLESTIMATE"></i><a href='javascript: selectReport("PAYROLLESTIMATE")'>Agents payroll estimate</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="BUDGETREPORT"></i><a href='javascript: selectReport("BUDGETREPORT")'>Budget report</a></div>

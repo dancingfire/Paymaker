@@ -214,6 +214,7 @@ public partial class sale_update : Root {
         return szHTML;
     }
 
+
     protected void btnUpdate_Click(object sender, EventArgs e) {
         sqlUpdate oSQL = new sqlUpdate("SALE", "ID", Convert.ToInt32(hdSaleID.Value));
         oSQL.add("STATUSID", lstStatus.SelectedValue);
