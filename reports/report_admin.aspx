@@ -553,21 +553,6 @@
                     
                     szParam += "&RecalcTotals=" + $("#lstRecreateTotals").val();
                     break;
-                    var szSrc = "commission_statement.aspx";
-                    var szParam = getFilterValues();
-
-                    if ($("#lstUser").val() == null) {
-                        if ($("#hfUserID").val() != "")
-                            szParam += "&szUserID=" + $("#hfUserID").val(); //Get the hidden value as this is a single user view
-                        else {
-                            $("#lstUser *").attr("selected", "selected");
-                            szParam += "&szUserID=" + $("#lstUser").val();
-                        }
-                    } else {
-                        szParam += "&szUserID=" + $("#lstUser").val();
-                    }
-                    szParam += "&RecalcTotals=" + $("#lstRecreateTotals").val();
-                    break;
 
                 case "EOFYBONUSSUMMARY":
                     var szSrc = "eofy_bonus_summary.aspx";
