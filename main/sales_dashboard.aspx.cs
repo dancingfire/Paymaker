@@ -110,7 +110,7 @@ public partial class sales_dashboard : Root {
             return String.Format("<a href='../PDF/{0}/{1}' target='_blank' title='Click to view PDF commission statement'>{2} {3}</a>", G.User.UserID, szFile, Month.Substring(0, 3), Year);
         } else {
             //Create a link to the report history
-            return String.Format("<a href='../reports/commission_statement.aspx?szUserID={0}&szPayPeriod={1}'  target='_blank' title='Click to generate commission statement'>{2} {3}</a>", G.User.UserID, PayPeriodID, Month.Substring(0, 3), Year);
+            return String.Format("<a href='../reports/commission_statement_new.aspx?szUserID={0}&szPayPeriod={1}'  target='_blank' title='Click to generate commission statement'>{2} {3}</a>", G.User.UserID, PayPeriodID, Month.Substring(0, 3), Year);
         }
     }
 
