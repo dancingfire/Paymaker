@@ -159,6 +159,10 @@ public partial class user_update : Root {
         oSQL.add("INITIALSCODE", szInitialsCode);
         oSQL.add("SALESTARGET", txtSalesTarget.Text);
         oSQL.add("ISACTIVE", szListStatus);
+        if(szListStatus == "1") {
+            oSQL.add("ISDELETED", "0");
+        }   
+        
         oSQL.add("SUPERVISORID", lstSupervisor.SelectedValue);
         if (lstAgentEOMReportSettings.SelectedValue == "")
             oSQL.addNull("AGENTEOMBALANCEREPORTSETTINGS");

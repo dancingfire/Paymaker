@@ -73,7 +73,7 @@
                     <table id="loginForm" cellspacing="1" cellpadding="1" align="center" border="0">
                         <tr>
                             <td style="width: 100px">
-                                <asp:Label ID="Label1" runat="server" CssClass="Label LoginLabel" Text="User name:"
+                                <asp:Label ID="Label1" runat="server" CssClass="Label LoginLabel" Text="Email:"
                                     Width="100px"></asp:Label>
                             </td>
                             <td style="width: 200px">

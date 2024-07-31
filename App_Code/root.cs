@@ -48,22 +48,24 @@ public class Root : System.Web.UI.Page, IDisposable {
         if (blnLoggedInAccessOnly)
             a = G.User.UserID;
 
-      
+        string szCurrScript = Request.ServerVariables["SCRIPT_NAME"];
+        
         if (HttpContext.Current.Session["USERID"] == null && G.Settings.Env != "dev") {
-            
-            if (!HttpContext.Current.User.Identity.IsAuthenticated) { 
-                Response.Redirect("/acs/samllogin.aspx");
-            } else {
-                if (!UserLogin.loginUserByEmail(HttpContext.Current.User.Identity.Name)) {
-                    Response.Write("Please contact your administrator to setup access to this application. We tried with the name: " + HttpContext.Current.User.Identity.Name);
-                    UserLogin.logout();
-                    Response.End();
-                } else {
+            if (!szCurrScript.Contains("login_hidden")) {
+                if (!HttpContext.Current.User.Identity.IsAuthenticated) {
                     Response.Redirect("/acs/samllogin.aspx");
+                } else {
+                    if (!UserLogin.loginUserByEmail(HttpContext.Current.User.Identity.Name)) {
+                        Response.Write("Please contact your administrator to setup access to this application. We tried with the name: " + HttpContext.Current.User.Identity.Name + " Please ensure that theis record has a login name entered so the system will allow access.");
+                        UserLogin.logout();
+                        Response.End();
+                    } else {
+                        Response.Redirect("/acs/samllogin.aspx");
+                    }
                 }
             }
         } 
-        string szCurrScript = Request.ServerVariables["SCRIPT_NAME"];
+       
         base.OnLoad(e);
 
         if (Page.IsCallback) {
