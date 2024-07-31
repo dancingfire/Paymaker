@@ -44,27 +44,12 @@ namespace Paymaker {
                 G.Notifications.showPageNotification(true);
                 return;
             }
-        
-            int MatchingUserID = (int)SqlHelper.ExecuteScalar(DB.DBConn, CommandType.StoredProcedure,
-                "getUserByLogin", new SqlParameter("@UserName", txtUserName.Text), new SqlParameter("@Password", txtPassword.Text));
-
-            switch (MatchingUserID) {
-                case -1:
-                    UserLogin.writeLog(-1, txtUserName.Text, false);
-                    Msg.Text = "That login could not be found. Please try again.";
-                    break;
-
-                default:
-                    G.User.LoginCount = 0;
-                    loginSuccess(MatchingUserID);
-                    break;
-            }
-        }
-
-        private void loginSuccess(int UserID) {
-            UserLogin.loginUserByID(UserID);
-            sbEndJS.AppendFormat("window.top.location.href = '{0}';", UserLogin.getStartPage());
-            pPage.Visible = false;
+            bool UserLoginGood = UserLogin.loginUserByEmail(txtUserName.Text);
+            
+            if (UserLoginGood) {
+                sbEndJS.AppendFormat("window.top.location.href = '{0}';", UserLogin.getStartPage());
+                pPage.Visible = false;
+            }            
         }
 
         protected void btnSubmit_Click(object sender, System.EventArgs e) {
