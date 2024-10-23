@@ -512,7 +512,7 @@ public class Sale {
                     FROM bdPROPERTY P
 	                    JOIN bdSALESLISTING SL ON SL.PROPERTYID = P.ID
                     	JOIN bdSALESVOUCHER SV ON SV.SALESLISTINGID = SL.ID
-					{1} AND SL.OfficeID in (3, 5, 1, 11, 7, 18, 10, 24, 28) 
+					{1} AND SL.OfficeID in ({3}) 
                     ORDER BY SL.ID DESC -- Latest first
 
                     -- 1. BnD records already imported
@@ -523,7 +523,7 @@ public class Sale {
 	                        JOIN bdSALESLISTING SL ON SL.PROPERTYID = P.ID
                     	    JOIN bdSALESVOUCHER SV ON SV.SALESLISTINGID = SL.ID
 					    {1}
-                    )", Client.DBName, szFilterRecords, szTop);
+                    )", Client.DBName, szFilterRecords, szTop, G.Settings.BoxAndDiceOfficeIDs);
         using (DataSet ds = DB.runDataSet(szSQL)) {
             foreach (DataRow dr in ds.Tables[0].Rows) {
                 //Check it the Sale is already imported

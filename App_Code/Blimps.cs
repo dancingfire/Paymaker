@@ -28,11 +28,11 @@ public enum BlimpObject {
 /// </summary>
 public static class BlimpsHelper {
     
-    //private static string szUserName = "gordfunk";
-     //  private static string szPassword = "gordfunk";
+    private static string szUserName = "gordfunk";
+    private static string szPassword = "gordfunk";
 
-     private static string szUserName = "accounts.banyule@fletchers.net.au";
-     private static string szPassword = "Lexidog10987!";
+     //private static string szUserName = "accounts.banyule@fletchers.net.au";
+     //private static string szPassword = "Lexidog10987!";
 
     private static string szBlimpsURL = "https://fletchers.boxdice.com.au/blimps/load";
 
