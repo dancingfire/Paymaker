@@ -574,7 +574,11 @@ public class G {
                 }
             }
         }
-
+        public static string BoxAndDiceOfficeIDs {
+            get {
+                return System.Configuration.ConfigurationManager.AppSettings["IncludedBnDOfficeIDs"];
+            }
+        }
         public static string DataDir {
             get {
                 return System.Configuration.ConfigurationManager.AppSettings["AppDataPath"];
