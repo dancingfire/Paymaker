@@ -330,7 +330,7 @@ public class UserLogin {
     }
 
     public static bool loginUserByEmail(string Email) {
-        int UserID = DB.getScalar(String.Format("SELECT ID FROM DB_USER WHERE (EMAIL = '{0}' OR Login = '{0}') AND ISDELETED = 0 AND ISACTIVE = 1 AND LOGIN != '' ORDER BY ROLEID", DB.escape(Email)), -1);
+        int UserID = DB.getScalar(String.Format("SELECT ID FROM DB_USER WHERE (EMAIL = '{0}' OR Login = '{0}') AND ISDELETED = 0 AND ISACTIVE = 1 ORDER BY ROLEID", DB.escape(Email)), -1);
         if (UserID < 0) {
             return false;
         }
