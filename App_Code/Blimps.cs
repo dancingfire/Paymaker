@@ -22,18 +22,33 @@ public enum BlimpObject {
     ContactCategory = 11,
     Task = 12
 }
+public static class BlimpsSettings {
 
+    /// <summary>
+    /// The live email server
+    /// </summary>
+    public static string BLIMPSUserName {
+        get {
+            return System.Configuration.ConfigurationManager.AppSettings["BLIMPSUserName"];
+        }
+    }
+
+    /// <summary>
+    /// The live email server username
+    /// </summary>
+    public static string BLIMPSPassword {
+        get {
+            return System.Configuration.ConfigurationManager.AppSettings["BLIMPSPassword"];
+        }
+    }
+}
 /// <summary>
 /// Helper functions for Blimps access
 /// </summary>
 public static class BlimpsHelper {
     
-    private static string szUserName = "gordfunk";
-    private static string szPassword = "gordfunk";
-
-     //private static string szUserName = "accounts.banyule@fletchers.net.au";
-     //private static string szPassword = "Lexidog10987!";
-
+    private static string szUserName = BlimpsSettings.BLIMPSUserName;
+    private static string szPassword = BlimpsSettings.BLIMPSPassword;
     private static string szBlimpsURL = "https://fletchers.boxdice.com.au/blimps/load";
 
     /// <summary>

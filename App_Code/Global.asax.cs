@@ -23,14 +23,18 @@ namespace Paymaker {
           //  ComponentPro.Saml.SamlSettings.LogWriter = new ComponentPro.Saml.Diagnostics.FileLogWriter("c:\\home\\site\\wwwroot\\saml.log", ComponentPro.Saml.Diagnostics.LogLevel.Verbose, false);
 
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            if (!String.IsNullOrEmpty(ConfigurationManager.AppSettings["SentryDNS"])) {
-                _sentry = SentrySdk.Init(o => {
-                    o.Debug = true;
-                    o.Dsn = ConfigurationManager.AppSettings["SentryDNS"];
-                    o.Environment = ConfigurationManager.AppSettings["Environment"];
-                });
+            SentryOptions o = new SentryOptions();
+            //o.AddAS();
+            o.Debug = true;
+            o.Dsn = ConfigurationManager.AppSettings["SentryDNS"];
+            o.Environment = ConfigurationManager.AppSettings["Environment"];
+            o.TracesSampleRate = 1.0;
 
+
+            if (!String.IsNullOrEmpty(ConfigurationManager.AppSettings["SentryDNS"])) {
+                _sentry = SentrySdk.Init(o);
             };
+
         }
 
         private void AddTask(string name, int seconds) {
@@ -61,11 +65,13 @@ namespace Paymaker {
         }
 
         protected void Application_Error(Object sender, EventArgs e) {
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
             System.Diagnostics.Debug.WriteLine("Hit the error");
             var exception = Server.GetLastError();
             SentrySdk.ConfigureScope(scope => {
                 if (!String.IsNullOrEmpty(G.User.Email)) {
-                    scope.User = new Sentry.User {
+                    scope.User = new SentryUser {
                         Id = Convert.ToString(G.User.UserID),
                         Email = G.User.Email
                     };
