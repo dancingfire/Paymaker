@@ -159,6 +159,11 @@
             Create a new DbString
             </summary>
         </member>
+        <member name="M:Dapper.DbString.#ctor(System.String,System.Int32)">
+            <summary>
+            Create a new DbString
+            </summary>
+        </member>
         <member name="P:Dapper.DbString.IsAnsi">
             <summary>
             Ansi vs Unicode 
@@ -177,6 +182,11 @@
         <member name="P:Dapper.DbString.Value">
             <summary>
             The value of the string
+            </summary>
+        </member>
+        <member name="M:Dapper.DbString.ToString">
+            <summary>
+            Gets a string representation of this DbString.
             </summary>
         </member>
         <member name="M:Dapper.DbString.AddParameter(System.Data.IDbCommand,System.String)">
@@ -321,6 +331,9 @@
             <summary>
             Tell Dapper to use an explicit constructor, passing nulls or 0s for all parameters
             </summary>
+            <remarks>
+            Usage on methods is limited to the usage with Dapper.AOT (https://github.com/DapperLib/DapperAOT)
+            </remarks>
         </member>
         <member name="M:Dapper.Extensions.CastResult``2(System.Threading.Tasks.Task{``0})">
             <summary>
@@ -476,7 +489,7 @@
             <param name="commandTimeout">The command timeout (in seconds).</param>
             <param name="commandType">The type of command to execute.</param>
             <returns>
-            A sequence of data of <typeparamref name="T"/>; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
+            A sequence of data of <typeparamref name="T"/>; if a basic type (int, string, etc) is queried then the data from the first column is assumed, otherwise an instance is
             created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
             </returns>
         </member>
@@ -645,7 +658,7 @@
             <param name="cnn">The connection to query on.</param>
             <param name="command">The command used to query on this connection.</param>
             <returns>
-            A sequence of data of <typeparamref name="T"/>; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
+            A sequence of data of <typeparamref name="T"/>; if a basic type (int, string, etc) is queried then the data from the first column is assumed, otherwise an instance is
             created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
             </returns>
         </member>
@@ -1162,7 +1175,6 @@
             <summary>
             Deep diagnostics only: find any hash collisions in the cache
             </summary>
-            <returns></returns>
         </member>
         <member name="M:Dapper.SqlMapper.ResetTypeHandlers">
             <summary>
@@ -1176,6 +1188,14 @@
             <param name="type">The type to map from.</param>
             <param name="dbType">The database type to map to.</param>
         </member>
+        <member name="M:Dapper.SqlMapper.AddTypeMap(System.Type,System.Data.DbType,System.Boolean)">
+            <summary>
+            Configure the specified type to be mapped to a given db-type.
+            </summary>
+            <param name="type">The type to map from.</param>
+            <param name="dbType">The database type to map to.</param>
+            <param name="useGetFieldValue">Whether to prefer <see cref="M:System.Data.Common.DbDataReader.GetFieldValue``1(System.Int32)"/> over <see cref="M:System.Data.Common.DbDataReader.GetValue(System.Int32)"/>.</param>
+        </member>
         <member name="M:Dapper.SqlMapper.RemoveTypeMap(System.Type)">
             <summary>
             Removes the specified type from the Type/DbType mapping table.
@@ -1188,6 +1208,13 @@
             </summary>
             <param name="type">The type to handle.</param>
             <param name="handler">The handler to process the <paramref name="type"/>.</param>
+        </member>
+        <member name="M:Dapper.SqlMapper.HasTypeHandler(System.Type)">
+            <summary>
+            Determine if the specified type will be processed by a custom handler.
+            </summary>
+            <param name="type">The type to handle.</param>
+            <returns>Boolean value specifying whether the type will be processed by a custom handler.</returns>
         </member>
         <member name="M:Dapper.SqlMapper.AddTypeHandlerImpl(System.Type,Dapper.SqlMapper.ITypeHandler,System.Boolean)">
             <summary>
@@ -1204,10 +1231,11 @@
             <typeparam name="T">The type to handle.</typeparam>
             <param name="handler">The handler for the type <typeparamref name="T"/>.</param>
         </member>
-        <member name="M:Dapper.SqlMapper.GetDbType(System.Object)">
+        <member name="M:Dapper.SqlMapper.SetDbType(System.Data.IDataParameter,System.Object)">
             <summary>
             Get the DbType that maps to a given value.
             </summary>
+            <param name="parameter">The parameter to configure the value for.</param>
             <param name="value">The object to get a corresponding database type for.</param>
         </member>
         <member name="M:Dapper.SqlMapper.LookupDbType(System.Type,System.String,System.Boolean,Dapper.SqlMapper.ITypeHandler@)">
@@ -1431,7 +1459,7 @@
             <param name="commandTimeout">The command timeout (in seconds).</param>
             <param name="commandType">The type of command to execute.</param>
             <returns>
-            A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
+            A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column is assumed, otherwise an instance is
             created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
             </returns>
         </member>
@@ -1447,7 +1475,7 @@
             <param name="commandTimeout">The command timeout (in seconds).</param>
             <param name="commandType">The type of command to execute.</param>
             <returns>
-            A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
+            A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column is assumed, otherwise an instance is
             created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
             </returns>
         </member>
@@ -1463,7 +1491,7 @@
             <param name="commandTimeout">The command timeout (in seconds).</param>
             <param name="commandType">The type of command to execute.</param>
             <returns>
-            A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
+            A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column is assumed, otherwise an instance is
             created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
             </returns>
         </member>
@@ -1479,7 +1507,7 @@
             <param name="commandTimeout">The command timeout (in seconds).</param>
             <param name="commandType">The type of command to execute.</param>
             <returns>
-            A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
+            A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column is assumed, otherwise an instance is
             created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
             </returns>
         </member>
@@ -1497,7 +1525,7 @@
             <param name="commandType">The type of command to execute.</param>
             <exception cref="T:System.ArgumentNullException"><paramref name="type"/> is <c>null</c>.</exception>
             <returns>
-            A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
+            A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column is assumed, otherwise an instance is
             created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
             </returns>
         </member>
@@ -1514,7 +1542,7 @@
             <param name="commandType">The type of command to execute.</param>
             <exception cref="T:System.ArgumentNullException"><paramref name="type"/> is <c>null</c>.</exception>
             <returns>
-            A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
+            A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column is assumed, otherwise an instance is
             created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
             </returns>
         </member>
@@ -1531,7 +1559,7 @@
             <param name="commandType">The type of command to execute.</param>
             <exception cref="T:System.ArgumentNullException"><paramref name="type"/> is <c>null</c>.</exception>
             <returns>
-            A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
+            A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column is assumed, otherwise an instance is
             created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
             </returns>
         </member>
@@ -1548,7 +1576,7 @@
             <param name="commandType">The type of command to execute.</param>
             <exception cref="T:System.ArgumentNullException"><paramref name="type"/> is <c>null</c>.</exception>
             <returns>
-            A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
+            A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column is assumed, otherwise an instance is
             created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
             </returns>
         </member>
@@ -1565,7 +1593,7 @@
             <param name="commandType">The type of command to execute.</param>
             <exception cref="T:System.ArgumentNullException"><paramref name="type"/> is <c>null</c>.</exception>
             <returns>
-            A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
+            A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column is assumed, otherwise an instance is
             created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
             </returns>
         </member>
@@ -1577,7 +1605,7 @@
             <param name="cnn">The connection to query on.</param>
             <param name="command">The command used to query on this connection.</param>
             <returns>
-            A sequence of data of <typeparamref name="T"/>; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
+            A sequence of data of <typeparamref name="T"/>; if a basic type (int, string, etc) is queried then the data from the first column is assumed, otherwise an instance is
             created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
             </returns>
         </member>
@@ -1589,7 +1617,7 @@
             <param name="cnn">The connection to query on.</param>
             <param name="command">The command used to query on this connection.</param>
             <returns>
-            A single instance or null of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
+            A single instance or null of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column is assumed, otherwise an instance is
             created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
             </returns>
         </member>
@@ -1601,7 +1629,7 @@
             <param name="cnn">The connection to query on.</param>
             <param name="command">The command used to query on this connection.</param>
             <returns>
-            A single or null instance of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
+            A single or null instance of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column is assumed, otherwise an instance is
             created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
             </returns>
         </member>
@@ -1613,7 +1641,7 @@
             <param name="cnn">The connection to query on.</param>
             <param name="command">The command used to query on this connection.</param>
             <returns>
-            A single instance of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
+            A single instance of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column is assumed, otherwise an instance is
             created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
             </returns>
         </member>
@@ -1625,7 +1653,7 @@
             <param name="cnn">The connection to query on.</param>
             <param name="command">The command used to query on this connection.</param>
             <returns>
-            A single instance of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
+            A single instance of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column is assumed, otherwise an instance is
             created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
             </returns>
         </member>
@@ -1647,7 +1675,7 @@
             <param name="cnn">The connection to query on.</param>
             <param name="command">The command to execute for this query.</param>
         </member>
-        <member name="M:Dapper.SqlMapper.ReadRow``1(Dapper.SqlMapper.CacheInfo,Dapper.SqlMapper.Identity,Dapper.CommandDefinition@,System.Type,System.Data.IDataReader)">
+        <member name="M:Dapper.SqlMapper.ReadRow``1(Dapper.SqlMapper.CacheInfo,Dapper.SqlMapper.Identity,Dapper.CommandDefinition@,System.Type,System.Data.Common.DbDataReader)">
             <summary>
             Shared value deserialization path for QueryRowImpl and QueryRowAsync
             </summary>
@@ -1885,6 +1913,21 @@
             <param name="returnNullIfFirstMissing"></param>
             <returns></returns>
         </member>
+        <member name="M:Dapper.SqlMapper.GetTypeDeserializer(System.Type,System.Data.Common.DbDataReader,System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            Internal use only
+            </summary>
+            <param name="type"></param>
+            <param name="reader"></param>
+            <param name="startBound"></param>
+            <param name="length"></param>
+            <param name="returnNullIfFirstMissing"></param>
+        </member>
+        <member name="M:Dapper.SqlMapper.ThrowNullCustomQueryParameter(System.String)">
+            <summary>
+            For internal use only
+            </summary>
+        </member>
         <member name="M:Dapper.SqlMapper.ThrowDataException(System.Exception,System.Int32,System.Data.IDataReader,System.Object)">
             <summary>
             Throws a data exception, only used internally
@@ -2042,6 +2085,16 @@
             </summary>
             <typeparam name="T">The type to read.</typeparam>
         </member>
+        <member name="M:Dapper.SqlMapper.GridReader.OnAfterGridAsync(System.Int32)">
+            <summary>
+            Marks the current grid as consumed, and moves to the next result
+            </summary>
+        </member>
+        <member name="M:Dapper.SqlMapper.GridReader.#ctor(System.Data.IDbCommand,System.Data.Common.DbDataReader,Dapper.SqlMapper.Identity,System.Action{System.Object},System.Object,System.Boolean,System.Threading.CancellationToken)">
+            <summary>
+            Creates a grid reader over an existing command and reader
+            </summary>
+        </member>
         <member name="M:Dapper.SqlMapper.GridReader.Read(System.Boolean)">
             <summary>
             Read the next grid of results, returned as a dynamic object.
@@ -2140,6 +2193,12 @@
             <param name="type">The type to read.</param>
             <exception cref="T:System.ArgumentNullException"><paramref name="type"/> is <c>null</c>.</exception>
         </member>
+        <member name="M:Dapper.SqlMapper.GridReader.OnBeforeGrid">
+            <summary>
+            Validates that data is available, returning the <see cref="P:Dapper.SqlMapper.GridReader.ResultIndex"/> that corresponds to the current grid - and marks the current grid as consumed;
+            this call <em>must</em> be paired with a call to <see cref="M:Dapper.SqlMapper.GridReader.OnAfterGrid(System.Int32)"/> or <see cref="M:Dapper.SqlMapper.GridReader.OnAfterGridAsync(System.Int32)"/>
+            </summary>
+        </member>
         <member name="M:Dapper.SqlMapper.GridReader.Read``3(System.Func{``0,``1,``2},System.String,System.Boolean)">
             <summary>
             Read multiple objects from a single record set on the grid.
@@ -2231,14 +2290,35 @@
             <param name="splitOn">The field(s) we should split and read the second object from (defaults to "id")</param>
             <param name="buffered">Whether to buffer results in memory.</param>
         </member>
+        <member name="P:Dapper.SqlMapper.GridReader.ResultIndex">
+            <summary>
+            Indicates the current result index
+            </summary>
+        </member>
         <member name="P:Dapper.SqlMapper.GridReader.IsConsumed">
             <summary>
             Has the underlying reader been consumed?
             </summary>
+            <remarks>This also reports <c>true</c> if the current grid is actively being consumed</remarks>
         </member>
         <member name="P:Dapper.SqlMapper.GridReader.Command">
             <summary>
             The command associated with the reader
+            </summary>
+        </member>
+        <member name="P:Dapper.SqlMapper.GridReader.Reader">
+            <summary>
+            The underlying reader
+            </summary>
+        </member>
+        <member name="P:Dapper.SqlMapper.GridReader.CancellationToken">
+            <summary>
+            The cancellation token associated with this reader
+            </summary>
+        </member>
+        <member name="M:Dapper.SqlMapper.GridReader.OnAfterGrid(System.Int32)">
+            <summary>
+            Marks the current grid as consumed, and moves to the next result
             </summary>
         </member>
         <member name="M:Dapper.SqlMapper.GridReader.Dispose">
@@ -2290,7 +2370,22 @@
             <param name="returnNullIfFirstMissing">Return null if we can't find the first column? (default false)</param>
             <returns>A parser for this specific object from this row.</returns>
         </member>
+        <member name="M:Dapper.SqlMapper.GetRowParser(System.Data.Common.DbDataReader,System.Type,System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            Gets the row parser for a specific row on a data reader. This allows for type switching every row based on, for example, a TypeId column.
+            You could return a collection of the base type but have each more specific.
+            </summary>
+            <param name="reader">The data reader to get the parser for the current row from</param>
+            <param name="type">The type to get the parser for</param>
+            <param name="startIndex">The start column index of the object (default 0)</param>
+            <param name="length">The length of columns to read (default -1 = all fields following startIndex)</param>
+            <param name="returnNullIfFirstMissing">Return null if we can't find the first column? (default false)</param>
+            <returns>A parser for this specific object from this row.</returns>
+        </member>
         <member name="M:Dapper.SqlMapper.GetRowParser``1(System.Data.IDataReader,System.Type,System.Int32,System.Int32,System.Boolean)">
+            <inheritdoc cref="M:Dapper.SqlMapper.GetRowParser``1(System.Data.Common.DbDataReader,System.Type,System.Int32,System.Int32,System.Boolean)"/>
+        </member>
+        <member name="M:Dapper.SqlMapper.GetRowParser``1(System.Data.Common.DbDataReader,System.Type,System.Int32,System.Int32,System.Boolean)">
             <summary>
             Gets the row parser for a specific row on a data reader. This allows for type switching every row based on, for example, a TypeId column.
             You could return a collection of the base type but have each more specific.
@@ -2368,7 +2463,17 @@
             The raw SQL command.
             </summary>
         </member>
+        <member name="P:Dapper.SqlMapper.Identity.Sql">
+            <summary>
+            The raw SQL command.
+            </summary>
+        </member>
         <member name="F:Dapper.SqlMapper.Identity.commandType">
+            <summary>
+            The SQL command type.
+            </summary>
+        </member>
+        <member name="P:Dapper.SqlMapper.Identity.CommandType">
             <summary>
             The SQL command type.
             </summary>
@@ -2383,9 +2488,19 @@
             The grid index (position in the reader) of this Identity.
             </summary>
         </member>
+        <member name="P:Dapper.SqlMapper.Identity.GridIndex">
+            <summary>
+            The grid index (position in the reader) of this Identity.
+            </summary>
+        </member>
         <member name="F:Dapper.SqlMapper.Identity.type">
             <summary>
-            This <see cref="T:System.Type"/> of this Identity.
+            The <see cref="P:Dapper.SqlMapper.Identity.Type"/> of this Identity.
+            </summary>
+        </member>
+        <member name="P:Dapper.SqlMapper.Identity.Type">
+            <summary>
+            The <see cref="P:Dapper.SqlMapper.Identity.Type"/> of this Identity.
             </summary>
         </member>
         <member name="F:Dapper.SqlMapper.Identity.connectionString">
@@ -2394,6 +2509,11 @@
             </summary>
         </member>
         <member name="F:Dapper.SqlMapper.Identity.parametersType">
+            <summary>
+            The type of the parameters object for this Identity.
+            </summary>
+        </member>
+        <member name="P:Dapper.SqlMapper.Identity.ParametersType">
             <summary>
             The type of the parameters object for this Identity.
             </summary>
@@ -2609,6 +2729,26 @@
             <summary>
             If set (non-negative), when performing in-list expansions of integer types ("where id in @ids", etc), switch to a string_split based
             operation if there are this many elements or more. Note that this feature requires SQL Server 2016 / compatibility level 130 (or above).
+            </summary>
+        </member>
+        <member name="P:Dapper.SqlMapper.Settings.UseIncrementalPseudoPositionalParameterNames">
+            <summary>
+            If set, pseudo-positional parameters (i.e. ?foo?) are passed using auto-generated incremental names, i.e. "1", "2", "3"
+            instead of the original name; for most scenarios, this is ignored since the name is redundant, but "snowflake" requires this.
+            </summary>
+        </member>
+        <member name="P:Dapper.SqlMapper.Settings.FetchSize">
+            <summary>
+            If assigned a non-negative value, then that value is applied to any commands <c>FetchSize</c> property, if it exists;
+            see https://docs.oracle.com/en/database/oracle/oracle-database/18/odpnt/CommandFetchSize.html; note that this value
+            can only be set globally - it is not intended for frequent/contextual changing.
+            </summary>
+        </member>
+        <member name="P:Dapper.SqlMapper.Settings.SupportLegacyParameterTokens">
+            <summary>
+            Indicates whether single-character parameter tokens (<c>?</c> etc) will be detected and used where possible;
+            this feature is not recommended and will be disabled by default in future versions;
+            where possible, prefer named parameters (<c>@yourParam</c> etc) or Dapper's "pseudo-positional" parameters (<c>?yourParam? etc</c>).
             </summary>
         </member>
         <member name="T:Dapper.SqlMapper.TypeHandler`1">
