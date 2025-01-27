@@ -60,21 +60,37 @@ namespace Paymaker {
                 -- 2) Heldover
                 SELECT HELDOVERAMOUNT AS HELDOVER, USERID
                 FROM USERPAYPERIOD
-                WHERE PAYPERIODID = {3};
+                WHERE PAYPERIODID = {3}
+                ORDER BY USERID;
 
                 -- 3) User Details
                 SELECT USR.ID AS USERID, USR.FIRSTNAME + ' ' + USR.LASTNAME AS AGENT, L_OFFICE.NAME AS OFFICE, '' as USED
                 FROM DB_USER USR JOIN LIST L_OFFICE ON L_OFFICE.ID = USR.OFFICEID
-                WHERE USR.ISACTIVE = 1 AND  USR.AGENTEOMBALANCEREPORTSETTINGS = USR.ID AND L_OFFICE.ISACTIVE = 1 {4};
+                WHERE {0} AND USR.ISACTIVE = 1 AND  USR.AGENTEOMBALANCEREPORTSETTINGS = USR.ID AND L_OFFICE.ISACTIVE = 1  {4};
 
                 -- 4) EOM Rollover
                 SELECT DISTRIBUTIONOFFUNDS, USERID
                 FROM USERPAYPERIOD
-                WHERE PAYPERIODID = {3} AND DISTRIBUTIONOFFUNDS > 0;
+                WHERE PAYPERIODID = {3} AND DISTRIBUTIONOFFUNDS > 0
+                ORDER BY USERID;
+    
+                -- 5) Future commission data
+                SELECT 
+                    SUM(USS.ACTUALPAYMENT) AS AMOUNT, USS.UserID
+                
+                FROM USERSALESPLIT USS
+                JOIN SALESPLIT SS ON USS.SALESPLITID = SS.ID AND SS.RECORDSTATUS = 0 AND USS.RECORDSTATUS < 1
+			    JOIN DB_USER USR on USS.UseRID = USR.ID
+                JOIN LIST L_OFFICE ON L_OFFICE.ID = USR.OFFICEID
+                JOIN SALE S ON SS.SALEID = S.ID
+			    where {0} AND S.STATUSID != 3 AND S.SALEDATE IS NOT NULL 
+                AND (S.PAYPERIODID IS NULL OR (s.PayPeriodID != {3} AND S.ENTITLEMENTDATE > '{1}')) AND S.SALEDATE <= '{2}'
+			    group by USS.UserID
                 "
                 , szFilter, Utility.formatDate(dtStart), Utility.formatDate(dtEnd), hdPayPeriod.Value, szCompanyFilter);
 
             DataSet ds = DB.runDataSet(szSQL);
+            
             if (ds.Tables[0].Rows.Count > 0)
                 formatDataSet(ds);
             GridViewHelper helper = new GridViewHelper(gvTable);
@@ -103,6 +119,7 @@ namespace Paymaker {
             DataView dvHeldover = ds.Tables[2].DefaultView;
             DataView dvUserDetails = ds.Tables[3].DefaultView;
             DataView dvRollover = ds.Tables[4].DefaultView;
+            DataView dvPending = ds.Tables[5].DefaultView;
 
             foreach (DataRow oR in ds.Tables[0].Rows) {
                 dvRetainer.RowFilter = "USERID = " + oR["USERID"].ToString();
@@ -114,6 +131,9 @@ namespace Paymaker {
                     oR["DEBITBALANCE"] = -1 * Convert.ToDouble(dvHeldover[0]["HELDOVER"]);
 
                 dvRollover.RowFilter = "USERID = " + oR["USERID"].ToString();
+                dvPending.RowFilter = "USERID = " + oR["USERID"].ToString();
+                if (dvPending.Count > 0)
+                    oR["PENDING"] = Convert.ToDouble(dvPending[0]["AMOUNT"]);
                 if (dvRollover.Count > 0)
                     oR["PENDING"] =  Convert.ToDouble(oR["PENDING"]) + Convert.ToDouble(dvRollover[0]["DISTRIBUTIONOFFUNDS"]);
 
