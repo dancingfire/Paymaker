@@ -89,7 +89,6 @@ public static class BlimpsHelper {
         request.AddHeader("Content-Type", "application/json");
         if (LastRangeID > -1) {
             request.AddHeader("Range", "ts=" + LastRangeID);
-            DB.runNonQuery("-- " + LastRangeID);
         }
         request.AddHeader("Test2", "test");
         request.RequestFormat = DataFormat.Json;
@@ -136,12 +135,12 @@ public static class BlimpsHelper {
 
                 if (arValue.Length > 1) {
                     szValue = arValue[0]; //Reduced the expression to 1-1024
-                    TotalRecords = Convert.ToInt32(arValue[1]);
+                    TotalRecords = Convert.ToInt32(Convert.ToDecimal(arValue[1]));
                 } else
                     return -1;
                 arValue = szValue.Split('-');
                 if (arValue.Length > 1)
-                    return Convert.ToInt32(arValue[1]) + 1;
+                    return Convert.ToInt32(Convert.ToDecimal(arValue[1])) + 1;
                 else
                     return -1;
             }
