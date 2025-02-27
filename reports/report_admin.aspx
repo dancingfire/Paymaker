@@ -254,18 +254,6 @@
                     }
                     $("#spDate").show();
                     break;
-                case "MONTHLYSALESBYPAYPERIOD":
-                    $("#lstFinancialYear option[value='']").remove();
-                    if (!blnSingleUser) {
-                        $("#spOffice").show();
-                        $("#spCompany").show();
-                        $("#spUser").show();
-                        $("#spActive").show();
-                    }  else {
-                        $("#spNonAdminUserFilter").show()
-                    }
-                    $("#spDate").show();
-                    break;
                 case "SALESLETTER":
                     $("#lstFinancialYear").attr('size', '1')
                         .removeAttr('size')
@@ -669,11 +657,6 @@
                     var szParam = getFilterValues();
                     szParam += getSelectedUser(false);
                     break;
-                case "MONTHLYSALESBYPAYPERIOD":
-                    var szSrc = "monthly_sales_by_pay_period.aspx";
-                    var szParam = getFilterValues();
-                    szParam += getSelectedUser(false);
-                    break;
                 case "MONTHLYSALESBYAGENT":
                     var szSrc = "monthly_sales_by_agent.aspx";
                     var szParam = getFilterValues();
@@ -975,7 +958,6 @@
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="MONTHLYSALESAGENTEXPENSES"></i><a href='javascript: selectReport("MONTHLYSALESAGENTEXPENSES")'>Monthly sales - agent expenses</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="MONTHLYSALESDETAIL"></i><a href='javascript: selectReport("MONTHLYSALESDETAIL")'>Monthly sales detail (graph totals)</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="MONTHLYSALESBYAGENT"></i><a href='javascript: selectReport("MONTHLYSALESBYAGENT")'>Monthly sales by agent</a></div>
-                        <div class='ReportLink'><i class="far fa-star MyReports" data-report="MONTHLYSALESBYPAYPERIOD"></i><a href='javascript: selectReport("MONTHLYSALESBYPAYPERIOD")'>Monthly sales by pay period</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="NATIONALSALESAWARD"></i><a href='javascript: selectReport("NATIONALSALESAWARD")'>National sales award</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="OFFTHETOP"></i><a href='javascript: selectReport("OFFTHETOP")'>Off the top monthly expenses</a></div>
                         <div class='ReportLink'><i class="far fa-star MyReports" data-report="YTDSALES"></i><a href='javascript: selectReport("YTDSALES")'>Year to date branch sales</a></div>

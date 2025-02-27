@@ -87,8 +87,5 @@ namespace Paymaker {
         protected void Application_End(Object sender, EventArgs e) {
             _sentry.Dispose();
         }
-
-        private void sqlConnection1_InfoMessage(object sender, System.Data.SqlClient.SqlInfoMessageEventArgs e) {
-        }
     }
 }
