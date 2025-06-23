@@ -70,6 +70,9 @@ public class Agent_OffTheTop : Report {
         if (!String.IsNullOrWhiteSpace(oFilter.UserIDList))
             szFilter += " AND USS.USERID IN (" + oFilter.UserIDList + ")";
 
+        if (!String.IsNullOrWhiteSpace(oFilter.OfficeIDList))
+            szFilter += " AND USR.OFFICEID IN (" + oFilter.OfficeIDList + ")";
+
         bool blnIncludeInactive = Valid.getBoolean("blnIncludeInactive", false);
         string szUserActive = " AND USR.ISACTIVE = 1 ";
         if (blnIncludeInactive)
