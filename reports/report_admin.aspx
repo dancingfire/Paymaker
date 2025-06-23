@@ -114,6 +114,7 @@
                     $("#spOffice").show();
                     break;
                 case "AGENTOFFTHETOP":
+                    $("#spOffice").show();
                     $("#spUser").show();
                     $("#spDate").show();
                     $("#spOffTheTop").show();
@@ -370,7 +371,7 @@
 
                 case "OFFTHETOP":
                     $("#spDate").show();
-                    $("#spCompany").show();
+                    $("#spCompany, #spOffice").show();
 
                     break;
                 case "SALESDOLLARS":
