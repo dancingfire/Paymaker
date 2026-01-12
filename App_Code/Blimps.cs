@@ -128,7 +128,8 @@ public static class BlimpsHelper {
     /// <returns></returns>
     public static int getContentRange(IList<Parameter> oR, ref int TotalRecords) {
         foreach (Parameter oP in oR) {
-            if (oP.Name == "Content-Range") {
+            if (oP.Name.ToUpper() == "CONTENT-RANGE") {
+                DB.runNonQuery("--" + Convert.ToString(oP.Value));
                 string szValue = Convert.ToString(oP.Value); //Value is in the format of: ts 1-1014/1372835384
                 szValue = szValue.Replace("ts", "").Trim();
                 string[] arValue = szValue.Split('/');
