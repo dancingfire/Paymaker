@@ -42,7 +42,6 @@ namespace Paymaker {
 					JOIN DB_USER USR ON USR.ID = USS.USERID
 					JOIN LIST L_OFFICE ON L_OFFICE.ID = USS.OFFICEID
 					JOIN LIST L_COMPANY ON L_COMPANY.ID = L_OFFICE.COMPANYID
-					WHERE COMMISSIONTYPEID = 10
                     GROUP BY SS.SALEID, L_OFFICE.COMPANYID) OWNER ON S.ID = OWNER.SALEID
                 WHERE S.STATUSID IN (1, 2) AND {0}
                 ORDER BY SUBSTRING(S.ADDRESS, CHARINDEX(' ', S.ADDRESS) + 1, LEN(S.ADDRESS))"
@@ -78,6 +77,7 @@ namespace Paymaker {
                     drv.EndEdit();
                 }
             }
+            dv.RowFilter = "";
             //Apply the company filter now that we have assigned costs
             if (!String.IsNullOrWhiteSpace(oF.CompanyID))
                 dv.RowFilter = String.Format(" COMPANYID IN (-1,{0})", oF.CompanyID);
