@@ -132,7 +132,10 @@ namespace Paymaker {
             chtArea.AxisY.Interval = Math.Round((chtArea.AxisY.Maximum / 15) / 500) * 500; //Round to nearest 500
             chtArea.AxisX.LabelAutoFitMinFontSize = 8;
             chtArea.AxisX.LabelAutoFitMaxFontSize = 8;
-            chtArea.AxisY.Maximum = getRoundedMaxValue(MaxSalesValue);
+            var Max = getRoundedMaxValue(MaxSalesValue);
+            if (Max > 700000)
+                Max = Max += 100000;
+            chtArea.AxisY.Maximum = Max;
             if (blnPrint) {
                 Charts.sendChartToClient(chtTopPerformers);
             }
