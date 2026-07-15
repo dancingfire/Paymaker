@@ -35,7 +35,8 @@ namespace Paymaker {
             int colCount = 0;
             foreach (DataRow oRow in dsOffice.Tables[0].Rows) {
                 alOffice.Add(Convert.ToInt32(oRow["ID"]));
-                oDataTable.Columns.Add(new DataColumn(oRow["NAME"].ToString(), System.Type.GetType("System.String")));
+                DataColumn oDH = new DataColumn(oRow["NAME"].ToString(), System.Type.GetType("System.String"));
+                oDataTable.Columns.Add(oDH);
                 DataColumn oDC = new DataColumn("NOOFSALES" + "_" + colCount, System.Type.GetType("System.String"));
                 oDC.DefaultValue = 0;
                 oDataTable.Columns.Add(oDC);

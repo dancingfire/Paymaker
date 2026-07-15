@@ -244,7 +244,7 @@ public class LeaveRequest {
                 End: {3}</br/>
                 Comments: {4} <br/><br/>
 
-               Please <a href='https://{0}?LEAVE=true'>login to CAPS </a> to respond to this request.
+               Please <a href='https://{5}?LEAVE=true'>login to CAPS </a> to respond to this request.
             ", u.Name, this.LeaveType, Utility.formatDate(StartDate), Utility.formatDate(EndDate), Utility.nl2br(Comment),
             G.BaseURL);
 

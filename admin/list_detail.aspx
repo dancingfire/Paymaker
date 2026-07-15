@@ -17,7 +17,7 @@
                     $(this).next().html(tempText + ' (in-active)');
                 }
             });
-            createDataTable("gvList", true, true, 380);
+            createDataTable("gvList", true, true, $(window).height() - 120);
         });
 
         function refreshPage() {
@@ -30,13 +30,14 @@
     </script>
 </head>
 <body class='AdminPage'>
-    <form id="frmMain" name="frmMain" method="post" runat="server" target="frmUpdate">
-        <div class="PageHeader" style="z-index: 107; width: 100%; top: 1px">
+    <form id="frmMain" name="frmMain" method="post" runat="server" target="frmUpdate" style="display: flex; flex-direction: column; height: 100vh;">
+        <div class="PageHeader" style="z-index: 107; width: 100%; top: 1px; flex-shrink: 0;">
             <asp:Label ID="lblItemName" runat="server" Text="Label"></asp:Label>
         </div>
 
-        <div style='float: left; width: 30%;'>
-            <div class="ListContainer" style="overflow: auto; overflow-x: hidden; width: 100%; height: 457px; float: left">
+        <div style="display: flex; flex: 1; overflow: hidden;">
+        <div style='float: left; width: 30%; display: flex; flex-direction: column;'>
+            <div class="ListContainer" style="overflow: auto; overflow-x: hidden; width: 100%; flex: 1; float: left">
                 <asp:GridView ID="gvList" runat="server" AutoGenerateColumns="false"
                     OnRowDataBound="gvList_RowDataBound" Width="100%"
                     EmptyDataText="No Data Found" EnableViewState="false">
@@ -50,7 +51,8 @@
                 <asp:Label ID="lblInsertText" runat="server" Text="Label" CssClass="LinkButton"></asp:Label></a></div>
         </div>
 
-        <iframe id='frmUpdate' name='frmUpdate' class='AdminUpdateFrame' frameborder='0' src='../blank.html'></iframe>
+        <iframe id='frmUpdate' name='frmUpdate' class='AdminUpdateFrame' frameborder='0' src='../blank.html' style='flex: 1; height: 100%;'></iframe>
+        </div>
     </form>
 </body>
 </html>

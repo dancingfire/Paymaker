@@ -97,22 +97,22 @@
             <br class="Align" />
 
             <asp:Label ID="lblName" runat="server" CssClass="Label LabelPos">First</asp:Label>
-            <asp:TextBox CssClass="Entry EntryPos" ID="txtFirstName" runat="server" Text=""></asp:TextBox>
+            <asp:TextBox CssClass="Entry EntryPos" ID="txtFirstName" runat="server" Text="" MaxLength="40"></asp:TextBox>
             <br class="Align" />
             <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ErrorMessage="First name is a required field" ControlToValidate="txtFirstName" Display="None"></asp:RequiredFieldValidator>
 
             <asp:Label ID="Label6" runat="server" CssClass="Label LabelPos">Last</asp:Label>
-            <asp:TextBox CssClass="Entry EntryPos" ID="txtLastName" runat="server" Text=""></asp:TextBox>
+            <asp:TextBox CssClass="Entry EntryPos" ID="txtLastName" runat="server" Text="" MaxLength="40"></asp:TextBox>
             <br class="Align" />
             <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ErrorMessage="Last name is a required field" ControlToValidate="txtLastName" Display="None"></asp:RequiredFieldValidator>
 
             <asp:Label ID="lblInitials" runat="server" CssClass="Label LabelPos">Initials</asp:Label>
-            <asp:TextBox CssClass="Entry EntryPos" ID="txtInitials" runat="server" Text=""></asp:TextBox>
+            <asp:TextBox CssClass="Entry EntryPos" ID="txtInitials" runat="server" Text="" MaxLength="3"></asp:TextBox>
             <br class="Align" />
             <asp:RequiredFieldValidator ID="RequiredFieldValidator3" runat="server" ErrorMessage="Initials is a required field" ControlToValidate="txtInitials" Display="None"></asp:RequiredFieldValidator>
 
             <asp:Label ID="Label1" runat="server" CssClass="Label LabelPos">Login</asp:Label>
-            <asp:TextBox CssClass="Entry EntryPos" ID="txtLogin" runat="server" Text=""></asp:TextBox>
+            <asp:TextBox CssClass="Entry EntryPos" ID="txtLogin" runat="server" Text="" MaxLength="40"></asp:TextBox>
             <br class="Align" />
 
             <asp:Label ID="Label2" runat="server" CssClass="Label LabelPos">Password</asp:Label>
@@ -120,7 +120,7 @@
             <br class="Align" />
 
             <asp:Label ID="Label3" runat="server" CssClass="Label LabelPos">Email</asp:Label>
-            <asp:TextBox CssClass="Entry EntryPos" ID="txtEmail" runat="server" Text=""></asp:TextBox>
+            <asp:TextBox CssClass="Entry EntryPos" ID="txtEmail" runat="server" Text="" MaxLength="80"></asp:TextBox>
             <br class="Align" />
             <asp:RequiredFieldValidator ID="RequiredFieldValidator4" runat="server" ErrorMessage="Email is a required field" ControlToValidate="txtEmail" Display="None"></asp:RequiredFieldValidator>
 
@@ -195,11 +195,11 @@
 
                 <asp:Label ID="Label5" runat="server" CssClass="Label LabelPos">Credit GL Code</asp:Label>
                 <asp:TextBox CssClass="Entry EntryPos" ID="txtCreditGLCode" runat="server" Text=""
-                    MaxLength="80"></asp:TextBox>
+                    MaxLength="50"></asp:TextBox>
                 <br class="Align" />
 
                 <asp:Label ID="Label7" runat="server" CssClass="Label LabelPos">Debit GL Code</asp:Label>
-                <asp:TextBox CssClass="Entry EntryPos" ID="txtDebitGLCode" runat="server" Text=""></asp:TextBox>
+                <asp:TextBox CssClass="Entry EntryPos" ID="txtDebitGLCode" runat="server" Text="" MaxLength="50"></asp:TextBox>
                 <br class="Align" />
 
                 <div class="panel panel-default" style="margin-top: 10px; width: 90%">
