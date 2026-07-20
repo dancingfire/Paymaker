@@ -234,7 +234,7 @@ public class UserPayPeriod {
     /// </summary>
     public double MonthlyIncomeWithRetainer {
         get {
-            return this.Income + this.OtherIncome - this.DeductionsAmount + (2*this.RetainerAmount); //Need to add the retainer back in
+            return this.Income + this.OtherIncome - this.DeductionsAmount + this.RetainerAmount; //Add the retainer back in once, to undo its single subtraction in DeductionsAmount
         }
     }
 

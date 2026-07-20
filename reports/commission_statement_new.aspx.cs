@@ -117,33 +117,52 @@ namespace Paymaker {
             addValue("[TOTALOTHERINCOME]", Utility.formatReportMoney(UserTotals.OtherIncome));
 
             addValue("[MONTHLYPAY]", Utility.formatReportMoney(UserTotals.MonthlyIncomeWithoutRetainer));
-            addPayOrRetainer();
             addValue("[MONTHLYRETAINER]", Utility.formatReportMoney(UserTotals.RetainerAmount));
 
             addSummaryValue("[CommissionSummary_OTHERINCOME]", Utility.formatReportMoney(UserTotals.OtherIncome));
             addSummaryValue("[CommissionSummary_DEDUCTIONS]", Utility.formatReportMoney(UserTotals.TotalDeductionAmount));
             sbHTML.Clear();
-            double TotalAfterSuper = UserTotals.MonthlyIncomeWithRetainer;
+
+            //Total payable amount (with retainer) adds the retainer back once (it was already subtracted once
+            //as a deduction line item above), or is capped at the retainer amount if the agent's earnings for
+            //the month fall short of it
+            double TotalPayable = UserTotals.MonthlyIncomeWithRetainer;
             if (UserTotals.UseRetainer)
-                TotalAfterSuper = UserTotals.RetainerAmount;
-            if (TotalAfterSuper >= 0) {
+                TotalPayable = UserTotals.RetainerAmount;
+            TotalPayable = TotalPayable >= 0 ? TotalPayable : -1 * TotalPayable;
+            addValue("[TOTALDISTRIBUTIONOFFUNDS]", Utility.formatReportMoney(TotalPayable));
+
+            //Super is only owed on money actually paid out this period, not on commission earned but not yet
+            //paid (it may be carried forward). When a retainer is drawn, super is based on the retainer alone
+            //rather than the full distribution - the commission portion isn't superannuated here.
+            double SuperBase = UserTotals.RetainerAmount > 0 ? UserTotals.RetainerAmount : UserTotals.MonthlyIncomeWithoutRetainer;
+            double Super = 0;
+            if (SuperBase >= 0) {
                 //Note: Caclulation changed after specific request from JL on Jul 6
-                double Super = TotalAfterSuper - (TotalAfterSuper / (1 +  (G.Settings.SuperannuationPercentage/100)));
-                double MaxSuperPerMonth = G.Settings.SuperannuationMaxContribution;            
+                Super = SuperBase - (SuperBase / (1 +  (G.Settings.SuperannuationPercentage/100)));
+                double MaxSuperPerMonth = G.Settings.SuperannuationMaxContribution;
                 if (Super > MaxSuperPerMonth)
                     Super = MaxSuperPerMonth;
                 UserTotals.SuperAmount = Super;
                 if (Valid.getText("RecalcTotals", "No").ToUpper() == "YES") {
                     DB.runNonQuery(String.Format("UPDATE USERPAYPERIOD SET SUPERPAID = {0} WHERE ID = {1}", Super, UserTotals.DBID));
                 }
-                TotalAfterSuper -= Super;
-                addValue("[MONTHLYSUPER]", Utility.formatReportMoney(Super));
-                addValue("[TOTALDISTRIBUTIONOFFUNDS]", Utility.formatReportMoney(TotalAfterSuper));
-            } else {
-                addValue("[TOTALDISTRIBUTIONOFFUNDS]", Utility.formatReportMoney(-1 * TotalAfterSuper));
-                addValue("[MONTHLYSUPER]", Utility.formatReportMoney(0));
-
             }
+            addValue("[MONTHLYSUPER]", Utility.formatReportMoney(Super));
+
+            //When a retainer is drawn, only the retainer (net of super) is paid out now and the remainder
+            //carries forward to next month. Without a retainer, the full payable amount goes out this month.
+            double NetPayable;
+            double CarryForward;
+            if (UserTotals.RetainerAmount > 0) {
+                NetPayable = UserTotals.RetainerAmount - Super;
+                CarryForward = TotalPayable - UserTotals.RetainerAmount;
+            } else {
+                NetPayable = TotalPayable - Super;
+                CarryForward = 0;
+            }
+            addValue("[NETPAYABLE]", Utility.formatReportMoney(NetPayable));
+            addValue("[CARRYFORWARD]", Utility.formatReportMoney(CarryForward));
 
             if (UserTotals.TotalDistributionOfFunds < 0) {
                 addSummaryValue("[CommissionSummary_DISTRIBUTIONOFFUNDS]", "$0.00");
@@ -164,24 +183,6 @@ namespace Paymaker {
             addJuniorSalaryBreakdown();
             addSeniorBalanceBreakDown();
             addValue("[SUMMARYTABLE]", szCommissionSummaryHTML);
-        }
-
-        void addPayOrRetainer() {
-           
-            string szRow = String.Format(@"
-                <tr style='height: 30px'><td colspan='12'>&nbsp;'</td></tr>
-                <tr style='font-size: 12px'>
-                    <td colspan='8'>&nbsp;</td>
-                    <td colspan='3' style='border-top: 2px solid black; font-weight: bold; text-align: right; '>
-                        {0}
-                    </td>
-                    <td  style='border-top: 2px solid black; font-weight: bold; text-align: right; '>
-                        {1}
-                    </td>
-                </tr>", UserTotals.UseRetainer?"Retainer Amount": "This Months Pay",
-                        UserTotals.UseRetainer ? Utility.formatReportMoney(UserTotals.RetainerAmount): Utility.formatReportMoney(UserTotals.MonthlyIncomeWithoutRetainer));
-            addValue("[MONTHLYPAYORRETAINER]", szRow);
-
         }
 
         private void addSeniorBalanceBreakDown() {
@@ -629,35 +630,52 @@ namespace Paymaker {
                                 <b>Distribution of Funds</b>
                             </td>
                         </tr>
-                        <tr>
-                            <td colspan='8'>&nbsp;</td>
-                            <td colspan='3' style='font-weight: bold; text-align: right; '>
-                               Total income less deductions
-                            </td>
-                            <td  style=' font-weight: bold; text-align: right; '>
-                                [MONTHLYPAY]
-                            </td>
-                        </tr>
-                        [MONTHLYPAYORRETAINER]
                         <tr style='font-size: 12px'>
                             <td colspan='8'>&nbsp;</td>
                             <td colspan='3' style='font-weight: bold; text-align: right; '>
-                                Less Super
+                                Total payable amount (with retainer)
                             </td>
-                            <td  style='font-weight: bold; text-align: right; '>
+                            <td style='font-weight: bold; text-align: right; '>
+                                [TOTALDISTRIBUTIONOFFUNDS]
+                            </td>
+                        </tr>
+                        <tr style='font-size: 12px'>
+                            <td colspan='8'>&nbsp;</td>
+                            <td colspan='3' style='text-align: right; '>
+                               Retainer Payable this month
+                            </td>
+                            <td style='text-align: right; '>
+                                [MONTHLYRETAINER]
+                            </td>
+                        </tr>
+                        <tr style='font-size: 12px'>
+                            <td colspan='8'>&nbsp;</td>
+                            <td colspan='3' style='text-align: right; '>
+                                Less super this month
+                            </td>
+                            <td  style='text-align: right; '>
                                 [MONTHLYSUPER]
                             </td>
                         </tr>
                         <tr style='font-size: 12px'>
                             <td colspan='8'>&nbsp;</td>
-                            <td colspan='3' style='border-top: 2px solid black; border-bottom: 2px solid black;font-weight: bold; text-align: right; '>
-                                Total Payable
+                            <td colspan='3' style='border-top: 1px solid black; font-weight: bold; text-align: right; '>
+                                Net payable this month
                             </td>
-                            <td  style='border-top: 2px solid black; border-bottom: 2px solid black;font-weight: bold; text-align: right; '>
-                                [TOTALDISTRIBUTIONOFFUNDS]
+                            <td style='border-top: 1px solid black; font-weight: bold; text-align: right; '>
+                                [NETPAYABLE]
                             </td>
                         </tr>
-                            
+                        <tr style='font-size: 12px'>
+                            <td colspan='8'>&nbsp;</td>
+                            <td colspan='3' style='border-top: 2px solid black; border-bottom: 2px solid black;font-weight: bold; text-align: right; '>
+                                Carry forward to next month
+                            </td>
+                            <td  style='border-top: 2px solid black; border-bottom: 2px solid black;font-weight: bold; text-align: right; '>
+                                [CARRYFORWARD]
+                            </td>
+                        </tr>
+
                         <tr style='font-style: italic;'>
                             <td colspan='{0}' style='font-size: 14px; border-bottom: 2px solid black; padding: 15px 0px 3px 0px;'>
                                 <b>Pending</b>
