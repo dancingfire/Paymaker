@@ -124,12 +124,10 @@ namespace Paymaker {
             sbHTML.Clear();
 
             //Total payable amount (with retainer) adds the retainer back once (it was already subtracted once
-            //as a deduction line item above), or is capped at the retainer amount if the agent's earnings for
-            //the month fall short of it
+            //as a deduction line item above). Kept signed (not capped or absolute-valued) so that a shortfall -
+            //where the agent has drawn more in retainer than they've actually earned - shows as a negative
+            //amount rather than being hidden, since that debt still needs to be recovered next month.
             double TotalPayable = UserTotals.MonthlyIncomeWithRetainer;
-            if (UserTotals.UseRetainer)
-                TotalPayable = UserTotals.RetainerAmount;
-            TotalPayable = TotalPayable >= 0 ? TotalPayable : -1 * TotalPayable;
             addValue("[TOTALDISTRIBUTIONOFFUNDS]", Utility.formatReportMoney(TotalPayable));
 
             //Super is only owed on money actually paid out this period, not on commission earned but not yet
