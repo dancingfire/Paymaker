@@ -117,7 +117,22 @@ namespace Paymaker {
             addValue("[TOTALOTHERINCOME]", Utility.formatReportMoney(UserTotals.OtherIncome));
 
             addValue("[MONTHLYPAY]", Utility.formatReportMoney(UserTotals.MonthlyIncomeWithoutRetainer));
-            addValue("[MONTHLYRETAINER]", Utility.formatReportMoney(UserTotals.RetainerAmount));
+
+            //No retainer for this agent at all - omit the row entirely rather than showing a $0.00 retainer
+            string szRetainerRow = "";
+            if (UserTotals.RetainerAmount > 0) {
+                szRetainerRow = String.Format(@"
+                    <tr style='font-size: 12px'>
+                        <td colspan='8'>&nbsp;</td>
+                        <td colspan='3' style='text-align: right; '>
+                           Retainer Payable this month
+                        </td>
+                        <td style='text-align: right; '>
+                            {0}
+                        </td>
+                    </tr>", Utility.formatReportMoney(UserTotals.RetainerAmount));
+            }
+            addValue("[RETAINERROW]", szRetainerRow);
 
             addSummaryValue("[CommissionSummary_OTHERINCOME]", Utility.formatReportMoney(UserTotals.OtherIncome));
             addSummaryValue("[CommissionSummary_DEDUCTIONS]", Utility.formatReportMoney(UserTotals.TotalDeductionAmount));
@@ -646,15 +661,7 @@ namespace Paymaker {
                                 [TOTALDISTRIBUTIONOFFUNDS]
                             </td>
                         </tr>
-                        <tr style='font-size: 12px'>
-                            <td colspan='8'>&nbsp;</td>
-                            <td colspan='3' style='text-align: right; '>
-                               Retainer Payable this month
-                            </td>
-                            <td style='text-align: right; '>
-                                [MONTHLYRETAINER]
-                            </td>
-                        </tr>
+                        [RETAINERROW]
                         <tr style='font-size: 12px'>
                             <td colspan='8'>&nbsp;</td>
                             <td colspan='3' style='text-align: right; '>
