@@ -255,15 +255,6 @@ public class UserPayPeriod {
     public DataSet dsDeductions = null;
 
     /// <summary>
-    /// We use the retainer only when the agents' pay will be less than their retainer amount
-    /// New rule for Ringwood - always apply the retainer
-    /// </summary>
-    public bool UseRetainer {
-        get {
-            return this.RetainerAmount > 0 && ( this.RetainerAmount > this.MonthlyIncomeWithoutRetainer || G.Settings.IsRingwood);
-        }
-    }
-    /// <summary>
     /// This will be true if the commission statement has written values to the DB
     /// </summary>
     public bool CommissionStatementDataExists { get; set; }
