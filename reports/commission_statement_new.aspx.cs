@@ -130,6 +130,15 @@ namespace Paymaker {
             double TotalPayable = UserTotals.MonthlyIncomeWithRetainer;
             addValue("[TOTALDISTRIBUTIONOFFUNDS]", Utility.formatReportMoney(TotalPayable));
 
+            //No retainer for this agent at all - don't imply one was factored in. Otherwise, if it went
+            //negative even after adding the retainer back, it means the retainer didn't cover the shortfall,
+            //so say so rather than claiming the (positive-sounding) "with retainer" figure.
+            string szTotalPayableLabel = "Total payable amount";
+            if (UserTotals.RetainerAmount > 0) {
+                szTotalPayableLabel += TotalPayable < 0 ? " (no deducted retainer)" : " (with retainer)";
+            }
+            addValue("[TOTALPAYABLELABEL]", szTotalPayableLabel);
+
             //Super is only owed on money actually paid out this period, not on commission earned but not yet
             //paid (it may be carried forward). When a retainer is drawn, super is based on the retainer alone
             //rather than the full distribution - the commission portion isn't superannuated here.
@@ -631,7 +640,7 @@ namespace Paymaker {
                         <tr style='font-size: 12px'>
                             <td colspan='8'>&nbsp;</td>
                             <td colspan='3' style='font-weight: bold; text-align: right; '>
-                                Total payable amount (with retainer)
+                                [TOTALPAYABLELABEL]
                             </td>
                             <td style='font-weight: bold; text-align: right; '>
                                 [TOTALDISTRIBUTIONOFFUNDS]
