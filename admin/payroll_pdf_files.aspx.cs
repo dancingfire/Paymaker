@@ -20,14 +20,14 @@ public partial class payroll_pdf_files : Root {
         getLocalDirectoriesAndFiles(cDIRECTORYPATH, "timesheets_2", tvTimesheet2.Nodes[0]);
     }
 
-    private void getLocalDirectoriesAndFiles(string szPath, string FileFilter, TreeNode node) {
+    private void getLocalDirectoriesAndFiles(string szPath, string FileFilter, TreeNode node, string szRelativePath = "") {
         int FileCount = 0;
         DirectoryInfo dirInfo = new DirectoryInfo(szPath);
         foreach (DirectoryInfo dir in dirInfo.GetDirectories()) {
-            
+
             TreeNode newNode = new TreeNode("&nbsp;" + dir.Name);
             newNode.Value = dir.FullName;
-            getLocalDirectoriesAndFiles(dir.FullName, FileFilter, newNode);
+            getLocalDirectoriesAndFiles(dir.FullName, FileFilter, newNode, Path.Combine(szRelativePath, dir.Name));
             node.ChildNodes.Add(newNode);
         }
 
@@ -43,7 +43,11 @@ public partial class payroll_pdf_files : Root {
                 newNode.NavigateUrl = getURLFromURI(file);
                 newNode.Target = "_blank";
             } else {
-                newNode.NavigateUrl = file.FullName.Replace(cDIRECTORYPATH, cWEBPATH);
+                // Build the relative path from the parts we've already walked rather than stripping
+                // cDIRECTORYPATH out of file.FullName - on Azure App Service, D:\home is a junction
+                // back to C:\home, so FullName can resolve to a C:\ path that never matches cDIRECTORYPATH,
+                // silently leaving the whole absolute path (including drive letter) as the link target
+                newNode.NavigateUrl = cWEBPATH + Uri.EscapeDataString(Path.Combine(szRelativePath, file.Name));
             }
             node.ChildNodes.Add(newNode);
             if (!chkShowAll.Checked && FileCount > 20)

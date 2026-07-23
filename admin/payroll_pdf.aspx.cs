@@ -17,12 +17,14 @@ namespace Paymaker {
 
             string file = Valid.getText("file", "", VT.NoValidation);
 
-            // Check for dot dot slash attack (directory traversal)
-            if (file.Contains("..\\") || file.Contains("../"))
+            // Check for directory traversal and rooted paths (e.g. "C:\..." or "\\server\share\...") -
+            // Path.Combine below silently ignores Directory whenever file is rooted, which would
+            // otherwise let a caller read any file on disk instead of just one under Directory
+            if (file.Contains("..\\") || file.Contains("../") || Path.IsPathRooted(file))
                 throw new Exception("Potential malicious file name");
 
-            // Lists only files conforming to patern "Timesheet_<num>_<YYYYMMDD>.pdf"
-            if (!Regex.IsMatch(file, @"timesheets_[0-9]_20[0-9]{2}[0-1][0-9][0-3][0-9].pdf", RegexOptions.IgnoreCase))
+            // Lists only files conforming to patern "Timesheet_<num>_<YYYYMMDD>.pdf" (optionally inside a subfolder)
+            if (!Regex.IsMatch(file, @"timesheets_[0-9]_20[0-9]{2}[0-1][0-9][0-3][0-9]\.pdf$", RegexOptions.IgnoreCase))
                 throw new Exception("Invalid file type");
 
             byte[] bytes = File.ReadAllBytes(Path.Combine(Directory, file));
