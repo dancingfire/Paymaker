@@ -10,9 +10,20 @@
             document.location.href = "../welcome.aspx";
         }
 
+        function validateHistoryEntry(dateID, valueID) {
+            var date = document.getElementById(dateID).value;
+            var value = document.getElementById(valueID).value;
+            if (date.trim() === '' || value.trim() === '') {
+                alert('Please enter both an effective date and a value.');
+                return false;
+            }
+            return true;
+        }
+
         $(document).ready(function () {
             addFormValidation('frmMain');
-          
+            createCalendar("txtNewSuperPercentageDate");
+            createCalendar("txtNewSuperMaxDate");
         });
     </script>
 </head>
@@ -24,14 +35,6 @@
         <div style='float: left; width: 40%;'>
             <asp:Label ID="lblCurrentPayPeriod" runat="server" CssClass="Label LabelPos" Text="Retainer threshold" Style="width: 200px" ToolTip="The amount that will be paid out if there is not enough income on the month"></asp:Label>
             <asp:TextBox ID="txtRetainerAmount" runat="server" CssClass="Entry EntryPos number required"></asp:TextBox>
-            <br class='Align' />
-
-            <asp:Label ID="Label1" runat="server" CssClass="Label LabelPos" Text="Superannuation percentage" Style="width: 200px" ToolTip="The percentage that comes off the agent's pay for superannuation"></asp:Label>
-            <asp:TextBox ID="txtSuperPercentage" runat="server" CssClass="Entry EntryPos number required"></asp:TextBox>
-            <br class='Align' />
-
-            <asp:Label ID="Label2" runat="server" CssClass="Label LabelPos" Text="Super maximum (monthly)" Style="width: 200px" ToolTip="The maximum annual amount that can be contributed to super in a month"></asp:Label>
-            <asp:TextBox ID="txtSuperMax" runat="server" CssClass="Entry EntryPos number required"></asp:TextBox>
             <br class='Align' />
 
             <asp:Label ID="Label4" runat="server" CssClass="Label LabelPos" Text="Super GL code" Style="width: 200px" ToolTip="The GL code for the super amount"></asp:Label>
@@ -54,6 +57,50 @@
         </div>
         <div class='AdminActionPanel' style='float: left; text-align: right; width: 100px'>
             <asp:Button ID="btnUpdate" runat="server" Text="Update" CssClass="Button btn" OnClick="btnUpdate_Click" />
+        </div>
+
+        <div class="panel panel-default" style="margin-top: 10px; width: 30%; float: left; clear: both;">
+            <div class="panel-heading">Superannuation percentage history</div>
+            <div class="panel-body">
+                <asp:GridView ID="gvSuperPercentageHistory" runat="server" AutoGenerateColumns="false" DataKeyNames="ID" OnRowDeleting="gvSuperPercentageHistory_RowDeleting">
+                    <Columns>
+                        <asp:BoundField DataField="EffectiveFrom" ItemStyle-Width="40%" HeaderText="Effective from" DataFormatString="{0:MMM d, yyyy}" />
+                        <asp:BoundField DataField="Value" ItemStyle-Width="40%" HeaderText="Percentage" ItemStyle-HorizontalAlign="Center" />
+                        <asp:TemplateField ItemStyle-Width="20%" ItemStyle-HorizontalAlign="Center">
+                            <ItemTemplate>
+                                <asp:LinkButton ID="lnkDelete" runat="server" CommandName="Delete" Text="Delete" CausesValidation="false" OnClientClick="return confirm('Delete this entry?');"></asp:LinkButton>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                    </Columns>
+                </asp:GridView>
+                <div style="margin-top: 10px;">
+                    <asp:TextBox ID="txtNewSuperPercentageDate" runat="server" CssClass="Entry"></asp:TextBox>
+                    <asp:TextBox ID="txtNewSuperPercentageValue" runat="server" CssClass="Entry number"></asp:TextBox>
+                    <asp:Button ID="btnAddSuperPercentage" runat="server" Text="Add" CssClass="Button btn" OnClick="btnAddSuperPercentage_Click" OnClientClick="return validateHistoryEntry('<%= txtNewSuperPercentageDate.ClientID %>', '<%= txtNewSuperPercentageValue.ClientID %>');" />
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default" style="margin-top: 10px; width: 30%; float: left; clear: both;">
+            <div class="panel-heading">Super maximum (monthly) history</div>
+            <div class="panel-body">
+                <asp:GridView ID="gvSuperMaxHistory" runat="server" AutoGenerateColumns="false" DataKeyNames="ID" OnRowDeleting="gvSuperMaxHistory_RowDeleting">
+                    <Columns>
+                        <asp:BoundField DataField="EffectiveFrom" ItemStyle-Width="40%" HeaderText="Effective from" DataFormatString="{0:MMM d, yyyy}" />
+                        <asp:BoundField DataField="Value" ItemStyle-Width="40%" HeaderText="Max ($)" ItemStyle-HorizontalAlign="Center" />
+                        <asp:TemplateField ItemStyle-Width="20%" ItemStyle-HorizontalAlign="Center">
+                            <ItemTemplate>
+                                <asp:LinkButton ID="lnkDelete" runat="server" CommandName="Delete" Text="Delete" CausesValidation="false" OnClientClick="return confirm('Delete this entry?');"></asp:LinkButton>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                    </Columns>
+                </asp:GridView>
+                <div style="margin-top: 10px;">
+                    <asp:TextBox ID="txtNewSuperMaxDate" runat="server" CssClass="Entry"></asp:TextBox>
+                    <asp:TextBox ID="txtNewSuperMaxValue" runat="server" CssClass="Entry number"></asp:TextBox>
+                    <asp:Button ID="btnAddSuperMax" runat="server" Text="Add" CssClass="Button btn" OnClick="btnAddSuperMax_Click" OnClientClick="return validateHistoryEntry('<%= txtNewSuperMaxDate.ClientID %>', '<%= txtNewSuperMaxValue.ClientID %>');" />
+                </div>
+            </div>
         </div>
     </form>
 </body>

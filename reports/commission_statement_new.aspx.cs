@@ -161,8 +161,8 @@ namespace Paymaker {
             double Super = 0;
             if (SuperBase >= 0) {
                 //Note: Caclulation changed after specific request from JL on Jul 6
-                Super = SuperBase - (SuperBase / (1 +  (G.Settings.SuperannuationPercentage/100)));
-                double MaxSuperPerMonth = G.Settings.SuperannuationMaxContribution;
+                Super = SuperBase - (SuperBase / (1 +  (G.Settings.SuperannuationPercentageAsOf(oPayPeriod.StartDate)/100)));
+                double MaxSuperPerMonth = G.Settings.SuperannuationMaxContributionAsOf(oPayPeriod.StartDate);
                 if (Super > MaxSuperPerMonth)
                     Super = MaxSuperPerMonth;
                 UserTotals.SuperAmount = Super;

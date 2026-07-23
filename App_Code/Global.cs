@@ -668,21 +668,23 @@ public class G {
         }
 
         /// <summary>
-        /// The percentage that comes off the agent's pay for superannuation
+        /// The percentage that comes off the agent's pay for superannuation, as it stood on a given date
         /// </summary>
-        public static double SuperannuationPercentage {
-            get {
-                return checkSessionVar("SUPERANNUATIONPERCENTAGE", 9.25);
-            }
+        public static double SuperannuationPercentageAsOf(DateTime AsOfDate) {
+            return DB.getScalar(String.Format(@"
+                SELECT TOP 1 VALUE FROM SUPERSETTINGSHISTORY
+                WHERE SETTINGNAME = 'SUPERANNUATIONPERCENTAGE' AND EFFECTIVEFROM <= '{0}'
+                ORDER BY EFFECTIVEFROM DESC", Utility.formatDate(AsOfDate)), 9.25);
         }
 
         /// <summary>
-        /// The maximum annual amount that can be contributed to super
+        /// The maximum monthly super contribution, as it stood on a given date
         /// </summary>
-        public static double SuperannuationMaxContribution {
-            get {
-                return checkSessionVar("SUPERANNUATIONMAX", 1807.85);
-            }
+        public static double SuperannuationMaxContributionAsOf(DateTime AsOfDate) {
+            return DB.getScalar(String.Format(@"
+                SELECT TOP 1 VALUE FROM SUPERSETTINGSHISTORY
+                WHERE SETTINGNAME = 'SUPERANNUATIONMAX' AND EFFECTIVEFROM <= '{0}'
+                ORDER BY EFFECTIVEFROM DESC", Utility.formatDate(AsOfDate)), 1807.85);
         }
 
         /// <summary>
