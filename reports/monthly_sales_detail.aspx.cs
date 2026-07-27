@@ -109,8 +109,10 @@ public class MonthlySalesDetail : Report {
             foreach(DataRow dr in ds.Tables[0].Rows) {
                 double dTotal = DB.readDouble(dr["GROSSCOMMISSION"]);
                 double dReferral = DB.readDouble(dr["REFERRALEXP"]);
-                double Ratio = (dTotal - dReferral) / dTotal;
-                dr["GRAPHTOTAL"] = DB.readDouble(dr["GRAPHTOTAL"]) * Ratio;
+                if (dTotal != 0) {
+                    double Ratio = (dTotal - dReferral) / dTotal;
+                    dr["GRAPHTOTAL"] = DB.readDouble(dr["GRAPHTOTAL"]) * Ratio;
+                }
             }
         }
         return ds;
