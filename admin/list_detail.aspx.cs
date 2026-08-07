@@ -75,7 +75,7 @@ public partial class list_detail : Root {
             SELECT *, case when ISACTIVE = 1 then 'Y' else 'N' END as status
             FROM LIST
             WHERE LISTTYPEID = {0}
-            ORDER BY SEQUENCENO", (int)oListType);
+            ORDER BY SEQUENCENO, NAME", (int)oListType);
         DataSet dsList = DB.runDataSet(szSQL);
         gvList.DataSource = dsList;
         gvList.DataBind();

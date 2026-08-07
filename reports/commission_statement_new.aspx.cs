@@ -134,6 +134,29 @@ namespace Paymaker {
             }
             addValue("[RETAINERROW]", szRetainerRow);
 
+            //Commission Paid behaves the same as the retainer (see below) but is tracked/labelled separately
+            //for agents on commission-only contracts who are drawing a partial payment against their balance,
+            //rather than an actual retainer.
+            string szCommissionPaidRow = "";
+            if (UserTotals.CommissionPaidAmount > 0) {
+                szCommissionPaidRow = String.Format(@"
+                    <tr style='font-size: 12px'>
+                        <td colspan='8'>&nbsp;</td>
+                        <td colspan='3' style='text-align: right; '>
+                           Commission Paid this month
+                        </td>
+                        <td style='text-align: right; '>
+                            {0}
+                        </td>
+                    </tr>", Utility.formatReportMoney(UserTotals.CommissionPaidAmount));
+            }
+            addValue("[COMMISSIONPAIDROW]", szCommissionPaidRow);
+
+            //Combined retainer + commission-paid amount - the two are mutually-exclusive in the normal case
+            //(an agent draws one or the other) but are summed here so the totals/super/carry-forward math
+            //below works the same regardless of which one (or both) is present.
+            double SpecialPayoutAmount = UserTotals.RetainerAmount + UserTotals.CommissionPaidAmount;
+
             addSummaryValue("[CommissionSummary_OTHERINCOME]", Utility.formatReportMoney(UserTotals.OtherIncome));
             addSummaryValue("[CommissionSummary_DEDUCTIONS]", Utility.formatReportMoney(UserTotals.TotalDeductionAmount));
             sbHTML.Clear();
@@ -145,26 +168,50 @@ namespace Paymaker {
             double TotalPayable = UserTotals.MonthlyIncomeWithRetainer;
             addValue("[TOTALDISTRIBUTIONOFFUNDS]", Utility.formatReportMoney(TotalPayable));
 
-            //No retainer for this agent at all - don't imply one was factored in. Otherwise, if it went
-            //negative even after adding the retainer back, it means the retainer didn't cover the shortfall,
-            //so say so rather than claiming the (positive-sounding) "with retainer" figure.
+            //No retainer/commission-paid for this agent at all - don't imply one was factored in. Otherwise,
+            //if it went negative even after adding the retainer/commission-paid back, it means that amount
+            //didn't cover the shortfall, so say so rather than claiming the (positive-sounding) "with retainer" figure.
             string szTotalPayableLabel = "Total payable amount";
-            if (UserTotals.RetainerAmount > 0) {
-                szTotalPayableLabel += TotalPayable < 0 ? " (no deducted retainer)" : " (with retainer)";
+            if (SpecialPayoutAmount > 0) {
+                string szSpecialPayoutName = UserTotals.RetainerAmount > 0 && UserTotals.CommissionPaidAmount > 0 ? "retainer/commission paid"
+                    : UserTotals.CommissionPaidAmount > 0 ? "commission paid" : "retainer";
+                szTotalPayableLabel += TotalPayable < 0 ? String.Format(" (no deducted {0})", szSpecialPayoutName) : String.Format(" (with {0})", szSpecialPayoutName);
             }
             addValue("[TOTALPAYABLELABEL]", szTotalPayableLabel);
 
             //Super is only owed on money actually paid out this period, not on commission earned but not yet
-            //paid (it may be carried forward). When a retainer is drawn, super is based on the retainer alone
-            //rather than the full distribution - the commission portion isn't superannuated here.
-            double SuperBase = UserTotals.RetainerAmount > 0 ? UserTotals.RetainerAmount : UserTotals.MonthlyIncomeWithoutRetainer;
+            //paid (it may be carried forward). When a retainer and/or commission-paid amount is drawn, super
+            //is based on that amount alone rather than the full distribution - the remaining commission
+            //portion isn't superannuated here. Retainer and commission-paid are superannuated individually
+            //(rather than just as a combined total) so that when both are present on the same statement, each
+            //can be shown net of its own share of super - this matches how Fletchers works it out by hand.
+            double SuperOnRetainer = 0;
+            double SuperOnCommissionPaid = 0;
             double Super = 0;
-            if (SuperBase >= 0) {
-                //Note: Caclulation changed after specific request from JL on Jul 6
-                Super = SuperBase - (SuperBase / (1 +  (G.Settings.SuperannuationPercentageAsOf(oPayPeriod.StartDate)/100)));
+            //Only SpecialPayoutAmount > 0 or a non-negative MonthlyIncomeWithoutRetainer give us a super figure
+            //worth persisting - a negative income with nothing drawn means there's nothing paid out this period
+            //to superannuate, so (as before) we leave SuperAmount/SUPERPAID untouched rather than zeroing it out.
+            bool blnHaveSuperFigure = true;
+            if (SpecialPayoutAmount > 0) {
+                SuperOnRetainer = calcSuper(UserTotals.RetainerAmount, oPayPeriod.StartDate);
+                SuperOnCommissionPaid = calcSuper(UserTotals.CommissionPaidAmount, oPayPeriod.StartDate);
+                Super = SuperOnRetainer + SuperOnCommissionPaid;
+            } else if (UserTotals.MonthlyIncomeWithoutRetainer >= 0) {
+                Super = calcSuper(UserTotals.MonthlyIncomeWithoutRetainer, oPayPeriod.StartDate);
+            } else {
+                blnHaveSuperFigure = false;
+            }
+
+            if (blnHaveSuperFigure) {
+                //The super calc above is uncapped per-item; cap the total and, if it was capped, scale each
+                //item's share down by the same proportion so Retainer + Commission Paid still add up to Super.
                 double MaxSuperPerMonth = G.Settings.SuperannuationMaxContributionAsOf(oPayPeriod.StartDate);
-                if (Super > MaxSuperPerMonth)
+                if (Super > MaxSuperPerMonth) {
+                    double Scale = MaxSuperPerMonth / Super;
+                    SuperOnRetainer *= Scale;
+                    SuperOnCommissionPaid *= Scale;
                     Super = MaxSuperPerMonth;
+                }
                 UserTotals.SuperAmount = Super;
                 if (Valid.getText("RecalcTotals", "No").ToUpper() == "YES") {
                     DB.runNonQuery(String.Format("UPDATE USERPAYPERIOD SET SUPERPAID = {0} WHERE ID = {1}", Super, UserTotals.DBID));
@@ -172,19 +219,49 @@ namespace Paymaker {
             }
             addValue("[MONTHLYSUPER]", Utility.formatReportMoney(Super));
 
-            //When a retainer is drawn, only the retainer (net of super) is paid out now and the remainder
-            //carries forward to next month. Without a retainer, the full payable amount goes out this month.
+            //When a retainer and/or commission-paid amount is drawn, only that amount (net of super) is paid
+            //out now and the remainder carries forward to next month. Otherwise the full payable amount goes
+            //out this month.
+            double NetRetainer = UserTotals.RetainerAmount - SuperOnRetainer;
+            double NetCommissionPaid = UserTotals.CommissionPaidAmount - SuperOnCommissionPaid;
             double NetPayable;
             double CarryForward;
-            if (UserTotals.RetainerAmount > 0) {
-                NetPayable = UserTotals.RetainerAmount - Super;
-                CarryForward = TotalPayable - UserTotals.RetainerAmount;
+            if (SpecialPayoutAmount > 0) {
+                NetPayable = NetRetainer + NetCommissionPaid;
+                CarryForward = TotalPayable - SpecialPayoutAmount;
             } else {
                 NetPayable = TotalPayable - Super;
                 CarryForward = 0;
             }
             addValue("[NETPAYABLE]", Utility.formatReportMoney(NetPayable));
             addValue("[CARRYFORWARD]", Utility.formatReportMoney(CarryForward));
+
+            //When both a retainer and a commission-paid amount are drawn in the same month, break the net
+            //payable figure back down per item (rather than just showing one combined number) so it's clear
+            //how much of it came from each.
+            string szNetPayableBreakdown = "";
+            if (UserTotals.RetainerAmount > 0 && UserTotals.CommissionPaidAmount > 0) {
+                szNetPayableBreakdown = String.Format(@"
+                    <tr style='font-size: 12px'>
+                        <td colspan='8'>&nbsp;</td>
+                        <td colspan='3' style='text-align: right; '>
+                           - of which Retainer
+                        </td>
+                        <td style='text-align: right; '>
+                            {0}
+                        </td>
+                    </tr>
+                    <tr style='font-size: 12px'>
+                        <td colspan='8'>&nbsp;</td>
+                        <td colspan='3' style='text-align: right; '>
+                           - of which Commission Paid
+                        </td>
+                        <td style='text-align: right; '>
+                            {1}
+                        </td>
+                    </tr>", Utility.formatReportMoney(NetRetainer), Utility.formatReportMoney(NetCommissionPaid));
+            }
+            addValue("[NETPAYABLEBREAKDOWN]", szNetPayableBreakdown);
 
             if (UserTotals.TotalDistributionOfFunds < 0) {
                 addSummaryValue("[CommissionSummary_DISTRIBUTIONOFFUNDS]", "$0.00");
@@ -390,6 +467,17 @@ namespace Paymaker {
 
         private void addValue(string Tag, string Value) {
             szCurrHTML = szCurrHTML.Replace(Tag, Value);
+        }
+
+        /// <summary>
+        /// Super owed on a single gross amount paid out this period, uncapped (the monthly cap is applied
+        /// separately across the combined total so it can be shared proportionally between line items).
+        /// </summary>
+        private double calcSuper(double GrossAmount, DateTime AsOfDate) {
+            if (GrossAmount <= 0)
+                return 0;
+            //Note: Caclulation changed after specific request from JL on Jul 6
+            return GrossAmount - (GrossAmount / (1 + (G.Settings.SuperannuationPercentageAsOf(AsOfDate) / 100)));
         }
 
         private void addSummaryValue(string Tag, string Value) {
@@ -662,6 +750,7 @@ namespace Paymaker {
                             </td>
                         </tr>
                         [RETAINERROW]
+                        [COMMISSIONPAIDROW]
                         <tr style='font-size: 12px'>
                             <td colspan='8'>&nbsp;</td>
                             <td colspan='3' style='text-align: right; '>
@@ -680,6 +769,7 @@ namespace Paymaker {
                                 [NETPAYABLE]
                             </td>
                         </tr>
+                        [NETPAYABLEBREAKDOWN]
                         <tr style='font-size: 12px'>
                             <td colspan='8'>&nbsp;</td>
                             <td colspan='3' style='border-top: 2px solid black; border-bottom: 2px solid black;font-weight: bold; text-align: right; '>

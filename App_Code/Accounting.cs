@@ -219,6 +219,12 @@ public class UserPayPeriod {
     public double AnnualSBSTotal { get; set; }
     public double GraphCommissionTotal { get; set; }
     public double RetainerAmount { get; set; }
+
+    /// <summary>
+    /// A partial payment against an agent's commission balance, tracked separately from RetainerAmount
+    /// but treated the same way for totals/super/carry-forward purposes.
+    /// </summary>
+    public double CommissionPaidAmount { get; set; }
     public double DeductionsAmount { get; set; }
     public double SuperAmount { get; set; }
 
@@ -230,11 +236,11 @@ public class UserPayPeriod {
     }
 
     /// <summary>
-    /// The current income for the month - includes the retainer as income
+    /// The current income for the month - includes the retainer and any commission-paid amount as income
     /// </summary>
     public double MonthlyIncomeWithRetainer {
         get {
-            return this.Income + this.OtherIncome - this.DeductionsAmount + this.RetainerAmount; //Add the retainer back in once, to undo its single subtraction in DeductionsAmount
+            return this.Income + this.OtherIncome - this.DeductionsAmount + this.RetainerAmount + this.CommissionPaidAmount; //Add the retainer/commission-paid back in once each, to undo their single subtraction in DeductionsAmount
         }
     }
 
@@ -312,6 +318,7 @@ public class UserPayPeriod {
             FROM USERPAYPERIOD WHERE USERID = {0} AND PAYPERIODID = {1}", UserID, intPrevPayperiodID);
         PrevHeldOver = DB.getScalar(szSQL, 0.0);
         getRetainerAmount();
+        getCommissionPaidAmount();
         checkPreviousHeldOver();
     }
 
@@ -399,6 +406,13 @@ public class UserPayPeriod {
         foreach (DataRow dr in dsDeductions.Tables[0].Rows) {
             if (DB.readString(dr["NAME"]).Contains("Retainer") )
                 RetainerAmount = DB.readDouble(dr["AMOUNT"], 0);
+        }
+    }
+
+    private void getCommissionPaidAmount() {
+        foreach (DataRow dr in dsDeductions.Tables[0].Rows) {
+            if (DB.readString(dr["NAME"]).Contains("Commission Paid"))
+                CommissionPaidAmount = DB.readDouble(dr["AMOUNT"], 0);
         }
     }
 
