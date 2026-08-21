@@ -79,7 +79,8 @@ namespace Paymaker {
             //A 404 (missing file/page) is never an application bug worth alerting on - it's either a
             //stale internal/external link or one of the constant automated scans probing for well-known
             //CVE paths (SharePoint, WordPress, etc.) that simply don't exist in this app.
-            if ((exception as HttpException)?.GetHttpCode() == 404)
+            HttpException httpException = exception as HttpException;
+            if (httpException != null && httpException.GetHttpCode() == 404)
                 return;
 
             SentrySdk.ConfigureScope(scope => {
